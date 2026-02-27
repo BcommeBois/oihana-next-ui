@@ -1,6 +1,6 @@
 {
   "name": "oihana-next-ui",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "private": false,
   "description": "Oihana Next.js UI component library — reusable components, hooks and utilities built with React 19, Next.js, Tailwind CSS and DaisyUI",
   "author": {
@@ -52,7 +52,7 @@
     "build": "next build",
     "build:lib": "tsup",
     "build:lib:watch": "tsup --watch",
-    "version":     "bun inject-version && git add src/version.js",
+    "version": "bun inject-version && git add src/version.js",
     "postversion": "bun run release",
     "release": "bun run build:lib && npm publish --access public && git push origin-ssh && git push origin-ssh --tags",
     "release:patch": "git add -A && git diff-index --quiet HEAD || git commit -m 'chore: prepare release' && npm version patch",
