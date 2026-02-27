@@ -34,6 +34,8 @@ export default defineConfig( {
             '.jsx' : 'jsx' ,
             '.mjs' : 'js' ,
         } ;
+
+        options.jsx = 'automatic' ;
     } ,
 
     external :
