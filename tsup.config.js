@@ -12,12 +12,13 @@ export default defineConfig( {
         'src/themes/**/*.{js,jsx,css,mjs}'
     ] ,
 
-    format      : [ 'esm' ] ,
-    jsx         : 'react-jsx' ,
-    splitting   : false ,
-    sourcemap   : true  ,
-    clean       : true  ,
-    dts         : false ,
+    clean        : true  ,
+    dts          : false ,
+    format       : [ 'esm' ] ,
+    jsx          : 'react-jsx' ,
+    outExtension : () => ({ js: '.js' }) ,
+    splitting    : false ,
+    sourcemap    : true  ,
 
     esbuildOptions( options )
     {
