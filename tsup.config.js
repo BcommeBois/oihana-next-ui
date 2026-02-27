@@ -9,7 +9,8 @@ export default defineConfig( {
         'src/helpers/**/*.{js,jsx}' ,
         'src/hooks/**/*.{js,jsx}' ,
         'src/motions/**/*.{js,jsx}' ,
-        'src/themes/**/*.{js,jsx,css,mjs}'
+        'src/themes/**/*.{js,jsx,css,mjs}',
+        '!src/themes/fonts/**',
     ] ,
 
     clean        : true  ,
