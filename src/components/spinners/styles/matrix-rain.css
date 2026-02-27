@@ -1,0 +1,65 @@
+:root
+{
+    ---spinner-matrix-rain-color : oklch(var(--color-success)) ;
+}
+
+.spinner-matrix-rain
+{
+    position : relative ;
+    width    : 200px ;
+    height   : 150px ;
+    overflow : hidden ;
+}
+
+.spinner-matrix-rain-column
+{
+    position   : absolute ;
+    top        : -100% ;
+    font-family : 'Courier New', monospace ;
+    font-size   : 14px ;
+    font-weight : bold ;
+    color       : var(---spinner-matrix-rain-color) ;
+    text-shadow : 0 0 5px var(---spinner-matrix-rain-color) ;
+    white-space : nowrap ;
+    opacity     : 0.8 ;
+    animation   : spinner-matrix-rain-fall linear infinite ;
+}
+
+.spinner-matrix-rain-column span
+{
+    display : block ;
+    opacity : 0.3 ;
+}
+
+.spinner-matrix-rain-column span:first-child
+{
+    opacity : 1 ;
+}
+
+.spinner-matrix-rain-column span:nth-child(2)
+{
+    opacity : 0.8 ;
+}
+
+.spinner-matrix-rain-column span:nth-child(3)
+{
+    opacity : 0.6 ;
+}
+
+.spinner-matrix-rain-column span:nth-child(4)
+{
+    opacity : 0.4 ;
+}
+
+@keyframes spinner-matrix-rain-fall
+{
+    0%
+    {
+        top : -100% ;
+    }
+
+    100%
+    {
+        top : 100% ;
+    }
+}

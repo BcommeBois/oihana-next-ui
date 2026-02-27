@@ -1,0 +1,52 @@
+:root {
+    ---spinner-image-background-color : oklch(var(--color-base-100));
+    ---spinner-image-color            : oklch(var(--color-base-content));
+    ---spinner-image-border-color     : oklch(var(--color-base-300)); /* kebab-case */
+}
+
+.spinner-image {
+    width         : 64px;
+    height        : 64px;
+    position      : relative;
+    background    : var(---spinner-image-background-color);
+    border-radius : 4px;
+    overflow      : hidden; /* retour à l'original */
+}
+
+.spinner-image::before {
+    content    : '';
+    position   : absolute;
+    left       : 0;
+    bottom     : 0;
+    width      : 40px;
+    height     : 40px;
+    transform  : rotate(45deg) translate(30%, 40%);
+    background : var(---spinner-image-color);
+    box-shadow: 32px -34px 0 5px color-mix(in oklch, var(---spinner-image-color), transparent 40%); /* kebab-case */
+    animation  : spinner-image-slide 2s infinite ease-in-out alternate;
+}
+
+.spinner-image::after {
+    content          : '';
+    position         : absolute;
+    left             : 10px;
+    top              : 10px;
+    width            : 16px;
+    height           : 16px;
+    border-radius    : 50%;
+    background       : var(---spinner-image-color);
+    transform-origin : 35px 145px;
+    animation        : spinner-image-rotate 2s infinite ease-in-out;
+}
+
+@keyframes spinner-image-slide {
+    0%,  100% { bottom: -35px; }
+    25%, 75%  { bottom: -2px;  }
+    20%, 80%  { bottom: 2px;   }
+}
+
+@keyframes spinner-image-rotate {
+    0%        { transform: rotate(-15deg); }
+    25%, 75%  { transform: rotate(0deg);  }
+    100%      { transform: rotate(25deg); }
+}

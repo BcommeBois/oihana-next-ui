@@ -1,0 +1,73 @@
+:root
+{
+    ---spinner-book-color       : oklch(var(--color-base-300)) ;
+    ---spinner-book-page-bg     : oklch(0.96 0 0) ;     /* #f5f5f5 */
+    ---spinner-book-page-front  : oklch(1 0 0) ;        /* #fff */
+    ---spinner-book-line-color  : oklch(0.87 0 0) ;     /* #ddd */
+}
+
+.spinner-book
+{
+    position         : relative ;
+    width            : 200px ;
+    height           : 140px ;
+    background-color : var(---spinner-book-color) ;
+    border-radius    : 8px ;
+    perspective      : 1000px ;
+    box-sizing       : border-box ;
+}
+
+.spinner-book::before
+{
+    content              : '' ;
+    position             : absolute ;
+    inset                : 0.625rem ;         /* inset-2.5 */
+    border-radius        : 0.5rem ;           /* rounded-lg */
+    background-color     : var(---spinner-book-page-bg) ;
+    background-repeat    : no-repeat ;
+    background-size      : 60px 10px ;
+    background-image     : linear-gradient(var(---spinner-book-line-color) 100px, transparent 0),
+    linear-gradient(var(---spinner-book-line-color) 100px, transparent 0),
+    linear-gradient(var(---spinner-book-line-color) 100px, transparent 0),
+    linear-gradient(var(---spinner-book-line-color) 100px, transparent 0),
+    linear-gradient(var(---spinner-book-line-color) 100px, transparent 0),
+    linear-gradient(var(---spinner-book-line-color) 100px, transparent 0) ;
+    background-position  : 15px 30px,
+    15px 60px,
+    15px 90px,
+    105px 30px,
+    105px 60px,
+    105px 90px ;
+    box-shadow           : 0 0 10px rgba(0, 0, 0, 0.25) ;
+}
+
+.spinner-book::after
+{
+    content              : '' ;
+    position             : absolute ;
+    right                : 0.625rem ;         /* right-2.5 */
+    top                  : 0.625rem ;         /* top-2.5 */
+    bottom               : 0.625rem ;         /* bottom-2.5 */
+    width                : calc(50% - 10px) ;
+    border-radius        : 0.5rem ;           /* rounded-lg */
+    background-color     : var(---spinner-book-page-front) ;
+    background-repeat    : no-repeat ;
+    background-size      : 60px 10px ;
+    background-image     : linear-gradient(var(---spinner-book-line-color) 100px, transparent 0),
+    linear-gradient(var(---spinner-book-line-color) 100px, transparent 0),
+    linear-gradient(var(---spinner-book-line-color) 100px, transparent 0) ;
+    background-position  : 50% 30px,
+    50% 60px,
+    50% 90px ;
+    transform            : rotateY(0deg) ;
+    transform-origin     : left center ;
+    animation            : spinner-book-paging 1s linear infinite ;
+}
+
+@keyframes spinner-book-paging
+{
+    to
+    {
+        transform : rotateY(-180deg) ;
+    }
+}

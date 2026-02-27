@@ -19,6 +19,7 @@
 
 # production
 /build
+/public/sw.js
 
 # misc
 .DS_Store
@@ -30,8 +31,14 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# environments
+.env
+.env.local
+.env.development
+.env.development.local
+.env.production
+.env.production.local
+.env.test
 
 # vercel
 .vercel
@@ -39,3 +46,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# IDE
+.idea/
+*.swp
+*.swo
+
+# Bun
+#bun.lock
+pnpm-lock.yaml

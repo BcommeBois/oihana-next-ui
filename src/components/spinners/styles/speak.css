@@ -1,0 +1,67 @@
+:root
+{
+    ---spinner-speak-background-color : oklch(var(--color-base-100)) ;
+    ---spinner-speak-color            : oklch(var(--color-error)) ;
+}
+
+.spinner-speak
+{
+    position         : relative ;
+    width            : 100px ;
+    height           : 75px ;
+    margin           : 0 auto ;
+    background-color : var(---spinner-speak-background-color) ;
+    border-radius    : 100% ;
+}
+
+.spinner-speak::before
+{
+    content       : '' ;
+    position      : absolute ;
+    top           : 50px ;
+    left          : -15px ;
+    border        : 15px solid transparent ;
+    border-top    : 25px solid var(---spinner-speak-background-color) ;
+    transform     : rotate(45deg) ;
+    box-sizing    : border-box ;
+}
+
+.spinner-speak::after
+{
+    content          : '' ;
+    position         : absolute ;
+    left             : 50% ;
+    top              : 50% ;
+    width            : 12px ;
+    height           : 12px ;
+    border-radius    : 50% ;
+    background-color : var(---spinner-speak-color) ;
+    box-shadow       : 20px 0 var(---spinner-speak-color),
+                       -20px 0 var(---spinner-speak-color) ;
+    transform        : translate(-50%, -50%) ;
+    animation        : spinner-speak-flash 0.5s ease-out infinite alternate ;
+}
+
+@keyframes spinner-speak-flash
+{
+    0%
+    {
+        background-color : color-mix(in oklch, var(---spinner-speak-color), transparent 75%) ;
+        box-shadow       : 20px 0 color-mix(in oklch, var(---spinner-speak-color), transparent 75%),
+                           -20px 0 var(---spinner-speak-color) ;
+    }
+
+    50%
+    {
+        background-color : var(---spinner-speak-color) ;
+        box-shadow       : 20px 0 color-mix(in oklch, var(---spinner-speak-color), transparent 75%),
+                           -20px 0 color-mix(in oklch, var(---spinner-speak-color), transparent 75%) ;
+    }
+
+    100%
+    {
+        background-color : var(---spinner-speak-color) ;
+        box-shadow       : 20px 0 var(---spinner-speak-color),
+                           -20px 0 color-mix(in oklch, var(---spinner-speak-color), transparent 75%) ;
+    }
+}

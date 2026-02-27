@@ -1,0 +1,85 @@
+:root
+{
+    ---spinner-fold-color : oklch(var(--color-base-content)) ;
+}
+
+.spinner-fold
+{
+    position  : relative ;
+    width     : 2.5rem ;  /* size-10 */
+    height    : 2.5rem ;  /* size-10 */
+    transform : rotateZ(45deg) ;
+}
+
+.spinner-fold-cube
+{
+    position  : relative ;
+    width     : 50% ;     /* size-1/2 */
+    height    : 50% ;     /* size-1/2 */
+    float     : left ;
+    transform : scale(1.1) ;
+}
+
+.spinner-fold-cube::before
+{
+    content          : '' ;
+    position         : absolute ;
+    top              : 0 ;
+    left             : 0 ;
+    width            : 100% ;    /* size-full */
+    height           : 100% ;    /* size-full */
+    background-color : var(---spinner-fold-color) ;
+    transform-origin : 100% 100% ;
+    animation        : spinner-fold 2.4s infinite linear both ;
+}
+
+.spinner-fold-cube:nth-child(2)
+{
+    transform : scale(1.1) rotateZ(90deg) ;
+}
+
+.spinner-fold-cube:nth-child(3)
+{
+    transform : scale(1.1) rotateZ(270deg) ;
+}
+
+.spinner-fold-cube:nth-child(4)
+{
+    transform : scale(1.1) rotateZ(180deg) ;
+}
+
+.spinner-fold-cube:nth-child(2)::before
+{
+    animation-delay : 0.3s ;
+}
+
+.spinner-fold-cube:nth-child(3)::before
+{
+    animation-delay : 0.9s ;
+}
+
+.spinner-fold-cube:nth-child(4)::before
+{
+    animation-delay : 0.6s ;
+}
+
+@keyframes spinner-fold
+{
+    0%, 10%
+    {
+        transform : perspective(140px) rotateX(-180deg) ;
+        opacity   : 0 ;
+    }
+
+    25%, 75%
+    {
+        transform : perspective(140px) rotateX(0deg) ;
+        opacity   : 1 ;
+    }
+
+    90%, 100%
+    {
+        transform : perspective(140px) rotateY(180deg) ;
+        opacity   : 0 ;
+    }
+}

@@ -1,0 +1,40 @@
+:root
+{
+    ---spinner-wifi-color : oklch(var(--color-base-content)) ;
+}
+
+.spinner-wifi,
+.spinner-wifi::before
+{
+    display          : inline-block ;
+    border           : 20px double transparent ;
+    border-top-color : var(---spinner-wifi-color) ;
+    border-radius    : 50% ;
+    box-sizing       : border-box ;
+}
+
+.spinner-wifi
+{
+    padding   : 8px ;
+    animation : spinner-wifi-loading 1s ease-in infinite ;
+}
+
+.spinner-wifi::before
+{
+    content : '' ;
+    width   : 0 ;
+    height  : 0 ;
+}
+
+@keyframes spinner-wifi-loading
+{
+    0%
+    {
+        border-style : none ;
+    }
+
+    100%
+    {
+        border-style : double ;
+    }
+}

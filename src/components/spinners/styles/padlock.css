@@ -1,0 +1,68 @@
+:root
+{
+    ---spinner-padlock-color : oklch(var(--color-base-content)) ;
+}
+
+.spinner-padlock
+{
+    position      : relative ;
+    width         : 64px ;
+    height        : 44px ;
+    border        : 4px solid ;
+    border-color  : var(---spinner-padlock-color) ;
+    border-radius : 0.5rem ;        /* rounded-lg */
+}
+
+.spinner-padlock::before
+{
+    content       : '' ;
+    position      : absolute ;
+    top           : 0 ;
+    left          : 50% ;
+    width         : 32px ;
+    height        : 28px ;
+    border        : 4px solid ;
+    border-color  : var(---spinner-padlock-color) ;
+    border-radius : 50% 50% 0 0 ;
+    transform     : translate(-50%, -100%) ;
+}
+
+.spinner-padlock::after
+{
+    content          : '' ;
+    position         : absolute ;
+    left             : 50% ;
+    top              : 50% ;
+    width            : 8px ;
+    height           : 8px ;
+    border-radius    : 50% ;
+    background-color : var(---spinner-padlock-color) ;
+    box-shadow       : 16px 0 var(---spinner-padlock-color),
+    -16px 0 var(---spinner-padlock-color) ;
+    transform        : translate(-50%, -50%) ;
+    animation        : spinner-padlock-flash 0.5s ease-out infinite alternate ;
+}
+
+@keyframes spinner-padlock-flash
+{
+    0%
+    {
+        background-color : color-mix(in oklch, var(---spinner-padlock-color), transparent 75%) ;
+        box-shadow       : 16px 0 color-mix(in oklch, var(---spinner-padlock-color), transparent 75%),
+        -16px 0 var(---spinner-padlock-color) ;
+    }
+
+    50%
+    {
+        background-color : var(---spinner-padlock-color) ;
+        box-shadow       : 16px 0 color-mix(in oklch, var(---spinner-padlock-color), transparent 75%),
+        -16px 0 color-mix(in oklch, var(---spinner-padlock-color), transparent 75%) ;
+    }
+
+    100%
+    {
+        background-color : color-mix(in oklch, var(---spinner-padlock-color), transparent 75%) ;
+        box-shadow       : 16px 0 var(---spinner-padlock-color),
+        -16px 0 color-mix(in oklch, var(---spinner-padlock-color), transparent 75%) ;
+    }
+}

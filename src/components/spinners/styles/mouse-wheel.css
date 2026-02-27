@@ -1,0 +1,60 @@
+:root
+{
+    ---spinner-mouse-wheel-color : oklch(var(--color-base-content)) ;
+}
+
+.spinner-mouse-wheel
+{
+    position      : relative ;
+    box-sizing    : border-box ;
+    width         : 3rem ;            /* w-12 */
+    height        : 5rem ;            /* h-20 */
+    margin        : auto ;
+    border        : 2px solid ;
+    border-color  : var(---spinner-mouse-wheel-color) ;
+    border-radius : 50% 50% 50% 50% / 25% 25% 25% 25% ;
+}
+
+.spinner-mouse-wheel::before
+{
+    content          : '' ;
+    position         : absolute ;
+    left             : 50% ;          /* left-1/2 */
+    top              : 1.25rem ;      /* top-5 */
+    width            : 0.25rem ;      /* size-1 */
+    height           : 0.25rem ;      /* size-1 */
+    background-color : var(---spinner-mouse-wheel-color) ;
+    border-radius    : 0.5rem ;       /* rounded-lg */
+    transform        : translateX(-50%) ;
+    animation        : spinner-mouse-wheel-scroll-down 1.5s linear infinite ;
+}
+
+@keyframes spinner-mouse-wheel-scroll-down
+{
+    0%
+    {
+        top     : 15px ;
+        height  : 4px ;
+        opacity : 1 ;
+    }
+
+    33%
+    {
+        top    : 15px ;
+        height : 40px ;
+    }
+
+    66%
+    {
+        top     : 50px ;
+        height  : 10px ;
+        opacity : 1 ;
+    }
+
+    100%
+    {
+        top     : 56px ;
+        height  : 4px ;
+        opacity : 0 ;
+    }
+}

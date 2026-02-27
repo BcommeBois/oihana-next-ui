@@ -1,0 +1,42 @@
+:root
+{
+    ---spinner-up-color : oklch(var(--color-base-content)) ;
+}
+
+.spinner-up
+{
+    position         : relative ;
+    display          : inline-block ;
+    width            : 15px ;
+    height           : 20px ;
+    margin-left      : 15px ;
+    margin-top       : 15px ;
+    background-color : var(---spinner-up-color) ;
+    box-sizing       : border-box ;
+    animation        : spinner-up-bump 0.4s linear infinite alternate ;
+}
+
+.spinner-up::after
+{
+    content       : '' ;
+    position      : absolute ;
+    left          : 50% ;
+    bottom        : 100% ;
+    transform     : translate(-50%, 0) ;
+    border        : 15px solid transparent ;
+    border-bottom-color : var(---spinner-up-color) ;
+    box-sizing    : border-box ;
+}
+
+@keyframes spinner-up-bump
+{
+    0%
+    {
+        transform : translate(-50%, 5px) ;
+    }
+
+    100%
+    {
+        transform : translate(-50%, -5px) ;
+    }
+}

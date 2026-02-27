@@ -1,0 +1,12 @@
+const meteor =
+{
+    name : 'meteor',
+    svg  : `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' version='1.1' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:svgjs='http://svgjs.dev/svgjs' width='1440' height='250' preserveAspectRatio='none' viewBox='0 0 1440 250'%3e%3cg mask='url(%26quot%3b%23SvgjsMask1003%26quot%3b)' fill='none'%3e%3cpath d='M15 250L265 0L478 0L228 250z' fill='url(%26quot%3b%23SvgjsLinearGradient1004%26quot%3b)'%3e%3c/path%3e%3cpath d='M248.60000000000002 250L498.6 0L782.1 0L532.1 250z' fill='url(%26quot%3b%23SvgjsLinearGradient1004%26quot%3b)'%3e%3c/path%3e%3cpath d='M482.20000000000005 250L732.2 0L916.7 0L666.7 250z' fill='url(%26quot%3b%23SvgjsLinearGradient1004%26quot%3b)'%3e%3c/path%3e%3cpath d='M733.8000000000001 250L983.8000000000001 0L1168.3000000000002 0L918.3000000000001 250z' fill='url(%26quot%3b%23SvgjsLinearGradient1004%26quot%3b)'%3e%3c/path%3e%3cpath d='M1418 250L1168 0L1061.5 0L1311.5 250z' fill='url(%26quot%3b%23SvgjsLinearGradient1005%26quot%3b)'%3e%3c/path%3e%3cpath d='M1171.4 250L921.4000000000001 0L688.9000000000001 0L938.9000000000001 250z' fill='url(%26quot%3b%23SvgjsLinearGradient1005%26quot%3b)'%3e%3c/path%3e%3cpath d='M944.8 250L694.8 0L417.29999999999995 0L667.3 250z' fill='url(%26quot%3b%23SvgjsLinearGradient1005%26quot%3b)'%3e%3c/path%3e%3cpath d='M700.1999999999999 250L450.19999999999993 0L262.69999999999993 0L512.6999999999999 250z' fill='url(%26quot%3b%23SvgjsLinearGradient1005%26quot%3b)'%3e%3c/path%3e%3cpath d='M1247.8120592310463 250L1440 57.81205923104636L1440 250z' fill='url(%26quot%3b%23SvgjsLinearGradient1004%26quot%3b)'%3e%3c/path%3e%3cpath d='M0 250L192.18794076895364 250L 0 57.81205923104636z' fill='url(%26quot%3b%23SvgjsLinearGradient1005%26quot%3b)'%3e%3c/path%3e%3c/g%3e%3cdefs%3e%3cmask id='SvgjsMask1003'%3e%3crect width='1440' height='250' fill='white'%3e%3c/rect%3e%3c/mask%3e%3clinearGradient x1='0%25' y1='100%25' x2='100%25' y2='0%25' id='SvgjsLinearGradient1004'%3e%3cstop stop-color='currentColor' offset='0'%3e%3c/stop%3e%3cstop stop-opacity='0' stop-color='rgba(currentColor)' offset='0.66'%3e%3c/stop%3e%3c/linearGradient%3e%3clinearGradient x1='100%25' y1='100%25' x2='0%25' y2='0%25' id='SvgjsLinearGradient1005'%3e%3cstop stop-color='rgba(currentColor)' offset='0'%3e%3c/stop%3e%3cstop stop-opacity='0' stop-color='rgba(currentColor)' offset='0.66'%3e%3c/stop%3e%3c/linearGradient%3e%3c/defs%3e%3c/svg%3e")` ,
+    size :
+    {
+        width  : 720 ,
+        height : 280
+    }
+}
+
+export default meteor ;

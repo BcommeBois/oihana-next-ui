@@ -1,0 +1,45 @@
+:root
+{
+    ---spinner-clock-border-color : oklch(var(--color-base-content) / 0.6) ;
+    ---spinner-clock-color        : oklch(var(--color-base-content)) ;
+}
+
+.spinner-clock
+{
+    position      : relative ;
+    display       : inline-block ;
+    width         : 3rem ;           /* size-12 */
+    height        : 3rem ;           /* size-12 */
+    border-radius : 50% ;            /* rounded-full */
+    border-style  : solid ;
+    border-width  : 2px ;
+    border-color  : var(---spinner-clock-border-color) ;
+    box-sizing    : border-box ;
+    animation     : spinner-clock 1s linear infinite ;
+}
+
+.spinner-clock::after
+{
+    content          : '' ;
+    position         : absolute ;
+    top              : 0 ;
+    left             : 50% ;
+    width            : 3px ;
+    height           : 24px ;
+    background-color : var(---spinner-clock-color) ;
+    transform        : translateX(-50%) ;
+    box-sizing       : border-box ;
+}
+
+@keyframes spinner-clock
+{
+    0%
+    {
+        transform : rotate(0deg) ;
+    }
+
+    100%
+    {
+        transform : rotate(360deg) ;
+    }
+}

@@ -1,0 +1,30 @@
+/* Spinner size variants using scale transform */
+
+.spinner-xs
+{
+    transform        : scale(0.5) ;
+    transform-origin : center center ;
+}
+
+.spinner-sm
+{
+    transform        : scale(0.75) ;
+    transform-origin : center center ;
+}
+
+.spinner-md
+{
+    /* Normal size - no transform */
+}
+
+.spinner-lg
+{
+    transform        : scale(1.25) ;
+    transform-origin : center center ;
+}
+
+.spinner-xl
+{
+    transform        : scale(1.5) ;
+    transform-origin : center center ;
+}

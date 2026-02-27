@@ -1,0 +1,30 @@
+:root
+{
+    ---spinner-spin-background-color : oklch(var(--color-base-100)) ;
+    ---spinner-spin-color            : oklch(var(--color-base-content)) ;
+}
+
+.spinner-spin
+{
+    display          : inline-block ;
+    box-sizing       : border-box ;
+    width            : 3rem ;           /* size-12 */
+    height           : 3rem ;           /* size-12 */
+    border           : 5px solid var(---spinner-spin-background-color) ;
+    border-bottom-color : var(---spinner-spin-color) ;
+    border-radius    : 50% ;            /* rounded-full */
+    animation        : spinner-spin-rotation 1s linear infinite ;
+}
+
+@keyframes spinner-spin-rotation
+{
+    0%
+    {
+        transform : rotate(0deg) ;
+    }
+
+    100%
+    {
+        transform : rotate(360deg) ;
+    }
+}

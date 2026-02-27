@@ -1,0 +1,10 @@
+/* Fullscreen backdrop */
+::backdrop {
+    z-index: 0;
+    background-color: transparent !important;
+}
+
+:fullscreen {
+    z-index: 1;
+    background-color: transparent;
+}

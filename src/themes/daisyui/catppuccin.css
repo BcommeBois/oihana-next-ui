@@ -1,0 +1,66 @@
+/* ── Catppuccin Latte (light) ── */
+
+@plugin "daisyui/theme" {
+    name             : "catppuccin-latte" ;
+    default          : true ;
+    prefersdark      : false;
+    color-scheme     : light ;
+    --color-primary  : #1e66f5 ;
+    --color-secondary: #ea76cb ;
+    --color-accent   : #179299 ;
+    --color-neutral  : #dce0e8 ;
+    --color-base-100 : #eff1f5 ;
+    --color-info     : #209fb5 ;
+    --color-success  : #40a02b ;
+    --color-warning  : #df8e1d ;
+    --color-error    : #d20f39 ;
+}
+
+/* ── Catppuccin Frappé (dark) ── */
+
+@plugin "daisyui/theme" {
+    name             : "catppuccin-frappe" ;
+    prefersdark      : true;
+    color-scheme     : dark ;
+    --color-primary  : #8caaee ;
+    --color-secondary: #f4b8e4 ;
+    --color-accent   : #81c8be ;
+    --color-neutral  : #232634 ;
+    --color-base-100 : #303446 ;
+    --color-info     : #85c1dc ;
+    --color-success  : #a6d189 ;
+    --color-warning  : #e5c890 ;
+    --color-error    : #e78284 ;
+}
+
+/* ── Catppuccin Macchiato (dark) ── */
+
+@plugin "daisyui/theme" {
+    name             : "catppuccin-macchiato" ;
+    color-scheme     : dark ;
+    --color-primary  : #8aadf4 ;
+    --color-secondary: #f5bde6 ;
+    --color-accent   : #8bd5ca ;
+    --color-neutral  : #181926 ;
+    --color-base-100 : #24273a ;
+    --color-info     : #7dc4e4 ;
+    --color-success  : #a6da95 ;
+    --color-warning  : #eed49f ;
+    --color-error    : #ed8796 ;
+}
+
+/* ── Catppuccin Mocha (dark) ── */
+
+@plugin "daisyui/theme" {
+    name             : "catppuccin-mocha" ;
+    color-scheme     : dark ;
+    --color-primary  : #89b4fa ;
+    --color-secondary: #f5c2e7 ;
+    --color-accent   : #94e2d5 ;
+    --color-neutral  : #11111b ;
+    --color-base-100 : #1e1e2e ;
+    --color-info     : #74c7ec ;
+    --color-success  : #a6e3a1 ;
+    --color-warning  : #f9e2af ;
+    --color-error    : #f38ba8 ;
+}

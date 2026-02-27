@@ -1,0 +1,70 @@
+:root
+{
+    ---spinner-pacman-color : oklch(var(--color-base-content)) ;
+}
+
+.spinner-pacman
+{
+    position      : relative ;
+    box-sizing    : border-box ;
+    border        : 24px solid ;
+    border-color  : var(---spinner-pacman-color) ;
+    border-radius : 50% ;
+    animation     : spinner-pacman-eat 1s linear infinite ;
+}
+
+.spinner-pacman::after,
+.spinner-pacman::before
+{
+    content          : '' ;
+    position         : absolute ;
+    left             : 50px ;
+    top              : 50% ;
+    width            : 15px ;
+    height           : 15px ;
+    background-color : var(---spinner-pacman-color) ;
+    border-radius    : 50% ;
+    box-sizing       : border-box ;
+    opacity          : 0 ;
+    transform        : translateY(-50%) ;
+    animation        : spinner-pacman-move 2s linear infinite ;
+}
+
+.spinner-pacman::before
+{
+    animation-delay : 1s ;
+}
+
+@keyframes spinner-pacman-eat
+{
+    0%, 49%
+    {
+        border-right-color : var(---spinner-pacman-color) ;
+    }
+
+    50%, 100%
+    {
+        border-right-color : transparent ;
+    }
+}
+
+@keyframes spinner-pacman-move
+{
+    0%
+    {
+        left    : 75px ;
+        opacity : 1 ;
+    }
+
+    50%
+    {
+        left    : 0 ;
+        opacity : 1 ;
+    }
+
+    52%, 100%
+    {
+        left    : -5px ;
+        opacity : 0 ;
+    }
+}

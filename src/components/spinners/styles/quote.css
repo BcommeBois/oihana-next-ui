@@ -1,0 +1,36 @@
+:root
+{
+    ---spinner-quote-color : oklch(var(--color-base-content)) ;
+}
+
+.spinner-quote
+{
+    color       : var(---spinner-quote-color) ;
+    font-family : Consolas, Menlo, Monaco, monospace ;
+    font-weight : bold ;
+    font-size   : 78px ;
+    opacity     : 0.8 ;
+}
+
+.spinner-quote::before
+{
+    content     : "{" ;
+    display     : inline-block ;
+    animation   : spinner-quote-pulse 0.4s alternate infinite ease-in-out ;
+}
+
+.spinner-quote::after
+{
+    content     : "}" ;
+    display     : inline-block ;
+    animation   : spinner-quote-pulse 0.4s 0.3s alternate infinite ease-in-out ;
+}
+
+@keyframes spinner-quote-pulse
+{
+    to
+    {
+        transform : scale(0.8) ;
+        opacity   : 0.5 ;
+    }
+}

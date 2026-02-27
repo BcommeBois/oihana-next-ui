@@ -1,0 +1,54 @@
+:root
+{
+    ---spinner-swing-color : oklch(var(--color-base-content)) ;
+}
+
+.spinner-swing
+{
+    position  : relative ;
+    width     : 2.5rem ;  /* size-10 */
+    height    : 2.5rem ;  /* size-10 */
+    animation : spinner-swing 1.8s infinite linear ;
+}
+
+.spinner-swing-dot
+{
+    position         : absolute ;
+    top              : 0 ;
+    left             : 0 ;
+    right            : 0 ;
+    margin           : auto ;        /* m-auto */
+    width            : 45% ;
+    height           : 45% ;
+    border-radius    : 50% ;         /* rounded-full */
+    background-color : var(---spinner-swing-color) ;
+    animation        : spinner-swing-dot 2s infinite ease-in-out ;
+}
+
+.spinner-swing-dot:nth-child(2)
+{
+    top              : auto ;
+    bottom           : 0 ;
+    animation-delay  : -1s ;
+}
+
+@keyframes spinner-swing
+{
+    100%
+    {
+        transform : rotate(360deg) ;
+    }
+}
+
+@keyframes spinner-swing-dot
+{
+    0%, 100%
+    {
+        transform : scale(0.2) ;
+    }
+
+    50%
+    {
+        transform : scale(1) ;
+    }
+}

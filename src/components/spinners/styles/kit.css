@@ -1,0 +1,41 @@
+:root
+{
+    ---spinner-kit-color : oklch(var(--color-base-content)) ;
+}
+
+.spinner-kit
+{
+    position  : relative ;
+    display   : inline-block ;
+    width     : 100% ;      /* w-full */
+    height    : 0.25rem ;   /* h-1 */
+    overflow  : hidden ;
+}
+
+.spinner-kit::after
+{
+    content          : '' ;
+    position         : absolute ;
+    top              : 0 ;
+    left             : 0 ;
+    width            : 6rem ;           /* w-24 */
+    height           : 0.25rem ;        /* h-1 */
+    background-color : var(---spinner-kit-color) ;
+    box-sizing       : border-box ;
+    animation        : spinner-kit 0.6s ease-in-out infinite alternate ;
+}
+
+@keyframes spinner-kit
+{
+    0%
+    {
+        left      : 0 ;
+        transform : translateX(-1%) ;
+    }
+
+    100%
+    {
+        left      : 100% ;
+        transform : translateX(-99%) ;
+    }
+}

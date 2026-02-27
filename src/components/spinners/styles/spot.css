@@ -1,0 +1,72 @@
+:root
+{
+    ---spinner-spot-color : oklch(var(--color-base-content)) ;
+}
+
+.spinner-spot
+{
+    position : relative ;
+    display  : block ;
+    width    : 48px ;
+    height   : 48px ;
+    margin   : 20px auto ;
+    box-sizing : border-box ;
+}
+
+.spinner-spot::after
+{
+    content       : '' ;
+    position      : absolute ;
+    left          : 0 ;
+    bottom        : 0 ;
+    width         : 48px ;
+    height        : 48px ;
+    border        : 15px solid ;
+    border-color  : var(---spinner-spot-color) ;
+    border-radius : 50% 50% 0 ;
+    box-sizing    : border-box ;
+    transform     : rotate(45deg) translate(0, 0) ;
+    animation     : spinner-spot-anim-marker 0.4s ease-in-out infinite alternate ;
+}
+
+.spinner-spot::before
+{
+    content       : '' ;
+    position      : absolute ;
+    top           : 150% ;
+    left          : 0 ;
+    right         : 0 ;
+    margin        : auto ;         /* m-auto */
+    width         : 24px ;
+    height        : 4px ;
+    border-radius : 50% ;
+    background    : rgba(0, 0, 0, 0.2) ;
+    box-sizing    : border-box ;
+    animation     : spinner-spot-anim-shadow 0.4s ease-in-out infinite alternate ;
+}
+
+@keyframes spinner-spot-anim-marker
+{
+    0%
+    {
+        transform : rotate(45deg) translate(5px, 5px) ;
+    }
+
+    100%
+    {
+        transform : rotate(45deg) translate(-5px, -5px) ;
+    }
+}
+
+@keyframes spinner-spot-anim-shadow
+{
+    0%
+    {
+        transform : scale(0.5) ;
+    }
+
+    100%
+    {
+        transform : scale(1) ;
+    }
+}
