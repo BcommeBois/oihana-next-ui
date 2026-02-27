@@ -52,7 +52,7 @@
     "build": "next build",
     "build:lib": "tsup",
     "build:lib:watch": "tsup --watch",
-    "release": "bun run build:lib && npm publish --access public && git push && git push --tags",
+    "release": "bun run build:lib && npm publish --access public && git push origin-ssh && git push origin-ssh --tags",
     "release:patch": "npm version patch && bun run release",
     "release:minor": "npm version minor && bun run release",
     "release:major": "npm version major && bun run release",
