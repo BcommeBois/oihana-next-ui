@@ -2,11 +2,11 @@
 
 ![Oihana Next UI](https://raw.githubusercontent.com/BcommeBois/oihana-next-ui/refs/heads/main/assets/images/oihana-next-ui-logo-inline-512x160.png)
 
+A modular Next.js UI component library built with React 19, Tailwind CSS v4 and DaisyUI v5.
+
 [![npm version](https://img.shields.io/npm/v/oihana-next-ui?style=flat-square)](https://www.npmjs.com/package/oihana-next-ui)
 [![npm downloads](https://img.shields.io/npm/dt/oihana-next-ui?style=flat-square)](https://www.npmjs.com/package/oihana-next-ui)
 [![License](https://img.shields.io/npm/l/oihana-next-ui?style=flat-square)](LICENSE)
-
-A modular Next.js UI component library built with React 19, Tailwind CSS v4 and DaisyUI v5.
 
 ## Built with
 
