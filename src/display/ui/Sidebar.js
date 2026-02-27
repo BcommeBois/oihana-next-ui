@@ -4,9 +4,6 @@ import { useDrag } from '@use-gesture/react' ;
 
 import { usePathname } from 'next/navigation';
 
-import getBackgroundColor from '@/themes/colors/backgroundColor';
-import getShadow          from '@/themes/effects/shadow';
-
 import Logo       from '@/display/ui/Logo';
 import Navigation from '@/display/ui/Navigation' ;
 import Version    from '@/display/ui/Version';

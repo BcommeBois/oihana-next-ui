@@ -1,9 +1,10 @@
-// const isArmDev = process.platform === 'win32' && process.arch === 'arm64';
-
 /** @type {import('next').NextConfig} */
 const nextConfig =
 {
-    allowedDevOrigins : [ '192.168.*.*' ] ,
+    allowedDevOrigins: process.env.NEXT_ALLOWED_DEV_ORIGINS
+        ? process.env.NEXT_ALLOWED_DEV_ORIGINS.split(',').map(origin => origin.trim())
+        : [ 'localhost', '127.0.0.1' ],
+
     devIndicators     :
     {
         appIsrStatus  : false ,
@@ -13,7 +14,7 @@ const nextConfig =
     reactCompiler : true ,
     images        :
     {
-        // unoptimized    : isArmDev, // 👈 Next ne touche plus aux URLs distantes
+        // unoptimized    : isArmDev, // 👈 Next no longer handles remote URLs
         formats        : [ 'image/avif', 'image/webp' ],
         remotePatterns :
         [
@@ -29,6 +30,7 @@ const nextConfig =
             },
         ],
     },
+
     // Generate a build ID based on the current time
     generateBuildId : async () => new Date().getTime().toString() ,
 

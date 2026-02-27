@@ -19,8 +19,8 @@ const logo =
     light              : process.env.NEXT_PUBLIC_LOGO_LIGHT  ,
     dark               : process.env.NEXT_PUBLIC_LOGO_DARK  ,
     href               : '/' ,
-    className          : 'p-4 border-b-2 border-base-content/10' ,
-    containerClassName : 'size-24 drop-shadow-xl' ,
+    className          : 'p-2 border-b-2 border-base-content/10' ,
+    containerClassName : 'w-46 drop-shadow-lg' ,
 }
 
 export default logo ;

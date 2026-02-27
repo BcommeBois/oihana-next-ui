@@ -57,7 +57,7 @@ const GlobalError = ( { error , reset } ) =>
                     />
 
                     <h2 className="text-2xl font-bold">
-                        Une erreur critique est survenue
+                        A critical error has occurred.
                     </h2>
 
                     <p className="text-warning">
