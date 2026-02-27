@@ -14,6 +14,7 @@ A modular Next.js UI component library built with React 19, Tailwind CSS v4 and 
 - [React](https://fr.react.dev/) — UI library
 - [Tailwind CSS](https://tailwindcss.com/) — Utility-first CSS framework
 - [DaisyUI](https://daisyui.com/) — Component library for Tailwind CSS
+- [VEGAS Core JS](https://www.npmjs.com/package/vegas-js-core) — A set of libraries writing in Javascript and based on the ES6 standard.
 - [React Icons](https://react-icons.github.io/react-icons/) — Popular icon packs as React components
 - [Motion](https://motion.dev/) — Animation library
 - [Maskito](https://maskito.dev/) — Input masking library
