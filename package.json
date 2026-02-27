@@ -1,5 +1,5 @@
 {
-  "name": "@oihana/next-ui",
+  "name": "oihana-next-ui",
   "version": "0.1.0",
   "private": false,
   "description": "Oihana Next.js UI component library — reusable components, hooks and utilities built with React 19, Next.js, Tailwind CSS and DaisyUI",
@@ -37,9 +37,11 @@
     "./hooks/*": "./dist/hooks/*.js",
     "./motions/*": "./dist/motions/*.js",
     "./themes/*": "./dist/themes/*.js",
-    "./themes/*.css":   "./dist/themes/*.css"
+    "./themes/*.css": "./dist/themes/*.css"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "peerDependencies": {
     "next": "^16.0.0",
     "react": "^19.0.0",
@@ -50,6 +52,7 @@
     "build": "next build",
     "build:lib": "tsup",
     "build:lib:watch": "tsup --watch",
+    "release": "bun run build:lib && npm publish --access public",
     "start": "next start",
     "lint": "biome check",
     "format": "biome format --write",
