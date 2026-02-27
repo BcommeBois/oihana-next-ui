@@ -19,6 +19,7 @@ export default defineConfig( {
     outExtension : () => ({ js: '.js' }) ,
     splitting    : false ,
     sourcemap    : true  ,
+    target       : 'esnext' ,
 
     esbuildOptions( options )
     {
@@ -46,6 +47,7 @@ export default defineConfig( {
         'next/image' ,
         'next/link' ,
         'next/navigation' ,
+        'next/font/google' ,
     ] ,
 
 }) ;
