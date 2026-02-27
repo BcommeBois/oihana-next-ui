@@ -8,19 +8,6 @@ A modular Next.js UI component library built with React 19, Tailwind CSS v4 and 
 [![npm downloads](https://img.shields.io/npm/dt/oihana-next-ui?style=flat-square)](https://www.npmjs.com/package/oihana-next-ui)
 [![License](https://img.shields.io/npm/l/oihana-next-ui?style=flat-square)](LICENSE)
 
-## Built with
-
-- [Next.js](https://nextjs.org/) — React framework for production
-- [React](https://fr.react.dev/) — UI library
-- [Tailwind CSS](https://tailwindcss.com/) — Utility-first CSS framework
-- [DaisyUI](https://daisyui.com/) — Component library for Tailwind CSS
-- [VEGAS Core JS](https://www.npmjs.com/package/vegas-js-core) — A set of libraries writing in Javascript and based on the ES6 standard.
-- [React Icons](https://react-icons.github.io/react-icons/) — Popular icon packs as React components
-- [Motion](https://motion.dev/) — Animation library
-- [Maskito](https://maskito.dev/) — Input masking library
-- [Day.js](https://day.js.org/) — Lightweight date library
-- [Chroma.js](https://www.vis4.net/chromajs/) — Color manipulation library
-
 ## Features
 
 - ⚛️ React 19 + Next.js 16
@@ -99,6 +86,19 @@ bun dev
 ```
 
 Open [http://localhost:3666](http://localhost:3666) to browse the component demos.
+
+## Built with
+
+- [Next.js](https://nextjs.org/) — React framework for production
+- [React](https://fr.react.dev/) — UI library
+- [Tailwind CSS](https://tailwindcss.com/) — Utility-first CSS framework
+- [DaisyUI](https://daisyui.com/) — Component library for Tailwind CSS
+- [VEGAS Core JS](https://www.npmjs.com/package/vegas-js-core) — A set of libraries writing in Javascript and based on the ES6 standard.
+- [React Icons](https://react-icons.github.io/react-icons/) — Popular icon packs as React components
+- [Motion](https://motion.dev/) — Animation library
+- [Maskito](https://maskito.dev/) — Input masking library
+- [Day.js](https://day.js.org/) — Lightweight date library
+- [Chroma.js](https://www.vis4.net/chromajs/) — Color manipulation library
 
 ### Build the library
 
