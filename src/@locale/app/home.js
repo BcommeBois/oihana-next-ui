@@ -3,7 +3,7 @@ const home =
     fr :
     {
         title       : process.env.NEXT_PUBLIC_APP_SHORT_TITLE  ,
-        description : 'Découvrez notre plateforme sécurisée et mutualisée !' ,
+        description : 'Découvrez notre plateforme !' ,
         seo         :
         {
             title       : "Accueil" ,
