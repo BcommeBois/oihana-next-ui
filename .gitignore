@@ -21,6 +21,10 @@
 /build
 /public/sw.js
 
+# Build lib
+/dist
+.tsup
+
 # misc
 .DS_Store
 *.pem

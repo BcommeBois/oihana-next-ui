@@ -17,7 +17,7 @@
 
 import cn from '@/themes/helpers/cn' ;
 
-const Arrow = 'absolute z-20 h-4 w-4 border-l border-t' ;
+const arrowBaseClasses = 'absolute z-20 h-4 w-4 border-l border-t' ;
 
 const alignMap =
 {
@@ -56,7 +56,7 @@ const Arrow = ({ align , color , position }) =>
     <div
         className =
         {
-            cn( Arrow , colorMap[color] || DEFAULT_COLOR , alignMap[align] , positionMap[position] )
+            cn( arrowBaseClasses , colorMap[color] || DEFAULT_COLOR , alignMap[align] , positionMap[position] )
         }
     />
 ) ;

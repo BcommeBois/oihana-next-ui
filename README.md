@@ -1,24 +1,69 @@
-# Oihana Next - UI library
+# Oihana Next UI
 
-![Oihana NextJS UI](https://raw.githubusercontent.com/BcommeBois/oihana-next-ui/refs/heads/main/assets/images/oihana-next-ui-logo-inline-512x160.png)
+![Oihana Next UI](https://raw.githubusercontent.com/BcommeBois/oihana-next-ui/refs/heads/main/assets/images/oihana-next-ui-logo-inline-512x160.png)
 
-A modular NextJS UI library based on Tailwindcss and DaisyUI.
+A modular Next.js UI component library built with React 19, Tailwind CSS v4 and DaisyUI v5.
 
-## Getting Started
+## Features
 
-First, run the development server:
+- ⚛️ React 19 + Next.js 16
+- 🎨 Tailwind CSS v4 + DaisyUI v5
+- 🌙 Dark mode support (flash-free)
+- 📱 PWA ready
+- ♿ Accessible components
+- 🧩 Composable and themeable
+
+## Installation
 
 ```bash
+bun add @oihana/next-ui
+# or
+npm install @oihana/next-ui
+```
+
+## Requirements
+
+```json
+{
+  "react":     "^19.0.0",
+  "react-dom": "^19.0.0",
+  "next":      "^16.0.0"
+}
+```
+
+## Usage
+
+```jsx
+import Picture  from '@oihana/next-ui/components/images/Picture'
+import Button   from '@oihana/next-ui/components/Button'
+import useThemes from '@oihana/next-ui/contexts/themes/useThemes'
+```
+
+## Development
+
+Clone the repo and start the demo app :
+
+```bash
+git clone https://github.com/BcommeBois/oihana-next-ui
+cd oihana-next-ui
+bun install
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3666](http://localhost:3666) to browse the component demos.
 
-## Learn More
+Build the library :
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+bun run build:lib
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Watch mode during development :
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+bun run build:lib:watch
+```
+
+## License
+
+[Mozilla Public License 2.0](./LICENSE) — © Marc Alcaraz

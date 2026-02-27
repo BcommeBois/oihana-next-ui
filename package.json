@@ -1,10 +1,52 @@
 {
-  "name": "oihana-next-ui",
+  "name": "@oihana/next-ui",
   "version": "0.1.0",
   "private": false,
+  "description": "Oihana Next.js UI component library — reusable components, hooks and utilities built with React 19, Next.js, Tailwind CSS and DaisyUI",
+  "author": {
+    "name": "Marc Alcaraz",
+    "email": "marc@ooop.fr"
+  },
+  "license": "MPL-2.0",
+  "homepage": "https://github.com/BcommeBois/oihana-next-ui#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BcommeBois/oihana-next-ui"
+  },
+  "bugs": {
+    "url": "https://github.com/BcommeBois/oihana-next-ui/issues"
+  },
+  "keywords": [
+    "nextjs",
+    "react",
+    "react19",
+    "tailwindcss",
+    "daisyui",
+    "ui",
+    "components",
+    "hooks",
+    "utils",
+    "pwa",
+    "oihana"
+  ],
+  "exports": {
+    "./components/*": "./dist/components/*.js",
+    "./hooks/*": "./dist/hooks/*.js",
+    "./utils/*": "./dist/utils/*.js",
+    "./themes/*": "./dist/themes/*.js",
+    "./contexts/*": "./dist/contexts/*.js"
+  },
+  "files": ["dist"],
+  "peerDependencies": {
+    "next": "^16.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
   "scripts": {
     "dev": "bun inject-version && next dev -p 3666",
     "build": "next build",
+    "build:lib": "tsup",
+    "build:lib:watch": "tsup --watch",
     "start": "next start",
     "lint": "biome check",
     "format": "biome format --write",
@@ -53,7 +95,9 @@
     "tailwind-scrollbar": "^4.0.2",
     "tailwindcss": "^4.2.1",
     "tailwindcss-animated": "^2.0.0",
-    "tailwindcss-opentype": "^1.2.0"
+    "tailwindcss-opentype": "^1.2.0",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
   },
   "ignoreScripts": [
     "sharp",
