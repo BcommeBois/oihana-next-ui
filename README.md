@@ -119,14 +119,17 @@ This project follows [Semantic Versioning](https://semver.org/) — `MAJOR.MINOR
 
 | Type | Command | Example | When to use |
 |------|---------|---------|-------------|
-| Patch | `npm version patch` | `0.1.0` → `0.1.1` | Bug fix, minor tweak |
-| Minor | `npm version minor` | `0.1.0` → `0.2.0` | New component or feature, backward compatible |
-| Major | `npm version major` | `0.1.0` → `1.0.0` | Breaking change |
+| Patch | `bun run release:patch` | `0.1.0` → `0.1.1` | Bug fix, minor tweak |
+| Minor | `bun run release:minor` | `0.1.0` → `0.2.0` | New component or feature, backward compatible |
+| Major | `bun run release:major` | `0.1.0` → `1.0.0` | Breaking change |
+
+Each script automatically bumps the version, builds the library, publishes to npm, and pushes the commit and tag to GitHub.
 
 You can also set a specific version manually :
 
 ```bash
 npm version 1.0.0
+bun run release
 ```
 
 Or a pre-release version :
@@ -135,17 +138,10 @@ Or a pre-release version :
 npm version prerelease --preid=alpha   # 0.1.0 → 0.1.1-alpha.0
 npm version prerelease --preid=beta    # 0.1.0 → 0.1.1-beta.0
 npm version prerelease --preid=rc      # 0.1.0 → 0.1.1-rc.0
+bun run release
 ```
 
 `npm version` automatically updates `package.json`, creates a Git commit and a Git tag.
-
-### Publish
-
-```bash
-npm version patch      # bump version
-bun run release        # build + publish to npm
-git push && git push --tags   # push commit and tag to GitHub
-```
 
 ## License
 
