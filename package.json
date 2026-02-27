@@ -31,10 +31,13 @@
   ],
   "exports": {
     "./components/*": "./dist/components/*.js",
+    "./components/*.css": "./dist/components/*.css",
+    "./contexts/*": "./dist/contexts/*.js",
+    "./helpers/*": "./dist/helpers/*.js",
     "./hooks/*": "./dist/hooks/*.js",
-    "./utils/*": "./dist/utils/*.js",
+    "./motions/*": "./dist/motions/*.js",
     "./themes/*": "./dist/themes/*.js",
-    "./contexts/*": "./dist/contexts/*.js"
+    "./themes/*.css":   "./dist/themes/*.css"
   },
   "files": ["dist"],
   "peerDependencies": {

@@ -4,11 +4,12 @@ export default defineConfig( {
 
     entry :
     [
-        'src/components/**/*.{js,jsx}' ,
-        'src/hooks/**/*.{js,jsx}' ,
-        'src/utils/**/*.{js,jsx}' ,
-        'src/themes/**/*.{js,jsx}' ,
+        'src/components/**/*.{js,jsx,css}' ,
         'src/contexts/**/*.{js,jsx}' ,
+        'src/helpers/**/*.{js,jsx}' ,
+        'src/hooks/**/*.{js,jsx}' ,
+        'src/motions/**/*.{js,jsx}' ,
+        'src/themes/**/*.{js,jsx,css,mjs}' ,
     ] ,
 
     format      : [ 'esm' ] ,
@@ -30,6 +31,7 @@ export default defineConfig( {
         {
             '.js'  : 'jsx' ,
             '.jsx' : 'jsx' ,
+            '.mjs' : 'js' ,
         } ;
     } ,
 
