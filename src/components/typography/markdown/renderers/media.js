@@ -13,13 +13,15 @@ export const img = props =>
         return null ;
     }
 
+    const className = "rounded-lg max-w-full h-auto inline-block align-middle" ;
+
     if ( props.src?.startsWith( 'http' ) )
     {
         return (
             <img
                 src       = { props.src }
                 alt       = { props.alt || '' }
-                className = "rounded-lg my-4 max-w-full h-auto"
+                className = { className}
             />
         ) ;
     }
@@ -30,7 +32,7 @@ export const img = props =>
             alt       = { props.alt || '' }
             width     = { 800 }
             height    = { 600 }
-            className = "rounded-lg my-4 max-w-full h-auto"
+            className = { className }
         />
     ) ;
 } ;
