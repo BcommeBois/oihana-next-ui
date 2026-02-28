@@ -1,10 +1,12 @@
 # Oihana Next UI
 
-![Oihana Next UI](https://raw.githubusercontent.com/BcommeBois/oihana-next-ui/refs/heads/main/assets/images/oihana-next-ui-logo-inline-512x160.png)
+[![Oihana Next UI](https://raw.githubusercontent.com/BcommeBois/oihana-next-ui/refs/heads/main/assets/images/oihana-next-ui-logo-inline-512x160.png)](https://github.com/BcommeBois/oihana-next-ui)
 
 A modular Next.js UI component library built with React 19, Tailwind CSS v4 and DaisyUI v5.
 
-[![npm version](https://img.shields.io/npm/v/oihana-next-ui?style=flat-square)](https://www.npmjs.com/package/oihana-next-ui) [![npm downloads](https://img.shields.io/npm/dt/oihana-next-ui?style=flat-square)](https://www.npmjs.com/package/oihana-next-ui)  [![License](https://img.shields.io/npm/l/oihana-next-ui?style=flat-square)](LICENSE)
+[![GitHub](https://img.shields.io/badge/GitHub-BcommeBois%2Foihana--next--ui-181717?style=flat-square&logo=github)](https://github.com/BcommeBois/oihana-next-ui) [![Demo](https://img.shields.io/badge/Demo-oihana--next--ui.vercel.app-000000?style=flat-square&logo=vercel)](https://oihana-next-ui.vercel.app/)
+
+[![npm version](https://img.shields.io/npm/v/oihana-next-ui?style=flat-square)](https://www.npmjs.com/package/oihana-next-ui) [![npm downloads](https://img.shields.io/npm/dt/oihana-next-ui?style=flat-square)](https://www.npmjs.com/package/oihana-next-ui) [![License](https://img.shields.io/npm/l/oihana-next-ui?style=flat-square)](LICENSE)
 
 ## Features
 
