@@ -4,8 +4,8 @@ import { useEffect , useRef } from 'react'
 
 import Input from './Input'
 
-import useMergeRefs from '@/hooks/useMergeRefs'
-import useValue     from '@/hooks/useValue'
+import useMergeRefs from '../../hooks/useMergeRefs'
+import useValue     from '../../hooks/useValue'
 
 import { MdEmail as EmailIcon } from 'react-icons/md'
 

@@ -30,7 +30,7 @@
  * ```
  */
 
-import getAvatarClassNames from '@/themes/components/avatar' ;
+import getAvatarClassNames from '../../themes/components/avatar' ;
 
 /**
  * @param {Object} props

@@ -2,10 +2,10 @@
 
 import { useEffect , useRef , useState } from 'react' ;
 
-import cn         from '@/themes/helpers/cn' ;
-import useThemes  from '@/contexts/themes/useThemes' ;
+import cn         from '../../themes/helpers/cn' ;
+import useThemes  from '../../contexts/themes/useThemes' ;
 
-import Loading from '@/components/Loading' ;
+import Loading from '../../components/Loading' ;
 import Image   from 'next/image' ;
 
 import buildImageProps from './helpers/buildImageProps' ;

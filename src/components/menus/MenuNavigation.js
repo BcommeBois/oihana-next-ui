@@ -58,9 +58,9 @@
 
 import format from 'vegas-js-core/src/strings/fastformat' ;
 
-import getMenuClasses from '@/themes/navigation/menu' ;
-
 import { usePathname } from 'next/navigation' ;
+
+import getMenuClasses from '../../themes/navigation/menu' ;
 
 import MenuLink from './MenuLink' ;
 

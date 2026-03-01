@@ -26,8 +26,8 @@
 
 import cn from '@/themes/helpers/cn' ;
 
-import getTextColor      from '@/themes/colors/textColor' ;
-import buttonIconSizeMap from '@/themes/sizing/buttonIconSize' ;
+import getTextColor      from '../../themes/colors/textColor' ;
+import buttonIconSizeMap from '../../themes/sizing/buttonIconSize' ;
 
 /**
  * @param {Object} props

@@ -4,9 +4,9 @@ import { useState, useRef } from 'react'
 
 import TextArea from './TextArea'
 
-import CodeBlock from '@/components/typography/CodeBlock'
+import CodeBlock from '../typography/CodeBlock'
 
-import cn from '@/themes/helpers/cn'
+import cn from '../../themes/helpers/cn'
 
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 

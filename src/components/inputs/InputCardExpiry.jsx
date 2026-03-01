@@ -5,8 +5,8 @@ import { useMemo, useRef } from 'react'
 import { useMaskito } from '@maskito/react'
 import { maskitoDateOptionsGenerator } from '@maskito/kit'
 
-import useValue     from '@/hooks/useValue'
-import useMergeRefs from '@/hooks/useMergeRefs'
+import useValue     from '../../hooks/useValue'
+import useMergeRefs from '../../hooks/useMergeRefs'
 
 import Input from './Input'
 

@@ -2,10 +2,10 @@
 
 import { useId } from 'react'
 
-import cn                from '@/themes/helpers/cn'
-import getActionElements from '@/components/helpers/getActionElements'
-import useTransformValue from '@/hooks/useTransformValue'
-import getInputClasses   from '@/themes/components/input'
+import cn                from '../../themes/helpers/cn'
+import getActionElements from '../../components/helpers/getActionElements'
+import useTransformValue from '../../hooks/useTransformValue'
+import getInputClasses   from '../../themes/components/input'
 
 /**
  * Input component with optional icon, action buttons, error states, transformations, and HTML5 validation.

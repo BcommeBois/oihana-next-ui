@@ -15,7 +15,6 @@
  * ```
  */
 
-import cn from '@/themes/helpers/cn'
 import Button from '../Button'
 
 /**

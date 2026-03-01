@@ -5,9 +5,9 @@ import { useMemo, useEffect , useRef } from 'react'
 import { useMaskito } from '@maskito/react'
 import { maskitoDateOptionsGenerator, maskitoParseDate } from '@maskito/kit'
 
-import useValue     from '@/hooks/useValue'
-import useMergeRefs from '@/hooks/useMergeRefs'
-import parseISO     from '@/helpers/date/parseISO'
+import useValue     from '../../hooks/useValue'
+import useMergeRefs from '../../hooks/useMergeRefs'
+import parseISO     from '../../helpers/date/parseISO'
 
 import Input from './Input'
 
@@ -21,7 +21,7 @@ import
     MM_YYYY,
     YYYY_MM_DD
 }
-from '@/helpers/date/dateModes'
+from '../../helpers/date/dateModes'
 
 import { MdCalendarToday as CalendarIcon } from 'react-icons/md'
 

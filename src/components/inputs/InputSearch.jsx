@@ -4,9 +4,9 @@ import { useEffect, useRef } from 'react'
 
 import Input from './Input'
 
-import useDebouncedValue from '@/hooks/useDebouncedValue'
-import useMergeRefs      from '@/hooks/useMergeRefs'
-import useValue          from '@/hooks/useValue'
+import useDebouncedValue from '../../hooks/useDebouncedValue'
+import useMergeRefs      from '../../hooks/useMergeRefs'
+import useValue          from '../../hooks/useValue'
 
 import { MdClose as CloseIcon, MdSearch as SearchIcon } from 'react-icons/md';
 

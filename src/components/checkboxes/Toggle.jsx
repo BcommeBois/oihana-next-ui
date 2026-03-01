@@ -4,9 +4,8 @@ import { useEffect, useRef, useId } from 'react'
 
 import cn from '@/themes/helpers/cn'
 
-import getToggleClasses from '@/themes/components/toggle'
-
-import useMergeRefs from '@/hooks/useMergeRefs'
+import getToggleClasses from '../../themes/components/toggle'
+import useMergeRefs     from '../../hooks/useMergeRefs'
 
 /**
  * Toggle (switch) component for DaisyUI 5.

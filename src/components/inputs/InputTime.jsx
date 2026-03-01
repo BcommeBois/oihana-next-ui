@@ -5,12 +5,12 @@ import { useMaskito } from '@maskito/react'
 import { maskitoTimeOptionsGenerator } from '@maskito/kit'
 
 import Input      from './Input'
-import SwapButton from '@/components/buttons/SwapButton'
+import SwapButton from '../../components/buttons/SwapButton'
 
-import { AM , PM } from '@/helpers/time/meridies'
+import { AM , PM } from '../../helpers/time/meridies'
 
-import useMergeRefs from '@/hooks/useMergeRefs'
-import useTime      from '@/helpers/time/useTime'
+import useMergeRefs from '../../hooks/useMergeRefs'
+import useTime      from '../../helpers/time/useTime'
 
 import { MdAccessTime as TimeIcon } from 'react-icons/md'
 

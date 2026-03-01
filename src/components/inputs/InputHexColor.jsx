@@ -4,7 +4,7 @@ import { useState } from 'react' ;
 
 import Input from './Input' ;
 
-import validateHexColor from '@/helpers/colors/validateHexColor' ;
+import validateHexColor from '../../helpers/colors/validateHexColor' ;
 
 import fastFormat from 'vegas-js-core/src/strings/fastformat' ;
 import hexToRgb   from 'vegas-js-core/src/colors/hexToRgb';

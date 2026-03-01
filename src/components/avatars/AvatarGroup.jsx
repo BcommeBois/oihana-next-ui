@@ -36,7 +36,7 @@
  * ```
  */
 
-import { getAvatarGroupClassNames } from '@/themes/components/avatar' ;
+import getAvatarGroupClassNames from '../../themes/components/avatarGroup' ;
 
 /**
  * @param {Object} props
@@ -52,7 +52,7 @@ const AvatarGroup = ({
 {
     const Component = as ?? 'div' ;
 
-    const classNames = getAvatarGroupClassNames({ className }) ;
+    const classNames = getAvatarGroupClassNames({ className } ) ;
 
     return (
         <Component className={ classNames }>

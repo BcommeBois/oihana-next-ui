@@ -24,10 +24,10 @@ import { useEffect , useRef , useState } from 'react'
 
 import cn from '@/themes/helpers/cn'
 
-import Flag    from '@/components/icons/Flag'
-import Tooltip from '@/components/Tooltip'
+import Flag    from '../icons/Flag'
+import Tooltip from '../Tooltip'
 
-import useLang from '@/contexts/lang'
+import useLang from '../../contexts/lang'
 
 /**
  * Resolves a localized language display name.

@@ -1,4 +1,4 @@
-import getFlexClassNames from '@/themes/layout/getFlexClassNames' ;
+import getFlexClassNames from '../../themes/layout/getFlexClassNames' ;
 
 /**
  * Flex layout component with comprehensive flexbox utilities.

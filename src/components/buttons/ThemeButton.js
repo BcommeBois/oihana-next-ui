@@ -19,21 +19,21 @@ import { useId } from 'react' ;
 
 import { MdDarkMode , MdLightMode } from 'react-icons/md' ;
 
-import cn from '@/themes/helpers/cn' ;
+import cn from '../../themes/helpers/cn' ;
 
-import useThemes from '@/contexts/themes' ;
+import useThemes from '../../contexts/themes' ;
 
-import getSwapClassNames , { SWAP_ITEM , SWAP_OFF , SWAP_ON } from '@/themes/components/swap' ;
+import getSwapClassNames , { SWAP_ITEM , SWAP_OFF , SWAP_ON } from '../../themes/components/swap' ;
 
-import iconSizeMap from '@/themes/sizing/iconSize' ;
+import iconSizeMap from '../../themes/sizing/iconSize' ;
 
 import Button from '../Button' ;
 
 /**
  * @param {Object} props
- * @param {import('@/themes/components/button').ButtonColorValue} [props.color] - Button color.
+ * @param {import('../..themes/components/button').ButtonColorValue} [props.color] - Button color.
  * @param {string} [props.className] - Additional class name.
- * @param {import('@/themes/components/button').ButtonSize} [props.size='lg'] - Button size.
+ * @param {import('../..themes/components/button').ButtonSize} [props.size='lg'] - Button size.
  * @param {*} [props.rest] - Additional Button props.
  */
 const ThemeButton =

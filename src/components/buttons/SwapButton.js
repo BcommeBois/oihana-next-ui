@@ -36,13 +36,13 @@
 
 import cn from '@/themes/helpers/cn'
 
-import getSwapClassNames , { SWAP_ITEM , SWAP_OFF , SWAP_ON } from '@/themes/components/swap'
+import getSwapClassNames , { SWAP_ITEM , SWAP_OFF , SWAP_ON } from '../../themes/components/swap'
 
-import iconSizeMap from '@/themes/sizing/iconSize'
+import iconSizeMap from '../../themes/sizing/iconSize'
 
 import Button from '../Button'
 
-import useI18n from '@/contexts/locale/useI18n'
+import useI18n from '../../contexts/locale/useI18n'
 
 /**
  * Generic swap button component based on DaisyUI Swap.

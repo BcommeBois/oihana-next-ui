@@ -4,13 +4,13 @@
  * @module components/menus/MenuLink
  */
 
-import cn from '@/themes/helpers/cn' ;
+import cn from '../../themes/helpers/cn' ;
 
 import Link from 'next/link' ;
 
-import Tooltip from '@/components/Tooltip' ;
+import Tooltip from '../../components/Tooltip' ;
 
-import { BOTTOM } from '@/themes/enums/positions' ;
+import { BOTTOM } from '../../themes/enums/positions' ;
 
 /**
  * @param {Object} props

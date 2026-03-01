@@ -28,13 +28,13 @@
 
 import NextLink from 'next/link'
 
-import IconBox from '@/components/icons/IconBox'
-import Tooltip from '@/components/Tooltip'
+import IconBox from '../../components/icons/IconBox'
+import Tooltip from '../../components/Tooltip'
 
-import useActiveLink from '@/hooks/useActiveLink'
-import useI18n       from '@/contexts/locale/useI18n'
+import useActiveLink from '../../hooks/useActiveLink'
+import useI18n       from '../../contexts/locale/useI18n'
 
-import getButtonClassNames from '@/themes/components/button'
+import getButtonClassNames from '../../themes/components/button'
 
 /**
  * @param {Object} props

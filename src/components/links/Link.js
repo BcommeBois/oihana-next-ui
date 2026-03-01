@@ -4,9 +4,9 @@
  * Link component wrapping Next.js Link.
  */
 
-import NextLink from 'next/link' ;
-import cn       from '@/themes/helpers/cn' ;
-import useActiveLink from '@/hooks/useActiveLink' ;
+import cn            from '../../themes/helpers/cn' ;
+import NextLink      from 'next/link' ;
+import useActiveLink from '../../hooks/useActiveLink' ;
 
 /**
  * Link component wrapping Next.js Link.

@@ -1,7 +1,7 @@
 'use client' ;
 
-import cn from '@/themes/helpers/cn' ;
-import getTableClasses from '@/themes/components/table' ;
+import cn from '../../themes/helpers/cn' ;
+import getTableClasses from '../../themes/components/table' ;
 
 /**
  * Table component for displaying data in a table format with DaisyUI 5 styling.

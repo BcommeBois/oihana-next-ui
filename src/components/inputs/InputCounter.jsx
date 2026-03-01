@@ -9,7 +9,7 @@ import round from 'vegas-js-core/src/maths/round'
 
 import Input from './Input'
 
-import useMergeRefs from '@/hooks/useMergeRefs'
+import useMergeRefs from '../../hooks/useMergeRefs'
 
 import { MdNumbers as DefaultIcon } from 'react-icons/md'
 import { MdAdd as MoreIcon, MdRemove as LessIcon } from 'react-icons/md'

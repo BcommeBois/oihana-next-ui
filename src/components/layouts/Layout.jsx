@@ -1,7 +1,7 @@
 'use client' ;
 
-import Flex from '@/components/layouts/Flex' ;
-import Grid from '@/components/layouts/Grid' ;
+import Flex from '../../components/layouts/Flex' ;
+import Grid from '../../components/layouts/Grid' ;
 
 export const FLEX = 'flex' ;
 export const GRID = 'grid' ;

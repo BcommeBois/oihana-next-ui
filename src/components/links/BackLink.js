@@ -8,8 +8,8 @@ import { useRouter } from 'next/navigation' ;
 import NextLink      from 'next/link' ;
 import { MdKeyboardReturn as DefaultBackIcon } from 'react-icons/md' ;
 
-import cn            from '@/themes/helpers/cn' ;
-import useActiveLink from '@/hooks/useActiveLink' ;
+import cn            from '../../themes/helpers/cn' ;
+import useActiveLink from '../../hooks/useActiveLink' ;
 
 /**
  * @param {Object} props

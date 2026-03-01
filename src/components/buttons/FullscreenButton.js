@@ -19,13 +19,13 @@ import { useId } from 'react' ;
 
 import { MdFullscreen , MdFullscreenExit } from 'react-icons/md' ;
 
-import cn from '@/themes/helpers/cn' ;
+import cn from '../../themes/helpers/cn' ;
 
-import useFullscreen from '@/contexts/fullscreen' ;
+import useFullscreen from '../../contexts/fullscreen' ;
 
-import getSwapClassNames , { SWAP_ITEM , SWAP_OFF , SWAP_ON } from '@/themes/components/swap' ;
+import getSwapClassNames , { SWAP_ITEM , SWAP_OFF , SWAP_ON } from '../../themes/components/swap' ;
 
-import iconSizeMap from '@/themes/sizing/iconSize' ;
+import iconSizeMap from '../../themes/sizing/iconSize' ;
 
 import Button from '../Button' ;
 

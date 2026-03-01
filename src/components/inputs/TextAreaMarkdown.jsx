@@ -4,9 +4,9 @@ import { useState } from 'react' ;
 
 import TextArea from './TextArea' ;
 
-import Markdown from '@/components/typography/Markdown' ;
+import Markdown from '../typography/Markdown' ;
 
-import cn from '@/themes/helpers/cn' ;
+import cn from '../../themes/helpers/cn' ;
 
 /**
  * TextArea with Markdown preview.

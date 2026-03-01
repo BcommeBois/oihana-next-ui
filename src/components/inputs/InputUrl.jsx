@@ -2,10 +2,10 @@
 
 import { useRef } from 'react'
 
-import useValue     from '@/hooks/useValue'
-import useMergeRefs from '@/hooks/useMergeRefs'
+import useValue     from '../../hooks/useValue'
+import useMergeRefs from '../../hooks/useMergeRefs'
 
-import Input    from './Input'
+import Input from './Input'
 
 import { MdLink as LinkIcon, MdOpenInNew as OpenIcon } from 'react-icons/md' ;
 

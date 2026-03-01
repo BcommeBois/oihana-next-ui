@@ -2,7 +2,7 @@
 
 import Image from 'next/image' ;
 
-import cn from '@/themes/helpers/cn' ;
+import cn from '../../themes/helpers/cn' ;
 
 /**
  * @typedef {Object} ThemedImageProps

@@ -1,6 +1,6 @@
 'use client' ;
 
-import getListClasses from '@/themes/components/list' ;
+import getListClasses from '../../themes/components/list' ;
 
 /**
  * List component for DaisyUI 5.

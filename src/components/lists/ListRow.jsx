@@ -2,11 +2,11 @@
 
 import { useId } from 'react' ;
 
-import cn from '@/themes/helpers/cn' ;
+import cn from '../../themes/helpers/cn' ;
 
-import { getListRowClasses , getListColGrowClasses , getListColWrapClasses } from '@/themes/components/list' ;
+import { getListRowClasses , getListColGrowClasses , getListColWrapClasses } from '../../themes/components/list' ;
 
-import Checkbox from '@/components/checkboxes/Checkbox' ;
+import Checkbox from '../../components/checkboxes/Checkbox' ;
 
 /**
  * ListRow component for DaisyUI 5.

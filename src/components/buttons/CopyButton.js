@@ -18,7 +18,7 @@
 
 import { MdContentCopy } from 'react-icons/md' ;
 
-import Jump from '@/motions/Jump' ;
+import Jump from '../../motions/Jump' ;
 
 import MotionButton from './MotionButton' ;
 

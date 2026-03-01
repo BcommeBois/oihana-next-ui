@@ -1,4 +1,4 @@
-import getGridClassNames from '@/themes/layout/getGridClassNames' ;
+import getGridClassNames from '../../themes/layout/getGridClassNames' ;
 
 /**
  * Grid layout component with comprehensive CSS Grid utilities.

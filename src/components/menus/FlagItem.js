@@ -4,12 +4,12 @@
  * @module components/menus/FlagItem
  */
 
-import cn from '@/themes/helpers/cn' ;
+import cn from '../../themes/helpers/cn' ;
 
-import Flag    from '@/components/icons/Flag' ;
-import Tooltip from '@/components/Tooltip' ;
+import Flag    from '../../components/icons/Flag' ;
+import Tooltip from '../../components/Tooltip' ;
 
-import { BOTTOM } from '@/themes/enums/positions' ;
+import { BOTTOM } from '../../themes/enums/positions' ;
 
 /**
  * @param {Object} props

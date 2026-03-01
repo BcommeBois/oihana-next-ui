@@ -5,8 +5,8 @@ import { useMemo , useRef } from 'react'
 import { useMaskito } from '@maskito/react'
 import { maskitoNumberOptionsGenerator } from '@maskito/kit'
 
-import useMergeRefs from '@/hooks/useMergeRefs'
-import useValue     from '@/hooks/useValue'
+import useMergeRefs from '../../hooks/useMergeRefs'
+import useValue     from '../../hooks/useValue'
 
 import clamp from 'vegas-js-core/src/maths/clamp'
 import round from 'vegas-js-core/src/maths/round'

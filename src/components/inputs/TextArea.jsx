@@ -2,11 +2,11 @@
 
 import { useEffect, useRef, useId } from 'react'
 
-import cn from '@/themes/helpers/cn' ;
+import cn from '../../themes/helpers/cn' ;
 
-import getTextareaClasses from '@/themes/components/textarea'
-import useTransformValue  from '@/hooks/useTransformValue'
-import useMergeRefs       from '@/hooks/useMergeRefs'
+import getTextareaClasses from '../../themes/components/textarea'
+import useTransformValue  from '../../hooks/useTransformValue'
+import useMergeRefs       from '../../hooks/useMergeRefs'
 
 /**
  * TextArea component with error states, transformations, auto-resize, and HTML5 validation.

@@ -1,6 +1,6 @@
 import 'flag-icons/css/flag-icons.min.css'
 
-import cn from '@/themes/helpers/cn'
+import cn from '../../themes/helpers/cn'
 
 /**
  * Affiche un drapeau de pays via flag icons

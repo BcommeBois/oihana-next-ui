@@ -1,6 +1,6 @@
-import cn from '@/themes/helpers/cn' ;
+import cn from '../../themes/helpers/cn' ;
 
-import getParsedElement from '@/themes/components/helpers/getParsedElement' ;
+import getParsedElement from '../../themes/components/helpers/getParsedElement' ;
 
 /**
  * Generic label component with HTML support.

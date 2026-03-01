@@ -1,8 +1,8 @@
 'use client' ;
 
-import cn from '@/themes/helpers/cn' ;
+import cn from '../../themes/helpers/cn' ;
 
-import getCollapseClasses, { CONTENT, TITLE } from '@/themes/components/collapse' ;
+import getCollapseClasses, { CONTENT, TITLE } from '../../themes/components/collapse' ;
 
 /**
  * Collapse mode types.

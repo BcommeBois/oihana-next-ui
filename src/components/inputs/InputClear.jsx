@@ -4,8 +4,8 @@ import { useCallback , useRef } from 'react' ;
 
 import Input from './Input' ;
 
-import useMergeRefs from '@/hooks/useMergeRefs'
-import useValue     from '@/hooks/useValue' ;
+import useMergeRefs from '../../hooks/useMergeRefs'
+import useValue     from '../../hooks/useValue' ;
 
 import { MdClose  as CloseIcon  } from 'react-icons/md' ;
 import { FaSearch as SearchIcon } from 'react-icons/fa' ;

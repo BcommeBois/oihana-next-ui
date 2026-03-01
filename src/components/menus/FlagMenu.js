@@ -4,17 +4,17 @@
  * @module components/menus/FlagMenu
  */
 
-import cn from '@/themes/helpers/cn' ;
+import cn from '../../themes/helpers/cn' ;
 
-import useLang  from '@/contexts/lang' ;
-import useValue from '@/hooks/useValue' ;
+import useLang  from '../../contexts/lang' ;
+import useValue from '../../hooks/useValue' ;
 
 import FlagItem from './FlagItem' ;
 
-import getMenuClasses from '@/themes/navigation/menu' ;
+import getMenuClasses from '../../themes/navigation/menu' ;
 
-import { XS }         from '@/themes/sizing/sizes' ;
-import { HORIZONTAL } from '@/themes/enums/orientations' ;
+import { XS }         from '../../themes/sizing/sizes' ;
+import { HORIZONTAL } from '../../themes/enums/orientations' ;
 
 /**
  * @param {Object} props

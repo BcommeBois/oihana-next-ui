@@ -5,9 +5,9 @@ import { useMemo, useEffect , useRef } from 'react'
 import { useMaskito } from '@maskito/react'
 import { maskitoDateRangeOptionsGenerator, maskitoParseDate } from '@maskito/kit'
 
-import useMergeRefs from '@/hooks/useMergeRefs'
-import useValue     from '@/hooks/useValue'
-import parseISO     from '@/helpers/date/parseISO'
+import useMergeRefs from '../../hooks/useMergeRefs'
+import useValue     from '../../hooks/useValue'
+import parseISO     from '../../helpers/date/parseISO'
 
 import Input from './Input'
 
@@ -21,7 +21,7 @@ import
     MM_YYYY,
     YYYY_MM_DD
 }
-from '@/helpers/date/dateModes'
+from '../../helpers/date/dateModes'
 
 import { MdDateRange as DateRangeIcon } from 'react-icons/md'
 

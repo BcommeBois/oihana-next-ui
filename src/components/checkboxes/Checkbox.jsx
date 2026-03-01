@@ -4,9 +4,9 @@ import { useEffect, useId , useRef } from 'react'
 
 import cn from '@/themes/helpers/cn'
 
-import getCheckboxClasses from '@/themes/components/checkbox'
+import getCheckboxClasses from '../../themes/components/checkbox'
 
-import useMergeRefs from '@/hooks/useMergeRefs'
+import useMergeRefs from '../../hooks/useMergeRefs'
 
 /**
  * Checkbox component for DaisyUI 5.
