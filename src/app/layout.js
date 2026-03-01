@@ -11,7 +11,8 @@ import merriweather  from '@/themes/fonts/merriweather' ;
 import redHatMono    from '@/themes/fonts/redHatMono' ;
 
 import config from '@/@configs' ;
-import script from '@/contexts/themes/script' ;
+
+import getThemeScript from '@/contexts/themes/getThemeScript' ;
 
 import Application   from '@/display/Application' ;
 import ServiceWorker   from '@/display/ServiceWorker';
@@ -62,6 +63,7 @@ export default async function RootLayout ( { children } )
 {
     const cookieStore = await cookies() ;
     const initialLang = cookieStore.get( 'lang' )?.value ?? config.defaultLang ;
+
     const classNames  = getFontClassNames([
         bitter ,
         cinzel ,
@@ -71,6 +73,10 @@ export default async function RootLayout ( { children } )
         merriweather ,
         redHatMono ,
     ] , 'h-full' );
+
+    const { dark , light } = config ;
+
+    const themeScript = getThemeScript({ light , dark  } );
 
     // noinspection HtmlRequiredTitleElement
     return (
@@ -82,7 +88,7 @@ export default async function RootLayout ( { children } )
         <head>
             <meta name="theme-color" content="#ffffff" />
 
-            <script dangerouslySetInnerHTML={{ __html: script }} />
+            <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         </head>
 
         <body
