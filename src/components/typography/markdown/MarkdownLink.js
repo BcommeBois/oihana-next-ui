@@ -4,7 +4,7 @@
  * @module components/typography/markdown/MarkdownLink
  */
 
-import getLinkClassName from '@/themes/navigation/link' ;
+import getLinkClassName from '../../../themes/navigation/link' ;
 
 /**
  * @param {Object} props

@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react' ;
 
-import useModal from '@/components/modals/hooks/useModal' ;
+import useModal from './useModal' ;
 
 /**
  * Hook to manage a remove/delete modal workflow.

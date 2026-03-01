@@ -1,10 +1,11 @@
 'use client' ;
 
-import useModal from '@/components/modals/hooks/useModal' ;
 
-import Input from '@/components/inputs/Input' ;
-import Modal from '@/components/modals/Modal' ;
-import Button from '@/components/Button' ;
+import Input  from '../inputs/Input' ;
+import Modal  from './Modal' ;
+import Button from '../Button' ;
+
+import useModal from './hooks/useModal' ;
 
 /**
  * Input with a modal trigger for complex input scenarios.

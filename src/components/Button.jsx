@@ -32,12 +32,12 @@
  * ```
  */
 
-import IconBox from '@/components/icons/IconBox' ;
-import Tooltip from '@/components/Tooltip' ;
+import IconBox from './icons/IconBox' ;
+import Tooltip from './Tooltip' ;
 
-import useI18n from '@/contexts/locale/useI18n' ;
+import useI18n from '../contexts/locale/useI18n' ;
 
-import getButtonClassNames from '@/themes/components/button' ;
+import getButtonClassNames from '../themes/components/button' ;
 
 /**
  * Button component for DaisyUI with icon, tooltip and i18n support.

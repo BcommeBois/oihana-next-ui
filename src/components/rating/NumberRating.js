@@ -1,9 +1,9 @@
 'use client' ;
 
-import useRatingValue from '@/hooks/useRatingValue' ;
-import getButtonClasses from '@/themes/components/button' ;
-import getGapX from '@/themes/spacing/gapX' ;
-import cn from '@/themes/helpers/cn' ;
+import useRatingValue   from '../../hooks/useRatingValue' ;
+import getButtonClasses from '../../themes/components/button' ;
+import getGapX          from '../../themes/spacing/gapX' ;
+import cn               from '../../themes/helpers/cn' ;
 
 /**
  * Number Rating component with DaisyUI buttons.

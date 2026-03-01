@@ -1,9 +1,9 @@
 'use client' ;
 
-import cn from '@/themes/helpers/cn' ;
+import cn from '../../themes/helpers/cn' ;
 
-import getTextColor             from '@/themes/colors/textColor' ;
-import getRadialProgressClasses from '@/themes/components/radialProgress' ;
+import getTextColor             from '../../themes/colors/textColor' ;
+import getRadialProgressClasses from '../../themes/components/radialProgress' ;
 
 /**
  * Radial progress component for DaisyUI 5.

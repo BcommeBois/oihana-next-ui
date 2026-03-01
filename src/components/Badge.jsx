@@ -32,7 +32,7 @@
  * ```
  */
 
-import getBadgeClassNames from '@/themes/components/badge' ;
+import getBadgeClassNames from '../themes/components/badge' ;
 
 /**
  * @param {Object} props

@@ -6,13 +6,11 @@
 
 import { useState } from 'react' ;
 
-import cn from '@/themes/helpers/cn' ;
-
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter' ;
 
-import useClipboard from '@/hooks/useClipboard' ;
-
-import useToast, { ERROR, SUCCESS } from '@/contexts/toasts/useToast' ;
+import cn           from '../../themes/helpers/cn' ;
+import useClipboard from '../../hooks/useClipboard' ;
+import useToast , { ERROR, SUCCESS } from '../../contexts/toasts/useToast' ;
 
 /**
  * @param {Object} props

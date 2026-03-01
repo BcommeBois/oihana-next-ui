@@ -1,6 +1,6 @@
 'use client' ;
 
-import ThemedImage from '@/components/images/ThemedImage' ;
+import ThemedImage from './images/ThemedImage' ;
 
 /**
  * Logo component with automatic dark mode support.
@@ -38,7 +38,7 @@ const Logo =
    alt= 'Logo' ,
    src ,
    dark ,
-   preload  = true , // ← Logos sont préchargés par défaut
+   preload  = true ,
    ...rest
 }) =>
 {

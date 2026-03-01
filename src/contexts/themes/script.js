@@ -2,7 +2,8 @@ import config from '@/@configs';
 
 const { dark , light } = config ;
 
-const script = `
+// TODO use a function
+const script = ` 
 (function() 
 {
     const storageKey = 'theme';

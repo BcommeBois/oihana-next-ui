@@ -1,8 +1,8 @@
 'use client' ;
 
-import getProgressClasses from '@/themes/components/progress' ;
+import getProgressClasses from '../../themes/components/progress' ;
 
-import cn from '@/themes/helpers/cn' ;
+import cn from '../../themes/helpers/cn' ;
 
 /**
  * Progress bar component for DaisyUI 5.

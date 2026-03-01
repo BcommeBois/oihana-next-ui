@@ -2,13 +2,14 @@
 
 import { MdCheckCircle, MdClose, MdErrorOutline, MdInfo, MdNotifications, MdWarning } from 'react-icons/md' ;
 
-import cn                  from '@/themes/helpers/cn' ;
-import getAlertClassNames  from '@/themes/components/alert' ;
-import getButtonClassNames from '@/themes/components/button' ;
-import getTextClassNames   from '@/themes/typography/getTextClassNames' ;
+import cn                  from '../themes/helpers/cn' ;
+import getAlertClassNames  from '../themes/components/alert' ;
+import getButtonClassNames from '../themes/components/button' ;
+import getTextClassNames   from '../themes/typography/getTextClassNames' ;
 import notEmpty            from 'vegas-js-core/src/strings/notEmpty' ;
-import parseHtml           from '@/helpers/parseHtml' ;
-import { ERROR, INFO, SUCCESS, WARNING } from '@/themes/colors' ;
+import parseHtml           from '../helpers/parseHtml' ;
+
+import { ERROR, INFO, SUCCESS, WARNING } from '../themes/colors' ;
 
 /**
  * Alert notification component with DaisyUI styling.

@@ -15,7 +15,7 @@
  * ```
  */
 
-import cn from '@/themes/helpers/cn' ;
+import cn from '../themes/helpers/cn' ;
 
 const arrowBaseClasses = 'absolute z-20 h-4 w-4 border-l border-t' ;
 

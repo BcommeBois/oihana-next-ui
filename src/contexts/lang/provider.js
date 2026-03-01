@@ -6,7 +6,7 @@ import dayjs from 'dayjs' ;
 
 import LangContext from './context' ;
 
-import { readStorage , setCookie , subscribeStorage , writeStorage } from '@/helpers/storage' ;
+import { readStorage , setCookie , subscribeStorage , writeStorage } from '../../helpers/storage' ;
 
 /**
  * Provides language context with locale persistence.

@@ -4,7 +4,7 @@ import { useState } from 'react' ;
 
 import Radio from './Radio' ;
 
-import cn from '@/themes/helpers/cn' ;
+import cn from '../../themes/helpers/cn' ;
 
 /**
  * RadioGroup component - Manages a group of radio buttons.

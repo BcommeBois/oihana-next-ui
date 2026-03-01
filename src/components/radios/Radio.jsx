@@ -1,7 +1,7 @@
 'use client' ;
 
-import cn from '@/themes/helpers/cn' ;
-import getRadioClasses from '@/themes/components/radio' ;
+import cn from '../../themes/helpers/cn' ;
+import getRadioClasses from '../../themes/components/radio' ;
 
 /**
  * Radio component for DaisyUI 5.

@@ -28,7 +28,7 @@
  * ```
  */
 
-import getLoadingClassNames , { RING } from '@/themes/components/loading' ;
+import getLoadingClassNames , { RING } from '../themes/components/loading' ;
 
 /**
  * @param {Object} props

@@ -1,6 +1,6 @@
 import clean from 'vegas-js-core/src/objects/clean'
 
-import reduceLang from '@/contexts/locale/helpers/reduceLang'
+import reduceLang from './reduceLang'
 
 /**
  * Maps an i18n object to a single language.

@@ -6,13 +6,13 @@
  * @module components/typography/Blockquote
  */
 
-import cn from '@/themes/helpers/cn' ;
+import cn from '../../themes/helpers/cn' ;
 
 import notEmpty from 'vegas-js-core/src/strings/notEmpty' ;
 
-import parseHtml from '@/helpers/parseHtml' ;
+import parseHtml from '../../helpers/parseHtml' ;
 
-import getBorderColor from '@/themes/colors/borderColor' ;
+import getBorderColor from '../../themes/colors/borderColor' ;
 
 import { MdFormatQuote as DefaultIcon } from 'react-icons/md' ;
 

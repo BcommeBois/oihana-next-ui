@@ -2,15 +2,15 @@
 
 import { useId } from 'react' ;
 
-import cn from '@/themes/helpers/cn' ;
+import cn from '../../themes/helpers/cn' ;
 
-import Button          from '@/components/Button' ;
-import Typography      from '@/components/typography/Typography' ;
+import Button          from '../Button' ;
 import PaginationRange from './PaginationRange' ;
+import Typography      from '../typography/Typography' ;
 
-import getPaginationData from '@/components/helpers/getPaginationData' ;
+import getPaginationData from '../helpers/getPaginationData' ;
 
-import useI18n from '@/contexts/locale/useI18n' ;
+import useI18n from '../../contexts/locale/useI18n' ;
 
 import {
     MdChevronLeft  as DefaultLeftIcon ,
@@ -18,7 +18,7 @@ import {
     MdFirstPage    as DefaultFirstPageIcon ,
     MdLastPage     as DefaultLastPageIcon ,
 }
-from "react-icons/md";
+from "react-icons/md" ;
 
 /**
  * Pagination component using DaisyUI 5 join pattern.

@@ -6,7 +6,7 @@
 
 import { useState } from 'react' ;
 
-import cn from '@/themes/helpers/cn' ;
+import cn from '../../../themes/helpers/cn' ;
 
 /**
  * @param {Object} props

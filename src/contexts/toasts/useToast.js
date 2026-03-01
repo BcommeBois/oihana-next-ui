@@ -14,7 +14,7 @@ import ucFirst      from 'vegas-js-core/src/strings/ucFirst' ;
 
 import ToastContext from './context' ;
 
-export { ERROR , INFO , SUCCESS , WARNING } from '@/themes/colors' ;
+export { ERROR , INFO , SUCCESS , WARNING } from '../../themes/colors' ;
 
 /**
  * Toast notification hook.

@@ -1,11 +1,12 @@
 'use client' ;
 
-import useRatingValue from '@/hooks/useRatingValue' ;
+import useRatingValue from '../../hooks/useRatingValue' ;
 
-import getRatingClasses, { RATING_HIDDEN } from '@/themes/components/rating' ;
-import getMaskClasses from '@/themes/components/mask' ;
-import getGapX        from '@/themes/spacing/gapX' ;
-import cn             from '@/themes/helpers/cn' ;
+import getRatingClasses, { RATING_HIDDEN } from '../../themes/components/rating' ;
+
+import getMaskClasses from '../../themes/components/mask' ;
+import getGapX        from '../../themes/spacing/gapX' ;
+import cn             from '../../themes/helpers/cn' ;
 
 /**
  * Rating component for DaisyUI 5.

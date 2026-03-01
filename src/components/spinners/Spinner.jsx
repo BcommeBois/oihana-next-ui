@@ -1,9 +1,9 @@
 'use client' ;
 
-import cn from '@/themes/helpers/cn' ;
+import cn from '../../themes/helpers/cn' ;
 
-import getCSSVariables from '@/themes/helpers/getCSSVariables' ;
-import useThemeColors from '@/themes/hooks/useThemeColors' ;
+import getCSSVariables from '../../themes/helpers/getCSSVariables' ;
+import useThemeColors  from '../../themes/hooks/useThemeColors' ;
 
 import './styles/sizes.css' ;
 

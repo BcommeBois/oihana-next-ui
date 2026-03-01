@@ -2,13 +2,13 @@
 
 import { useId , useRef } from 'react'
 
-import useBreakpoint from '@/themes/hooks/useBreakpoint'
+import useBreakpoint from '../../themes/hooks/useBreakpoint'
 
-import Button from '@/components/Button'
+import Button from '../Button'
 
 import { MdOutlineClose as CloseIcon } from "react-icons/md";
 
-import cn from '@/themes/helpers/cn'
+import cn from '../../themes/helpers/cn'
 
 import
 {

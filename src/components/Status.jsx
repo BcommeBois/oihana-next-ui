@@ -1,8 +1,8 @@
 'use client' ;
 
-import cn from '@/themes/helpers/cn' ;
+import cn from '../themes/helpers/cn' ;
 
-import getStatusClasses from '@/themes/components/status' ;
+import getStatusClasses from '../themes/components/status' ;
 
 /**
  * Status component for DaisyUI 5.

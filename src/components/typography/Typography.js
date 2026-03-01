@@ -1,8 +1,8 @@
 'use client' ;
 
-import getTextClassNames from '@/themes/typography/getTextClassNames' ;
+import getTextClassNames from '../../themes/typography/getTextClassNames' ;
 
-import parseHtml from '@/helpers/parseHtml' ;
+import parseHtml from '../../helpers/parseHtml' ;
 import notEmpty  from 'vegas-js-core/src/strings/notEmpty' ;
 
 /**

@@ -41,7 +41,7 @@
  * ```
  */
 
-import getTooltipClassNames from '@/themes/components/tooltip' ;
+import getTooltipClassNames from '../themes/components/tooltip' ;
 
 /**
  * @param {Object} props

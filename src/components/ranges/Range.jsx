@@ -2,9 +2,9 @@
 
 import { useState } from 'react' ;
 
-import cn from '@/themes/helpers/cn' ;
+import cn from '../../themes/helpers/cn' ;
 
-import getRangeClasses from '@/themes/components/range' ;
+import getRangeClasses from '../../themes/components/range' ;
 
 const Range =
 ({

@@ -2,7 +2,7 @@
 
 import { useState } from 'react' ;
 
-import useI18n from '@/contexts/locale' ;
+import useI18n from '../locale' ;
 
 import mapI18nItem from './helpers/mapI18nItem' ;
 

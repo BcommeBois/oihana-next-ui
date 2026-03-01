@@ -10,9 +10,9 @@ import { useState } from 'react' ;
 
 import { AnimatePresence , motion } from 'motion/react' ;
 
-import Alert from '@/components/Alert' ;
+import Alert from '../../components/Alert' ;
 
-import getToastClasses , { BOTTOM , END } from '@/themes/components/toast' ;
+import getToastClasses , { BOTTOM , END } from '../../themes/components/toast' ;
 
 import ToastContext from './context' ;
 

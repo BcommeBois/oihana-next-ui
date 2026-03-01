@@ -1,7 +1,7 @@
 'use client' ;
 
-import IconBox from '@/components/icons/IconBox' ;
-import NumberRating from '@/components/rating/NumberRating' ;
+import IconBox from '../../components/icons/IconBox' ;
+import NumberRating from '../../components/rating/NumberRating' ;
 
 /**
  * Icon Rating component - NumberRating with icon support.

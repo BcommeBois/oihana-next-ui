@@ -6,7 +6,7 @@
  * @module components/typography/markdown/Markdown
  */
 
-import cn from '@/themes/helpers/cn'
+import cn from '../../themes/helpers/cn'
 
 import ReactMarkdown from 'react-markdown'
 

@@ -28,7 +28,7 @@
  * ```
  */
 
-import getDividerClassNames from '@/themes/components/divider' ;
+import getDividerClassNames from '../themes/components/divider' ;
 
 /**
  * @param {Object} props

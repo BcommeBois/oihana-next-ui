@@ -4,7 +4,7 @@
  * @module components/typography/markdown/renderers/code
  */
 
-import cn from '@/themes/helpers/cn'
+import cn from '../../../../themes/helpers/cn' ;
 
 import CodeBlock          from '../../CodeBlock'
 import CodeBlockWithToast from '../../CodeBlockWithToast'

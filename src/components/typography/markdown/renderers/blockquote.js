@@ -4,9 +4,9 @@
  * @module components/typography/markdown/renderers/blockquote
  */
 
-import cn from '@/themes/helpers/cn' ;
+import cn from '../../../../themes/helpers/cn' ;
 
-import Blockquote from '@/components/typography/Blockquote' ;
+import Blockquote from '../../Blockquote' ;
 
 const blockquote =
 (

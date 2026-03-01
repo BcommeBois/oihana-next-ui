@@ -6,9 +6,9 @@ import { useLocalStorage } from 'react-use' ;
 
 import useThemeColor from './useThemeColor';
 
-import extractThemeColorsFromDOM from '@/themes/helpers/extractThemeColorsFromDom' ;
-import useConfig                 from '@/contexts/config' ;
-import usePrefersDark            from '@/themes/hooks/usePrefersDark';
+import extractThemeColorsFromDOM from '../../themes/helpers/extractThemeColorsFromDom' ;
+import useConfig                 from '../config' ;
+import usePrefersDark            from '../../themes/hooks/usePrefersDark';
 
 import ThemesContext from './context' ;
 

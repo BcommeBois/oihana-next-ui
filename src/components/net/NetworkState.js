@@ -1,10 +1,11 @@
 'use client';
 
-import cn from '@/themes/helpers/cn';
 
 import { useEffect, useState } from 'react';
 
 import { useNetworkState } from 'react-use';
+
+import cn from '../../themes/helpers/cn';
 
 import {
     MdBluetooth,
@@ -18,7 +19,7 @@ import {
 
 import useI18n from '@/contexts/locale/useI18n';
 
-import { BASE, LG, MD, SM, XL, XS } from '@/themes/sizing/sizes';
+import { BASE, LG, MD, SM, XL, XS } from '../../themes/sizing/sizes';
 
 // Re-export sizes for convenience
 export { BASE, LG, MD, SM, XL, XS };
