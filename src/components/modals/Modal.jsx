@@ -112,17 +112,6 @@ const Modal =
         onAgree?.() ;
     } ;
 
-    const handleCancelClick = () =>
-    {
-        dialogRef.current?.close() ;
-        onCancel?.() ;
-    } ;
-
-    const handleClose = () =>
-    {
-        onClose?.() ;
-    } ;
-
     const handleBackdropClick = ( e ) =>
     {
         if ( disableBackdropClick )
@@ -137,11 +126,31 @@ const Modal =
         }
     } ;
 
+    const handleCancelClick = () =>
+    {
+        dialogRef.current?.close() ;
+        onCancel?.() ;
+    } ;
+
+    const handleClose = () =>
+    {
+        onClose?.() ;
+    } ;
+
     const handleEscapeKey = event =>
     {
         if ( disableEscapeKeyDown )
         {
             event.preventDefault() ;
+        }
+    } ;
+
+    const handleKeyDown = event =>
+    {
+        if ( disableEscapeKeyDown && event.key === 'Escape' )
+        {
+            event.preventDefault() ;
+            event.stopPropagation() ;
         }
     } ;
 
@@ -175,6 +184,7 @@ const Modal =
             className       = { modalClasses }
             onClose         = { handleClose }
             onCancel        = { handleEscapeKey }
+            onKeyDown       = { handleKeyDown }
         >
             {/* Backdrop */}
             { showBackdrop && (
