@@ -33,6 +33,7 @@
     "./components/*": "./dist/components/*.js",
     "./components/*.css": "./dist/components/*.css",
     "./contexts/*": "./dist/contexts/*.js",
+    "./display/*": "./dist/display/*.js",
     "./helpers/*": "./dist/helpers/*.js",
     "./hooks/*": "./dist/hooks/*.js",
     "./motions/*": "./dist/motions/*.js",

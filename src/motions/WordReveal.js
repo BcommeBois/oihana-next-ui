@@ -2,7 +2,7 @@
 
 import { motion } from 'motion/react' ;
 
-import cn from '@/themes/helpers/cn'
+import cn from '../themes/helpers/cn'
 
 /**
  * Animate text word by word with a staggered fade-in.

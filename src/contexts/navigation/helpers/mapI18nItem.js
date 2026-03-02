@@ -1,7 +1,7 @@
 
-import { COLLAPSE } from '@/contexts/navigation/types'
+import { COLLAPSE } from '../types'
 
-import mapI18nBadge from '@/contexts/navigation/helpers/mapI18nBadge'
+import mapI18nBadge from './mapI18nBadge'
 
 /**
  * Maps a navigation item with i18n locale data.

@@ -4,9 +4,9 @@
  * @module display/ui/navigation/Navigation
  */
 
-import cn from '@/themes/helpers/cn' ;
+import cn from '../../themes/helpers/cn' ;
 
-import useNavigation from '@/contexts/navigation' ;
+import useNavigation from '../../contexts/navigation' ;
 
 import Menu from './navigation/Menu' ;
 

@@ -5,7 +5,7 @@
  *
  * @example
  * ```jsx
- * import Jump from '@/motions/Jump' ;
+ * import Jump from 'oihana-next-ui/motions/Jump' ;
  *
  * // With animation
  * <MotionButton motion={Jump} color="primary" path="actions.save" />

@@ -2,7 +2,7 @@
  * Date format modes for InputDate component.
  *
  * @example
- * import { DD_MM_YYYY, YYYY_MM_DD } from '@/helpers/date/dateModes' ;
+ * import { DD_MM_YYYY, YYYY_MM_DD } from 'oihana-next-ui/helpers/date/dateModes' ;
  *
  * <InputDate mode={DD_MM_YYYY} />
  * <InputDate mode={YYYY_MM_DD} separator="-" />

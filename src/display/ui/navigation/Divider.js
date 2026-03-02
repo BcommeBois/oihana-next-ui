@@ -13,17 +13,17 @@
  * ```
  */
 
-import cn from '@/themes/helpers/cn' ;
+import cn from '../../../themes/helpers/cn' ;
 
-import Divider from '@/components/Divider' ;
+import Divider from '../../../components/Divider' ;
 
 /**
  * Renders a divider inside a navigation menu.
  *
  * @param {Object} props
- * @param {import('@/themes/components/divider').DividerAlignment} [props.alignment] - Content alignment.
+ * @param {import('../../../themes/components/divider').DividerAlignment} [props.alignment] - Content alignment.
  * @param {string} [props.className] - Additional class names.
- * @param {import('@/themes/components/divider').DividerColorValue} [props.color] - Divider color.
+ * @param {import('../../../themes/components/divider').DividerColorValue} [props.color] - Divider color.
  * @param {string} [props.label] - Divider text content.
  *
  * @returns {React.ReactElement}

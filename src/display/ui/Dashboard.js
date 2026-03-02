@@ -1,7 +1,28 @@
 /**
  * Dashboard layout component.
  *
+ * Renders a full-page layout with a responsive sidebar drawer and navbar.
+ * Supports two layout modes: `aside` (default) and `top`.
+ *
+ * In `aside` mode, the navbar is embedded inside the drawer content area.
+ * In `top` mode, the navbar sits above the drawer at full width.
+ *
  * @module display/Dashboard
+ *
+ * @example
+ * ```jsx
+ * <Dashboard>
+ *     <Page />
+ * </Dashboard>
+ * ```
+ *
+ * @example
+ * ```jsx
+ * // Top navbar layout
+ * <Dashboard layout="top">
+ *     <Page />
+ * </Dashboard>
+ * ```
  */
 
 'use client' ;
@@ -10,13 +31,12 @@ import { useState } from 'react' ;
 
 import { MdMenu as MenuIcon } from 'react-icons/md' ;
 
-import Drawer from '@/display/ui/Drawer' ;
+import Drawer  from './Drawer' ;
+import Navbar  from './Navbar' ;
+import Sidebar from './Sidebar' ;
 
-import Navbar  from '@/display/ui/Navbar' ;
-import Sidebar from '@/display/ui/Sidebar' ;
-
-import useApplication from '@/contexts/application' ;
-import useConfig      from '@/contexts/config' ;
+import useApplication from '../../contexts/application' ;
+import useConfig      from '../../contexts/config' ;
 
 /**
  * @typedef {'aside' | 'top'} DashboardLayout
@@ -26,12 +46,12 @@ export const ASIDE = 'aside' ;
 export const TOP   = 'top' ;
 
 /**
- * @param {Object} props
- * @param {string} [props.breakpoint] - Responsive breakpoint.
- * @param {React.ReactNode} props.children - Page content.
- * @param {string} [props.configPath='ui.dashboard'] - Config context path.
- * @param {DashboardLayout} [props.layout] - Navbar layout mode.
- * @param {string} [props.titleClassName] - The additional title class names.
+ * @param {Object}          props
+ * @param {string}          [props.breakpoint='lg']            - Responsive breakpoint for the sidebar drawer.
+ * @param {React.ReactNode} props.children                     - Page content.
+ * @param {string}          [props.configPath='ui.dashboard']  - Config context path.
+ * @param {DashboardLayout} [props.layout='aside']             - Navbar layout mode.
+ * @param {string}          [props.titleClassName]             - Additional class names forwarded to the navbar title.
  */
 const Dashboard =
 ({
@@ -39,7 +59,7 @@ const Dashboard =
     children ,
     configPath  = 'ui.dashboard' ,
     layout : layoutProp ,
-    titleClassName : titleClassNameProp ,
+    titleClassName  ,
 }) =>
 {
     const {
@@ -68,7 +88,7 @@ const Dashboard =
         </button>
     ) ;
 
-    const navbar  = showNavbar  && <Navbar left={ openButton } /> ;
+    const navbar  = showNavbar  && <Navbar left={ openButton } titleClassName={ titleClassName } /> ;
     const sidebar = showSidebar && <Sidebar onAction = { closeDrawer } /> ;
 
     if ( layout === TOP ) // navbar full-width on the top

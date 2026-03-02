@@ -1,13 +1,12 @@
-// @/hooks/useTime.js
-
 import { useEffect, useState } from 'react' ;
 import { usePrevious } from 'react-use' ;
 
 import notEmpty from 'vegas-js-core/src/strings/notEmpty' ;
 
-import useValue from '@/hooks/useValue' ;
-import Time from '@/helpers/time/Time' ;
-import { AM, PM } from '@/helpers/time/meridies' ;
+import useValue from '../../hooks/useValue' ;
+
+import Time from './Time' ;
+import { AM, PM } from '../time/meridies' ;
 
 /**
  * React hook to manage time state with AM/PM support.
@@ -50,7 +49,7 @@ const useTime =
 
     const [ value    , setValue    ] = useValue( defaultValue, valueFromProps, onChangeFromProps ) ;
     const [ meridiem , setMeridiem ] = useValue( defaultMeridiem, meridiemFromProps, onChangeMeridiemFromProps ) ;
-    const [ time     , setTime      ] = useState( null ) ;
+    const [ time     , setTime     ] = useState( null ) ;
 
     // --------- Setters
 

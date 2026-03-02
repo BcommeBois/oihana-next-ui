@@ -1,6 +1,5 @@
-import clip from 'vegas-js-core/src/numbers/clip' ;
-import isUint from 'vegas-js-core/src/isUint' ;
-
+import clip         from 'vegas-js-core/src/numbers/clip' ;
+import isUint       from 'vegas-js-core/src/isUint' ;
 import padTo2Digits from 'vegas-js-core/src/numbers/padTo2Digits' ;
 import padTo3Digits from 'vegas-js-core/src/numbers/padTo3Digits' ;
 

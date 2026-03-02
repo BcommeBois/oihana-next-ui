@@ -34,7 +34,7 @@
  * ```
  */
 
-import cn from '@/themes/helpers/cn'
+import cn from '../../themes/helpers/cn'
 
 import getSwapClassNames , { SWAP_ITEM , SWAP_OFF , SWAP_ON } from '../../themes/components/swap'
 
@@ -48,18 +48,18 @@ import useI18n from '../../contexts/locale/useI18n'
  * Generic swap button component based on DaisyUI Swap.
  *
  * @param {object} props
- * @param {import('@/themes/components/swap').SwapAnimation | null} [props.animation='flip'] - Swap animation.
+ * @param {import('../../themes/components/swap').SwapAnimation | null} [props.animation='flip'] - Swap animation.
  * @param {boolean} [props.checked] - Swap checked state.
  * @param {string} [props.className] - Additional class name.
- * @param {import('@/themes/components/button').ButtonColorValue} [props.color] - Button color.
+ * @param {import('../../themes/components/button').ButtonColorValue} [props.color] - Button color.
  * @param {boolean} [props.disabled] - Disabled state.
  * @param {React.ReactNode} [props.off] - Content when unchecked.
  * @param {React.ReactNode} [props.on] - Content when checked.
  * @param {Function} [props.onChange] - Toggle handler, receives current checked state.
  * @param {string} [props.path] - i18n path for label/title.
- * @param {import('@/themes/components/button').ButtonShape} [props.shape='square'] - Button shape.
- * @param {import('@/themes/components/button').ButtonSize} [props.size='md'] - Button size.
- * @param {import('@/themes/components/button').ButtonStyle} [props.style='ghost'] - Button style.
+ * @param {import('../../themes/components/button').ButtonShape} [props.shape='square'] - Button shape.
+ * @param {import('../../themes/components/button').ButtonSize} [props.size='md'] - Button size.
+ * @param {import('../../themes/components/button').ButtonStyle} [props.style='ghost'] - Button style.
  * @param {string} [props.title] - Accessible title (overrides i18n).
  * @param {Object} props.rest - Other props passed to SwapButton
  *

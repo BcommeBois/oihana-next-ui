@@ -14,7 +14,7 @@ import cn from '../../themes/helpers/cn' ;
  * @param {Object} props
  * @param {boolean} [props.showPreview=true] - Show Markdown preview
  * @param {string} [props.previewPosition='right'] - 'right', 'bottom', 'tab'
- * @param {import('@/components/typography/Markdown').default} [props.markdownProps] - Props passed to Markdown component
+ * @param {import('../typography/Markdown').default} [props.markdownProps] - Props passed to Markdown component
  * @param {Object} props.rest - Other props passed to TextArea
  */
 const TextAreaMarkdown =

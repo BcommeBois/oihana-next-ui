@@ -5,9 +5,9 @@
  *
  * @example
  * ```js
- * import useApplication from '@/contexts/application' ;
+ * import useApplication from 'oihana-next-ui/contexts/application' ;
  *
- * import useApplication , { ApplicationProvider } from '@/contexts/application' ;
+ * import useApplication , { ApplicationProvider } from 'oihana-next-ui/contexts/application' ;
  * ```
  */
 

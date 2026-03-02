@@ -1,8 +1,8 @@
 'use client';
 
-import ThemedImage from '@/components/images/ThemedImage';
+import ThemedImage from '../../components/images/ThemedImage';
 
-import cn from '@/themes/helpers/cn';
+import cn from '../../themes/helpers/cn';
 
 /**
  * @typedef {Object} SplashLogoProps

@@ -2,7 +2,7 @@
 
 import { useRef } from 'react'
 
-import useValue from '@/hooks/useValue'
+import useValue from '../../hooks/useValue'
 
 import clamp from 'vegas-js-core/src/maths/clamp'
 import round from 'vegas-js-core/src/maths/round'

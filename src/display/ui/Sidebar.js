@@ -4,13 +4,13 @@ import { useDrag } from '@use-gesture/react' ;
 
 import { usePathname } from 'next/navigation';
 
-import Logo       from '@/display/ui/Logo';
-import Navigation from '@/display/ui/Navigation' ;
-import Version    from '@/display/ui/Version';
+import Logo       from './Logo';
+import Navigation from './Navigation' ;
+import Version    from './Version';
 
-import useConfig  from '@/contexts/config' ;
+import useConfig  from '../../contexts/config' ;
 
-import cn from '@/themes/helpers/cn' ;
+import cn from '../../themes/helpers/cn' ;
 
 /**
  * @typedef {Object} LogoConfig
@@ -78,21 +78,21 @@ import cn from '@/themes/helpers/cn' ;
  */
 const Sidebar =
 ({
-     configPath= 'ui.sidebar' ,
-     className       : classNameProp ,
-     homePath        : homePathProp = '/' ,
-     navigation      : navigationProp ,
-     logo            : logoProp ,
-     swipe           : swipeProp ,
+     configPath = 'ui.sidebar' ,
+     className : classNameProp ,
+     homePath : homePathProp = '/' ,
+     navigation : navigationProp ,
+     logo : logoProp ,
+     swipe : swipeProp ,
      onAction ,
  }) =>
 {
     const {
-        homePath        = homePathProp,
-        className       = classNameProp,
-        logo            = logoProp,
-        navigation      = navigationProp,
-        swipe           = swipeProp,
+        homePath   = homePathProp,
+        className  = classNameProp,
+        logo       = logoProp,
+        navigation = navigationProp,
+        swipe      = swipeProp,
     }
     = useConfig( configPath ) ?? {} ;
 

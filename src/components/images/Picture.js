@@ -30,9 +30,9 @@ import buildImageProps from './helpers/buildImageProps' ;
  * @param {number} [props.height] - Image height (required if not using fill)
  * @param {string} [props.imageClassName] - Image element classes
  * @param {string} [props.loading='lazy'] - Loading strategy: 'lazy' | 'eager' (ignored if priority is true)
- * @param {import('@/themes/components/loading').LoadingAnimation} [props.loadingAnimation='spinner'] - Loading animation style
- * @param {import('../colors/textColor').TextColor} [props.loadingColor='base-content'] - Loading color
- * @param {import('@/themes/components/loading').LoadingSize} [props.loadingSize='lg'] - Loading spinner size
+ * @param {import('../../themes/components/loading').LoadingAnimation} [props.loadingAnimation='spinner'] - Loading animation style
+ * @param {import('../../themes/colors/textColor').TextColor} [props.loadingColor='base-content'] - Loading color
+ * @param {import('../../themes/components/loading').LoadingSize} [props.loadingSize='lg'] - Loading spinner size
  * @param {string} [props.objectFit='cover'] - Object fit for fill mode: 'contain' | 'cover' | 'fill' | 'none'
  * @param {Function} [props.onLoad] - Callback when image loads (receives React SyntheticEvent — use e.target for img element)
  * @param {boolean} [props.priority=false] - Priority loading (disables lazy)

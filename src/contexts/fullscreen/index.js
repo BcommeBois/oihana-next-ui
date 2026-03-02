@@ -5,9 +5,9 @@
  *
  * @example
  * ```js
- * import useFullscreen from '@/contexts/fullscreen' ;
+ * import useFullscreen from 'oihana-next-ui/contexts/fullscreen' ;
  *
- * import useFullscreen , { FullscreenProvider } from '@/contexts/fullscreen' ;
+ * import useFullscreen , { FullscreenProvider } from 'oihana-next-ui/contexts/fullscreen' ;
  * ```
  */
 

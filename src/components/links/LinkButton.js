@@ -39,11 +39,11 @@ import getButtonClassNames from '../../themes/components/button'
 /**
  * @param {Object} props
  * @param {boolean} [props.active] - Active state.
- * @param {import('@/themes/components/button').ButtonColorValue} [props.activeColor] - Color when active.
+ * @param {import('../../themes/components/button').ButtonColorValue} [props.activeColor] - Color when active.
  * @param {boolean} [props.animation=true] - Enable click animation.
  * @param {React.ReactNode} [props.children] - Link content (overrides i18n label).
  * @param {string} [props.className] - Additional class name.
- * @param {import('@/themes/components/button').ButtonColorValue} [props.color='ghost'] - Button color.
+ * @param {import('../../themes/components/button').ButtonColorValue} [props.color='ghost'] - Button color.
  * @param {boolean} [props.disabled] - Disabled state.
  * @param {boolean} [props.glass] - Glass effect.
  * @param {string|Object} props.href - Destination URL or route object.
@@ -52,17 +52,17 @@ import getButtonClassNames from '../../themes/components/button'
  * @param {Function} [props.onClick] - Click handler.
  * @param {string} [props.path] - i18n path for label, title and tooltip.
  * @param {React.Ref<HTMLAnchorElement>} [props.ref] - Forwarded ref.
- * @param {import('@/themes/components/button').ButtonShape} [props.shape] - Button shape.
+ * @param {import('../../themes/components/button').ButtonShape} [props.shape] - Button shape.
  * @param {boolean} [props.showIcon=true] - Show/hide icon.
  * @param {boolean} [props.showTooltip=true] - Show/hide tooltip.
- * @param {import('@/themes/components/button').ButtonSize} [props.size='sm'] - Button size.
- * @param {import('@/themes/components/button').ButtonStyle} [props.style] - Button style variant.
+ * @param {import('../../themes/components/button').ButtonSize} [props.size='sm'] - Button size.
+ * @param {import('../../themes/components/button').ButtonStyle} [props.style] - Button style variant.
  * @param {number} [props.tabIndex] - Tab index.
  * @param {string} [props.title] - Accessible title (overrides i18n).
  * @param {string} [props.tooltip] - Tooltip text (overrides i18n).
  * @param {string} [props.tooltipClassName] - Tooltip class name.
- * @param {import('@/themes/components/tooltip').TooltipColorValue} [props.tooltipColor] - Tooltip color.
- * @param {import('@/themes/components/tooltip').TooltipPosition} [props.tooltipPosition] - Tooltip position.
+ * @param {import('../../themes/components/tooltip').TooltipColorValue} [props.tooltipColor] - Tooltip color.
+ * @param {import('../../themes/components/tooltip').TooltipPosition} [props.tooltipPosition] - Tooltip position.
  * @param {boolean} [props.wide] - Wide button modifier.
  */
 const LinkButton =

@@ -22,7 +22,7 @@
 
 import { useEffect , useRef , useState } from 'react'
 
-import cn from '@/themes/helpers/cn'
+import cn from '../../themes/helpers/cn'
 
 import Flag    from '../icons/Flag'
 import Tooltip from '../Tooltip'
@@ -45,8 +45,8 @@ const getDisplayName = ( code , style ) => code
  * @param {boolean} [props.showTooltip=true] - Show/hide tooltip on trigger.
  * @param {Intl.RelativeTimeFormatStyle} [props.style='long'] - Intl display name style.
  * @param {string} [props.tooltipClassName] - Tooltip class name.
- * @param {import('@/themes/components/tooltip').TooltipColorValue} [props.tooltipColor] - Tooltip color.
- * @param {import('@/themes/components/tooltip').TooltipPosition} [props.tooltipPosition='bottom'] - Tooltip position.
+ * @param {import('../../themes/components/tooltip').TooltipColorValue} [props.tooltipColor] - Tooltip color.
+ * @param {import('../../themes/components/tooltip').TooltipPosition} [props.tooltipPosition='bottom'] - Tooltip position.
  */
 const LangDropDown =
 ({

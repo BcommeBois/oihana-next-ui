@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react'
 
-import { clearStorage } from '@/helpers/storage'
+import clearStorage from '../helpers/storage/clearStorage'
 
 /**
  * Checks app version and clears storage if version changed.
@@ -56,7 +56,7 @@ const useVersionCheck =
 
         if ( storedVersion !== version )
         {
-            clearStorage( localStorage , keepLocal ) ;
+            clearStorage( localStorage   , keepLocal   ) ;
             clearStorage( sessionStorage , keepSession ) ;
 
             localStorage.setItem( storageKey , version ) ;

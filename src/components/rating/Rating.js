@@ -41,13 +41,13 @@ import cn             from '../../themes/helpers/cn' ;
  * @param {number} [props.defaultValue] - Default value for uncontrolled mode
  * @param {Function} [props.onChange] - Change handler (value) => void
  * @param {number} [props.count=5] - Number of stars/items
- * @param {import('@/themes/components/rating').RatingSize} [props.size='md'] - Size: 'xs', 'sm', 'md', 'lg', 'xl'
- * @param {import('@/themes/components/mask').MaskShape} [props.shape='star-2'] - Mask shape
- * @param {import('@/themes/colors/backgroundColor').BackgroundColorValue} [props.color] - Background color
+ * @param {import('../../themes/components/rating').RatingSize} [props.size='md'] - Size: 'xs', 'sm', 'md', 'lg', 'xl'
+ * @param {import('../../themes/components/mask').MaskShape} [props.shape='star-2'] - Mask shape
+ * @param {import('../../themes/colors/backgroundColor').BackgroundColorValue} [props.color] - Background color
  * @param {boolean} [props.half=false] - Enable half-star ratings
  * @param {boolean} [props.readOnly=false] - Read-only mode (uses divs instead of inputs)
  * @param {boolean} [props.allowClear=true] - Allow clearing the rating (adds hidden radio)
- * @param {string | number | import('@/themes/sizing/sizes').ResponsiveSize} [props.gap] - Gap between items (number or responsive object)
+ * @param {string | number | import('../../themes/sizing/sizes').ResponsiveSize} [props.gap] - Gap between items (number or responsive object)
  * @param {string} [props.className] - Additional classes for container
  * @param {boolean} [props.disabled=false] - Disable all inputs
  */

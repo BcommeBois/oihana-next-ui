@@ -5,9 +5,9 @@
  *
  * @example
  * ```js
- * import useLang from '@/contexts/lang' ;
+ * import useLang from 'oihana-next-ui/contexts/lang' ;
  *
- * import useLang , { LangProvider } from '@/contexts/lang' ;
+ * import useLang , { LangProvider } from 'oihana-next-ui/contexts/lang' ;
  * ```
  */
 

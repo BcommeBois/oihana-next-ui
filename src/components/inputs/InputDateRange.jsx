@@ -60,7 +60,7 @@ import { MdDateRange as DateRangeIcon } from 'react-icons/md'
  * @param {Object} props.rest - Other props
  *
  * @example
- * import { DD_MM_YYYY, YYYY_MM_DD } from '@/components/inputs/InputDateRange';
+ * import { DD_MM_YYYY, YYYY_MM_DD } from 'oihana-next-ui/components/inputs/InputDateRange';
  *
  * // French format (dd/mm/yyyy – dd/mm/yyyy)
  * <InputDateRange mode={DD_MM_YYYY} dateSeparator="/" />

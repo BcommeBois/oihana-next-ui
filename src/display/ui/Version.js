@@ -1,19 +1,20 @@
-import cn        from '@/themes/helpers/cn';
-import useConfig from '@/contexts/config';
-import version   from '@/version';
+import cn        from '../../themes/helpers/cn';
+import useConfig from '../../contexts/config';
 
 /**
  * @typedef {Object} VersionConfig
- * @property {boolean} [show] - Whether to display the version footer.
- * @property {string} [className] - CSS classes for version footer.
+ * @property {boolean} [show] - Whether to display the version component.
+ * @property {string} [className] - CSS classes for version component.
+ * @property {string}  [version]   - The version label.
  */
 
 /**
- * Version footer component.
+ * Version component.
  *
  * @param {Object} props
- * @param {string} [props.className] - Additional class names.
- * @param {string} [props.configPath='ui.sidebar.version'] - Config context path.
+ * @param {string}  [props.className]                        - Additional class names.
+ * @param {string}  [props.configPath='ui.version']          - Config context path.
+ * @param {string}  [props.version]                          - Version label. Overrides config value.
  *
  * @example
  * ```jsx
@@ -29,11 +30,13 @@ const Version =
 ({
     className,
     configPath = 'ui.version',
+    version : versionProp ,
 }) =>
 {
     const {
-        show = true,
-        className : configClassName,
+        className : configClassName ,
+        show      = true ,
+        version   = versionProp ,
     }
     = useConfig( configPath ) ?? {} ;
 

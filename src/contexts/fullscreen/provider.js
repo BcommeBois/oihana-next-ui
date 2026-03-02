@@ -17,7 +17,7 @@ import FullscreenContext from './context' ;
  * @example
  * ```jsx
  * // In layout.js
- * import { FullscreenProvider } from '@/contexts/fullscreen' ;
+ * import { FullscreenProvider } from 'oihana-next-ui/contexts/fullscreen' ;
  *
  * <FullscreenProvider>
  *     { children }
@@ -27,7 +27,7 @@ import FullscreenContext from './context' ;
  * @example
  * ```jsx
  * // Usage in component
- * import useFullscreen from '@/contexts/fullscreen' ;
+ * import useFullscreen from 'oihana-next-ui/contexts/fullscreen' ;
  *
  * const { isFullscreen , toggleFullscreen } = useFullscreen() ;
  *

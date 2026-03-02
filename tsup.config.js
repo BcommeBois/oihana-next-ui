@@ -6,6 +6,7 @@ export default defineConfig( {
     [
         'src/components/**/*.{js,jsx,css}' ,
         'src/contexts/**/*.{js,jsx}' ,
+        'src/display/**/*.{js,jsx}' ,
         'src/helpers/**/*.{js,jsx}' ,
         'src/hooks/**/*.{js,jsx}' ,
         'src/motions/**/*.{js,jsx}' ,
@@ -17,14 +18,14 @@ export default defineConfig( {
     dts          : false ,
     format       : [ 'esm' ] ,
     jsx          : 'react-jsx' ,
-    outExtension : () => ({ js: '.js' }) ,
+    outExtension : () => ( { js: '.js' } ) ,
     splitting    : false ,
     sourcemap    : true  ,
     target       : 'esnext' ,
 
     esbuildOptions( options )
     {
-        // Résout @/ → src/ au moment de la compilation
+        // Resolves @/ → src/ at compile time
         options.alias =
         {
             '@' : new URL( './src' , import.meta.url ).pathname ,

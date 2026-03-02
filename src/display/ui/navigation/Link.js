@@ -5,15 +5,16 @@
  */
 
 import NextLink from 'next/link' ;
+
 import { usePathname } from 'next/navigation' ;
 
 import isObject   from 'vegas-js-core/src/isPlainObject' ;
 import notEmpty   from 'vegas-js-core/src/strings/notEmpty' ;
 import startsWith from 'vegas-js-core/src/strings/startsWith' ;
 
-import cn from '@/themes/helpers/cn' ;
+import cn from '../../../themes/helpers/cn' ;
 
-import Badge from '@/components/Badge' ;
+import Badge from '../../../components/Badge' ;
 
 /**
  * Returns a Badge element from a string or object definition.

@@ -56,7 +56,7 @@ import { MdCalendarToday as CalendarIcon } from 'react-icons/md'
  * @param {Object} props.rest - Other props passed to InputGroup
  *
  * @example
- * import { DD_MM_YYYY, MM_DD_YYYY, YYYY_MM_DD } from '@/components/inputs/InputDate';
+ * import { DD_MM_YYYY, MM_DD_YYYY, YYYY_MM_DD } from 'oihana-next-ui/components/inputs/InputDate';
  *
  * // French format (dd/mm/yyyy)
  * <InputDate mode={DD_MM_YYYY} separator="/" />

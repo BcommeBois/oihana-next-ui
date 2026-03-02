@@ -6,7 +6,7 @@
  * @module display/ui/navigation/items
  */
 
-import { COLLAPSE , DIVIDER , LINK } from '@/contexts/navigation/types' ;
+import { COLLAPSE , DIVIDER , LINK } from '../../../contexts/navigation/types' ;
 
 import Collapse from './Collapse' ;
 import Divider  from './Divider' ;

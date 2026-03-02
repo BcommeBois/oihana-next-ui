@@ -48,9 +48,9 @@ import getTooltipClassNames from '../themes/components/tooltip' ;
  * @param {React.ElementType} [props.as] - Root element type.
  * @param {React.ReactNode} [props.children] - Tooltip trigger content.
  * @param {string} [props.className] - Additional class name.
- * @param {import('@/themes/components/tooltip').TooltipColorValue} [props.color] - Tooltip color.
+ * @param {import('../themes/components/tooltip').TooltipColorValue} [props.color] - Tooltip color.
  * @param {boolean} [props.open] - Force tooltip open.
- * @param {import('@/themes/components/tooltip').TooltipPosition} [props.position] - Tooltip placement.
+ * @param {import('../themes/components/tooltip').TooltipPosition} [props.position] - Tooltip placement.
  * @param {React.Ref} [props.ref] - Forwarded ref.
  * @param {boolean} [props.show=true] - Enable/disable tooltip. When false, renders children only.
  * @param {string} [props.tip] - Tooltip text (uses data-tip attribute).

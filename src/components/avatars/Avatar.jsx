@@ -38,7 +38,7 @@ import getAvatarClassNames from '../../themes/components/avatar' ;
  * @param {string} [props.className] - Wrapper class name (applied to avatar container).
  * @param {string} [props.innerClassName] - Inner wrapper class name (size, shape, etc.).
  * @param {React.ReactNode} [props.children] - Avatar content (image, placeholder text, etc.).
- * @param {import('@/themes/components/avatar').AvatarIndicator} [props.indicator] - Online/offline indicator.
+ * @param {import('../../themes/components/avatar').AvatarIndicator} [props.indicator] - Online/offline indicator.
  * @param {boolean} [props.placeholder] - Show letter placeholder.
  */
 const Avatar =

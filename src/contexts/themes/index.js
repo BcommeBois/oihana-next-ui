@@ -6,13 +6,13 @@
  * @example
  * ```js
  * // Default import (most common)
- * import useThemes from '@/contexts/themes' ;
+ * import useThemes from 'oihana-next-ui/contexts/themes' ;
  *
  * // With provider
- * import useThemes , { ThemesProvider } from '@/contexts/themes' ;
+ * import useThemes , { ThemesProvider } from 'oihana-next-ui/contexts/themes' ;
  *
  * // Named imports
- * import { ThemesProvider , ThemesContext , LIGHT , DARK } from '@/contexts/themes' ;
+ * import { ThemesProvider , ThemesContext , LIGHT , DARK } from 'oihana-next-ui/contexts/themes' ;
  * ```
  */
 

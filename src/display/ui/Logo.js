@@ -1,10 +1,10 @@
 import NextLink from 'next/link' ;
 
-import ThemedImage from '@/components/images/ThemedImage' ;
+import ThemedImage from '../../components/images/ThemedImage' ;
 
-import useConfig from '@/contexts/config' ;
+import useConfig from '../../contexts/config' ;
 
-import cn from '@/themes/helpers/cn' ;
+import cn from '../../themes/helpers/cn' ;
 
 /**
  * @typedef {Object} LogoConfig

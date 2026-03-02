@@ -17,7 +17,7 @@ import {
     MdWifiTethering
 } from 'react-icons/md';
 
-import useI18n from '@/contexts/locale/useI18n';
+import useI18n from '../../contexts/locale/useI18n';
 
 import { BASE, LG, MD, SM, XL, XS } from '../../themes/sizing/sizes';
 
@@ -89,13 +89,15 @@ const NetworkState =
     size = MD
 }) =>
 {
-    const [mounted, setMounted] = useState(false);
-    const { online, type } = useNetworkState();
+    const { online, type } = useNetworkState() ;
+
+    const [ mounted , setMounted ] = useState( false ) ;
 
     useEffect(() =>
     {
-        setMounted(true);
-    }, []);
+        setMounted( true ) ;
+    }
+    , [] ) ;
 
     // i18n support (expects structure: { online: { label, title }, offline: { label, title } })
     const i18nOnline  = useI18n( path ? `${path}.online`  : null , {} , false ) ;

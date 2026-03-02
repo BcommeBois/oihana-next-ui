@@ -1,6 +1,6 @@
 'use client';
 
-import cn from '@/themes/helpers/cn';
+import cn from '../../themes/helpers/cn';
 
 /**
  * @typedef {Object} SplashSectionProps

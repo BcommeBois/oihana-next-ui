@@ -5,14 +5,14 @@
  *
  * @example
  * ```js
- * import useNavigation from '@/contexts/navigation' ;
+ * import useNavigation from 'oihana-next-ui/contexts/navigation' ;
  *
  * const { navigation , setNavigation } = useNavigation() ;
  * ```
  *
  * @example
  * ```js
- * import useNavigation , { NavigationProvider } from '@/contexts/navigation' ;
+ * import useNavigation , { NavigationProvider } from 'oihana-next-ui/contexts/navigation' ;
  * ```
  */
 

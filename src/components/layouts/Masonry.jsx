@@ -1,10 +1,10 @@
 'use client' ;
 
-import Flex from '../../components/layouts/Flex' ;
-import Grid from '../../components/layouts/Grid' ;
-
-import useBreakpoints, { XXL } from '@/themes/hooks/useBreakpoints' ;
 import isPlainObject from 'vegas-js-core/src/isPlainObject' ;
+
+import Flex from './Flex' ;
+import Grid from './Grid' ;
+import useBreakpoints, { XXL } from '../../themes/hooks/useBreakpoints' ;
 
 /**
  * Masonry layout component that distributes children across responsive columns.

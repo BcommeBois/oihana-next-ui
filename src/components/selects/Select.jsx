@@ -1,8 +1,8 @@
 'use client' ;
 
-import getActionElements from '@/components/helpers/getActionElements' ;
-import getSelectClasses  from '@/themes/components/select' ;
-import cn                from '@/themes/helpers/cn' ;
+import cn                from '../../themes/helpers/cn' ;
+import getActionElements from '../helpers/getActionElements' ;
+import getSelectClasses  from '../../themes/components/select' ;
 
 /**
  * Select component with optional actions, error states, and HTML5 validation.

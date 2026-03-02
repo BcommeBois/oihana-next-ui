@@ -90,7 +90,7 @@ const checkThemeDarkVariant = () =>
  * - `data-dark`  — `'true'` | `'false'`, used for flash-free CSS-only dark mode switching.
  *
  * The `data-dark` attribute is set both here (on toggle) and in the inline blocking script
- * (`@/contexts/themes/script`) to guarantee the correct value **before first paint**.
+ * (`oihana-next-ui/contexts/themes/getThemeScript`) to guarantee the correct value **before first paint**.
  *
  * Components like `ThemedImage` rely on the Tailwind `theme-dark:` variant to swap
  * light/dark assets without any hydration flash.
@@ -198,8 +198,6 @@ const ThemesProvider =
     , [ isDark ] ) ;
 
     useThemeColor( colors[ themeColorKey ] ?? 'base-100' , syncThemeColor ) ;
-
-
 
     return (
         <ThemesContext value={ { colors , isDark: resolvedIsDark , toggleIsDark } }>

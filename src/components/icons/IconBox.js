@@ -24,7 +24,7 @@
  * ```
  */
 
-import cn from '@/themes/helpers/cn' ;
+import cn from '../../themes/helpers/cn' ;
 
 import getTextColor      from '../../themes/colors/textColor' ;
 import buttonIconSizeMap from '../../themes/sizing/buttonIconSize' ;
@@ -33,7 +33,7 @@ import buttonIconSizeMap from '../../themes/sizing/buttonIconSize' ;
  * @param {Object} props
  * @param {React.ReactNode} [props.children] - Custom icon content (takes priority over icon prop).
  * @param {string} [props.className] - Additional class name.
- * @param {import('@/themes/colors/textColor').TextColor} [props.color] - Icon color.
+ * @param {import('@../..themes/colors/textColor').TextColor} [props.color] - Icon color.
  * @param {boolean} [props.disabled] - Reduced opacity.
  * @param {string} [props.disabledClassName='opacity-60'] - Custom disabled class.
  * @param {React.ReactNode} [props.icon] - Icon component to render.

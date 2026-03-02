@@ -37,8 +37,8 @@ import NumberRating from '../../components/rating/NumberRating' ;
  * @param {React.ElementType} [props.activeIcon] - Active icon component
  * @param {string} [props.iconClassName] - Additional classes for inactive icon
  * @param {string} [props.activeIconClassName] - Additional classes for active icon
- * @param {import('@/themes/colors/textColor').TextColor} [props.iconColor] - Inactive icon color (overrides button color)
- * @param {import('@/themes/colors/textColor').TextColor} [props.activeIconColor] - Active icon color (overrides button color)
+ * @param {import('../../themes/colors/textColor').TextColor} [props.iconColor] - Inactive icon color (overrides button color)
+ * @param {import('../../themes/colors/textColor').TextColor} [props.activeIconColor] - Active icon color (overrides button color)
  */
 const IconRating =
 ({

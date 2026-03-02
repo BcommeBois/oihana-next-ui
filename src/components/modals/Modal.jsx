@@ -17,7 +17,7 @@ import
     getModalActionClasses,
     getModalBackdropClasses,
 }
-from '@/themes/components/modal' ;
+from '../../themes/components/modal' ;
 
 const Modal =
 ({

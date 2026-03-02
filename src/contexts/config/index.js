@@ -5,13 +5,13 @@
  *
  * @example
  * ```js
- * import useConfig from '@/contexts/config' ;
+ * import useConfig from 'oihana-next-ui/contexts/config' ;
  *
  * // With provider
- * import useConfig , { ConfigProvider } from '@/contexts/config' ;
+ * import useConfig , { ConfigProvider } from 'oihana-next-ui/contexts/config' ;
  *
  * // Named imports
- * import { ConfigProvider , useSetConfig } from '@/contexts/config' ;
+ * import { ConfigProvider , useSetConfig } from 'oihana-next-ui/contexts/config' ;
  * ```
  */
 

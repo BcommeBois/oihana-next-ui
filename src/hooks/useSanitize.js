@@ -1,6 +1,6 @@
 import sanitizeHtml from 'sanitize-html'
 
-import useConfig from '@/contexts/config'
+import useConfig from '../contexts/config'
 
 import notEmpty from 'vegas-js-core/src/strings/notEmpty'
 import trim     from 'vegas-js-core/src/strings/trim'

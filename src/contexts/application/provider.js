@@ -23,7 +23,7 @@ const DEFAULT_CLASSNAME = 'flex flex-col py-4 px-3 lg:p-8 space-y-2 lg:space-y-4
  * @example
  * ```jsx
  * // In layout.js
- * import { ApplicationProvider } from '@/contexts/application' ;
+ * import { ApplicationProvider } from 'oihana-next-ui/contexts/application' ;
  *
  * <ApplicationProvider
  *     showNavbar    = { true }

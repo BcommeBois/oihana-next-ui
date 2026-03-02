@@ -39,9 +39,9 @@ import getBadgeClassNames from '../themes/components/badge' ;
  * @param {React.ElementType} [props.as] - Root element type.
  * @param {React.ReactNode} [props.children] - Badge content.
  * @param {string} [props.className] - Additional class name.
- * @param {import('@/themes/components/badge').BadgeColorValue} [props.color] - Badge color.
- * @param {import('@/themes/components/badge').BadgeSize} [props.size] - Badge size.
- * @param {import('@/themes/components/badge').BadgeStyle} [props.style] - Badge style variant.
+ * @param {import('../themes/components/badge').BadgeColorValue} [props.color] - Badge color.
+ * @param {import('../themes/components/badge').BadgeSize} [props.size] - Badge size.
+ * @param {import('../themes/components/badge').BadgeStyle} [props.style] - Badge style variant.
  */
 const Badge =
 ({

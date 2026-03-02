@@ -31,9 +31,9 @@ import MotionButton from './MotionButton' ;
  * @param {React.ElementType} [props.motion] - Motion wrapper component.
  * @param {Object} [props.motionProps] - Props passed to the motion wrapper.
  * @param {string} [props.path] - i18n path.
- * @param {import('@/themes/components/button').ButtonColorValue} [props.color='secondary'] - Button color.
- * @param {import('@/themes/components/button').ButtonShape} [props.shape='circle'] - Button shape.
- * @param {import('@/themes/components/button').ButtonSize} [props.size='md'] - Button size.
+ * @param {import('../../themes/components/button').ButtonColorValue} [props.color='secondary'] - Button color.
+ * @param {import('../../themes/components/button').ButtonShape} [props.shape='circle'] - Button shape.
+ * @param {import('../../themes/components/button').ButtonSize} [props.size='md'] - Button size.
  * @param {*} [props.rest] - Additional Button props.
  */
 const RefreshButton =

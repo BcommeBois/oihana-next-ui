@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useId } from 'react'
 
-import cn from '@/themes/helpers/cn'
+import cn from '../../themes/helpers/cn'
 
 import getToggleClasses from '../../themes/components/toggle'
 import useMergeRefs     from '../../hooks/useMergeRefs'

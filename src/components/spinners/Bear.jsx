@@ -1,7 +1,7 @@
 'use client' ;
 
-import Spinner from './Spinner' ;
-import useThemeColors from '@/themes/hooks/useThemeColors' ;
+import Spinner        from './Spinner' ;
+import useThemeColors from '../../themes/hooks/useThemeColors' ;
 
 import './styles/bear.css' ;
 

@@ -21,7 +21,7 @@ import notEmpty  from 'vegas-js-core/src/strings/notEmpty' ;
  * @prop {string} [defaultClassName] - Default className prepended to generated classes.
  * @prop {boolean} [html=false] - Parse children as HTML string.
  *
- * @prop {import('@/themes/typography/getTextClassNames').TextClassNameProps} textProps - All text styling props.
+ * @prop {import('../../themes/typography/getTextClassNames').TextClassNameProps} textProps - All text styling props.
  */
 
 /**

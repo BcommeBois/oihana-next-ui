@@ -7,26 +7,29 @@
 
 'use client' ;
 
-import LangDropDown from '@/components/dropDowns/LangDropDown';
-import cn from '@/themes/helpers/cn'
 
-import Link from '@/components/links/Link';
-import FullscreenButton from '@/components/buttons/FullscreenButton';
-import ThemeButton from '@/components/buttons/ThemeButton';
-import useConfig from '@/contexts/config' ;
-import useI18n   from '@/contexts/locale/useI18n' ;
+import cn from '../../themes/helpers/cn'
 
-import getNavbarClassNames , {
+import LangDropDown     from '../../components/dropDowns/LangDropDown';
+import Link             from '../../components/links/Link';
+import FullscreenButton from '../../components/buttons/FullscreenButton';
+import ThemeButton      from '../../components/buttons/ThemeButton';
+
+import useConfig from '../../contexts/config' ;
+import useI18n   from '../../contexts/locale/useI18n' ;
+
+import getNavbarClassNames ,
+{
     NAVBAR_START ,
     NAVBAR_CENTER ,
     NAVBAR_END ,
 }
-from '@/themes/components/navbar' ;
+from '../../themes/components/navbar' ;
 
 /**
  * @param {Object} props
  * @param {React.ElementType} [props.as='nav'] - Root element type.
- * @param {import('@/themes/colors/backgroundColor').BackgroundColor} [props.backgroundColor] - Background color.
+ * @param {import('../../themes/colors/backgroundColor').BackgroundColor} [props.backgroundColor] - Background color.
  * @param {React.ReactNode} [props.center] - Center section content.
  * @param {React.ReactNode} [props.children] - Children (replaces default layout).
  * @param {string} [props.className] - Additional class names.
@@ -35,7 +38,7 @@ from '@/themes/components/navbar' ;
  * @param {import('../layout/position').PositionValue} [props.position] - CSS position.
  * @param {React.Ref} [props.ref] - Forwarded ref.
  * @param {React.ReactNode} [props.right] - Extra content in the end section.
- * @param {import('@/themes/filters/shadow').ShadowValue} [props.shadow] - Box shadow.
+ * @param {import('../../themes/filters/shadow').ShadowValue} [props.shadow] - Box shadow.
  * @param {string} [props.titleClassName] - The additional title class names.
  */
 const Navbar =

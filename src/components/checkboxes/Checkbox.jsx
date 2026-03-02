@@ -2,7 +2,7 @@
 
 import { useEffect, useId , useRef } from 'react'
 
-import cn from '@/themes/helpers/cn'
+import cn from '../../themes/helpers/cn'
 
 import getCheckboxClasses from '../../themes/components/checkbox'
 

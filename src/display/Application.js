@@ -19,7 +19,7 @@ import ToastProvider       from '../contexts/toasts/provider';
 import Dashboard    from './ui/Dashboard';
 import SplashScreen from './SplashScreen';
 
-import useVersionCheck from '@/hooks/useVersionCheck'
+import useVersionCheck from '../hooks/useVersionCheck'
 
 import config       from '@/@configs'
 import languages    from '@/@configs/languages'

@@ -21,8 +21,8 @@ import Button from '../Button'
  * @param {Object} props
  * @param {React.ElementType} [props.as] - Root element type.
  * @param {boolean} [props.join=true] - DaisyUI join-item modifier.
- * @param {import('@/themes/components/button').ButtonShape} [props.shape='square'] - Button shape.
- * @param {import('@/themes/components/button').ButtonStyle} [props.style='ghost'] - Button style.
+ * @param {import('../../themes/components/button').ButtonShape} [props.shape='square'] - Button shape.
+ * @param {import('../../themes/components/button').ButtonStyle} [props.style='ghost'] - Button style.
  * @param {*} [props.rest] - Additional Button props.
  */
 const InputButton =

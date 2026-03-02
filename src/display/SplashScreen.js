@@ -1,6 +1,6 @@
 'use client';
 
-import cn from '@/themes/helpers/cn' ;
+import cn from '../themes/helpers/cn' ;
 
 import SplashFooter from './splashScreen/SplashFooter' ;
 import SplashHeader from './splashScreen/SplashHeader' ;
@@ -34,8 +34,6 @@ import SplashLogo   from './splashScreen/SplashLogo' ;
  * @example
  * ```jsx
  * // Basic usage with spread config
- * import splashScreen from '@/@configs/ui/splashScreen' ;
- *
  * <SplashScreen { ...splashScreen } />
  * ```
  *

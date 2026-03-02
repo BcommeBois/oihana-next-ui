@@ -8,7 +8,7 @@
  *
  * @example
  * ```jsx
- * import Loading from '@/components/Loading';
+ * import Loading from 'oihana-next-ui/components/Loading';
  *
  * // Default (ring, primary, lg)
  * <Loading />
@@ -32,10 +32,10 @@ import getLoadingClassNames , { RING } from '../themes/components/loading' ;
 
 /**
  * @param {Object} props
- * @param {import('@/themes/components/loading').LoadingAnimation} [props.animation='ring'] - Animation style.
+ * @param {import('../themes/components/loading').LoadingAnimation} [props.animation='ring'] - Animation style.
  * @param {string} [props.className] - Additional class name.
- * @param {import('../colors/textColor').TextColor} [props.color='primary'] - Loading color.
- * @param {import('@/themes/components/loading').LoadingSize} [props.size='lg'] - Loading size.
+ * @param {import('../themes/colors/textColor').TextColor} [props.color='primary'] - Loading color.
+ * @param {import('../themes/components/loading').LoadingSize} [props.size='lg'] - Loading size.
  */
 const Loading =
 ({

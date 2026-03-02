@@ -9,11 +9,11 @@
 
 import { useId , useEffect , useRef } from 'react' ;
 
-import cn from '@/themes/helpers/cn' ;
+import cn from '../../themes/helpers/cn' ;
 
-import useResetScroll from '@/hooks/useResetScroll' ;
+import useResetScroll from '../../hooks/useResetScroll' ;
 
-import { breakpoints } from '@/themes/enums/breakpoints' ;
+import { breakpoints } from '../../themes/enums/breakpoints' ;
 
 /**
  * @typedef {'start' | 'end'} DrawerAlign

@@ -6,7 +6,7 @@
  * @example
  * ```js
  * // Get locale value by path
- * import useI18n from '@/contexts/locale' ;
+ * import useI18n from 'oihana-next-ui/contexts/locale' ;
  *
  * const title = useI18n( 'page.title' ) ;
  * ```
@@ -14,7 +14,7 @@
  * @example
  * ```js
  * // Full locale access
- * import { useLocale } from '@/contexts/locale' ;
+ * import { useLocale } from 'oihana-next-ui/contexts/locale' ;
  *
  * const { locale , getLocale , setLocale } = useLocale() ;
  * ```
@@ -22,7 +22,7 @@
  * @example
  * ```js
  * // Provider setup
- * import { LocaleProvider , SPLIT , MERGE } from '@/contexts/locale' ;
+ * import { LocaleProvider , SPLIT , MERGE } from 'oihana-next-ui/contexts/locale' ;
  * ```
  */
 

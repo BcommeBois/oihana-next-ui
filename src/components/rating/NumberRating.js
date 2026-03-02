@@ -37,15 +37,15 @@ import cn               from '../../themes/helpers/cn' ;
  * @param {number} [props.defaultValue] - Default value for uncontrolled mode
  * @param {Function} [props.onChange] - Change handler (value) => void
  * @param {number} [props.count=5] - Number of buttons
- * @param {import('@/themes/components/button').ButtonShape} [props.shape='square'] - Button shape ('circle' or 'square')
+ * @param {import('../../themes/components/button').ButtonShape} [props.shape='square'] - Button shape ('circle' or 'square')
  * @param {string} [props.size='sm'] - Button size: 'xs', 'sm', 'md', 'lg', 'xl'
  * @param {string} [props.color='ghost'] - Inactive button color
  * @param {string} [props.activeColor='primary'] - Active button color
- * @param {import('@/themes/components/button').ButtonStyle} [props.style] - Button style: 'ghost', 'outline', 'soft', etc.
- * @param {import('@/themes/components/button').ButtonStyle} [props.activeStyle] - Active button style
+ * @param {import('../../themes/components/button').ButtonStyle} [props.style] - Button style: 'ghost', 'outline', 'soft', etc.
+ * @param {import('../../themes/components/button').ButtonStyle} [props.activeStyle] - Active button style
  * @param {boolean} [props.readOnly=false] - Read-only mode
  * @param {boolean} [props.allowClear=true] - Allow clearing by clicking active button
- * @param {string | number | import('@/themes/sizing/sizes').ResponsiveSize} [props.gap] - Gap between buttons
+ * @param {string | number | import('../../themes/sizing/sizes').ResponsiveSize} [props.gap] - Gap between buttons
  * @param {string} [props.className] - Additional classes for container
  * @param {string} [props.buttonClassName] - Additional classes for buttons
  * @param {boolean} [props.disabled=false] - Disable all buttons

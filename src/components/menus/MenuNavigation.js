@@ -10,14 +10,14 @@
  *
  * import { useState } from 'react';
  *
- * import Logo           from '@/@assets/Logo';
- * import Container      from '@/display/Container';
- * import Page           from '@/display/Page';
- * import Jump           from '@/motions/Jump';
- * import LetterReveal   from '@/motions/LetterReveal';
+ * import Logo           from 'oihana-next-ui/@assets/Logo';
+ * import Container      from 'oihana-next-ui/display/Container';
+ * import Page           from 'oihana-next-ui/display/Page';
+ * import Jump           from 'oihana-next-ui/motions/Jump';
+ * import LetterReveal   from 'oihana-next-ui/motions/LetterReveal';
  *
- * import FlagMenu from '@/components/menus/FlagMenu' ;
- * import MenuNavigation from '@/components/menus/MenuNavigation' ;
+ * import FlagMenu from 'oihana-next-ui/components/menus/FlagMenu' ;
+ * import MenuNavigation from 'oihana-next-ui/components/menus/MenuNavigation' ;
  *
  * import {
  *     MdHome as HomeIcon ,
