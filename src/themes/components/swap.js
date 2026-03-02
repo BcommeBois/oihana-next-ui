@@ -41,7 +41,6 @@ export const SWAP_OFF           = 'swap-off' ;
  * @param {Object} [props.before] - Class definitions to prepend.
  * @param {string} [props.beforeClassName] - ClassName to prepend.
  * @param {string} [props.className] - ClassName to append.
- * @param {string} [props.color] - The color of the swap element (text).
  * @param {boolean} [props.indeterminate] - Force indeterminate state via class.
  *
  * @returns {string} The swap className expression.
@@ -59,6 +58,9 @@ export const SWAP_OFF           = 'swap-off' ;
  *
  * getSwapClassNames({ indeterminate: true }) ;
  * // → 'swap swap-rotate swap-indeterminate'
+ *
+ * getSwapClassNames({ animation: undefined }) ;
+ * // → 'swap'
  * ```
  */
 const getSwapClassNames =
@@ -69,7 +71,6 @@ const getSwapClassNames =
      before ,
      beforeClassName ,
      className ,
-     color ,
      indeterminate ,
 } = {} ) => cn
 (

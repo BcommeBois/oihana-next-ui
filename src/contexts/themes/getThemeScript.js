@@ -15,34 +15,34 @@ const getThemeScript = ( { light, dark } ) =>
     return `
 (function ()
 {
-    const storageKey = 'theme';
-    const light = '${light}';
-    const dark  = '${dark}';
+    const storageKey = 'theme'    ;
+    const light      = '${light}' ;
+    const dark       = '${dark}'  ;
 
-    const stored = localStorage.getItem(storageKey);
-    let isDark;
+    const stored = localStorage.getItem( storageKey ) ;
+    
+    let isDark ;
 
-    if (stored !== null)
+    if ( stored !== null )
     {
         try
         {
-            isDark = JSON.parse(stored);
+            isDark = JSON.parse( stored ) ;
         }
         catch
         {
-            isDark = false;
+            isDark = false ;
         }
     }
     else
     {
-        isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        isDark = window.matchMedia('(prefers-color-scheme: dark)').matches ;
     }
 
-    const root = document.documentElement;
+    const root = document.documentElement ;
 
-    root.setAttribute('data-theme', isDark ? dark : light);
-    root.setAttribute('data-dark', isDark ? 'true' : 'false');
-
+    root.setAttribute( 'data-theme' , isDark ? dark   : light  ) ;
+    root.setAttribute( 'data-dark'  , isDark ? 'true' : 'false') ;
 })();
 `;
 }

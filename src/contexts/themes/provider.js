@@ -37,6 +37,7 @@ export const DARK = 'dark' ;
 const checkThemeDarkVariant = () =>
 {
     const container = document.createElement( 'div' ) ;
+
     container.setAttribute( 'data-dark' , 'true' ) ;
     container.style.position = 'absolute' ;
     container.style.opacity  = '0' ;
@@ -160,15 +161,17 @@ const ThemesProvider =
      tag = 'html'
 } ) =>
 {
-    const prefersDark = usePrefersDark() ;
     const { light = LIGHT , dark = DARK } = useConfig() ?? {} ;
 
-    const [ isDark , setIsDark ] = useLocalStorage( storageKey , prefersDark ) ;
+    const [ isDark , setIsDark ] = useLocalStorage( storageKey , null ) ;
     const [ colors , setColors ] = useState( {} ) ;
+
+    const prefersDark    = usePrefersDark() ;
+    const resolvedIsDark = isDark ?? prefersDark ?? false ;
 
     const toggleIsDark = () =>
     {
-        const newIsDark = !isDark ;
+        const newIsDark = !resolvedIsDark ;
         setIsDark( newIsDark ) ;
 
         const element = document.querySelector( tag ) ;
@@ -196,8 +199,10 @@ const ThemesProvider =
 
     useThemeColor( colors[ themeColorKey ] ?? 'base-100' , syncThemeColor ) ;
 
+
+
     return (
-        <ThemesContext value={ { colors , isDark , toggleIsDark } }>
+        <ThemesContext value={ { colors , isDark: resolvedIsDark , toggleIsDark } }>
             { children }
         </ThemesContext>
     ) ;
