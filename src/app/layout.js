@@ -4,8 +4,6 @@ import "@/styles"
 
 import courierPrime  from '@/themes/fonts/courrierPrime' ;
 import bitter        from '@/themes/fonts/bitter' ;
-import cinzel        from '@/themes/fonts/cinzel' ;
-import inter         from '@/themes/fonts/inter' ;
 import lato          from '@/themes/fonts/lato' ;
 import merriweather  from '@/themes/fonts/merriweather' ;
 import redHatMono    from '@/themes/fonts/redHatMono' ;
@@ -66,13 +64,12 @@ export default async function RootLayout ( { children } )
 
     const classNames  = getFontClassNames([
         bitter ,
-        cinzel ,
         courierPrime ,
-        inter ,
         lato ,
         merriweather ,
         redHatMono ,
-    ] , 'h-full' );
+    ]
+    , 'h-full' );
 
     const { dark , light } = config ;
 

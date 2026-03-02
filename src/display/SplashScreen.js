@@ -2,54 +2,70 @@
 
 import cn from '@/themes/helpers/cn' ;
 
-import splashScreen from '@/@configs/ui/splashScreen' ;
-
-import SplashFooter from '@/display/splashScreen/SplashFooter' ;
-import SplashHeader from '@/display/splashScreen/SplashHeader' ;
-import SplashLoader from '@/display/splashScreen/SplashLoader' ;
-import SplashLogo   from '@/display/splashScreen/SplashLogo' ;
+import SplashFooter from './splashScreen/SplashFooter' ;
+import SplashHeader from './splashScreen/SplashHeader' ;
+import SplashLoader from './splashScreen/SplashLoader' ;
+import SplashLogo   from './splashScreen/SplashLogo' ;
 
 /**
  * Splash screen displayed while the application is loading.
  *
- * Displays configurable header, logo, loader and footer based on
- * the configuration file @/@configs/ui/splashScreen.
- *
- * Features:
- * - Theme-aware logo rendering via ThemedImage
- * - Configurable visibility for each section
- * - Customizable typography via headerClassName and footerClassName
- * - Customizable loader style via loaderClassName (DaisyUI variants)
- * - Customizable logo size via logoClassName
- * - Full accessibility support with ARIA attributes
- * - Responsive layout with flexbox
- * - Custom pattern background support
+ * Renders a full-screen overlay with configurable header, logo, loader and footer.
+ * Typically used in combination with `AnimatePresence` for a fade-in/out transition.
  *
  * @component
- * @example
- * // Configured via @/@configs/ui/splashScreen
- * <SplashScreen />
+ *
+ * @param {Object}  props
+ * @param {string}  [props.className]            - Additional class names for the root element.
+ * @param {string}  [props.footer]               - Footer text content.
+ * @param {string}  [props.footerClassName]      - Additional class names for the footer.
+ * @param {string}  [props.header]               - Header text content.
+ * @param {string}  [props.headerClassName]      - Additional class names for the header.
+ * @param {string}  [props.loaderClassName]      - Additional class names for the loader (DaisyUI variants).
+ * @param {*}       [props.logo]                 - Logo asset passed to SplashLogo.
+ * @param {string}  [props.logoClassName]        - Additional class names for the logo.
+ * @param {boolean} [props.showFooter=true]      - Whether to render the footer.
+ * @param {boolean} [props.showHeader=true]      - Whether to render the header.
+ * @param {boolean} [props.showLoader=true]      - Whether to render the loader.
+ * @param {boolean} [props.showLogo=true]        - Whether to render the logo.
  *
  * @returns {React.JSX.Element}
+ *
+ * @example
+ * ```jsx
+ * // Basic usage with spread config
+ * import splashScreen from '@/@configs/ui/splashScreen' ;
+ *
+ * <SplashScreen { ...splashScreen } />
+ * ```
+ *
+ * @example
+ * ```jsx
+ * // Manual usage
+ * <SplashScreen
+ *     header     = "My Application"
+ *     footer     = "version 1.0.0"
+ *     logo       = { logo }
+ *     showLoader = { true }
+ * />
+ * ```
  */
-const SplashScreen = () =>
+const SplashScreen =
+({
+     className ,
+     footer ,
+     footerClassName = '' ,
+     header ,
+     headerClassName = '' ,
+     loaderClassName = '' ,
+     logo ,
+     logoClassName   = '' ,
+     showFooter    = true ,
+     showHeader    = true ,
+     showLoader    = true ,
+     showLogo      = true ,
+}) =>
 {
-    const {
-        className,
-        footer,
-        footerClassName = '',
-        header,
-        headerClassName = '',
-        loaderClassName = '',
-        logo,
-        logoClassName   = '',
-        showFooter      = true,
-        showHeader      = true,
-        showLoader      = true,
-        showLogo        = true,
-    }
-    = splashScreen;
-
     return (
         <div
             className  = { cn( 'flex grow flex-col min-h-screen', className ) }

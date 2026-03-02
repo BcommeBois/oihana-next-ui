@@ -35,10 +35,10 @@ export const TOP   = 'top' ;
  */
 const Dashboard =
 ({
-    breakpoint     : breakpointProp ,
+    breakpoint: breakpointProp ,
     children ,
     configPath  = 'ui.dashboard' ,
-    layout         : layoutProp ,
+    layout : layoutProp ,
     titleClassName : titleClassNameProp ,
 }) =>
 {

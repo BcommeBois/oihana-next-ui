@@ -1,6 +1,6 @@
-import cn from '@/themes/helpers/cn';
+import cn        from '@/themes/helpers/cn';
 import useConfig from '@/contexts/config';
-import version from '@/version';
+import version   from '@/version';
 
 /**
  * @typedef {Object} VersionConfig
@@ -25,7 +25,8 @@ import version from '@/version';
  * <Version configPath="ui.footer.version" />
  * ```
  */
-const Version = ({
+const Version =
+({
     className,
     configPath = 'ui.version',
 }) =>

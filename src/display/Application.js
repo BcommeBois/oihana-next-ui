@@ -2,31 +2,30 @@
 
 import { useEffect , useState } from 'react' ;
 
-import SplashScreen from '@/display/SplashScreen';
 
 import { AnimatePresence , motion } from 'motion/react' ;
 
-import ApplicationProvider from '@/contexts/application/provider' ;
-import ConfigProvider      from '@/contexts/config/provider' ;
-import FullScreenProvider  from '@/contexts/fullscreen/provider' ;
-import LangProvider        from '@/contexts/lang/provider' ;
-import LoadingProvider     from '@/contexts/loading/provider' ;
-import LocaleProvider      from '@/contexts/locale/provider' ;
-import NavigationProvider  from '@/contexts/navigation/provider' ;
-import SelectProvider      from '@/contexts/select/provider' ;
-import ThemeProvider       from '@/contexts/themes/provider' ;
-import ToastProvider       from '@/contexts/toasts/provider';
+import ApplicationProvider from '../contexts/application/provider' ;
+import ConfigProvider      from '../contexts/config/provider' ;
+import FullScreenProvider  from '../contexts/fullscreen/provider' ;
+import LangProvider        from '../contexts/lang/provider' ;
+import LoadingProvider     from '../contexts/loading/provider' ;
+import LocaleProvider      from '../contexts/locale/provider' ;
+import NavigationProvider  from '../contexts/navigation/provider' ;
+import SelectProvider      from '../contexts/select/provider' ;
+import ThemeProvider       from '../contexts/themes/provider' ;
+import ToastProvider       from '../contexts/toasts/provider';
 
-import Dashboard from '@/display/ui/Dashboard';
+import Dashboard    from './ui/Dashboard';
+import SplashScreen from './SplashScreen';
 
 import useVersionCheck from '@/hooks/useVersionCheck'
 
-import config     from '@/@configs'
-import languages  from '@/@configs/languages'
-import locale     from '@/@locale'
-import navigation from '@/@configs/navigation'
-
-import logo from '@/@assets/logos/oihana-next-ui-logo-512x512.svg' ;
+import config       from '@/@configs'
+import languages    from '@/@configs/languages'
+import locale       from '@/@locale'
+import navigation   from '@/@configs/navigation'
+import splashScreen from '@/@configs/ui/splashScreen' ;
 
 const { defaultLang , version , versionCheck } = config ;
 
@@ -54,7 +53,7 @@ const Application = ( { children , initialLang } ) =>
                     exit       = { { opacity : 0 } }
                     transition = { { duration : 0.4 , delay : 0.3 } }
                 >
-                    <SplashScreen logo={ logo } />
+                    <SplashScreen { ...splashScreen } />
                 </motion.div>
             ) }
         </AnimatePresence>
