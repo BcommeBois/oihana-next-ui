@@ -52,7 +52,8 @@ import getRadialProgressClasses from '../../themes/components/radialProgress' ;
  * @param {*} [props.progressRef] - Ref for progress element
  * @param {Object} [props.progressProps] - Additional props for div element
  */
-const RadialProgress = ({
+const RadialProgress =
+({
     value = 0,
     max = 100,
     size = '5rem',
