@@ -1,5 +1,7 @@
 'use client' ;
 
+import { useMemo } from 'react' ;
+
 import { motion } from 'motion/react' ;
 
 /**
@@ -45,7 +47,7 @@ const StaggerList =
     ...rest
 }) =>
 {
-    const MotionTag = motion.create( Tag ) ;
+    const MotionTag = useMemo( () => motion.create( Tag ) , [ Tag ] ) ;
 
     const containerVariants =
     {
@@ -72,7 +74,7 @@ const StaggerList =
             { Array.isArray( children )
                 ? children.map( ( child , i ) => (
                     <motion.div
-                        key        = { child?.key ?? i }
+                        key        = { child?.key ?? `stagger-item-${ i }` }
                         variants   = { itemVariants }
                         transition = { itemTransition }
                     >

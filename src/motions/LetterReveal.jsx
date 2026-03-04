@@ -1,5 +1,7 @@
 'use client' ;
 
+import { useMemo } from 'react' ;
+
 import { motion } from 'motion/react' ;
 
 import cn from '../themes/helpers/cn'
@@ -33,8 +35,8 @@ const LetterReveal =
     ...rest
 }) =>
 {
-    const MotionTag = motion.create( Tag ) ;
-    const letters = text.split( '' ) ;
+    const MotionTag = useMemo( () => motion.create( Tag ) , [ Tag ] ) ;
+    const letters   = text.split( '' ) ;
 
     return (
         <MotionTag
@@ -47,7 +49,7 @@ const LetterReveal =
         >
             { letters.map( ( letter , i ) => (
                 <motion.span
-                    key         = { i }
+                    key         = { `letter-reveal-${ i }` }
                     className   = "inline-block"
                     style       = { letter === ' ' ? { width: '0.25em' } : undefined }
                     variants    = { {

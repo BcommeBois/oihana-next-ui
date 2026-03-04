@@ -30,6 +30,7 @@ import { BsFillMarkdownFill     as MarkdownIcon       } from 'react-icons/bs' ;
 import { GiDominoMask           as MaskIcon           } from "react-icons/gi";
 import { RiLayoutMasonryFill    as MasonryIcon        } from "react-icons/ri";
 import { TfiLayoutMenuSeparated as MenuIcon           } from "react-icons/tfi" ;
+import { MdAnimation            as MotionIcon         } from "react-icons/md";
 import { BiFoodMenu             as NavigationIcon     } from "react-icons/bi";
 import { MdOutlineNetworkWifi   as NetworkIcon        } from "react-icons/md";
 import { TfiLayoutMenu          as PaginationIcon     } from "react-icons/tfi";
@@ -93,6 +94,7 @@ const navigation =
                     { id : 'masks'      , type : LINK  , Icon : MaskIcon       , path  : '/lab/masks'      } ,
                     { id : 'markdown'   , type : LINK  , Icon : MarkdownIcon   , path  : '/lab/markdown'   } ,
                     { id : 'typography' , type : LINK  , Icon : TypographyIcon , path  : '/lab/typography' } ,
+                    { id : 'motion'     , type : LINK  , Icon : MotionIcon     , path  : '/lab/motion'     } ,
                     { id : 'network'    , type : LINK  , Icon : NetworkIcon    , path  : '/lab/network'    } ,
                     { id : 'status'     , type : LINK  , Icon : StatusIcon     , path  : '/lab/status'     } ,
                 ]

@@ -1,5 +1,7 @@
 'use client' ;
 
+import { useMemo } from 'react' ;
+
 import { motion } from 'motion/react' ;
 
 /**
@@ -42,7 +44,7 @@ const Tilt =
     ...rest
 }) =>
 {
-    const MotionTag = motion.create( Tag ) ;
+    const MotionTag = useMemo( () => motion.create( Tag ) , [ Tag ] ) ;
 
     const handleMouseMove = ( e ) =>
     {

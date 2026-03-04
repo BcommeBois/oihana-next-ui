@@ -1,5 +1,7 @@
 'use client' ;
 
+import { useMemo } from 'react' ;
+
 import { motion } from 'motion/react' ;
 
 import cn from '../themes/helpers/cn'
@@ -31,7 +33,7 @@ const WordReveal =
     ...rest
 }) =>
 {
-    const MotionTag = motion.create( Tag ) ;
+    const MotionTag = useMemo( () => motion.create( Tag ) , [ Tag ] ) ;
     const words = text.split( ' ' ) ;
 
     return (
@@ -44,7 +46,7 @@ const WordReveal =
         >
             { words.map( ( word , i ) => (
                 <motion.span
-                    key        = { i }
+                    key        = { `word-reveal-${ i }` }
                     className  = "inline-block mr-[0.25em]"
                     variants   = { {
                         hidden  : { opacity: 0 , y: 20 , filter: 'blur(4px)' } ,
