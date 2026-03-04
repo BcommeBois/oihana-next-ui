@@ -1,6 +1,6 @@
 'use client' ;
 
-import { useContext } from 'react' ;
+import { use } from 'react' ;
 
 import ApplicationContext from './context'
 
@@ -42,7 +42,7 @@ import ApplicationContext from './context'
  */
 const useApplication = () =>
 {
-    const context = useContext( ApplicationContext ) ;
+    const context = use( ApplicationContext ) ;
 
     if ( !context )
     {

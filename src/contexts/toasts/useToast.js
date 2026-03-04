@@ -6,7 +6,7 @@
  * @module contexts/toasts/useToast
  */
 
-import { useContext } from 'react' ;
+import { use } from 'react' ;
 
 import generateUUID from 'vegas-js-core/src/random/generateUUID' ;
 import notEmpty     from 'vegas-js-core/src/strings/notEmpty' ;
@@ -45,7 +45,7 @@ export { ERROR , INFO , SUCCESS , WARNING } from '../../themes/colors' ;
  */
 const useToast = ({ delay = 4000 , show = true } = {}) =>
 {
-    const context = useContext( ToastContext ) ;
+    const context = use( ToastContext ) ;
 
     if ( !context )
     {

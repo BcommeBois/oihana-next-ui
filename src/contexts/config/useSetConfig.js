@@ -1,6 +1,6 @@
 'use client' ;
 
-import { useContext } from 'react' ;
+import { use } from 'react' ;
 
 import ConfigContext from './context' ;
 
@@ -17,7 +17,7 @@ import ConfigContext from './context' ;
  */
 const useSetConfig = () =>
 {
-    const context = useContext( ConfigContext ) ;
+    const context = use( ConfigContext ) ;
 
     if ( !context )
     {

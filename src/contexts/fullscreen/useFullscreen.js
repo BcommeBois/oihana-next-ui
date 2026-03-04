@@ -1,6 +1,6 @@
 'use client';
 
-import { useContext } from 'react'
+import { use } from 'react'
 
 import FullscreenContext from './context'
 
@@ -25,7 +25,7 @@ import FullscreenContext from './context'
  */
 const useFullscreen = () =>
 {
-    const context = useContext( FullscreenContext ) ;
+    const context = use( FullscreenContext ) ;
 
     if ( !context )
     {

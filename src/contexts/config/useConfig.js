@@ -1,6 +1,6 @@
 'use client' ;
 
-import { useContext } from 'react' ;
+import { use } from 'react' ;
 
 import get from 'vegas-js-core/src/objects/get' ;
 
@@ -32,7 +32,7 @@ import ConfigContext from './context' ;
  */
 const useConfig = ( path = null , defaultValue = {} ) =>
 {
-    const context = useContext( ConfigContext ) ;
+    const context = use( ConfigContext ) ;
 
     if ( !context )
     {

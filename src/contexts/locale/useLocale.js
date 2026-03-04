@@ -1,6 +1,6 @@
 'use client' ;
 
-import { useContext } from 'react'
+import { use } from 'react'
 
 import LocaleContext from './context'
 
@@ -28,7 +28,7 @@ import LocaleContext from './context'
  */
 const useLocale = () =>
 {
-    const context = useContext( LocaleContext ) ;
+    const context = use( LocaleContext ) ;
 
     if ( !context )
     {

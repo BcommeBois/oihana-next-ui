@@ -1,8 +1,9 @@
 'use client' ;
 
-import Container      from '@/display/Container' ;
-import Page           from '@/display/Page' ;
-import Markdown from 'src/components/typography/Markdown';
+import Container from '../../display/Container' ;
+import Page      from '../../display/Page' ;
+
+import Markdown from '../../components/typography/Markdown';
 
 import readme from '../../../README.md' ;
 

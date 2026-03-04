@@ -1,6 +1,6 @@
 'use client' ;
 
-import { useContext } from 'react' ;
+import { use } from 'react' ;
 
 import NavigationContext from './context' ;
 
@@ -29,7 +29,7 @@ import NavigationContext from './context' ;
  */
 const useNavigation = () =>
 {
-    const context = useContext( NavigationContext ) ;
+    const context = use( NavigationContext ) ;
 
     if ( !context )
     {

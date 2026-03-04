@@ -1,6 +1,6 @@
 'use client' ;
 
-import { useContext } from 'react' ;
+import { use } from 'react' ;
 
 import LangContext from './context' ;
 
@@ -28,7 +28,7 @@ import LangContext from './context' ;
  */
 const useLang = () =>
 {
-    const context = useContext( LangContext ) ;
+    const context = use( LangContext ) ;
 
     if ( !context )
     {

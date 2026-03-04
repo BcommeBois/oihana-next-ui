@@ -1,6 +1,6 @@
 'use client' ;
 
-import { useContext } from 'react' ;
+import { use } from 'react' ;
 
 import ThemesContext from './context' ;
 
@@ -31,7 +31,7 @@ import ThemesContext from './context' ;
  */
 const useThemes = () =>
 {
-    const context = useContext( ThemesContext ) ;
+    const context = use( ThemesContext ) ;
 
     if ( !context )
     {

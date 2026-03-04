@@ -1,6 +1,6 @@
 'use client' ;
 
-import { useContext } from 'react' ;
+import { use } from 'react' ;
 
 import SelectContext from './context' ;
 
@@ -27,7 +27,7 @@ import SelectContext from './context' ;
  */
 const useSelect = () =>
 {
-    const context = useContext( SelectContext ) ;
+    const context = use( SelectContext ) ;
 
     if ( !context )
     {
