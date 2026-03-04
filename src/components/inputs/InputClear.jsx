@@ -1,9 +1,11 @@
 'use client';
 
-import { useCallback , useRef } from 'react' ;
+import { useRef } from 'react' ;
 
 import Input from './Input' ;
 
+import cn           from '../../themes/helpers/cn' ;
+import styles       from './styles/InputActions.module.css' ;
 import useMergeRefs from '../../hooks/useMergeRefs'
 import useValue     from '../../hooks/useValue' ;
 
@@ -79,14 +81,13 @@ const InputClear =
     const internalRef = useRef( null ) ;
     const mergedRef   = useMergeRefs( internalRef , ref ) ;
 
-    const handleChange = useCallback( event =>
+    const handleChange = event =>
     {
-        const inputValue = event?.target?.value ?? (typeof event === 'string' ? event : '') ;
-        setValue( inputValue ) ;
-    }
-    , [ setValue ] ) ;
+        const inputValue = event?.target?.value ?? (typeof event === 'string' ? event : '');
+        setValue(inputValue);
+    } ;
 
-    const handleClear = useCallback( event =>
+    const handleClear = event =>
     {
         event?.preventDefault();
         setValue( '' ) ;
@@ -95,8 +96,7 @@ const InputClear =
         {
             internalRef.current?.focus();
         });
-    }
-    , [ setValue , onClear ] ) ;
+    };
 
     const iconElement = showIcon &&
     (
@@ -113,7 +113,7 @@ const InputClear =
             key        = "clear"
             type       = "button"
             onClick    = { handleClear }
-            className  = "btn btn-input join-item btn-square btn-ghost opacity-70 hover:opacity-100"
+            className  = { cn( 'btn join-item btn-square btn-ghost opacity-70 hover:opacity-100' , styles.btnInput , error && styles.btnInputError ) }
             aria-label = { clearLabel }
             title      = { clearLabel }
         >
@@ -124,21 +124,21 @@ const InputClear =
 
     return (
         <Input
-            type          = { type }
-            value         = { value }
-            onChange      = { handleChange }
-            placeholder   = { placeholder }
-            icon          = { iconElement }
-            iconClassName = { iconClassName }
             actions       = { clearButton }
             disabled      = { disabled }
-            readOnly      = { readOnly }
             error         = { error }
             helper        = { helper }
+            icon          = { iconElement }
+            iconClassName = { iconClassName }
             label         = { label }
             legend        = { legend }
-            useFieldset   = { useFieldset }
+            onChange      = { handleChange }
+            placeholder   = { placeholder }
+            readOnly      = { readOnly }
             ref           = { mergedRef }
+            type          = { type }
+            useFieldset   = { useFieldset }
+            value         = { value }
             { ...rest }
         />
     );

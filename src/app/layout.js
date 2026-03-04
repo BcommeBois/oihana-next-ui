@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers' ;
 
-import "@/styles"
+import "./global.css" ;
 
 import courierPrime  from '@/themes/fonts/courrierPrime' ;
 import bitter        from '@/themes/fonts/bitter' ;

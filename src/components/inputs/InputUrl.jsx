@@ -2,10 +2,12 @@
 
 import { useRef } from 'react'
 
+import Input from './Input'
+
+import cn           from '../../themes/helpers/cn' ;
+import styles       from './styles/InputActions.module.css' ;
 import useValue     from '../../hooks/useValue'
 import useMergeRefs from '../../hooks/useMergeRefs'
-
-import Input from './Input'
 
 import { MdLink as LinkIcon, MdOpenInNew as OpenIcon } from 'react-icons/md' ;
 
@@ -188,7 +190,7 @@ const InputURL =
             type       = "button"
             onClick    = { handleOpen }
             disabled   = { !value || disabled }
-            className  = "btn btn-input join-item btn-square font-semibold"
+            className  = { cn( 'btn join-item btn-square font-semibold' , styles.btnInput , error && styles.btnInputError ) }
             aria-label = { openLabel }
             title      = { openLabel }
         >
@@ -250,7 +252,7 @@ const InputURL =
             pattern       = { buildUrlPattern() }
             placeholder   = { placeholder }
             readOnly      = { readOnly }
-            ref           = { ref }
+            ref           = { mergedRef }
             required      = { required }
             title         = { title }
             type          = "url"

@@ -2,9 +2,12 @@
 
 import { useState } from 'react' ;
 
-import Container from '@/display/Container' ;
+import cn     from '../../themes/helpers/cn' ;
+import styles from '../../components/inputs/styles/InputActions.module.css' ;
 
-import Select from '@/components/selects/Select' ;
+import Container from '../../display/Container' ;
+
+import Select from '../../components/selects/Select' ;
 
 const SelectDemo = () =>
 {
@@ -208,8 +211,8 @@ const SelectDemo = () =>
                     label="Filter"
                     actions={
                         <button
-                            className="btn btn-square btn-input"
-                            onClick={() => alert('Clear filter')}
+                            className = { cn( 'btn btn-square' , styles.btnInput ) }
+                            onClick   = { () => alert('Clear filter') }
                         >
                             ✕
                         </button>
@@ -229,7 +232,7 @@ const SelectDemo = () =>
                 <Select
                     label="Programming Language"
                     value={ controlledValue }
-                    onChange={ (e) => setControlledValue( e.target.value ) }
+                    onChange={ e => setControlledValue( e.target.value ) }
                     helper={ controlledValue ? `You selected: ${controlledValue}` : 'No selection yet' }
                 >
                     <option value="">Select a language</option>

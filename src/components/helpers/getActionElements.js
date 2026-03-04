@@ -1,5 +1,7 @@
 import cn from '../../themes/helpers/cn' ;
 
+import styles from '../inputs/styles/InputActions.module.css' ;
+
 /**
  * Renders action buttons for input/select components.
  *
@@ -38,8 +40,8 @@ const getActionElements = ( actions, hasError = false ) =>
                 { ...action.props }
                 className = { cn
                 (
-                    action.props.className,
-                    hasError && 'btn-input-error'
+                    action.props.className ,
+                    hasError && styles.btnInputError
                 )}
             />
         ) ;

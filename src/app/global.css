@@ -1,0 +1,221 @@
+@import "tailwindcss";
+
+/* =============================
+   Fonts (via next/font variables)
+   ============================= */
+
+/* noinspection CssUnresolvedCustomProperty */
+@theme {
+    --font-sans    : var(--font-lato);
+    --font-serif   : var(--font-courier-prime);
+    --font-mono    : var(--font-red-hat-mono);
+    --font-display : var(--font-merriweather);
+    --font-heading : var(--font-bitter);
+}
+
+@custom-variant theme-dark (&:is([data-dark="true"] *));
+
+/* =============================
+   Base
+   ============================= */
+
+@layer base
+{
+    body
+    {
+        font-family : var(--font-sans), sans-serif;;
+    }
+
+    h1, h2, h3, h4, h5, h6
+    {
+        font-family : var(--font-heading), serif;
+    }
+
+    h1 { @apply text-3xl font-bold sm:text-4xl md:text-5xl lg:text-6xl ; }
+    h2 { @apply text-2xl font-bold sm:text-3xl md:text-4xl ; }
+    h3 { @apply text-xl font-semibold sm:text-2xl lg:text-3xl ; }
+    h4 { @apply text-lg font-semibold sm:text-xl ; }
+    h5 { @apply text-base font-medium sm:text-lg ; }
+    h6 { @apply text-sm font-medium sm:text-base ; }
+
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button
+    {
+        -webkit-appearance: none !important;
+        margin: 0 !important;
+    }
+
+    input[type=number] {
+        -moz-appearance: textfield !important;
+    }
+}
+
+/* =============================
+   Fullscreen
+   ============================= */
+
+::backdrop
+{
+    z-index          : 0 ;
+    background-color : transparent !important ;
+}
+
+:fullscreen
+{
+    z-index          : 1 ;
+    background-color : transparent ;
+}
+
+/* =============================
+   Scrollbar
+   ============================= */
+
+/* Firefox */
+*
+{
+    scrollbar-width : thin ;
+    scrollbar-color : rgba(0,0,0,0.5) rgba(0,0,0,0.2) ;
+}
+
+/* Chrome, Edge, Safari */
+*::-webkit-scrollbar { width: 4px ; }
+
+*::-webkit-scrollbar-track
+{
+    background    : rgba(0,0,0,0.2) ;
+    border-radius : 4px ;
+}
+
+*::-webkit-scrollbar-thumb
+{
+    background-color : rgba(0,0,0,0.5) ;
+    border-radius    : 9999px ;
+    border           : 1px solid transparent ;
+}
+
+/* =============================
+   Utilities
+   ============================= */
+
+@layer utilities
+{
+    /* Z-index personnalisés */
+    .z-500   { z-index: 500; }
+    .z-1000  { z-index: 1000; }
+    .z-2000  { z-index: 2000; }
+    .z-9999  { z-index: 9999; }
+    .z-99999 { z-index: 99999; }
+
+    /* Rotations personnalisées */
+    .rotate-75  { transform: rotate(75deg); }
+    .rotate-135 { transform: rotate(135deg); }
+    .rotate-225 { transform: rotate(225deg); }
+    .rotate-270 { transform: rotate(270deg); }
+}
+
+@utility text-glow
+{
+    filter : drop-shadow( 0 1px 3px color-mix( in oklch , var(--color-primary) , transparent 50% ) ) ;
+}
+
+/* =============================
+   Plugins / DaisyUI
+   ============================= */
+
+/* https://github.com/new-data-services/tailwindcss-animated */
+@plugin "tailwindcss-animated";
+
+/* https://tailwindcss-opentype.netlify.app/installation/ */
+@plugin "tailwindcss-opentype";
+
+/* https://adoxography.github.io/tailwind-scrollbar/getting-started */
+@plugin 'tailwind-scrollbar';
+
+/* https://github.com/tailwindlabs/tailwindcss-typography */
+@plugin "@tailwindcss/typography";
+
+/* background pattern */
+@plugin '../themes/plugins/background-patterns/index.mjs' ;
+
+/* pattern craft */
+/*@plugin '../themes/plugins/pattern-craft/index.mjs' ;*/
+
+/* =============================
+   DaisyUI
+   ============================= */
+
+@plugin "daisyui"
+{
+    themes : garden --default, coffee --prefersdark;
+    root   : ":root";
+    logs   : true;
+}
+
+@plugin "daisyui/theme"
+{
+    name                      : "oihana-ui-light" ;
+    default                   : true ;
+    color-scheme              : light ;
+
+    /* Colors */
+
+    --color-primary           : #E12A27 ;
+    --color-primary-content   : #ECEFF4 ;
+    --color-secondary         : #F9BF05 ;
+    --color-secondary-content : #3B4252 ;
+    --color-accent            : #434C5E ;
+    --color-accent-content    : #F7F0EA ;
+    --color-neutral           : #4C566A ;
+    --color-neutral-content   : #ECEFF4 ;
+
+    /*--color-base-100: oklch(91.637% 0.034 90.515);*/
+    /*--color-base-200: oklch(88.272% 0.049 91.774);*/
+    /*--color-base-300: oklch(84.133% 0.065 90.856);*/
+    /*--color-base-content: oklch(41% 0.112 45.904);*/
+
+    --color-base-100          : #FAF6F2 ;
+    --color-base-200          : #F0E8E0 ;
+    --color-base-300          : #D9CFC4 ;
+    --color-base-content      : #2E3440 ;
+
+    --color-info              : #EBCB8B ;
+    --color-info-content      : #3B4252 ;
+    --color-success           : #A3BE8C ;
+    --color-success-content   : #2E3440 ;
+    --color-warning           : #D08770 ;
+    --color-warning-content   : #2E3440 ;
+    --color-error             : #BF616A ;
+    --color-error-content     : #ECEFF4 ;
+}
+
+@plugin "daisyui/theme"
+{
+    name         : "oihana-ui-dark" ;
+    prefersdark  : true ;
+    color-scheme : dark ;
+
+    /* Colors */
+
+    --color-primary           : #E12A27 ;
+    --color-primary-content   : #ECEFF4 ;
+    --color-secondary         : #F9BF05 ;
+    --color-secondary-content : #2E3440 ;
+    --color-accent            : #4C566A ;
+    --color-accent-content    : #F7F0EA ;
+    --color-neutral           : #D8DEE9 ;
+    --color-neutral-content   : #2E3440 ;
+
+    --color-base-100          : #2E3440 ;
+    --color-base-200          : #3B4252 ;
+    --color-base-300          : #434C5E ;
+    --color-base-content      : #ECEFF4 ;
+
+    --color-info              : #EBCB8B ;
+    --color-info-content      : #3B4252 ;
+    --color-success           : #A3BE8C ;
+    --color-success-content   : #2E3440 ;
+    --color-warning           : #D08770 ;
+    --color-warning-content   : #2E3440 ;
+    --color-error             : #BF616A ;
+    --color-error-content     : #ECEFF4 ;
+}

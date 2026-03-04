@@ -9,6 +9,8 @@ import round from 'vegas-js-core/src/maths/round'
 
 import Input from './Input'
 
+import cn           from '../../themes/helpers/cn' ;
+import styles       from './styles/InputActions.module.css' ;
 import useMergeRefs from '../../hooks/useMergeRefs'
 
 import { MdNumbers as DefaultIcon } from 'react-icons/md'
@@ -142,6 +144,13 @@ const InputCounter =
 
     const numericValue = value === '' || isNaN(value) ? defaultValue : parseFloat(value);
 
+    const btnClassNames = cn
+    (
+       'btn join-item btn-square font-semibold' ,
+        styles.btnInput ,
+        error && styles.btnInputError
+    ) ;
+
     // Action buttons (stepper)
     const actions = showStepper && !readOnly ?
     [
@@ -150,7 +159,7 @@ const InputCounter =
             type       = "button"
             onClick    = { handleLess }
             disabled   = { disabled || numericValue <= min }
-            className  = "btn btn-input join-item btn-square font-semibold"
+            className  = { btnClassNames }
             aria-label = { decreaseLabel }
             title      = { decreaseLabel }
         >
@@ -161,7 +170,7 @@ const InputCounter =
             type       = "button"
             onClick    = { handleMore }
             disabled   = { disabled || numericValue >= max }
-            className  = "btn btn-input join-item btn-square font-semibold"
+            className  = { btnClassNames }
             aria-label = { increaseLabel }
             title      = { increaseLabel }
         >

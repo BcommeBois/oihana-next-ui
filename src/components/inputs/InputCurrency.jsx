@@ -5,13 +5,15 @@ import { useMemo , useRef } from 'react'
 import { useMaskito } from '@maskito/react'
 import { maskitoNumberOptionsGenerator } from '@maskito/kit'
 
-import useMergeRefs from '../../hooks/useMergeRefs'
-import useValue     from '../../hooks/useValue'
-
 import clamp from 'vegas-js-core/src/maths/clamp'
 import round from 'vegas-js-core/src/maths/round'
 
 import Input from './Input'
+
+import cn           from '../../themes/helpers/cn' ;
+import styles       from './styles/InputActions.module.css' ;
+import useMergeRefs from '../../hooks/useMergeRefs'
+import useValue     from '../../hooks/useValue'
 
 import {
     MdEuro   as EuroIcon ,
@@ -192,11 +194,13 @@ const InputCurrency =
 
     const currentNum = isValueEmpty( value ) || isNaN( value ) ? defaultValue : Number( value ) ;
 
+    const btnClassNames = cn( 'btn join-item btn-square font-semibold' , styles.btnInput , error && styles.btnInputError ) ;
+
     const actions = showStepper && !readOnly ?
     [
         <button
             aria-label = { decreaseLabel }
-            className  = "btn btn-input join-item btn-square font-semibold"
+            className  = { btnClassNames }
             disabled   = { disabled || currentNum <= min }
             key        = "less"
             onClick    = { handleLess }
@@ -208,7 +212,7 @@ const InputCurrency =
         <button
             aria-label = { increaseLabel }
             key        = "more"
-            className  = "btn btn-input join-item btn-square font-semibold"
+            className  = { btnClassNames }
             disabled   = { disabled || currentNum >= max }
             onClick    = { handleMore }
             title      = { increaseLabel }

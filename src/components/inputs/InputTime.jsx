@@ -9,6 +9,9 @@ import SwapButton from '../../components/buttons/SwapButton'
 
 import { AM , PM } from '../../helpers/time/meridies'
 
+import cn     from '../../themes/helpers/cn' ;
+import styles from './styles/InputActions.module.css' ;
+
 import useMergeRefs from '../../hooks/useMergeRefs'
 import useTime      from '../../helpers/time/useTime'
 
@@ -201,7 +204,7 @@ const InputTime =
 
     const meridiemButton = ampm ? (
         <SwapButton
-            className        = "btn-input join-item"
+            className        = { cn( 'join-item' , styles.btnInput , error && styles.btnInputError ) }
             checked          = { meridiem === AM }
             disabled         = { disabled || readOnly }
             on               = { AM }

@@ -2,7 +2,11 @@
 
 import { useEffect, useRef } from 'react'
 
+import cn from '../../themes/helpers/cn'
+
 import Input from './Input'
+
+import styles from './styles/InputActions.module.css' ;
 
 import useDebouncedValue from '../../hooks/useDebouncedValue'
 import useMergeRefs      from '../../hooks/useMergeRefs'
@@ -106,6 +110,13 @@ const InputSearch =
 
     const actions = [];
 
+    const btnClassNames = cn
+    (
+        'btn join-item btn-square font-semibold' ,
+        styles.btnInput ,
+        error && styles.btnInputError ,
+    ) ;
+
     if ( showClearButton && value && !readOnly && !disabled )
     {
         actions.push
@@ -114,7 +125,7 @@ const InputSearch =
                 key        = "clear"
                 type       = "button"
                 onClick    = { handleClear }
-                className  = "btn btn-input join-item btn-square font-semibold"
+                className  = { btnClassNames }
                 aria-label = { clearLabel }
                 title      = { clearLabel }
             >
@@ -132,7 +143,7 @@ const InputSearch =
                 type       = "button"
                 onClick    = { handleSearch }
                 disabled   = { disabled }
-                className  = "btn btn-input join-item btn-square font-semibold"
+                className  = { btnClassNames }
                 aria-label = { searchLabel }
                 title      = { searchLabel }
             >

@@ -4,6 +4,8 @@ import { useState , useRef } from 'react'
 
 import Input from './Input'
 
+import cn           from '../../themes/helpers/cn' ;
+import styles       from './styles/InputActions.module.css' ;
 import useMergeRefs from '../../hooks/useMergeRefs'
 
 import {
@@ -142,10 +144,10 @@ const InputPassword =
             key          = "toggle"
             type         = "button"
             onClick      = { handleToggle }
-            className    = "btn btn-input join-item btn-square font-semibold"
+            className    = { cn( 'btn join-item btn-square font-semibold' , styles.btnInput , error && styles.btnInputError ) }
             aria-label   = { isVisible ? hidePasswordLabel : showPasswordLabel }
-            title        = { isVisible ? hidePasswordLabel : showPasswordLabel }
             aria-pressed = { isVisible }
+            title        = { isVisible ? hidePasswordLabel : showPasswordLabel }
         >
         {
             isVisible ? ( visibleIcon || <VisibleIcon /> ) : ( hiddenIcon  || <HiddenIcon  /> )

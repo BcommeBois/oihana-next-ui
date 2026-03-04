@@ -12,6 +12,9 @@ import {
 }
 from "react-icons/fa" ;
 
+import cn     from '../../themes/helpers/cn' ;
+import styles from '../../components/inputs/styles/InputActions.module.css' ;
+
 const PATTERN_USERNAME = '[A-Za-z][A-Za-z0-9\\-]*' ;
 const PATTERN_PASSWORD = '(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}' ;
 const PATTERN_PHONE    = '[0-9]*' ;
@@ -164,7 +167,10 @@ const InputValidatorDemo = () =>
                     helper        = "We'll send you a confirmation email"
                     actions       =
                     {
-                        <button type="submit" className="btn btn-input join-item btn-square font-semibold">
+                        <button
+                            className = { cn( 'btn join-item btn-square font-semibold' , styles.btnInput ) }
+                            type      = "submit"
+                        >
                             Join
                         </button>
                     }
