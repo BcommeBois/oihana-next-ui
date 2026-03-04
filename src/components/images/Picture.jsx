@@ -2,8 +2,10 @@
 
 import { useEffect , useRef , useState } from 'react' ;
 
-import cn         from '../../themes/helpers/cn' ;
-import useThemes  from '../../contexts/themes/useThemes' ;
+import cn           from '../../themes/helpers/cn' ;
+import useInView    from '../../hooks/useInView' ;
+import useMergeRefs from '../../hooks/useMergeRefs' ;
+import useThemes    from '../../contexts/themes/useThemes' ;
 
 import Loading from '../../components/Loading' ;
 import Image   from 'next/image' ;
@@ -29,6 +31,9 @@ import buildImageProps from './helpers/buildImageProps' ;
  * @param {boolean} [props.fill=false] - Fill parent container (responsive mode)
  * @param {number} [props.height] - Image height (required if not using fill)
  * @param {string} [props.imageClassName] - Image element classes
+ * @param {boolean} [props.lazyMount=false] - Only mount image when visible in viewport.
+ * @param {string} [props.lazyRootMargin='200px'] - Viewport margin before triggering load.
+ * @param {number} [props.lazyThreshold=0] - Visibility threshold to trigger load (0-1).
  * @param {string} [props.loading='lazy'] - Loading strategy: 'lazy' | 'eager' (ignored if priority is true)
  * @param {import('../../themes/components/loading').LoadingAnimation} [props.loadingAnimation='spinner'] - Loading animation style
  * @param {import('../../themes/colors/textColor').TextColor} [props.loadingColor='base-content'] - Loading color
@@ -55,6 +60,9 @@ const Picture =
     fill = false ,
     height ,
     imageClassName ,
+    lazyMount = false ,
+    lazyRootMargin = '200px' ,
+    lazyThreshold = 0 ,
     loading = 'lazy' ,
     loadingAnimation = 'spinner' ,
     loadingColor = 'base-content' ,
@@ -69,6 +77,8 @@ const Picture =
     topRight ,
     width ,
 
+    ref ,
+
     ...rest
 }) =>
 {
@@ -76,6 +86,15 @@ const Picture =
 
     const [ isLoading  , setIsLoading  ] = useState( true ) ;
     const [ dimensions , setDimensions ] = useState( null ) ;
+
+    const { ref : inViewRef , inView } = useInView({
+        once       : lazyMount ,
+        rootMargin : lazyRootMargin ,
+        threshold  : lazyThreshold ,
+    }) ;
+
+    const shouldRender = !lazyMount || inView ;
+    const mergedRef    = useMergeRefs( inViewRef , ref ) ;
 
     // Track previous isDark to detect theme switches
     const prevIsDarkRef = useRef( isDark ) ;
@@ -157,21 +176,33 @@ const Picture =
     }) ;
 
     return (
-        <div className={ containerClasses }>
+        <div
+            className = { containerClasses }
+            ref       = { mergedRef }
+        >
 
-            <div className={ cn( 'relative' , ! fill && 'inline-block' , fill && 'w-full h-full' ) }>
-                <Image { ...imageProps } />
-            </div>
+            { shouldRender ? (
+                <>
+                    <div className={ cn( 'relative' , !fill && 'inline-block' , fill && 'w-full h-full' ) }>
+                        <Image { ...imageProps } />
+                    </div>
 
-            { showLoading && isLoading && (
-                <div className="absolute inset-0 flex items-center justify-center">
-                    <Loading
-                        animation = { loadingAnimation }
-                        color     = { loadingColor }
-                        size      = { loadingSize }
-                    />
-                </div>
-            )}
+                    { showLoading && isLoading && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                            <Loading
+                                animation = { loadingAnimation }
+                                color     = { loadingColor }
+                                size      = { loadingSize }
+                            />
+                        </div>
+                    )}
+                </>
+            ) : (
+                // Placeholder maintient les dimensions avant chargement
+                !fill && width && height && (
+                    <div style={{ width , height }} className="bg-base-300" />
+                )
+            ) }
 
             {/* Top-left corner */}
             { topLeft && (

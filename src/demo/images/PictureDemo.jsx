@@ -325,6 +325,172 @@ const PictureDemo = () =>
 
             <Divider />
 
+            {/* Lazy Mount */}
+            <div className="flex flex-col gap-4">
+                <h3 className="text-xl font-semibold border-b-2 border-info pb-2">
+                    Lazy Mount (Load on Scroll)
+                </h3>
+
+                <p className="text-sm opacity-70">
+                    Images are only mounted in the DOM when they enter the viewport.
+                    Scroll down to see images load progressively.
+                </p>
+
+                <div className="alert alert-info">
+                    <span className="text-sm">
+                        💡 <strong>lazyMount</strong> differs from native browser lazy loading:
+                        the entire component is not rendered until visible — saves DOM nodes and network requests.
+                    </span>
+                </div>
+
+                {/* Comparison: normal vs lazy */}
+                <div className="flex flex-col gap-2">
+                    <h4 className="font-semibold">Normal vs Lazy Mount</h4>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="flex flex-col gap-2">
+                            <code className="badge badge-sm">Normal (loaded immediately)</code>
+                            <Picture
+                                src="https://picsum.photos/600/400?random=lazy01"
+                                alt="Normal loading"
+                                width={ 600 }
+                                height={ 400 }
+                                className="rounded-box overflow-hidden shadow-md"
+                                loadingAnimation="ring"
+                                loadingColor="primary"
+                            />
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+                            <code className="badge badge-sm">lazyMount (loaded on scroll)</code>
+                            <Picture
+                                src="https://picsum.photos/600/400?random=lazy02"
+                                alt="Lazy mount"
+                                width={ 600 }
+                                height={ 400 }
+                                className="rounded-box overflow-hidden shadow-md"
+                                loadingAnimation="ring"
+                                loadingColor="secondary"
+                                lazyMount
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Large lazy grid */}
+                <div className="flex flex-col gap-2 mt-4">
+                    <h4 className="font-semibold">Grid of 12 lazy images</h4>
+                    <p className="text-sm opacity-70">
+                        Each image mounts only when it enters the viewport (200px margin).
+                    </p>
+
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        { Array.from( { length : 12 } , ( _ , i ) => (
+                            <div key={ i } className="flex flex-col gap-1">
+                                <code className="badge badge-xs badge-ghost">
+                                    #{ String( i + 1 ).padStart( 2 , '0' ) }
+                                </code>
+                                <Picture
+                                    src={ `https://picsum.photos/400/300?random=lazyg${ i }` }
+                                    alt={ `Lazy image ${ i + 1 }` }
+                                    width={ 400 }
+                                    height={ 300 }
+                                    className="rounded-box overflow-hidden shadow-md"
+                                    loadingAnimation="spinner"
+                                    loadingSize="sm"
+                                    lazyMount
+                                    lazyRootMargin="200px"
+                                />
+                            </div>
+                        ) ) }
+                    </div>
+                </div>
+
+                {/* Custom margin */}
+                <div className="flex flex-col gap-2 mt-4">
+                    <h4 className="font-semibold">lazyRootMargin — Preload anticipation</h4>
+                    <p className="text-sm opacity-70">
+                        <code>lazyRootMargin</code> controls how many pixels before entering the viewport the image starts loading.
+                    </p>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="flex flex-col gap-2">
+                            <code className="badge badge-sm">lazyRootMargin="0px" (at the edge)</code>
+                            <Picture
+                                src="https://picsum.photos/400/250?random=margin01"
+                                alt="Margin 0px"
+                                width={ 400 }
+                                height={ 250 }
+                                className="rounded-box overflow-hidden shadow-md"
+                                loadingAnimation="ring"
+                                loadingColor="error"
+                                loadingSize="sm"
+                                lazyMount
+                                lazyRootMargin="0px"
+                            />
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+                            <code className="badge badge-sm">lazyRootMargin="200px" (default)</code>
+                            <Picture
+                                src="https://picsum.photos/400/250?random=margin02"
+                                alt="Margin 200px"
+                                width={ 400 }
+                                height={ 250 }
+                                className="rounded-box overflow-hidden shadow-md"
+                                loadingAnimation="ring"
+                                loadingColor="warning"
+                                loadingSize="sm"
+                                lazyMount
+                                lazyRootMargin="200px"
+                            />
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+                            <code className="badge badge-sm">lazyRootMargin="500px" (early load)</code>
+                            <Picture
+                                src="https://picsum.photos/400/250?random=margin03"
+                                alt="Margin 500px"
+                                width={ 400 }
+                                height={ 250 }
+                                className="rounded-box overflow-hidden shadow-md"
+                                loadingAnimation="ring"
+                                loadingColor="success"
+                                loadingSize="sm"
+                                lazyMount
+                                lazyRootMargin="500px"
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                <div className="mockup-code text-xs">
+                    <pre data-prefix="1"><code>&lt;Picture</code></pre>
+                    <pre data-prefix="2"><code>    src="/photo.jpg"</code></pre>
+                    <pre data-prefix="3"><code>    width={'{ 400 }'}</code></pre>
+                    <pre data-prefix="4"><code>    height={'{ 300 }'}</code></pre>
+                    <pre data-prefix="5"><code></code></pre>
+                    <pre data-prefix="6"><code>    lazyMount <span className="text-success">// Only mount when visible</span></code></pre>
+                    <pre data-prefix="7"><code>    lazyRootMargin="200px" <span className="text-info">// Start loading 200px before visible</span></code></pre>
+                    <pre data-prefix="8"><code>    lazyThreshold={'{ 0.1 }'} <span className="text-info">// Trigger when 10% is visible</span></code></pre>
+                    <pre data-prefix="9"><code>/&gt;</code></pre>
+                </div>
+
+                <div className="alert alert-success">
+                    <div className="flex flex-col gap-1 text-sm">
+                        <div className="font-semibold">✅ When to use lazyMount?</div>
+                        <ul className="list-disc list-inside space-y-1 text-xs">
+                            <li><strong>Long galleries</strong> — grids of 20+ images</li>
+                            <li><strong>Infinite lists</strong> — dynamically loaded content</li>
+                            <li><strong>Heavy pages</strong> — reduce initial DOM size</li>
+                            <li><strong>Mobile</strong> — save bandwidth and battery</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <Divider />
+
             {/* Auto Dimensions & Fill Mode */}
             <div className="flex flex-col gap-4">
                 <h3 className="text-xl font-semibold border-b-2 border-primary pb-2">
