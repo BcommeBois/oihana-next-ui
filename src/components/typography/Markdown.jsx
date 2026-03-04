@@ -6,6 +6,8 @@
  * @module components/typography/markdown/Markdown
  */
 
+import styles from './styles/Markdown.module.css' ;
+
 import cn from '../../themes/helpers/cn'
 
 import ReactMarkdown from 'react-markdown'
@@ -211,7 +213,7 @@ const Markdown =
     } ;
 
     return (
-        <div className={ cn( 'markdown-content max-w-none' , className ) }>
+        <div className={ cn( styles.markdown , 'max-w-none' , className ) }>
             <ReactMarkdown
                 components    = { components    }
                 rehypePlugins = { rehypePlugins }

@@ -40,6 +40,7 @@ import { LuSlidersHorizontal    as RangeIcon          } from "react-icons/lu";
 import { MdOutlineStarRate      as RatingIcon         } from "react-icons/md";
 import { VscListSelection       as SelectIcon         } from "react-icons/vsc" ;
 import { FaSpinner              as SpinnerIcon        } from "react-icons/fa";
+import { GrStatusPlaceholder    as StatusIcon         } from "react-icons/gr";
 import { BsTextareaResize       as TextAreaIcon       } from "react-icons/bs" ;
 import { TiMessages             as ToastIcon          } from "react-icons/ti" ;
 import { FaToggleOn             as ToggleIcon         } from "react-icons/fa";
@@ -93,6 +94,7 @@ const navigation =
                     { id : 'markdown'   , type : LINK  , Icon : MarkdownIcon   , path  : '/lab/markdown'   } ,
                     { id : 'typography' , type : LINK  , Icon : TypographyIcon , path  : '/lab/typography' } ,
                     { id : 'network'    , type : LINK  , Icon : NetworkIcon    , path  : '/lab/network'    } ,
+                    { id : 'status'     , type : LINK  , Icon : StatusIcon     , path  : '/lab/status'     } ,
                 ]
             } ,
             {

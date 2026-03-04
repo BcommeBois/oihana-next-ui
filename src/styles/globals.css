@@ -1,6 +1,5 @@
 @import "tailwindcss";
 
-@import "./components/dots.css";
 @import "./components/input-buttons.css";
 
 /* =============================
@@ -72,38 +71,6 @@
   }
 }
 
-@layer components {
-  .markdown-content {
-    & li > p {
-      margin-block: 0 !important;
-      line-height: 1.5 !important;
-    }
-  }
-}
-
-/* =============================
-   Font-families custom via variables CSS
-   ============================= */
-:root {
-  /* Custom categories colors */
-  --category-01: #E06B4B;
-  --category-02: #C1402D;
-  --category-03: #F1A821;
-  --category-04: #D97C4D;
-  --category-05: #70B0AA;
-  --category-06: #2E7C7C;
-  --category-07: #5A9364;
-  --category-09: #A03E31;
-  --category-10: #5C8A4F;
-  --category-11: #9C7B3B;
-  --category-80: #C68F2A;
-  --category-90: #8B5A40;
-  --category-91: #46806F;
-  --category-97: #784229;
-  --category-98: #B37D6B;
-  --category-99: #6E5D53;
-}
-
 /* =============================
    Utilities
    ============================= */
@@ -122,24 +89,6 @@
   .rotate-135 { transform: rotate(135deg); }
   .rotate-225 { transform: rotate(225deg); }
   .rotate-270 { transform: rotate(270deg); }
-
-  /* Color Categories */
-  .bg-category-01 { background-color: var(--category-01); }
-  .bg-category-02 { background-color: var(--category-02); }
-  .bg-category-03 { background-color: var(--category-03); }
-  .bg-category-04 { background-color: var(--category-04); }
-  .bg-category-05 { background-color: var(--category-05); }
-  .bg-category-06 { background-color: var(--category-06); }
-  .bg-category-07 { background-color: var(--category-07); }
-  .bg-category-09 { background-color: var(--category-09); }
-  .bg-category-10 { background-color: var(--category-10); }
-  .bg-category-11 { background-color: var(--category-11); }
-  .bg-category-80 { background-color: var(--category-80); }
-  .bg-category-90 { background-color: var(--category-90); }
-  .bg-category-91 { background-color: var(--category-91); }
-  .bg-category-97 { background-color: var(--category-97); }
-  .bg-category-98 { background-color: var(--category-98); }
-  .bg-category-99 { background-color: var(--category-99); }
 }
 
 @utility text-glow
