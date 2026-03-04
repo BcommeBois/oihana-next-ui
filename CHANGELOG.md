@@ -10,6 +10,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ---
 
+## [0.1.12] — 2026-03-04
+
+Refactoring and optimization.
+
+#### Hooks
+
+- `useInView` — Hook that detects when an element enters the viewport.
+
 ## [0.1.0] — 2026-02-27
 
 ### Added
@@ -48,7 +56,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `IconBox` — Icon container with sizing and color props
 
 **Images**
-- `Picture` — Next.js Image wrapper with loading state and dark mode support
+- `Picture` — Next.js Image wrapper with loading state and dark mode support (lazy mode in options)
 - `ThemedImage` — Image with automatic light/dark source switching
 
 **Inputs**

@@ -1,4 +1,3 @@
-// hooks/useInView.js
 'use client' ;
 
 import { useEffect , useRef , useState } from 'react' ;
