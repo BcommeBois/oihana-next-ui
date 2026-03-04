@@ -3,21 +3,21 @@ const home =
     fr :
     {
         title       : process.env.NEXT_PUBLIC_APP_SHORT_TITLE  ,
-        description : 'Découvrez notre plateforme !' ,
+        description : 'Une bibliothèque modulaire de composants d\'interface utilisateur Next.js construite avec React, Tailwind CSS et DaisyUI.' ,
         seo         :
         {
-            title       : "Accueil" ,
-            description : "Accueil de la plateforme"
+            title       : "Oihana Next UI" ,
+            description : "Une bibliothèque modulaire de composants d'interface utilisateur Next.js construite avec React, Tailwind CSS et DaisyUI."
         }
     },
     en :
     {
         title       : process.env.NEXT_PUBLIC_APP_SHORT_TITLE ,
-        description : 'Discover our platform !' ,
+        description : 'A modular Next.js UI component library built with React, Tailwind CSS and DaisyUI.' ,
         seo         :
         {
-            title       : "Welcome" ,
-            description : "Discover our platform !"
+            title       : "Oihana Next UI" ,
+            description : "A modular Next.js UI component library built with React, Tailwind CSS and DaisyUI."
         }
     }
 };
