@@ -1,5 +1,5 @@
-import { readdirSync, statSync, existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { join, relative, sep } from 'node:path';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
@@ -7,7 +7,7 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url));
 // Dossiers à scanner dans /src
 const SRC_DIRS = [
     'components',
-    'context', // Attention: ton package.json disait 'context', ton script disait 'contexts'
+    'contexts',
     'display',
     'helpers',
     'hooks',

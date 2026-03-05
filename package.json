@@ -36,6 +36,8 @@
   "exports": {
     "./components/*": "./src/components/*",
     "./components/*.css": "./src/components/*.css",
+    "./contexts/*": "./src/contexts/*",
+    "./contexts/*.css": "./src/contexts/*.css",
     "./display/*": "./src/display/*",
     "./display/*.css": "./src/display/*.css",
     "./helpers/*": "./src/helpers/*",
