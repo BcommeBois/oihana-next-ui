@@ -7,7 +7,10 @@ import gray    from './gray'
 import green   from './green'
 import indigo  from './indigo'
 import lime    from './lime'
+import mauve   from './mauve'
+import mist    from './mist'
 import neutral from './neutral'
+import olive   from './olive'
 import orange  from './orange'
 import pink    from './pink'
 import purple  from './purple'
@@ -16,6 +19,7 @@ import rose    from './rose'
 import sky     from './sky'
 import slate   from './slate'
 import stone   from './stone'
+import taupe   from './taupe'
 import teal    from './teal'
 import violet  from './violet'
 import yellow  from './yellow'
@@ -86,7 +90,10 @@ export const tailwindColors =
     ...green ,
     ...indigo ,
     ...lime ,
+    ...mauve ,
+    ...mist ,
     ...neutral ,
+    ...olive ,
     ...orange ,
     ...pink ,
     ...purple ,
@@ -95,6 +102,7 @@ export const tailwindColors =
     ...sky ,
     ...slate ,
     ...stone ,
+    ...taupe ,
     ...teal ,
     ...violet ,
     ...yellow ,
@@ -183,7 +191,10 @@ export * from './gray' ;
 export * from './green' ;
 export * from './indigo' ;
 export * from './lime' ;
+export * from './mauve' ;
+export * from './mist' ;
 export * from './neutral' ;
+export * from './olive' ;
 export * from './orange' ;
 export * from './pink' ;
 export * from './purple' ;
@@ -193,6 +204,7 @@ export * from './sky' ;
 export * from './slate' ;
 export * from './stone' ;
 export * from './teal' ;
+export * from './taupe' ;
 export * from './violet' ;
 export * from './yellow' ;
 export * from './zinc' ;

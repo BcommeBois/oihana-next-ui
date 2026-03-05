@@ -1,6 +1,6 @@
 'use client' ;
 
-import useThemes from '@/contexts/themes' ;
+import useThemes from '../../contexts/themes/useThemes' ;
 
 import get     from 'vegas-js-core/src/objects/get' ;
 import hasPath from 'vegas-js-core/src/objects/hasPath' ;
