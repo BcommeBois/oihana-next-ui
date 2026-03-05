@@ -31,7 +31,10 @@
   ],
   "type": "module",
   "files": [
-    "src"
+    "src",
+    "package.json",
+    "README.md",
+    "LICENSE"
   ],
   "exports": {
     "./package.json": "./package.json",

@@ -18,34 +18,20 @@ const exports = {
     "./package.json": "./package.json",
     "./README.md": "./README.md",
     "./LICENSE": "./LICENSE",
-    "./version": "./src/version.js",
-    "./src/*": "./src/*"
+    "./version": "./src/version.js"
 };
 
-for (const dir of SRC_DIRS)
-{
+for (const dir of SRC_DIRS) {
     const dirPath = join(__dirname, '../src', dir);
 
-    if ( existsSync( dirPath ) )
-    {
-        exports[`./${dir}/*.css`] = `./src/${dir}/*.css` ;
-        exports[`./${dir}/*.js`]  = `./src/${dir}/*.js`  ;
-        exports[`./${dir}/*.jsx`] = `./src/${dir}/*.jsx` ;
-        exports[`./${dir}/*.mjs`] = `./src/${dir}/*.mjs` ;
-
-        exports[`./${dir}/*`] =
-        {
-            "import": `./src/${dir}/*.js`,
-            "default": `./src/${dir}/*.jsx`
-        };
+    if (existsSync(dirPath)) {
+        exports[`./${dir}/*`] = `./src/${dir}/*`;
     }
 }
 
 const pkgPath = join(__dirname, '../package.json');
 const pkg = JSON.parse(readFileSync(pkgPath, 'utf8'));
-
 pkg.exports = exports;
 
 writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + '\n');
-
-console.log(`✓ Exports générés (incluant README et LICENSE).`);
+console.log(`✓ Exports simplifiés générés.`);

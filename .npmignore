@@ -1,0 +1,13 @@
+/assets
+/scripts
+/public
+.env*
+.idea
+.DS_Store
+*.tgz
+bun.lock
+tsup.config.js
+biome.json
+next.config.mjs
+postcss.config.mjs
+jsconfig.json
