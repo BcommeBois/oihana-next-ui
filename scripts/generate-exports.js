@@ -1,8 +1,8 @@
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs' ;
+import { join } from 'node:path' ;
+import { fileURLToPath } from 'node:url' ;
 
-const __dirname = fileURLToPath(new URL('.', import.meta.url));
+const __dirname = fileURLToPath( new URL( '.' , import.meta.url ) ) ;
 
 const SRC_DIRS = [
     'components',
