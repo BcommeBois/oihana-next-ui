@@ -29,42 +29,22 @@
     "pwa",
     "oihana"
   ],
-  "exports": {
-    "./components/*": "./dist/components/*.js",
-    "./components/*.css": "./dist/components/*.css",
-    "./contexts/*": "./dist/contexts/*.js",
-    "./display/*": "./dist/display/*.js",
-    "./helpers/*": "./dist/helpers/*.js",
-    "./hooks/*": "./dist/hooks/*.js",
-    "./motions/*": "./dist/motions/*.js",
-    "./themes/*": "./dist/themes/*.js",
-    "./themes/*.css": "./dist/themes/*.css"
-  },
   "files": [
-    "dist"
+    "src"
   ],
+  "exports": {
+    "./components/*": "./src/components/*",
+    "./contexts/*": "./src/contexts/*",
+    "./display/*": "./src/display/*",
+    "./helpers/*": "./src/helpers/*",
+    "./hooks/*": "./src/hooks/*",
+    "./motions/*": "./src/motions/*",
+    "./themes/*": "./src/themes/*"
+  },
   "peerDependencies": {
     "next": "^16.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
-  },
-  "scripts": {
-    "dev": "bun inject-version && next dev -p 3666",
-    "build": "next build",
-    "build:lib": "tsup",
-    "build:lib:watch": "tsup --watch",
-    "version": "bun inject-version && git add src/version.js",
-    "postversion": "bun release",
-    "release": "bun build:lib && npm publish --access public && git push origin-ssh && git push origin-ssh --tags",
-    "release:patch": "bun stage && npm version patch",
-    "release:minor": "bun stage && npm version minor",
-    "release:major": "bun stage && npm version major",
-    "stage": "git add -A && git diff-index --quiet HEAD || git commit -m 'chore: prepare release'",
-    "start": "next start",
-    "lint": "biome check",
-    "format": "biome format --write",
-    "inject-version": "bun run ./scripts/inject-version.js",
-    "generate-splash": "bun run ./scripts/generate-splash.js --bg \"#D9CFC4\" --force"
   },
   "dependencies": {
     "@maskito/core": "^5.1.1",
@@ -110,7 +90,6 @@
     "tailwindcss": "^4.2.1",
     "tailwindcss-animated": "^2.0.0",
     "tailwindcss-opentype": "^1.2.0",
-    "tsup": "^8.5.1",
     "typescript": "^5.9.3"
   },
   "ignoreScripts": [
@@ -121,6 +100,22 @@
     "sharp",
     "unrs-resolver"
   ],
+  "scripts": {
+    "dev": "bun inject-version && next dev -p 3666",
+    "build": "next build",
+    "start": "next start",
+    "lint": "biome check",
+    "format": "biome format --write",
+    "inject-version": "bun run ./scripts/inject-version.js",
+    "generate-splash": "bun run ./scripts/generate-splash.js --bg \"#D9CFC4\" --force",
+    "version": "bun inject-version && git add src/version.js",
+    "postversion": "bun release",
+    "release": "npm publish --access public && git push origin-ssh && git push origin-ssh --tags",
+    "release:patch": "bun stage && npm version patch",
+    "release:minor": "bun stage && npm version minor",
+    "release:major": "bun stage && npm version major",
+    "stage": "git add -A && git diff-index --quiet HEAD || git commit -m 'chore: prepare release'"
+  },
   "pwa": {
     "offline": true
   }
