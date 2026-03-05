@@ -19,10 +19,10 @@ const useActiveLink = href =>
     const pathname = usePathname() ;
 
     const targetPath = typeof href === 'object' && href !== null
-        ? href.pathname
+        ? ( href.pathname ?? null )
         : href ;
 
-    const isActive = pathname === targetPath ;
+    const isActive = !!targetPath && pathname === targetPath ;
 
     const handleClick = useCallback( ( e , onClick ) =>
     {
