@@ -100,8 +100,7 @@
     "tailwind-scrollbar": "^4.0.2",
     "tailwindcss": "^4.2.1",
     "tailwindcss-animated": "^2.0.0",
-    "tailwindcss-opentype": "^1.2.0",
-    "tsup": "^8.5.1"
+    "tailwindcss-opentype": "^1.2.0"
   },
   "ignoreScripts": [
     "sharp",
