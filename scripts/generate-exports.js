@@ -22,17 +22,22 @@ const exports = {
     "./src/*": "./src/*"
 };
 
-for (const dir of SRC_DIRS) {
+for (const dir of SRC_DIRS)
+{
     const dirPath = join(__dirname, '../src', dir);
 
-    if (existsSync(dirPath))
+    if ( existsSync( dirPath ) )
     {
-        exports[`./${dir}/*.css`] = `./src/${dir}/*.css`;
-        exports[`./${dir}/*.js`] = `./src/${dir}/*.js`;
-        exports[`./${dir}/*.jsx`] = `./src/${dir}/*.jsx`;
-        exports[`./${dir}/*.mjs`] = `./src/${dir}/*.mjs`;
+        exports[`./${dir}/*.css`] = `./src/${dir}/*.css` ;
+        exports[`./${dir}/*.js`]  = `./src/${dir}/*.js`  ;
+        exports[`./${dir}/*.jsx`] = `./src/${dir}/*.jsx` ;
+        exports[`./${dir}/*.mjs`] = `./src/${dir}/*.mjs` ;
 
-        exports[`./${dir}/*`] = `./src/${dir}/*`;
+        exports[`./${dir}/*`] =
+        {
+            "import": `./src/${dir}/*.js`,
+            "default": `./src/${dir}/*.jsx`
+        };
     }
 }
 
