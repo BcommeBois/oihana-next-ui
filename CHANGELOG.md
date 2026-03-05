@@ -10,6 +10,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ---
 
+## [0.1.28] — 2026-03-05
+
+**Layouts**
+
+- `Themes` — Add the DaisyUI 'card' component helper.
+
 ## [0.1.27] — 2026-03-05
 
 **Layouts**
