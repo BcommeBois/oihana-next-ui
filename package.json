@@ -1,6 +1,6 @@
 {
   "name": "oihana-next-ui",
-  "version": "0.1.20",
+  "version": "0.1.21",
   "private": false,
   "description": "Oihana Next.js UI component library — reusable components, hooks and utilities built with React 19, Next.js, Tailwind CSS and DaisyUI",
   "author": {
@@ -35,6 +35,10 @@
   ],
   "exports": {
     "./package.json": "./package.json",
+    "./README.md": "./README.md",
+    "./LICENSE": "./LICENSE",
+    "./version": "./src/version.js",
+    "./src/*": "./src/*",
     "./components/*.css": "./src/components/*.css",
     "./components/*.js": "./src/components/*.js",
     "./components/*.jsx": "./src/components/*.jsx",
@@ -69,22 +73,7 @@
     "./themes/*.js": "./src/themes/*.js",
     "./themes/*.jsx": "./src/themes/*.jsx",
     "./themes/*.mjs": "./src/themes/*.mjs",
-    "./themes/*": "./src/themes/*",
-    "./@assets/*.css": "./src/@assets/*.css",
-    "./@assets/*.js": "./src/@assets/*.js",
-    "./@assets/*.jsx": "./src/@assets/*.jsx",
-    "./@assets/*.mjs": "./src/@assets/*.mjs",
-    "./@assets/*": "./src/@assets/*",
-    "./@configs/*.css": "./src/@configs/*.css",
-    "./@configs/*.js": "./src/@configs/*.js",
-    "./@configs/*.jsx": "./src/@configs/*.jsx",
-    "./@configs/*.mjs": "./src/@configs/*.mjs",
-    "./@configs/*": "./src/@configs/*",
-    "./@locale/*.css": "./src/@locale/*.css",
-    "./@locale/*.js": "./src/@locale/*.js",
-    "./@locale/*.jsx": "./src/@locale/*.jsx",
-    "./@locale/*.mjs": "./src/@locale/*.mjs",
-    "./@locale/*": "./src/@locale/*"
+    "./themes/*": "./src/themes/*"
   },
   "peerDependencies": {
     "next": "^16.0.0",
