@@ -499,7 +499,7 @@ const LayoutDemo = () =>
                         </h3>
                         <Layout
                             as        = "section"
-                            className = "bg-gradient-to-br from-primary/10 to-secondary/10 rounded-lg border-2 border-dashed border-primary/30"
+                            className = "bg-linear-to-br from-primary/10 to-secondary/10 rounded-lg border-2 border-dashed border-primary/30"
                             cols      = { 4 }
                             display   = { GRID }
                             gap       = { 4 }
