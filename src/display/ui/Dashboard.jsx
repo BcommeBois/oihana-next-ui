@@ -35,8 +35,8 @@ import Drawer  from './Drawer' ;
 import Navbar  from './Navbar' ;
 import Sidebar from './Sidebar' ;
 
-import useApplication from '../../contexts/application' ;
-import useConfig      from '../../contexts/config' ;
+import useApplication from '../../contexts/application/useApplication' ;
+import useConfig      from '../../contexts/config/useConfig' ;
 
 /**
  * @typedef {'aside' | 'top'} DashboardLayout

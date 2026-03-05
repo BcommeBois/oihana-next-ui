@@ -8,14 +8,14 @@ import lato          from '@/themes/fonts/lato' ;
 import merriweather  from '@/themes/fonts/merriweather' ;
 import redHatMono    from '@/themes/fonts/redHatMono' ;
 
-import config from '@/@configs' ;
-
 import getThemeScript from '@/contexts/themes/getThemeScript' ;
 
 import Application   from '@/display/Application' ;
-import ServiceWorker   from '@/display/ServiceWorker';
+import ServiceWorker from '@/display/ServiceWorker';
 
 import getFontClassNames from '@/themes/helpers/getFontClassNames';
+
+import config from '@/@configs' ;
 
 export const metadata =
 {

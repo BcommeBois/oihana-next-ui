@@ -1,5 +1,5 @@
 import cn        from '../../themes/helpers/cn';
-import useConfig from '../../contexts/config';
+import useConfig from '../../contexts/config/useConfig';
 
 /**
  * @typedef {Object} VersionConfig

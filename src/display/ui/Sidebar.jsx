@@ -8,7 +8,7 @@ import Logo       from './Logo';
 import Navigation from './Navigation' ;
 import Version    from './Version';
 
-import useConfig  from '../../contexts/config' ;
+import useConfig  from '../../contexts/config/useConfig' ;
 
 import cn from '../../themes/helpers/cn' ;
 

@@ -31,7 +31,7 @@ import { MdDarkMode , MdLightMode } from 'react-icons/md' ;
 
 import cn from '../../themes/helpers/cn' ;
 
-import useThemes from '../../contexts/themes' ;
+import useThemes from '../../contexts/themes/useThemes' ;
 
 import getSwapClassNames , { ROTATE , SWAP_ITEM , SWAP_OFF , SWAP_ON } from '../../themes/components/swap' ;
 

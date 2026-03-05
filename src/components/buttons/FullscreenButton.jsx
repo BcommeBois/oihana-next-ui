@@ -21,7 +21,7 @@ import { MdFullscreen , MdFullscreenExit } from 'react-icons/md' ;
 
 import cn from '../../themes/helpers/cn' ;
 
-import useFullscreen from '../../contexts/fullscreen' ;
+import useFullscreen from '../../contexts/fullscreen/useFullscreen' ;
 
 import getSwapClassNames , { SWAP_ITEM , SWAP_OFF , SWAP_ON } from '../../themes/components/swap' ;
 

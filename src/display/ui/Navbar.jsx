@@ -15,7 +15,7 @@ import Link             from '../../components/links/Link';
 import FullscreenButton from '../../components/buttons/FullscreenButton';
 import ThemeButton      from '../../components/buttons/ThemeButton';
 
-import useConfig from '../../contexts/config' ;
+import useConfig from '../../contexts/config/useConfig' ;
 import useI18n   from '../../contexts/locale/useI18n' ;
 
 import getNavbarClassNames ,

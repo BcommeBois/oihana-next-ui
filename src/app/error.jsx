@@ -4,9 +4,9 @@ import { useEffect } from 'react' ;
 
 import Image from 'next/image' ;
 
-import SlideUp from '@/motions/SlideUp' ;
+import SlideUp from '../motions/SlideUp' ;
 
-import useI18n from '@/contexts/locale' ;
+import useI18n from '../contexts/locale/useI18n' ;
 
 /**
  * Default labels if i18n unavailable.

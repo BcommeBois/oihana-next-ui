@@ -2,7 +2,7 @@ import NextLink from 'next/link' ;
 
 import ThemedImage from '../../components/images/ThemedImage' ;
 
-import useConfig from '../../contexts/config' ;
+import useConfig from '../../contexts/config/useConfig' ;
 
 import cn from '../../themes/helpers/cn' ;
 

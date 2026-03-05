@@ -27,7 +27,7 @@ import cn from '../../themes/helpers/cn'
 import Flag    from '../icons/Flag'
 import Tooltip from '../Tooltip'
 
-import useLang from '../../contexts/lang'
+import useLang from '../../contexts/lang/useLang'
 
 /**
  * Resolves a localized language display name.

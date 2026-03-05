@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ---
 
+## [0.1.13] — 2026-03-04
+
+Remove the index.js files in the contexts.
+
 ## [0.1.12] — 2026-03-04
 
 Refactoring and optimization.

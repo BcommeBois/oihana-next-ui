@@ -1,6 +1,6 @@
 'use client'
 
-import useApplication from '@/contexts/application'
+import useApplication from '@/contexts/application/useApplication'
 
 const Layout = ( { children } ) =>
 {

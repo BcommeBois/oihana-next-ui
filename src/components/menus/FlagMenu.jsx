@@ -6,7 +6,7 @@
 
 import cn from '../../themes/helpers/cn' ;
 
-import useLang  from '../../contexts/lang' ;
+import useLang  from '../../contexts/lang/useLang' ;
 import useValue from '../../hooks/useValue' ;
 
 import FlagItem from './FlagItem' ;

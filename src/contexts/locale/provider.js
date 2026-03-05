@@ -4,7 +4,7 @@ import { useEffect , useState } from 'react' ;
 
 import get from 'vegas-js-core/src/objects/get' ;
 
-import useLang from '../lang' ;
+import useLang from '../lang/useLang' ;
 
 import LocaleContext from './context' ;
 
