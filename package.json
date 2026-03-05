@@ -93,7 +93,6 @@
     "@types/react-syntax-highlighter": "^15.5.13",
     "@types/sanitize-html": "^2.16.0",
     "babel-plugin-react-compiler": "1.0.0",
-    "cpx": "^1.5.0",
     "daisyui": "^5.5.19",
     "raw-loader": "^4.0.2",
     "sharp": "^0.34.5",
