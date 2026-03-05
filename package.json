@@ -101,6 +101,12 @@
     "tailwindcss-animated": "^2.0.0",
     "tailwindcss-opentype": "^1.2.0"
   },
+  "resolutions": {
+    "serialize-javascript": "6.0.2"
+  },
+  "overrides": {
+    "serialize-javascript": "6.0.2"
+  },
   "ignoreScripts": [
     "sharp",
     "unrs-resolver"
