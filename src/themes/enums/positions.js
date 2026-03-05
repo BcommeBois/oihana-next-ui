@@ -5,7 +5,7 @@
  *
  * @example
  * ```js
- * import { TOP , LEFT } from '@/themes/enums/positions' ;
+ * import { TOP , LEFT } from 'oihana-next-ui/themes/enums/positions' ;
  *
  * const placement = `${ TOP }-${ LEFT }` ;
  * // → 'top-left'

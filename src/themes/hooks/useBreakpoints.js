@@ -17,7 +17,7 @@ from '../enums/breakpoints' ;
  *
  * @example
  * ```js
- * import useBreakpoints , { LG , XXL } from '@/themes/hooks/useBreakpoints' ;
+ * import useBreakpoints , { LG , XXL } from 'oihana-next-ui/themes/hooks/useBreakpoints' ;
  *
  * const breakpoints = useBreakpoints() ;
  * const { sm , md , lg , xl , [ XXL ]: xxl } = breakpoints ;

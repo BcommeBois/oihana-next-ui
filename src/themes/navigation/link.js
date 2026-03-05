@@ -4,7 +4,7 @@
  * @module themes/navigation/link
  */
 
-import cn from '@/themes/helpers/cn' ;
+import cn from '../helpers/cn' ;
 
 import {
     ACCENT ,

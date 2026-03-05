@@ -15,7 +15,7 @@ import clearStorage from '../helpers/storage/clearStorage'
  *
  * @example
  * ```jsx
- * import { version } from '@/version' ;
+ * import { version } from 'oihana-next-ui/version' ;
  *
  * const Application = ( { children } ) =>
  * {

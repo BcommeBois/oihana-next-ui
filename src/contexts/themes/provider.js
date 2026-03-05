@@ -102,7 +102,7 @@ const checkThemeDarkVariant = () =>
  *    @custom-variant theme-dark (&:is([data-dark="true"] *));
  *    ```
  *
- * 2. The inline blocking script (`@/contexts/themes/script`) must set both
+ * 2. The inline blocking script (`oihana-next-ui/contexts/themes/script`) must set both
  *    `data-theme` and `data-dark` on `<html>` before first paint.
  *
  * @param {Object} props

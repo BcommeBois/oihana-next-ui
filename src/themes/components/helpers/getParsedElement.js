@@ -2,7 +2,7 @@
 
 import notEmpty from 'vegas-js-core/src/strings/notEmpty' ;
 
-import parseHtml from '@/helpers/parseHtml' ;
+import parseHtml from '../../helpers/parseHtml' ;
 
 /**
  * Returns an element, optionally parsing it as HTML.

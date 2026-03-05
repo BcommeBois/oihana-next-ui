@@ -4,9 +4,9 @@
  * @module themes/layout/getFlexClassNames
  */
 
-import cn from '@/themes/helpers/cn' ;
+import cn from '../helpers/cn' ;
 
-import applyIfDefined from '@/helpers/applyIfDefined' ;
+import applyIfDefined from '../../helpers/applyIfDefined' ;
 
 import getFlexDirection from './flexDirection' ;
 import getFlexGrow      from './flexGrow' ;

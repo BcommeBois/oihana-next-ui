@@ -7,8 +7,8 @@
  * @module themes/spacing/getSpacingClassNames
  */
 
-import applyIfDefined from '@/helpers/applyIfDefined';
-import cn             from '@/themes/helpers/cn' ;
+import applyIfDefined from '../../helpers/applyIfDefined';
+import cn             from '../helpers/cn' ;
 
 import getBorderSpacing  from './borderSpacing' ;
 import getBorderSpacingX from './borderSpacingX' ;

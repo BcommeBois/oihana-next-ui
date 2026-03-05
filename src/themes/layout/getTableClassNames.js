@@ -4,9 +4,9 @@
  * @module themes/layout/getTableClassNames
  */
 
-import cn from '@/themes/helpers/cn' ;
+import cn from '../helpers/cn' ;
 
-import applyIfDefined from '@/helpers/applyIfDefined' ;
+import applyIfDefined from '../../helpers/applyIfDefined' ;
 
 import getTableSize      from '../sizing/tableSize' ;
 import getBorderSpacing  from '../spacing/borderSpacing' ;

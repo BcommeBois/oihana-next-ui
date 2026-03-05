@@ -1,5 +1,5 @@
-import { extractColorsFromDom as extractDaisyUiColors  } from '@/themes/colors/daisyui'
-import { extractColorsFromDom as extractTailwindColors } from '@/themes/colors/tailwindcss'
+import { extractColorsFromDom as extractDaisyUiColors  } from '../colors/daisyui'
+import { extractColorsFromDom as extractTailwindColors } from '../colors/tailwindcss'
 
 /**
  * Extracts all theme colors from DOM (DaisyUI + Tailwind).

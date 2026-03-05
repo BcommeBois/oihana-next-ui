@@ -5,7 +5,7 @@
  *
  * @example
  * ```js
- * import { PERCENT_50 , PERCENT_100 } from '@/themes/enums/percentages' ;
+ * import { PERCENT_50 , PERCENT_100 } from 'oihana-next-ui/themes/enums/percentages' ;
  *
  * const width = { width: PERCENT_50 } ;
  * // → { width: '50%' }

@@ -6,8 +6,8 @@
  * @module themes/layout/getLayoutClassNames
  */
 
-import applyIfDefined from '@/helpers/applyIfDefined' ;
-import cn             from '@/themes/helpers/cn' ;
+import applyIfDefined from '../../helpers/applyIfDefined' ;
+import cn             from '../helpers/cn' ;
 
 // Alignment
 import getAlignContent   from './alignContent' ;

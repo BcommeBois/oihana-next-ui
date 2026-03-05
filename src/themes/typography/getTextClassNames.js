@@ -24,7 +24,7 @@ import getTextWrap       from './textWrap' ;
 import getWhitespace     from './whitespace' ;
 import getWordBreak      from './wordBreak' ;
 
-import applyIfDefined from '@/helpers/applyIfDefined' ;
+import applyIfDefined from '../../helpers/applyIfDefined' ;
 
 /**
  * @typedef {Object} TextClassNameProps

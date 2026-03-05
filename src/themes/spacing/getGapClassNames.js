@@ -4,8 +4,8 @@
  * @module themes/spacing/getGapClassNames
  */
 
-import applyIfDefined from '@/helpers/applyIfDefined' ;
-import cn             from '@/themes/helpers/cn' ;
+import applyIfDefined from '../../helpers/applyIfDefined' ;
+import cn             from '../helpers/cn' ;
 
 import getGap  from './gap' ;
 import getGapX from './gapX' ;

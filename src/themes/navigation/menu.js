@@ -19,7 +19,7 @@
  * - 2xl:menu-xs | 2xl:menu-sm | 2xl:menu-md | 2xl:menu-lg
  */
 
-import cn from '@/themes/helpers/cn' ;
+import cn from '../helpers/cn' ;
 
 import getResponsiveDefinition , { create } from '../helpers/getResponsiveDefinition' ;
 

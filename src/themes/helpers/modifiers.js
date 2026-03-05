@@ -5,7 +5,7 @@
  *
  * @example
  * ```js
- * import { HOVER , DARK , MOTION_SAFE } from '@/themes/enums/modifiers' ;
+ * import { HOVER , DARK , MOTION_SAFE } from 'oihana-next-ui/themes/enums/modifiers' ;
  *
  * const className = `${ DARK }:bg-gray-900 ${ HOVER }:scale-105 ${ MOTION_SAFE }:transition` ;
  * // → 'dark:bg-gray-900 hover:scale-105 motion-safe:transition'
