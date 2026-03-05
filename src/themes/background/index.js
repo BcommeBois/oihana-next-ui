@@ -1,4 +1,4 @@
-import cn from '@/themes/helpers/cn' ;
+import cn from '../../themes/helpers/cn' ;
 
 import getBackgroundColor   from '../colors/backgroundColor' ;
 import getBackgroundPattern from '../effects/backgroundPattern' ;

@@ -4,9 +4,9 @@
  * @module themes/layout/getGridClassNames
  */
 
-import cn from '@/themes/helpers/cn' ;
+import cn from '../helpers/cn' ;
 
-import applyIfDefined from '@/helpers/applyIfDefined' ;
+import applyIfDefined from '../../helpers/applyIfDefined' ;
 
 import getGridAutoCols from './gridAutoCols' ;
 import getGridAutoRows from './gridAutoRows' ;

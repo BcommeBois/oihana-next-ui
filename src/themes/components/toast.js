@@ -15,7 +15,7 @@
  * - toast-bottom
  */
 
-import cn from '@/themes/helpers/cn' ;
+import cn from '../../themes/helpers/cn' ;
 
 /**
  * @typedef {'start' | 'center' | 'end'} HorizontalAlignment

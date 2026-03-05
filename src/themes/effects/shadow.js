@@ -5,8 +5,8 @@
  * @see https://tailwindcss.com/docs/box-shadow
  */
 
-import applyIfDefined from '@/helpers/applyIfDefined' ;
-import cn             from '@/themes/helpers/cn' ;
+import applyIfDefined from '../../helpers/applyIfDefined' ;
+import cn             from '../helpers/cn' ;
 
 import getPseudoClassDefinition from '../helpers/getPseudoClassDefinition' ;
 

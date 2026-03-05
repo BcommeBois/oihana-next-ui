@@ -5,7 +5,7 @@
  *
  * @example
  * ```js
- * import { HORIZONTAL , VERTICAL } from '@/themes/enums/orientations' ;
+ * import { HORIZONTAL , VERTICAL } from 'oihana-next-ui/themes/enums/orientations' ;
  *
  * const divider = `divider-${ HORIZONTAL }` ;
  * // → 'divider-horizontal'

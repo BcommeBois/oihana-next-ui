@@ -12,8 +12,8 @@
  * These are applied on child elements, not on the navbar itself.
  */
 
-import applyIfDefined from '@/helpers/applyIfDefined' ;
-import cn             from '@/themes/helpers/cn' ;
+import applyIfDefined from '../../helpers/applyIfDefined' ;
+import cn             from '../helpers/cn' ;
 
 import getBackgroundColor from '../colors/backgroundColor' ;
 import getPosition        from '../layout/position' ;

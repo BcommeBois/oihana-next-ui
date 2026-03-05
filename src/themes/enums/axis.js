@@ -5,7 +5,7 @@
  *
  * @example
  * ```js
- * import { X , Y } from '@/themes/enums/axis' ;
+ * import { X , Y } from 'oihana-next-ui/themes/enums/axis' ;
  *
  * const overflow = `overflow-${ X }-auto` ;
  * // → 'overflow-x-auto'

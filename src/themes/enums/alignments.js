@@ -5,7 +5,7 @@
  *
  * @example
  * ```js
- * import { CENTER , START , STRETCH } from '@/themes/enums/alignments' ;
+ * import { CENTER , START , STRETCH } from 'oihana-next-ui/themes/enums/alignments' ;
  *
  * const justify = `justify-${ CENTER }` ;
  * // → 'justify-center'
