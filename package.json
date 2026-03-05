@@ -1,6 +1,6 @@
 {
   "name": "oihana-next-ui",
-  "version": "0.1.22",
+  "version": "0.1.23",
   "private": false,
   "description": "Oihana Next.js UI component library — reusable components, hooks and utilities built with React 19, Next.js, Tailwind CSS and DaisyUI",
   "author": {
@@ -41,63 +41,13 @@
     "./README.md": "./README.md",
     "./LICENSE": "./LICENSE",
     "./version": "./src/version.js",
-    "./src/*": "./src/*",
-    "./components/*.css": "./src/components/*.css",
-    "./components/*.js": "./src/components/*.js",
-    "./components/*.jsx": "./src/components/*.jsx",
-    "./components/*.mjs": "./src/components/*.mjs",
-    "./components/*": {
-      "import": "./src/components/*.js",
-      "default": "./src/components/*.jsx"
-    },
-    "./contexts/*.css": "./src/contexts/*.css",
-    "./contexts/*.js": "./src/contexts/*.js",
-    "./contexts/*.jsx": "./src/contexts/*.jsx",
-    "./contexts/*.mjs": "./src/contexts/*.mjs",
-    "./contexts/*": {
-      "import": "./src/contexts/*.js",
-      "default": "./src/contexts/*.jsx"
-    },
-    "./display/*.css": "./src/display/*.css",
-    "./display/*.js": "./src/display/*.js",
-    "./display/*.jsx": "./src/display/*.jsx",
-    "./display/*.mjs": "./src/display/*.mjs",
-    "./display/*": {
-      "import": "./src/display/*.js",
-      "default": "./src/display/*.jsx"
-    },
-    "./helpers/*.css": "./src/helpers/*.css",
-    "./helpers/*.js": "./src/helpers/*.js",
-    "./helpers/*.jsx": "./src/helpers/*.jsx",
-    "./helpers/*.mjs": "./src/helpers/*.mjs",
-    "./helpers/*": {
-      "import": "./src/helpers/*.js",
-      "default": "./src/helpers/*.jsx"
-    },
-    "./hooks/*.css": "./src/hooks/*.css",
-    "./hooks/*.js": "./src/hooks/*.js",
-    "./hooks/*.jsx": "./src/hooks/*.jsx",
-    "./hooks/*.mjs": "./src/hooks/*.mjs",
-    "./hooks/*": {
-      "import": "./src/hooks/*.js",
-      "default": "./src/hooks/*.jsx"
-    },
-    "./motions/*.css": "./src/motions/*.css",
-    "./motions/*.js": "./src/motions/*.js",
-    "./motions/*.jsx": "./src/motions/*.jsx",
-    "./motions/*.mjs": "./src/motions/*.mjs",
-    "./motions/*": {
-      "import": "./src/motions/*.js",
-      "default": "./src/motions/*.jsx"
-    },
-    "./themes/*.css": "./src/themes/*.css",
-    "./themes/*.js": "./src/themes/*.js",
-    "./themes/*.jsx": "./src/themes/*.jsx",
-    "./themes/*.mjs": "./src/themes/*.mjs",
-    "./themes/*": {
-      "import": "./src/themes/*.js",
-      "default": "./src/themes/*.jsx"
-    }
+    "./components/*": "./src/components/*",
+    "./contexts/*": "./src/contexts/*",
+    "./display/*": "./src/display/*",
+    "./helpers/*": "./src/helpers/*",
+    "./hooks/*": "./src/hooks/*",
+    "./motions/*": "./src/motions/*",
+    "./themes/*": "./src/themes/*"
   },
   "peerDependencies": {
     "next": "^16.0.0",
