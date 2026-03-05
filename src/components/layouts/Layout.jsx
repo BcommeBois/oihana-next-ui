@@ -1,17 +1,19 @@
 'use client' ;
 
-import Flex from '../../components/layouts/Flex' ;
-import Grid from '../../components/layouts/Grid' ;
+import Flex    from '../../components/layouts/Flex' ;
+import Grid    from '../../components/layouts/Grid' ;
+import Masonry from '../../components/layouts/Masonry' ;
 
-export const FLEX = 'flex' ;
-export const GRID = 'grid' ;
-export const NONE = 'none' ;
+export const FLEX    = 'flex'    ;
+export const GRID    = 'grid'    ;
+export const MASONRY = 'masonry' ;
+export const NONE    = 'none'    ;
 
 /**
  * Layout display type definitions.
- * @typedef {'flex'|'grid'|'none'} LayoutDisplay
+ * @typedef {'flex'|'grid'|'masonry'|'none'} LayoutDisplay
  */
-export const displays = [ FLEX , GRID , NONE ] ;
+export const displays = [ FLEX , GRID , MASONRY , NONE ] ;
 
 /**
  * Layout component that switches between Flex, Grid, or plain div based on display mode.
@@ -27,10 +29,11 @@ export const displays = [ FLEX , GRID , NONE ] ;
  * @param {string} [props.backgroundPattern] - Background pattern utility class
  * @param {React.ReactNode} [props.children] - Child elements
  * @param {string} [props.className] - Additional class names
+ * @param {string} [props.columnClassName] - Additional class names for each column (Masonry only)
  * @param {number|string|Object} [props.columns] - Grid columns (Grid only) - Alias for 'cols'
  * @param {number|string|Object} [props.cols] - Grid columns (Grid only)
  * @param {'row'|'row-reverse'|'col'|'col-reverse'} [props.direction] - Flex direction (Flex only)
- * @param {'flex'|'grid'|'none'} [props.display='flex'] - Layout display mode
+ * @param {'flex'|'grid'|'masonry'|'none'} [props.display='flex'] - Layout display mode
  * @param {string|number} [props.elevation] - Shadow/elevation level
  * @param {'row'|'col'|'dense'|'row-dense'|'col-dense'} [props.flow] - Grid flow direction (Grid only)
  * @param {number|string|Object} [props.gap] - Gap between items (all directions)
@@ -87,6 +90,18 @@ export const displays = [ FLEX , GRID , NONE ] ;
  * </Layout>
  *
  * @example
+ * // Masonry with column styling
+ * <Layout
+ *     columnClassName = "bg-base-200 rounded-lg p-2"
+ *     columns         = { { xs: 1, md: 2, xl: 3 } }
+ *     display         = "masonry"
+ *     gap             = { 6 }
+ * >
+ *     <Card>Item 1</Card>
+ *     <Card>Item 2</Card>
+ * </Layout>
+ *
+ * @example
  * // Responsive grid with spacing
  * <Layout
  *     className="bg-base-200 rounded-lg shadow-md *:p-4 *:bg-base-300"
@@ -131,6 +146,7 @@ const Layout =
     children ,
     className ,
     cols ,
+    columnClassName ,
     columns ,
     direction ,
     display = FLEX ,
@@ -176,8 +192,6 @@ const Layout =
     // Common properties shared between Flex and Grid
     const commonProps =
     {
-        alignContent ,
-        alignItems ,
         as ,
         backgroundColor ,
         backgroundPattern ,
@@ -187,8 +201,6 @@ const Layout =
         gapX ,
         gapY ,
         height ,
-        justifyContent ,
-        justifyItems ,
         margin ,
         marginBottom ,
         marginEnd ,
@@ -207,13 +219,25 @@ const Layout =
         paddingTop ,
         paddingX ,
         paddingY ,
-        placeContent ,
-        placeItems ,
-        position ,
         ref ,
         size ,
         width ,
     } ;
+
+    // Masonry mode
+    if ( display === MASONRY )
+    {
+        return (
+            <Masonry
+                { ...commonProps }
+                columnClassName = { columnClassName }
+                columns         = { columns }
+                { ...rest }
+            >
+                { children }
+            </Masonry>
+        ) ;
+    }
 
     // Grid mode
     if ( display === GRID )
@@ -221,11 +245,18 @@ const Layout =
         return (
             <Grid
                 { ...commonProps }
-                autoCols = { autoCols }
-                autoRows = { autoRows }
-                cols     = { cols || columns }
-                flow     = { flow }
-                rows     = { rows }
+                alignContent   = { alignContent }
+                alignItems     = { alignItems }
+                autoCols       = { autoCols }
+                autoRows       = { autoRows }
+                cols           = { cols || columns }
+                flow           = { flow }
+                justifyContent = { justifyContent }
+                justifyItems   = { justifyItems }
+                placeContent   = { placeContent }
+                placeItems     = { placeItems }
+                position       = { position }
+                rows           = { rows }
                 { ...rest }
             >
                 { children }
@@ -239,8 +270,15 @@ const Layout =
         return (
             <Flex
                 { ...commonProps }
-                direction = { direction }
-                wrap      = { wrap }
+                alignContent   = { alignContent }
+                alignItems     = { alignItems }
+                direction      = { direction }
+                justifyContent = { justifyContent }
+                justifyItems   = { justifyItems }
+                placeContent   = { placeContent }
+                placeItems     = { placeItems }
+                position       = { position }
+                wrap           = { wrap }
                 { ...rest }
             >
                 { children }

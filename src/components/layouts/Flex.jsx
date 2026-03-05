@@ -4,13 +4,13 @@ import getFlexClassNames from '../../themes/layout/getFlexClassNames' ;
  * Flex layout component with comprehensive flexbox utilities.
  *
  * @param {Object} props
+ * @param {React.ElementType} [props.as='div'] - HTML element or component to render
  * @param {'start'|'end'|'center'|'between'|'around'|'evenly'|'stretch'} [props.alignContent] - Align content along cross axis
  * @param {'start'|'end'|'center'|'baseline'|'stretch'} [props.alignItems] - Align items along cross axis
  * @param {string} [props.backgroundColor] - Background color utility class
  * @param {string} [props.backgroundPattern] - Background pattern utility class
  * @param {React.ReactNode} [props.children] - Child elements
  * @param {string} [props.className] - Additional class names
- * @param {React.ElementType} [props.as='div'] - HTML element or component to render
  * @param {'row'|'row-reverse'|'col'|'col-reverse'} [props.direction] - Flex direction
  * @param {string|number} [props.elevation] - Shadow/elevation level
  * @param {number|string} [props.gap] - Gap between items (all directions)

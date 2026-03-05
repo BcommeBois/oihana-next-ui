@@ -4,6 +4,7 @@ import getGridClassNames from '../../themes/layout/getGridClassNames' ;
  * Grid layout component with comprehensive CSS Grid utilities.
  *
  * @param {Object} props
+ * @param {React.ElementType} [props.as='div'] - HTML element or component to render
  * @param {'start'|'end'|'center'|'between'|'around'|'evenly'|'stretch'} [props.alignContent] - Align content along block axis
  * @param {'start'|'end'|'center'|'baseline'|'stretch'} [props.alignItems] - Align items along block axis
  * @param {string} [props.autoCols] - Grid auto-columns template
@@ -13,7 +14,6 @@ import getGridClassNames from '../../themes/layout/getGridClassNames' ;
  * @param {React.ReactNode} [props.children] - Child elements
  * @param {string} [props.className] - Additional class names
  * @param {number|string} [props.cols] - Number of columns or template
- * @param {React.ElementType} [props.Component='div'] - HTML element or component to render
  * @param {string|number} [props.elevation] - Shadow/elevation level
  * @param {'row'|'col'|'dense'|'row-dense'|'col-dense'} [props.flow] - Grid flow direction
  * @param {number|string} [props.gap] - Gap between items (all directions)
