@@ -8,14 +8,14 @@ import lato          from '@/themes/fonts/lato' ;
 import merriweather  from '@/themes/fonts/merriweather' ;
 import redHatMono    from '@/themes/fonts/redHatMono' ;
 
-import getThemeScript from '@/contexts/themes/getThemeScript' ;
+
+import getFontClassNames from '@/themes/helpers/getFontClassNames';
+import getThemeScript    from '@/contexts/themes/getThemeScript' ;
+
+import { initServerI18n } from '@/helpers/i18n/serverI18nConfig' ;
 
 import Application   from '@/display/Application' ;
 import ServiceWorker from '@/display/ServiceWorker';
-
-import getFontClassNames from '@/themes/helpers/getFontClassNames';
-
-import { initServerI18n } from '@/helpers/i18n/serverI18nConfig' ;
 
 import getServerI18n      from '@/helpers/i18n/getServerI18n' ;
 import getServerMetadatas from '@/helpers/i18n/getServerMetadatas' ;
