@@ -8,7 +8,7 @@ import {
     MdDisplaySettings    as DisplayIcon ,
     MdDynamicForm        as FormIcon ,
     MdFeedback           as FeedbackIcon ,
-    MdScience            as BetaIcon ,
+    MdScience            as LabIcon ,
     MdTexture            as PatternsIcon ,
     MdTextSnippet        as TypographyIcon ,
 } from 'react-icons/md' ;
@@ -46,14 +46,13 @@ import { BsTextareaResize       as TextAreaIcon       } from "react-icons/bs" ;
 import { TiMessages             as ToastIcon          } from "react-icons/ti" ;
 import { FaToggleOn             as ToggleIcon         } from "react-icons/fa";
 
-
 const navigation =
 [
     { id : 'home' , type  : LINK  , Icon  : DashboardIcon , path  : '/home' } ,
     {
         id        : 'lab' ,
         type      : COLLAPSE ,
-        Icon      : BetaIcon ,
+        Icon      : LabIcon ,
         className : 'gap-1' ,
         items     :
         [

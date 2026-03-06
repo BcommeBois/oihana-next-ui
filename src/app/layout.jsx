@@ -15,38 +15,44 @@ import ServiceWorker from '@/display/ServiceWorker';
 
 import getFontClassNames from '@/themes/helpers/getFontClassNames';
 
-import config from '@/@configs' ;
+import { initServerI18n } from '@/helpers/i18n/serverI18nConfig' ;
 
-export const metadata =
+import getServerI18n      from '@/helpers/i18n/getServerI18n' ;
+import getServerMetadatas from '@/helpers/i18n/getServerMetadatas' ;
+
+import config from '@/@configs' ;
+import locale from '@/@locale'
+
+initServerI18n(
 {
-    title           : "Oihana Next UI"       ,
-    description     : "Oihana Next UI based on TailwindCSS and DaisyUI"  ,
-    appleWebApp     :
-    {
-        capable        : true              ,
-        statusBarStyle : 'default'         ,
-        title          : 'Oihana Next UI'  ,
-    } ,
-    formatDetection :
-    {
-        telephone : false ,
-    } ,
-    icons :
-    {
-        icon :
-        [
-            { url : "/assets/icons/ios/32.png"  , sizes : "32x32"   , type : "image/png" } ,
-            { url : "/assets/icons/ios/192.png" , sizes : "192x192" , type : "image/png" } ,
-            { url : "/assets/icons/ios/512.png" , sizes : "512x512" , type : "image/png" } ,
-        ] ,
-        apple :
-        [
-            { url : "/assets/icons/ios/180.png" , sizes : "180x180" , type : "image/png" } ,
-            { url : "/assets/icons/ios/152.png" , sizes : "152x152" , type : "image/png" } ,
-            { url : "/assets/icons/ios/120.png" , sizes : "120x120" , type : "image/png" } ,
-        ] ,
-    } ,
-};
+    locale      : locale ,
+    defaultLang : config.defaultLang ,
+    languages   : config.languages   ,
+    metadatas   : config.metadatas   ,
+}) ;
+
+export async function generateMetadata()
+{
+    const i18n      = await getServerI18n() ;
+    const metadatas = getServerMetadatas() ;
+
+    const { description , title } = i18n( 'seo' ) ;
+
+    return {
+        ...metadatas ,
+        title :
+        {
+            default  : title ,
+            template : `%s — ${ title }` ,
+        } ,
+        description : description ,
+        appleWebApp :
+        {
+            ...metadatas.appleWebApp ,
+            title ,
+        } ,
+    } ;
+}
 
 export const viewport =
 {
