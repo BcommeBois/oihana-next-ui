@@ -26,24 +26,14 @@
 
 import { useSyncExternalStore } from 'react' ;
 
-import readStorage      from 'oihana-next-ui/helpers/storage/readStorage' ;
-import writeStorage     from 'oihana-next-ui/helpers/storage/writeStorage' ;
-import removeStorage    from 'oihana-next-ui/helpers/storage/removeStorage' ;
-import subscribeStorage from 'oihana-next-ui/helpers/storage/subscribeStorage' ;
+import readStorage      from '../helpers/storage/readStorage' ;
+import writeStorage     from '../helpers/storage/writeStorage' ;
+import removeStorage    from '../helpers/storage/removeStorage' ;
+import subscribeStorage from '../helpers/storage/subscribeStorage' ;
 
-/**
- * Prefix applied to all display preference storage keys.
- * @type {string}
- */
-export const DISPLAY_STORAGE_PREFIX = 'display__' ;
+import getDisplayStorageKey from '../helpers/storage/displayStorageKey' ;
 
-/**
- * Builds the full storage key from a page identifier.
- *
- * @param {string} pageKey - e.g. 'products' or 'app.products'
- * @returns {string}       - e.g. 'display__products'
- */
-export const getDisplayStorageKey = pageKey => `${ DISPLAY_STORAGE_PREFIX }${ pageKey }` ;
+export { getDisplayStorageKey } ;
 
 /**
  * @param {string|null|undefined} pageKey       - Page identifier — use `url` or `path` prop from ThingsPage.
