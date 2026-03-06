@@ -20,7 +20,7 @@ import { RiCheckboxFill         as CheckBoxIcon       } from "react-icons/ri";
 import { LuListCollapse         as CollapseIcon       } from "react-icons/lu";
 import { CiGrid31               as FlexIcon           } from "react-icons/ci";
 import { IoMdGrid               as GridIcon           } from "react-icons/io";
-import { SiDialogflow           as ModalIcon          } from "react-icons/si";
+import { FaPager                as HeaderIcon         } from "react-icons/fa6";
 import { SlPicture              as ImageIcon          } from "react-icons/sl";
 import { RiInputField           as InputIcon          } from "react-icons/ri" ;
 import { LuLayoutDashboard      as LayoutIcon         } from "react-icons/lu";
@@ -30,6 +30,7 @@ import { BsFillMarkdownFill     as MarkdownIcon       } from 'react-icons/bs' ;
 import { GiDominoMask           as MaskIcon           } from "react-icons/gi";
 import { RiLayoutMasonryFill    as MasonryIcon        } from "react-icons/ri";
 import { TfiLayoutMenuSeparated as MenuIcon           } from "react-icons/tfi" ;
+import { SiDialogflow           as ModalIcon          } from "react-icons/si";
 import { MdAnimation            as MotionIcon         } from "react-icons/md";
 import { BiFoodMenu             as NavigationIcon     } from "react-icons/bi";
 import { MdOutlineNetworkWifi   as NetworkIcon        } from "react-icons/md";
@@ -94,6 +95,7 @@ const navigation =
                     { id : 'markdown'   , type : LINK  , Icon : MarkdownIcon   , path  : '/lab/markdown'   } ,
                     { id : 'typography' , type : LINK  , Icon : TypographyIcon , path  : '/lab/typography' } ,
                     { id : 'motion'     , type : LINK  , Icon : MotionIcon     , path  : '/lab/motion'     } ,
+                    { id : 'headers'    , type : LINK  , Icon : HeaderIcon     , path  : '/lab/headers'    } ,
                     { id : 'network'    , type : LINK  , Icon : NetworkIcon    , path  : '/lab/network'    } ,
                     { id : 'status'     , type : LINK  , Icon : StatusIcon     , path  : '/lab/status'     } ,
                 ]

@@ -10,28 +10,29 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ---
 
+## [0.1.32] — 2026-03-06
+
+**Components**
+- components/headers/PageHeader
+
 ## [0.1.31] — 2026-03-06
 
 **Picture**
-
 - Fix the priority property
 
 ## [0.1.30] — 2026-03-06
 
 **I18n**
-
 - Adds a metadatas injector engine based on the i18n helpers. 
 
 ## [0.1.28] — 2026-03-05
 
 **Layouts**
-
 - `Themes` — Add the DaisyUI 'card' component helper.~~
 
 ## [0.1.27] — 2026-03-05
 
 **Layouts**
-
 - `Layout` — Add the 'masonry' display mode.
 
 #### Components
