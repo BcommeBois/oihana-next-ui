@@ -10,6 +10,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ---
 
+## [0.1.31] — 2026-03-06
+
+**Picture**
+
+- Fix the priority property
+
 ## [0.1.30] — 2026-03-06
 
 **I18n**
