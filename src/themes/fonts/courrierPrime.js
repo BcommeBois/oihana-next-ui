@@ -6,5 +6,6 @@ const courierPrime = Courier_Prime
     weight   : [ '400', '700' ],
     variable : '--font-courier-prime',
     display  : 'swap',
+    preload  : false
 });
 export default courierPrime ;

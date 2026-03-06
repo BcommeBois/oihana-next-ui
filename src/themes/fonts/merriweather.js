@@ -6,6 +6,7 @@ const merriweather = Merriweather
     weight   : [ '300', '400', '700', '900' ],
     variable : '--font-merriweather',
     display  : 'swap',
+    preload  : false
 });
 
 export default merriweather ;
