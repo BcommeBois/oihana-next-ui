@@ -129,7 +129,7 @@ const PageHeader =
     (
         <Typography
             as        = "h1"
-            className = { cn( 'text-primary leading-tight' , titleClassName ) }
+            className = { cn( 'leading-tight' , titleClassName ) }
             size      = "xl"
             weight    = "semibold"
         >
