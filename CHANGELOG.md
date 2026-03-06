@@ -10,23 +10,25 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ---
 
+## [0.1.35] — 2026-03-06
+
+**Hooks**
+- hooks/useDisplayPreference : Persists the display mode preference for a given page key.
+
 ## [0.1.32] — 2026-03-06
 
 **Components**
-
 - components/dropDowns/DisplayDropDown
 
 ## [0.1.32] — 2026-03-06
 
 **Components**
-
 - components/headers/PageHeader
 
 ## [0.1.31] — 2026-03-06
 
-**Picture**
-
-- Fix the priority property
+**Components**
+- PictureFix the priority property
 
 ## [0.1.30] — 2026-03-06
 
