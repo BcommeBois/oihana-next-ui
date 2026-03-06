@@ -6,6 +6,14 @@ import Layout, { FLEX, GRID, MASONRY } from '@/components/layouts/Layout' ;
 import Container                       from '@/display/Container' ;
 import DisplayDropDown                 from '@/components/dropDowns/DisplayDropDown' ;
 
+import { BsList    as BsListIcon    } from 'react-icons/bs' ;
+import { BsGrid    as BsGridIcon    } from 'react-icons/bs' ;
+import { BsColumns as BsColumnsIcon } from 'react-icons/bs' ;
+
+import { TbLayoutList        as TbListIcon    } from 'react-icons/tb' ;
+import { TbLayoutGrid        as TbGridIcon    } from 'react-icons/tb' ;
+import { RiLayoutMasonryLine as TbMasonryIcon } from "react-icons/ri";
+
 // ─── Fake items ──────────────────────────────────────────────────────────────
 
 const ITEMS =
@@ -112,7 +120,7 @@ const AutoCell = ({ label , justify , align , value , onChange , computed }) =>
 
 // ─── Demo ─────────────────────────────────────────────────────────────────────
 
-const DisplayDropdownDemo = () =>
+const DisplayDropDownDemo = () =>
 {
     const [ mAll  , setMAll  ] = useState( 'flex'    ) ;
     const [ mFM   , setMFM   ] = useState( 'masonry' ) ;
@@ -306,6 +314,74 @@ const DisplayDropdownDemo = () =>
 
             <div className="divider" />
 
+            {/* ════════════════════════════════ Icons ══════════════════════════════ */}
+
+            <section className="flex flex-col gap-4">
+
+                <h4 className="text-base font-semibold text-base-content/70 uppercase tracking-wide">
+                    Icons
+                </h4>
+
+                <p className="text-xs text-base-content/40">
+                    La prop <span className="font-mono">icons</span> accepte un override partiel ou total — les clés absentes gardent l'icône par défaut.
+                </p>
+
+                <div className="flex flex-col gap-3">
+
+                    {/* Défaut — pour comparaison */}
+
+                    <div className="flex flex-col gap-1">
+                        <p className="text-xs text-base-content/50 font-mono">
+                            défaut (CiGrid31 / RiLayoutMasonryFill / IoMdGrid)
+                        </p>
+                        <Row value={ mAll } onChange={ setMAll } />
+                    </div>
+
+                    {/* Override total — bs icons */}
+
+                    <div className="flex flex-col gap-1">
+                        <p className="text-xs text-base-content/50 font-mono">
+                            { "icons={ { flex: BsList , masonry: BsColumns , grid: BsGrid } }" }
+                        </p>
+                        <Row
+                            icons    = { { flex : BsListIcon , masonry : BsColumnsIcon , grid : BsGridIcon } }
+                            value    = { mAll }
+                            onChange = { setMAll }
+                        />
+                    </div>
+
+                    {/* Override total — tb icons */}
+
+                    <div className="flex flex-col gap-1">
+                        <p className="text-xs text-base-content/50 font-mono">
+                            { "icons={ { flex: TbLayoutList , masonry: TbLayoutMasonry , grid: TbLayoutGrid } }" }
+                        </p>
+                        <Row
+                            icons    = { { flex : TbListIcon , masonry : TbMasonryIcon , grid : TbGridIcon } }
+                            value    = { mAll }
+                            onChange = { setMAll }
+                        />
+                    </div>
+
+                    {/* Override partiel — flex seulement */}
+
+                    <div className="flex flex-col gap-1">
+                        <p className="text-xs text-base-content/50 font-mono">
+                            { "icons={ { flex: BsList } } — masonry + grid restent par défaut" }
+                        </p>
+                        <Row
+                            icons    = { { flex : BsListIcon } }
+                            value    = { mAll }
+                            onChange = { setMAll }
+                        />
+                    </div>
+
+                </div>
+
+            </section>
+
+            <div className="divider" />
+
             {/* ════════════════════════════════ autoPosition ═══════════════════════ */}
 
             <section className="flex flex-col gap-4">
@@ -431,4 +507,4 @@ const DisplayDropdownDemo = () =>
     ) ;
 } ;
 
-export default DisplayDropdownDemo ;
+export default DisplayDropDownDemo ;
