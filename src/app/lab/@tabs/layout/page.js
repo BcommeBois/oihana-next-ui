@@ -2,7 +2,9 @@
 
 import Page      from '@/display/Page' ;
 import Container from '@/display/Container' ;
-import LayoutDemo from '@/demo/layouts/LayoutDemo' ;
+
+import LayoutDemo          from '@/demo/layouts/LayoutDemo' ;
+import DisplayDropdownDemo from '@/demo/layouts/DisplayDropdownDemo';
 
 /**
  * Layout showcase page.
@@ -17,9 +19,9 @@ const LayoutPage = () =>
             </h1>
         </Container>
 
-        <Container maxWidth="max-w-6xl">
-            <LayoutDemo />
-        </Container>
+        <LayoutDemo />
+
+        <DisplayDropdownDemo />
     </Page>
 ) ;
 
