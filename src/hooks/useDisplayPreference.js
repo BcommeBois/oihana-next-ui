@@ -16,19 +16,20 @@
  *
  * @example
  * ```js
+ * // With persistence
  * const [ display , saveDisplay , clearDisplay ] = useDisplayPreference( 'products' , 'flex' ) ;
  *
- * saveDisplay( 'masonry' ) ; // → localStorage + cookie display__products=masonry
- * clearDisplay() ;           // → removes both
+ * // Without persistence (pageKey absent) — save/clear are no-ops
+ * const [ display , saveDisplay , clearDisplay ] = useDisplayPreference( null , 'flex' ) ;
  * ```
  */
 
 import { useSyncExternalStore } from 'react' ;
 
-import readStorage      from '../helpers/storage/readStorage' ;
-import removeStorage    from '../helpers/storage/removeStorage' ;
-import subscribeStorage from '../helpers/storage/subscribeStorage' ;
-import writeStorage     from '../helpers/storage/writeStorage' ;
+import readStorage      from 'oihana-next-ui/helpers/storage/readStorage' ;
+import writeStorage     from 'oihana-next-ui/helpers/storage/writeStorage' ;
+import removeStorage    from 'oihana-next-ui/helpers/storage/removeStorage' ;
+import subscribeStorage from 'oihana-next-ui/helpers/storage/subscribeStorage' ;
 
 /**
  * Prefix applied to all display preference storage keys.
@@ -45,22 +46,25 @@ export const DISPLAY_STORAGE_PREFIX = 'display__' ;
 export const getDisplayStorageKey = pageKey => `${ DISPLAY_STORAGE_PREFIX }${ pageKey }` ;
 
 /**
- * @param {string} pageKey       - Page identifier — use `url` or `path` prop from ThingsPage.
- * @param {string} [defaultValue='flex'] - Fallback when nothing is stored.
+ * @param {string|null|undefined} pageKey       - Page identifier — use `url` or `path` prop from ThingsPage.
+ *                                                Pass null/undefined to disable persistence entirely.
+ * @param {string}                [defaultValue='flex'] - Fallback when nothing is stored.
  * @returns {[ string , (mode: string) => void , () => void ]}
  */
 const useDisplayPreference = ( pageKey , defaultValue = 'flex' ) =>
 {
-    const key = getDisplayStorageKey( pageKey ) ;
+    const key = pageKey ? getDisplayStorageKey( pageKey ) : null ;
 
-    const subscribe         = cb => subscribeStorage( cb ) ;
-    const getSnapshot       = () => readStorage( key ) ?? defaultValue ;
+    const subscribe         = cb => key ? subscribeStorage( cb ) : () => {} ;
+    const getSnapshot       = () => key ? ( readStorage( key ) ?? defaultValue ) : defaultValue ;
     const getServerSnapshot = () => defaultValue ;
 
     const value = useSyncExternalStore( subscribe , getSnapshot , getServerSnapshot ) ;
 
     const save = mode =>
     {
+        if ( !key ) return ;
+
         if ( mode )
         {
             writeStorage( key , mode ) ;
@@ -71,7 +75,7 @@ const useDisplayPreference = ( pageKey , defaultValue = 'flex' ) =>
         }
     } ;
 
-    const clear = () => removeStorage( key ) ;
+    const clear = () => key && removeStorage( key ) ;
 
     return [ value , save , clear ] ;
 } ;
