@@ -168,10 +168,10 @@ const Picture =
         width ,
         height ,
         objectFit ,
-        onLoad  : handleLoad ,
-        source  : activeSrc ,
+        onLoad   : handleLoad ,
+        source   : activeSrc ,
         priority ,
-        loading ,
+        loading  : priority ? 'eager' : loading ,
         rest ,
     }) ;
 
