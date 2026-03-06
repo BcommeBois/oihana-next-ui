@@ -1,30 +1,24 @@
-import { useEffect } from 'react' ;
-
-import { usePathname } from 'next/navigation' ;
+import { useEffect }                     from 'react' ;
+import { usePathname , useSearchParams } from 'next/navigation' ;
 
 /**
- * React hook that resets scroll position when the route changes.
+ * Resets scroll position when the route (pathname or searchParams) changes.
  *
- * @param {React.RefObject<HTMLElement>} [ref] - Optional element reference. Defaults to window.
- * @param {boolean} [disabled=false] - Whether to disable the scroll reset.
- * @param {ScrollBehavior} [behavior='instant'] - Scroll behavior: 'instant' or 'smooth'.
- *
- * @example
- * ```js
- * // Reset window scroll on route change
- * useResetScroll() ;
- *
- * // Reset a specific container
- * const containerRef = useRef( null ) ;
- * useResetScroll( containerRef ) ;
- *
- * // With smooth scroll
- * useResetScroll( null , false , 'smooth' ) ;
- * ```
+ * @param {React.RefObject} [ref]                       - Optional scroll container ref.
+ * @param {boolean}         [disabled=false]
+ * @param {string}          [scrollClassName='drawer-content'] - CSS class of the fallback scroll container.
+ * @param {ScrollBehavior}  [behavior='smooth']          - Scroll behavior.
  */
-const useResetScroll = ( ref , disabled = false , behavior = 'instant' ) =>
+const useResetScroll =
+(
+    ref ,
+    disabled = false ,
+    scrollClassName = 'drawer-content' ,
+    behavior = 'smooth'
+) =>
 {
-    const pathname = usePathname() ;
+    const pathname     = usePathname() ;
+    const searchParams = useSearchParams() ;
 
     useEffect( () =>
     {
@@ -33,11 +27,13 @@ const useResetScroll = ( ref , disabled = false , behavior = 'instant' ) =>
             return ;
         }
 
-        const element = ref?.current ?? window ;
+        const element = ref?.current
+            ?? document.querySelector( `.${ scrollClassName }` )
+            ?? window ;
 
-        element.scrollTo( { top: 0 , left: 0 , behavior } ) ;
+        element.scrollTo( { top : 0 , behavior } ) ;
     }
-    , [ pathname , disabled , behavior ] ) ;
+    , [ behavior , disabled , pathname , searchParams , ref , scrollClassName ] ) ;
 } ;
 
 export default useResetScroll ;
