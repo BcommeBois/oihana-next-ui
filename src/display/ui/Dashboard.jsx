@@ -27,7 +27,7 @@
 
 'use client' ;
 
-import { useState } from 'react' ;
+import { useCallback , useState } from 'react' ;
 
 import { MdMenu as MenuIcon } from 'react-icons/md' ;
 
@@ -72,8 +72,8 @@ const Dashboard =
 
     const [ drawerOpen , setDrawerOpen ] = useState( false ) ;
 
-    const openDrawer  = () => setDrawerOpen( true ) ;
-    const closeDrawer = () => setDrawerOpen( false ) ;
+    const openDrawer  = useCallback( () => setDrawerOpen( true  ) , [] ) ;
+    const closeDrawer = useCallback( () => setDrawerOpen( false ) , [] ) ;
 
     const bp = breakpoint ?? 'lg' ;
 

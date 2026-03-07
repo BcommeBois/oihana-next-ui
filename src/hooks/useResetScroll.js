@@ -1,8 +1,8 @@
 import { useEffect }                     from 'react' ;
-import { usePathname } from 'next/navigation' ;
+import { usePathname , useSearchParams } from 'next/navigation' ;
 
 /**
- * Resets scroll position when the route (pathname) changes.
+ * Resets scroll position when the route (pathname or searchParams) changes.
  *
  * @param {React.RefObject} [ref]                       - Optional scroll container ref.
  * @param {boolean}         [disabled=false]
@@ -17,7 +17,8 @@ const useResetScroll =
     behavior = 'smooth'
 ) =>
 {
-    const pathname = usePathname() ;
+    const pathname     = usePathname() ;
+    const searchParams = useSearchParams() ;
 
     useEffect( () =>
     {
@@ -32,7 +33,7 @@ const useResetScroll =
 
         element.scrollTo( { top : 0 , behavior } ) ;
     }
-    , [ behavior , disabled , pathname , ref , scrollClassName ] ) ;
+    , [ behavior , disabled , pathname , searchParams , ref , scrollClassName ] ) ;
 } ;
 
 export default useResetScroll ;
