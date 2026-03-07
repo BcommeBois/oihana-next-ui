@@ -51,6 +51,8 @@ const LangProvider =
 
     const lang = useSyncExternalStore( subscribe , getSnapshot , getServerSnapshot ) ;
 
+    dayjs.locale( lang ) ;
+
     const setLang = useCallback( ( code ) =>
     {
         if ( isValidLang( code ) )
