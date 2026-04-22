@@ -17,6 +17,7 @@ import { MdColorLens as ColorIcon } from 'react-icons/md' ;
  *
  * @param {Object} props
  * @param {boolean} [props.alpha=false] - Allow alpha channel (8 chars: #RRGGBBAA)
+ * @param {number} [props.length] - Explicit hex length (3, 4, 6 or 8). Overrides the default derived from `alpha`. When set, validation requires exactly this length.
  * @param {boolean} [props.prefixed=true] - Display "#" prefix
  * @param {boolean} [props.showColorPreview=true] - Show color preview in icon background
  * @param {boolean} [props.showValidationError=false] - Show error message for invalid colors
@@ -71,6 +72,7 @@ const InputHexColor =
     error: externalError,
     icon,
     iconClassName = 'aspect-square',
+    length,
     onChange: onChangeFromProps,
     prefixed = true,
     showColorPreview = true,
@@ -85,6 +87,10 @@ const InputHexColor =
     const [ currentColor , setCurrentColor ] = useState( externalValue || defaultValue || '' ) ;
     const [ internalError, setInternalError ] = useState( '' ) ;
 
+    // --------- Resolve max length (explicit length wins over alpha default)
+
+    const maxLength = length ?? ( alpha ? 8 : 6 ) ;
+
     // --------- Transformations
 
     const transform = value =>
@@ -94,8 +100,7 @@ const InputHexColor =
             return '' ;
         }
 
-        const cleaned   = value.replace( /([^0-9A-F]+)/gi, '' ) ;
-        const maxLength = alpha ? 8 : 6 ;
+        const cleaned = value.replace( /([^0-9A-F]+)/gi, '' ) ;
 
         return cleaned.substring( 0, maxLength ).toUpperCase() ;
     } ;
@@ -108,19 +113,21 @@ const InputHexColor =
             return true ;
         }
 
-        const isValid = validateHexColor( value , alpha ) ;
+        // When length is explicit, require exact length; otherwise accept any valid hex form.
+        const isValid = length !== undefined
+            ? ( value.length === length && validateHexColor( value, alpha ) )
+            : validateHexColor( value, alpha ) ;
 
         if ( showValidationError )
         {
             if ( !isValid )
             {
-                const expectedLength = alpha ? 8 : 6 ;
                 const defaultPattern = 'Invalid hex color (expected {0} characters: 0-9, A-F)' ;
 
                 setInternalError( fastFormat
                 (
                     validationError ?? defaultPattern,
-                    String( expectedLength )
+                    String( maxLength )
                 ) ) ;
             }
             else
@@ -134,12 +141,14 @@ const InputHexColor =
 
     const format = prefixed ? value =>
     {
-        return value ? `#${value}` : '' ;
+        if ( !value ) return '' ;
+        return value.startsWith( '#' ) ? value : `#${value}` ;
     } : undefined ;
 
     const process = ( value ) =>
     {
-        return value ? `#${value}` : '' ;
+        if ( !value ) return '' ;
+        return value.startsWith( '#' ) ? value : `#${value}` ;
     } ;
 
     // --------- Intercept onChange to update currentColor

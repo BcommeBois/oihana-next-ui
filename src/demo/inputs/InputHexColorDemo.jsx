@@ -60,11 +60,12 @@ const InputHexColorDemo = () =>
 
             {/* Short format (3 chars) */}
             <InputHexColor
-                label       = "Short Format (3 chars)"
+                length       = { 3 }
+                label        = "Short Format (3 chars)"
                 defaultValue = "F53"
-                icon        = { <ColorIcon /> }
-                placeholder = "FFF"
-                helper      = "Short format: #rgb"
+                icon         = { <ColorIcon /> }
+                placeholder  = "FFF"
+                helper       = "Short format: #rgb"
             />
 
             {/* With validation error */}
