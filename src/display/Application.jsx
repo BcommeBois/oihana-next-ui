@@ -47,7 +47,7 @@ const Application = ( { children , initialLang } ) =>
             { !ready && (
                 <motion.div
                     key        = "splash"
-                    className  = "fixed inset-0 z-50 bg-base-100"
+                    className  = "fixed inset-0 z-50 bg-base-100 pointer-events-none"
                     initial    = { { opacity : 0 } }
                     animate    = { { opacity : 1 } }
                     exit       = { { opacity : 0 } }
