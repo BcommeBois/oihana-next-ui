@@ -100,49 +100,71 @@ Open [http://localhost:3666](http://localhost:3666) to browse the component demo
 - [Day.js](https://day.js.org/) — Lightweight date library
 - [Chroma.js](https://www.vis4.net/chromajs/) — Color manipulation library
 
-### Build the library
-
-```bash
-bun run build:lib
-```
-
-### Watch mode
-
-```bash
-bun run build:lib:watch
-```
-
 ## Release
+
+The package publishes the raw `src/` tree (no build step) — see the `files` and `exports` fields in [`package.json`](./package.json).
 
 ### Versioning
 
 This project follows [Semantic Versioning](https://semver.org/) — `MAJOR.MINOR.PATCH` (e.g. `1.2.3`).
 
-| Type | Command | Example | When to use |
-|------|---------|---------|-------------|
-| Patch | `bun run release:patch` | `0.1.0` → `0.1.1` | Bug fix, minor tweak |
-| Minor | `bun run release:minor` | `0.1.0` → `0.2.0` | New component or feature, backward compatible |
-| Major | `bun run release:major` | `0.1.0` → `1.0.0` | Breaking change |
+| Type  | Command                 | Example             | When to use                                   |
+|-------|-------------------------|---------------------|-----------------------------------------------|
+| Patch | `bun run release:patch` | `0.1.46` → `0.1.47` | Bug fix, small tweak                          |
+| Minor | `bun run release:minor` | `0.1.46` → `0.2.0`  | New component or feature, backward compatible |
+| Major | `bun run release:major` | `0.1.46` → `1.0.0`  | Breaking change                               |
 
-Each script automatically bumps the version, builds the library, publishes to npm, and pushes the commit and tag to GitHub.
+### Prerequisites
 
-You can also set a specific version manually :
+- Logged in to npm — `npm whoami` should print your username (otherwise `npm login`).
+- A git remote named `origin-ssh` configured (the `release` script pushes there with `--follow-tags`).
+- A clean working tree, ideally — `release:*` will otherwise commit any pending change as `chore: prepare release` before bumping the version.
+
+### Patch release walkthrough — e.g. `0.1.46` → `0.1.47`
+
+1. **Update [`CHANGELOG.md`](./CHANGELOG.md)** — add a new section under `[Unreleased]` with the new version and date :
+
+   ~~~markdown
+   ## [0.1.47] — 2026-04-27
+
+   **Components**
+   - `XYZ` — what changed and why.
+   ~~~
+
+2. **Run the release script** :
+
+   ```bash
+   bun run release:patch
+   ```
+
+   What happens, in order — all of this is automatic :
+
+   1. `stage` — commits any pending change as `chore: prepare release` (skipped if the working tree is clean).
+   2. `npm version patch` — bumps `0.1.46` → `0.1.47` in `package.json`.
+   3. `version` script (auto-run by `npm version`) :
+      - `inject-version` writes the new version into `src/version.js` and `public/sw.js`,
+      - `generate-exports` refreshes the `exports` field in `package.json`,
+      - then stages `src/version.js`, `public/sw.js` and `package.json` for the version commit.
+   4. `npm version` creates the release commit (`0.1.47`) and the matching git tag.
+   5. `postversion` script (auto-run by `npm version`) → `release` :
+      - `npm publish --access public` publishes to npm,
+      - `git push origin-ssh --follow-tags` pushes the commit and the tag to GitHub.
+
+### Manual / pre-release version
+
+Set a specific version manually — `version` + `postversion` still run as above :
 
 ```bash
 npm version 1.0.0
-bun run release
 ```
 
-Or a pre-release version :
+Pre-release versions :
 
 ```bash
-npm version prerelease --preid=alpha   # 0.1.0 → 0.1.1-alpha.0
-npm version prerelease --preid=beta    # 0.1.0 → 0.1.1-beta.0
-npm version prerelease --preid=rc      # 0.1.0 → 0.1.1-rc.0
-bun run release
+npm version prerelease --preid=alpha   # 0.1.46 → 0.1.47-alpha.0
+npm version prerelease --preid=beta    # 0.1.46 → 0.1.47-beta.0
+npm version prerelease --preid=rc      # 0.1.46 → 0.1.47-rc.0
 ```
-
-`npm version` automatically updates `package.json`, creates a Git commit and a Git tag.
 
 ## License
 
