@@ -48,9 +48,20 @@ const getBadge = ( badge ) =>
  */
 
 /**
+ * Default active-link style — neutral, transparent darkening that works
+ * in both light and dark themes through DaisyUI semantic tokens. Subtle
+ * by design: relies on the `font-medium` weight bump as a secondary cue
+ * so the active state stays readable without competing visually with
+ * the page content.
+ */
+const DEFAULT_ACTIVE_CLASSNAME = 'bg-base-content/10 font-medium' ;
+
+/**
  * @typedef {Object} LinkProps
  * @property {string|BadgeProps} [badge] - Badge label or configuration object.
  * @property {string} [className] - Additional class names.
+ * @property {string} [activeClassName] - Override for the default
+ *   active-link style applied when the current pathname matches `path`.
  * @property {React.ComponentType<{ size?: number }>} [Icon] - Icon component.
  * @property {number} [iconSize=20] - Icon size in pixels.
  * @property {string} [label] - Link text content.
@@ -85,6 +96,7 @@ const Link =
 ({
      badge ,
      className ,
+     activeClassName ,
      Icon ,
      iconSize = 20 ,
      label ,
@@ -99,7 +111,7 @@ const Link =
     const classNames = cn
     (
         'space-x-4' ,
-        { active } ,
+        active && ( activeClassName ?? DEFAULT_ACTIVE_CLASSNAME ) ,
         className ,
     ) ;
 
@@ -125,17 +137,19 @@ const Link =
         { path
             ? (
                 <NextLink
-                    className = { classNames }
-                    href      = { path }
-                    onClick   = { handleClick }
+                    className   = { classNames }
+                    href        = { path }
+                    onClick     = { handleClick }
+                    data-active = { active || undefined }
                 >
                     { content }
                 </NextLink>
             )
             : (
                 <a
-                    className = { classNames }
-                    onClick   = { handleClick }
+                    className   = { classNames }
+                    onClick     = { handleClick }
+                    data-active = { active || undefined }
                 >
                     { content }
                 </a>
