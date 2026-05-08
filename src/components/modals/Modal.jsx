@@ -232,7 +232,7 @@ const Modal =
                     </div>
                 )}
 
-                <div className={`overflow-y-auto h-full p-2 py-4 ${ contentClassName || '' }`}>
+                <div className={ cn( 'overflow-y-auto h-full p-2 py-4' , contentClassName ) }>
                     { children }
                 </div>
 
