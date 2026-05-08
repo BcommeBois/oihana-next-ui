@@ -38,13 +38,13 @@ import MotionButton from './MotionButton' ;
  */
 const RefreshButton =
 ({
-     color       = 'secondary' ,
-     icon        = MdRefresh ,
-     motion      = Jump ,
+     color = 'secondary' ,
+     icon = MdRefresh ,
+     motion = Jump ,
      motionProps = { delay: 0.3 } ,
-     path        = 'components.buttons.refresh' ,
-     shape       = 'circle' ,
-     size        = 'md' ,
+     path = 'components.buttons.refresh' ,
+     shape = 'circle' ,
+     size = 'md' ,
      ...rest
  }) =>
 (
