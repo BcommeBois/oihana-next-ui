@@ -64,7 +64,11 @@ const Application = ( { children , initialLang } ) =>
                     <ThemeProvider>
                         <ApplicationProvider>
                             <FullScreenProvider>
-                                <NavigationProvider defaultNavigation={ navigation } >
+                                <NavigationProvider
+                                    defaultNavigation = { navigation }
+                                    defaultMode       = "auto"
+                                    storageKey        = "oihana-next-ui:lab:nav"
+                                >
                                     <LoadingProvider>
                                         <ToastProvider>
                                             <SelectProvider>
