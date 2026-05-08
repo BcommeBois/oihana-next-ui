@@ -15,6 +15,8 @@ import mapI18nBadge from './mapI18nBadge'
  * @param {React.ComponentType} [item.Icon] - Icon component.
  * @param {Object} [item.badge] - Badge configuration.
  * @param {Object[]} [item.items] - Child items (for collapse type).
+ * @param {boolean} [item.defaultOpen] - Per-item override for the
+ *   collapse open/closed default. Only meaningful when `type === 'collapse'`.
  * @param {Object} locale - Locale data.
  *
  * @returns {Object} Mapped navigation item with localized label.
@@ -51,7 +53,7 @@ import mapI18nBadge from './mapI18nBadge'
  */
 const mapI18nItem = ( item , locale ) =>
 {
-    const { badge , className , Icon , id , items , label , path , type } = item ;
+    const { badge , className , defaultOpen , Icon , id , items , label , path , type } = item ;
 
     const mappedItems = type === COLLAPSE && items?.length > 0
         ? items.map( ( child ) => mapI18nItem( child , locale ) )
@@ -64,14 +66,15 @@ const mapI18nItem = ( item , locale ) =>
     const mappedLabel = locale?.[ id ] ?? label ?? '' ;
 
     return {
-        badge     : mappedBadge ,
-        className ,
-        Icon      ,
-        id        ,
-        items     : mappedItems ,
-        label     : mappedLabel ,
-        path      ,
-        type      ,
+        badge       : mappedBadge ,
+        className   ,
+        defaultOpen ,
+        Icon        ,
+        id          ,
+        items       : mappedItems ,
+        label       : mappedLabel ,
+        path        ,
+        type        ,
     } ;
 } ;
 
