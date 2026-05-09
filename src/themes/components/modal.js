@@ -62,6 +62,7 @@ export const getModalClasses =
  * @param {boolean} [props.fullScreen] - Full screen mode
  * @param {boolean} [props.fullWidth] - Full width mode
  * @param {string} [props.placement] - Modal placement (for centering logic)
+ * @param {boolean} [props.flexLayout] - Switch the modal-box to a vertical flex column so a sticky custom footer + scrollable content area can be composed cleanly. Used by `<Modal footerNode>`.
  * @param {string} [props.className] - Additional classes
  *
  * @returns {string} Combined class names
@@ -69,6 +70,7 @@ export const getModalClasses =
 export const getModalBoxClasses =
 ({
     className ,
+    flexLayout ,
     fullScreen ,
     fullWidth ,
     maxWidth,
@@ -77,11 +79,13 @@ export const getModalBoxClasses =
 = {} ) => cn
 (
     MODAL_BOX ,
+    'px-4 pt-1 pb-3',
     {
         'max-w-none w-full max-h-none h-full rounded-none' : fullScreen ,
         'w-full max-w-none'                                : !fullScreen && fullWidth ,
         'mx-auto'                                          : !fullScreen && !fullWidth && ( placement === 'top' || placement === 'bottom' ) ,
         [ maxWidth ]                                       : !fullScreen && !fullWidth && maxWidth ,
+        'flex flex-col overflow-hidden'                    : flexLayout ,
     },
     className,
 ) ;

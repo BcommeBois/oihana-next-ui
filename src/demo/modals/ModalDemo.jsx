@@ -22,7 +22,8 @@ import {
     MdError,
     MdDelete,
     MdDriveFileRenameOutline ,
-    MdSave
+    MdSave,
+    MdCloudDone,
 } from 'react-icons/md' ;
 
 const ModalDemo = () =>
@@ -60,6 +61,9 @@ const ModalDemo = () =>
 
     // Form modal
     const { modalRef: formRef, open: openForm } = useModal() ;
+
+    // Custom footerNode modal (sticky footer + scrollable content)
+    const { modalRef: footerNodeRef, open: openFooterNode } = useModal() ;
 
     // Toggle demo
     const { modalRef: toggleRef, toggle: toggleModal, isOpen: toggleIsOpen } = useModal({
@@ -613,6 +617,162 @@ const ModalDemo = () =>
                     <p className="py-4">
                         This modal has a custom button in the footer alongside the standard buttons.
                     </p>
+                </Modal>
+            </div>
+
+            <Divider />
+
+            {/* Custom Footer Node (sticky footer + scrollable content) */}
+            <div className="flex flex-col gap-4">
+                <h3 className="text-xl font-semibold border-b-2 border-info pb-2">
+                    Custom Footer Node — sticky footer + scrollable content
+                </h3>
+
+                <div className="card bg-base-100 shadow">
+                    <div className="card-body gap-4">
+
+                        <h4 className="card-title text-base">
+                            <MdInfo className="text-info" /> When to use <code className="badge badge-sm">footerNode</code>
+                        </h4>
+
+                        <p className="text-sm text-base-content/80">
+                            Use the <code className="badge badge-sm">footerNode</code> prop when the standard
+                            <code className="badge badge-sm">agree</code> / <code className="badge badge-sm">disagree</code> footer
+                            is too rigid — typically for forms with a status text, custom buttons, or any layout
+                            that does not fit the default <code className="badge badge-sm">modal-action</code> row.
+                        </p>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <h5 className="font-bold text-success mb-2">✅ What it gives you</h5>
+                                <ul className="list-disc list-inside space-y-1 text-sm">
+                                    <li>Footer always pinned at the bottom of the modal-box</li>
+                                    <li>Content area scrolls on its own (smooth, internal)</li>
+                                    <li>Header stays at the top</li>
+                                    <li>No need for <code className="badge badge-sm">!important</code> overrides</li>
+                                    <li>No need for <code className="badge badge-sm">modalBoxClassName="flex flex-col"</code> boilerplate</li>
+                                </ul>
+                            </div>
+
+                            <div>
+                                <h5 className="font-bold text-warning mb-2">⚠️ Precedence rules</h5>
+                                <p className="text-sm mb-1">
+                                    When <code className="badge badge-sm">footerNode</code> is set, these props are <strong>ignored</strong>:
+                                </p>
+                                <p className="text-xs font-mono text-base-content/70">
+                                    agree, disagree, agreeColor, disagreeColor, agreeIcon, disagreeIcon,
+                                    showAgree, showDisagree, showFooter, footerReverse, footerClassName,
+                                    footerOptions, onAgree, onCancel
+                                </p>
+                                <p className="text-sm mt-2">
+                                    A <code className="badge badge-sm">console.warn</code> is emitted in dev if any of them
+                                    are passed alongside.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="alert alert-info">
+                            <MdInfo size={20} />
+                            <div className="text-sm">
+                                Standard mode (without <code>footerNode</code>) is unchanged: the existing
+                                <code className="badge badge-sm">showFooter</code> behaviour with sticky agree/disagree row
+                                still works exactly as before.
+                            </div>
+                        </div>
+
+                        <h5 className="font-bold mt-2">Before / After</h5>
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                            <div>
+                                <p className="text-xs text-error mb-1 font-semibold">❌ Before (manual recipe — 8 lines, 5 ! markers)</p>
+                                <div className="mockup-code text-xs">
+                                    <pre data-prefix="1"><code>&lt;Modal</code></pre>
+                                    <pre data-prefix="2"><code>  contentClassName ="!overflow-hidden !p-0 flex flex-col flex-1 min-h-0"</code></pre>
+                                    <pre data-prefix="3"><code>  modalBoxClassName="!overflow-hidden flex flex-col"</code></pre>
+                                    <pre data-prefix="4"><code>  showFooter={`{false}`}&gt;</code></pre>
+                                    <pre data-prefix="5"><code>  &lt;div className="flex-1 min-h-0 overflow-y-auto ..."&gt;</code></pre>
+                                    <pre data-prefix="6"><code>    {`{form fields}`}</code></pre>
+                                    <pre data-prefix="7"><code>  &lt;/div&gt;</code></pre>
+                                    <pre data-prefix="8"><code>  &lt;div className="shrink-0 flex border-t bg-base-100 ..."&gt;</code></pre>
+                                    <pre data-prefix="9"><code>    {`{status + cancel + save}`}</code></pre>
+                                    <pre data-prefix="10"><code>  &lt;/div&gt;</code></pre>
+                                    <pre data-prefix="11"><code>&lt;/Modal&gt;</code></pre>
+                                </div>
+                            </div>
+
+                            <div>
+                                <p className="text-xs text-success mb-1 font-semibold">✅ After — 1 prop, no overrides</p>
+                                <div className="mockup-code text-xs">
+                                    <pre data-prefix="1"><code>&lt;Modal</code></pre>
+                                    <pre data-prefix="2"><code>  title="Edit profile"</code></pre>
+                                    <pre data-prefix="3"><code>  footerNode={`{<FormFooter ... />}`}</code></pre>
+                                    <pre data-prefix="4"><code>&gt;</code></pre>
+                                    <pre data-prefix="5"><code>  &lt;form className="flex flex-col gap-4"&gt;</code></pre>
+                                    <pre data-prefix="6"><code>    {`{form fields}`}</code></pre>
+                                    <pre data-prefix="7"><code>  &lt;/form&gt;</code></pre>
+                                    <pre data-prefix="8"><code>&lt;/Modal&gt;</code></pre>
+                                    <pre data-prefix="9"><code></code></pre>
+                                    <pre data-prefix="10"><code>// modal-box auto: flex flex-col</code></pre>
+                                    <pre data-prefix="11"><code>// content auto:   flex-1 min-h-0 overflow-y-auto</code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <Button color="info" onClick={ openFooterNode }>
+                    Open Modal with footerNode + long form
+                </Button>
+
+                <Modal
+                    ref        = { footerNodeRef }
+                    title      = "Edit User Profile (long form)"
+                    icon       = { <MdDriveFileRenameOutline size={24} className="text-info" /> }
+                    maxWidth   = "max-w-xl"
+                    footerNode = {
+                        <div className="flex items-center gap-3 px-4 py-3">
+                            <div className="flex items-center gap-2 text-sm text-base-content/70">
+                                <MdCloudDone className="text-success" size={18} />
+                                <span>Saved 2 seconds ago</span>
+                            </div>
+                            <div className="ml-auto flex gap-2">
+                                <Button
+                                    color   = "neutral"
+                                    size    = "sm"
+                                    onClick = { () => footerNodeRef.current?.close() }
+                                >
+                                    Cancel
+                                </Button>
+                                <Button
+                                    color   = "primary"
+                                    size    = "sm"
+                                    onClick = { () =>
+                                    {
+                                        console.log( 'Profile saved' ) ;
+                                        footerNodeRef.current?.close() ;
+                                    }}
+                                >
+                                    <MdSave size={16} />
+                                    Save
+                                </Button>
+                            </div>
+                        </div>
+                    }
+                >
+                    <div className="flex flex-col gap-4 px-2">
+                        <p className="text-sm text-base-content/70">
+                            Scroll inside this modal — notice that the header stays at the top
+                            and the footer stays visible at the bottom while the form scrolls.
+                        </p>
+
+                        { Array.from( { length: 25 } ).map( ( _ , i ) => (
+                            <Input
+                                key         = { i }
+                                label       = { `Field ${ i + 1 }` }
+                                placeholder = { `Enter value for field ${ i + 1 }` }
+                            />
+                        ))}
+                    </div>
                 </Modal>
             </div>
 

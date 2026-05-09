@@ -10,6 +10,57 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ---
 
+## [0.2.1] — 2026-05-09
+
+**Components**
+- `Modal` — New `footerNode` prop for the « sticky custom footer + scrollable content » layout. When set, the modal-box switches to a vertical flex column: the header stays at the top, the content area grows and scrolls internally, and `footerNode` is rendered in a dedicated `shrink-0` slot pinned at the bottom (with `border-t` and `bg-base-100`). No more `!important` overrides on `contentClassName` / `modalBoxClassName` to achieve this pattern. The standard `agree` / `disagree` footer path is unchanged when `footerNode` is not provided.
+- `Modal` — `footerNode` has full precedence over the standard footer props. When `footerNode` is set, the following props are ignored: `agree`, `disagree`, `agreeColor`, `disagreeColor`, `agreeIcon`, `disagreeIcon`, `showAgree`, `showDisagree`, `showFooter`, `footerReverse`, `footerClassName`, `footerOptions`, `onAgree`, `onCancel`. A `console.warn` is emitted in development if any of them are passed alongside `footerNode`.
+- `Modal` — Tighter vertical padding on the `modal-box` (`px-4 py-1` instead of DaisyUI's default `padding: 1.5rem`). Removes ~20px of dead space above the header and below the footer for every modal in the library, which previously stacked with the header / footer wrapper paddings.
+- `Modal` — Full JSDoc block added at the top of the file (description, two `@example` blocks, prop table for the most relevant props).
+
+**Themes**
+- `getModalBoxClasses` — New `flexLayout` boolean option that adds `flex flex-col overflow-hidden` to the modal-box. Used internally by `<Modal>` when `footerNode` is provided.
+
+**Lab / Demo**
+- New « Custom Footer Node » section on `/lab/modals` with three explanatory sub-blocks (when to use, precedence rules, before/after recipe in `mockup-code`) and a live example: a 25-input form inside a `<Modal footerNode={...}>` with a status text + Cancel + Save footer that stays pinned while the form scrolls.
+
+**Migration note for consumers**
+
+If you were using the manual recipe to get a sticky custom footer:
+
+```jsx
+// Before — 5 ! markers, fragile
+<Modal
+    contentClassName  = "!overflow-hidden !p-0 flex flex-col flex-1 min-h-0"
+    modalBoxClassName = "!overflow-hidden flex flex-col"
+    showFooter        = { false }
+>
+    <div className="flex-1 min-h-0 overflow-y-auto px-4 py-4 ...">
+        { /* form fields */ }
+    </div>
+    <div className="shrink-0 flex border-t bg-base-100 ...">
+        { /* status + Cancel + Save */ }
+    </div>
+</Modal>
+```
+
+…you can now collapse it to:
+
+```jsx
+<Modal
+    title      = "Edit profile"
+    footerNode = { <FormFooter ... /> }
+>
+    <form className="flex flex-col gap-4">
+        { /* form fields */ }
+    </form>
+</Modal>
+```
+
+The library handles the flex column layout, the internal scroll on the content area, and the sticky footer slot. `AlertModal`, `ConfirmModal` and `InputModal` are intentionally **not** extended with `footerNode` for now — their value lies in the standardised footer.
+
+---
+
 ## [0.2.0] — 2026-05-08
 
 **Contexts**
