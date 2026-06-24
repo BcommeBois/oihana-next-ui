@@ -1,6 +1,6 @@
 'use client'
 
-import { COLLAPSE , LINK /* , DIVIDER */ } from '@/contexts/navigation/types'
+import { COLLAPSE , LINK /* , DIVIDER */ } from '../contexts/navigation/types'
 
 import {
     MdOutlineSmartButton as ButtonIcon ,

@@ -21,11 +21,11 @@ import SplashScreen from './SplashScreen';
 
 import useVersionCheck from '../hooks/useVersionCheck'
 
-import config       from '@/@configs'
-import languages    from '@/@configs/languages'
-import locale       from '@/@locale'
-import navigation   from '@/@configs/navigation'
-import splashScreen from '@/@configs/ui/splashScreen' ;
+import config       from '../@configs'
+import languages    from '../@configs/languages'
+import locale       from '../@locale'
+import navigation   from '../@configs/navigation'
+import splashScreen from '../@configs/ui/splashScreen' ;
 
 const { defaultLang , version , versionCheck } = config ;
 

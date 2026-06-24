@@ -2,7 +2,7 @@
 
 import { useEffect , useRef } from 'react' ;
 
-import resolveRefElement from '@/helpers/react/resolveRefElement' ;
+import resolveRefElement from '../helpers/react/resolveRefElement' ;
 
 /**
  * Default distance, before the sentinel is reached, at which loading is triggered.
@@ -27,6 +27,12 @@ export const DEFAULT_THRESHOLD = 0 ;
  *
  * Note : `onLoadMore` should be stable (wrap it in `useCallback`), otherwise
  * the observer is recreated on every render.
+ *
+ * Note : `onLoadMore` should also be re-entrancy safe. Because the `loading`
+ * state is asynchronous, React StrictMode's double-invoke and observer bursts
+ * can call it again before `loading` flips — guard with a synchronous ref
+ * (`if ( loadingRef.current ) return ; loadingRef.current = true ;`) to avoid
+ * loading the same page twice (which yields duplicate React keys).
  *
  * @param {Object} [options]
  * @param {boolean}  [options.hasMore=true]                  - Whether more items can be loaded.

@@ -1,9 +1,9 @@
-import getLocaleFromI18n from '@/contexts/locale/helpers/getLocaleFromI18n' ;
+import getLocaleFromI18n from '../contexts/locale/helpers/getLocaleFromI18n' ;
 
 import 'dayjs/locale/fr' ;
 import 'dayjs/locale/en' ;
 
-import languages from '@/@configs/languages' ;
+import languages from '../@configs/languages' ;
 
 import app        from './app' ;
 import components from './components' ;

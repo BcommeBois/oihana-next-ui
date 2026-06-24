@@ -5,7 +5,7 @@ import languages  from './languages'
 import navigation from './navigation'
 import ui         from './ui'
 
-import version from '@/version'
+import version from '../version'
 
 const config =
 {

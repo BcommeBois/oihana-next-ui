@@ -1,6 +1,6 @@
 'use client' ;
 
-import { useCallback , useEffect , useState } from 'react' ;
+import { useCallback , useEffect , useRef , useState } from 'react' ;
 
 import InfiniteScroll from '@/components/layouts/InfiniteScroll' ;
 import List           from '@/components/lists/List' ;
@@ -192,15 +192,20 @@ const ChatPanel = () =>
     const [ loading , setLoading ] = useState( false ) ;
     const [ hasMore , setHasMore ] = useState( true ) ;
 
+    // Synchronous re-entrancy guard : blocks double loads from React StrictMode's
+    // double-invoke and from IntersectionObserver bursts, before any await.
+    const loadingRef = useRef( false ) ;
+
     // --------- Prepend the previous (older) page of messages
 
     const loadOlder = useCallback( async () =>
     {
-        if ( loading || !hasMore )
+        if ( loadingRef.current || !hasMore )
         {
             return ;
         }
 
+        loadingRef.current = true ;
         setLoading( true ) ;
 
         await new Promise( resolve => setTimeout( resolve , LATENCY ) ) ;
@@ -212,8 +217,9 @@ const ChatPanel = () =>
         setLoaded( prev => [ ...older , ...prev ] ) ;
         setHasMore( start > 0 ) ;
         setLoading( false ) ;
+        loadingRef.current = false ;
     }
-    , [ hasMore , loaded.length , loading ] ) ;
+    , [ hasMore , loaded.length ] ) ;
 
     // --------- Initial load (most recent page)
 
@@ -255,15 +261,20 @@ const InfiniteScrollDemo = () =>
     const [ loading , setLoading ] = useState( false ) ;
     const [ hasMore , setHasMore ] = useState( true ) ;
 
+    // Synchronous re-entrancy guard : blocks double loads from React StrictMode's
+    // double-invoke and from IntersectionObserver bursts, before any await.
+    const loadingRef = useRef( false ) ;
+
     // --------- Append the next page, guarding against concurrent loads
 
     const loadMore = useCallback( async () =>
     {
-        if ( loading || !hasMore )
+        if ( loadingRef.current || !hasMore )
         {
             return ;
         }
 
+        loadingRef.current = true ;
         setLoading( true ) ;
 
         const { items : newItems , hasMore : more } = await fetchPage( page ) ;
@@ -272,8 +283,9 @@ const InfiniteScrollDemo = () =>
         setHasMore( more ) ;
         setPage( prev => prev + 1 ) ;
         setLoading( false ) ;
+        loadingRef.current = false ;
     }
-    , [ hasMore , loading , page ] ) ;
+    , [ hasMore , page ] ) ;
 
     // --------- Initial load
 

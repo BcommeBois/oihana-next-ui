@@ -2,11 +2,11 @@
 
 import { useRef } from 'react' ;
 
-import Loading from '@/components/Loading' ;
+import Loading from '../Loading' ;
 
-import useInfiniteScroll from '@/hooks/useInfiniteScroll' ;
+import useInfiniteScroll from '../../hooks/useInfiniteScroll' ;
 
-import cn from '@/themes/helpers/cn' ;
+import cn from '../../themes/helpers/cn' ;
 
 /**
  * Default root element type for the InfiniteScroll container.
