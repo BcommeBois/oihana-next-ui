@@ -33,6 +33,14 @@ export const SENTINEL_CLASS = 'h-px w-full' ;
 export const LOADER_WRAPPER_CLASS = 'flex justify-center py-4' ;
 
 /**
+ * Class applied to the container in `reverse` mode (chat-like). Lays children
+ * out bottom-to-top so the scroll stays anchored at the bottom : prepending
+ * older items does not shift the visible content.
+ * @type {string}
+ */
+export const REVERSE_CLASS = 'flex flex-col-reverse' ;
+
+/**
  * InfiniteScroll — renders its children, then watches a sentinel element to
  * load more content when the user scrolls near the edge of the list.
  *
@@ -52,7 +60,7 @@ export const LOADER_WRAPPER_CLASS = 'flex justify-center py-4' ;
  * @param {React.ReactNode}   [props.loader]             - Custom loading indicator (defaults to `<Loading />`).
  * @param {boolean}           [props.loading=false]      - Loading-in-flight state.
  * @param {Function}          [props.onLoadMore]         - Called when the sentinel is reached. Should be stable (`useCallback`).
- * @param {boolean}           [props.reverse=false]      - Reverse mode : load older items when scrolling up (chat-like).
+ * @param {boolean}           [props.reverse=false]      - Reverse / chat mode : lays children out bottom-to-top (`flex flex-col-reverse`) and loads older items when scrolling up. Children must be ordered newest-first.
  * @param {string}            [props.rootMargin]         - Pre-load distance before the sentinel is reached.
  * @param {boolean}           [props.scrollable=false]   - When true, the container is the scroll viewport and the observer root.
  * @param {number}            [props.threshold]          - Visibility threshold (0-1).
@@ -82,16 +90,17 @@ export const LOADER_WRAPPER_CLASS = 'flex justify-center py-4' ;
  *     { rows }
  * </InfiniteScroll>
  *
- * // Reverse mode (chat-like : older messages load when scrolling up)
+ * // Reverse / chat mode (older messages load when scrolling up).
+ * // `flex flex-col-reverse` is applied automatically ; pass messages newest-first.
  * <InfiniteScroll
  *     reverse
  *     scrollable
- *     className="max-h-96 flex flex-col-reverse"
+ *     className="max-h-96"
  *     hasMore={ hasMore }
  *     loading={ loading }
  *     onLoadMore={ loadOlderMessages }
  * >
- *     { messages }
+ *     { messagesNewestFirst.map( m => <ChatBubble key={ m.id } { ...m } /> ) }
  * </InfiniteScroll>
  * ```
  */
@@ -126,7 +135,7 @@ const InfiniteScroll =
         threshold ,
     }) ;
 
-    // --------- Building blocks (order depends on `reverse`)
+    // --------- Building blocks
 
     const sentinel = hasMore
         ? <div ref={ sentinelRef } aria-hidden="true" className={ SENTINEL_CLASS } />
@@ -139,21 +148,21 @@ const InfiniteScroll =
     const footer = !hasMore ? endMessage : null ;
 
     // --------- Render container
+    //
+    // DOM order is always [ children , indicator , sentinel , footer ].
+    // In `reverse` mode the container is laid out bottom-to-top (flex-col-reverse),
+    // so the sentinel / indicator / footer naturally end up at the visual top and
+    // the scroll stays anchored at the bottom.
 
     return (
         <Component
-            className = { cn( scrollable && SCROLLABLE_CLASS , className ) }
+            className = { cn( scrollable && SCROLLABLE_CLASS , reverse && REVERSE_CLASS , className ) }
             ref       = { rootRef }
         >
-            { reverse && footer }
-            { reverse && sentinel }
-            { reverse && indicator }
-
             { children }
-
-            { !reverse && indicator }
-            { !reverse && sentinel }
-            { !reverse && footer }
+            { indicator }
+            { sentinel }
+            { footer }
         </Component>
     ) ;
 } ;
