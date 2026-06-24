@@ -23,6 +23,7 @@ import { IoMdGrid               as GridIcon           } from "react-icons/io";
 import { FaPager                as HeaderIcon         } from "react-icons/fa6";
 import { SlPicture              as ImageIcon          } from "react-icons/sl";
 import { RiInputField           as InputIcon          } from "react-icons/ri" ;
+import { TbInfinity             as InfiniteScrollIcon } from "react-icons/tb";
 import { LuLayoutDashboard      as LayoutIcon         } from "react-icons/lu";
 import { CiBoxList              as ListIcon           } from "react-icons/ci";
 import { RiProgress7Line        as LoadingIcon        } from "react-icons/ri";
@@ -73,12 +74,13 @@ const navigation =
                 Icon : LayoutIcon ,
                 items :
                 [
-                    { id : 'flex'     , type : LINK  , Icon : FlexIcon     , path  : '/lab/flex'     } ,
-                    { id : 'grid'     , type : LINK  , Icon : GridIcon     , path  : '/lab/grid'     } ,
-                    { id : 'masonry'  , type : LINK  , Icon : MasonryIcon  , path  : '/lab/masonry'  } ,
-                    { id : 'layout'   , type : LINK  , Icon : LayoutIcon   , path  : '/lab/layout'   } ,
-                    { id : 'collapse' , type : LINK  , Icon : CollapseIcon , path  : '/lab/collapse' } ,
-                    { id : 'patterns' , type : LINK  , Icon : PatternsIcon , path  : '/lab/patterns' } ,
+                    { id : 'flex'           , type : LINK  , Icon : FlexIcon           , path  : '/lab/flex'           } ,
+                    { id : 'grid'           , type : LINK  , Icon : GridIcon           , path  : '/lab/grid'           } ,
+                    { id : 'masonry'        , type : LINK  , Icon : MasonryIcon        , path  : '/lab/masonry'        } ,
+                    { id : 'infiniteScroll' , type : LINK  , Icon : InfiniteScrollIcon , path  : '/lab/infiniteScroll' } ,
+                    { id : 'layout'         , type : LINK  , Icon : LayoutIcon         , path  : '/lab/layout'         } ,
+                    { id : 'collapse'       , type : LINK  , Icon : CollapseIcon       , path  : '/lab/collapse'       } ,
+                    { id : 'patterns'       , type : LINK  , Icon : PatternsIcon       , path  : '/lab/patterns'       } ,
                 ]
             } ,
             {
