@@ -452,6 +452,34 @@ const RangeDemo = () =>
                 </div>
             </div>
 
+            <Divider />
+
+            {/* Vertical (daisyUI 5.6) */}
+            <div className="flex flex-col gap-4">
+                <h3 className="text-xl font-semibold">Vertical</h3>
+                <p className="text-sm text-base-content/70">
+                    <code>orientation="vertical"</code> — height adjustable via the <code>height</code> prop
+                    (default <code>h-64</code>). Markers are not rendered in vertical mode.
+                </p>
+
+                <div className="flex items-end gap-10">
+                    <Range orientation="vertical" defaultValue={ 40 } />
+                    <Range orientation="vertical" defaultValue={ 60 } color="primary" />
+                    <Range orientation="vertical" defaultValue={ 30 } color="secondary" size="lg" />
+                    <Range orientation="vertical" defaultValue={ 80 } color="accent" size="sm" height="h-40" />
+
+                    <Range
+                        label="Volume"
+                        orientation="vertical"
+                        defaultValue={ 55 }
+                        color="success"
+                        showValue
+                        valuePosition="bottom"
+                        formatValue={ (v) => `${v}%` }
+                    />
+                </div>
+            </div>
+
         </Container>
     ) ;
 } ;

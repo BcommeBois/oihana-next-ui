@@ -14,6 +14,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   - `components/Tooltip.jsx` — new `align` prop.
 - Lab — new `/lab/tooltips` showcase (Feedback → Tooltips) demoing positions, alignments, colours and rich content.
 
+**Components — Range (vertical)**
+- Added the daisyUI 5.6 **vertical range** (`range-vertical`).
+  - `themes/components/range.js` — new `orientation` parameter in `getRangeClasses()`, reusing `HORIZONTAL` / `VERTICAL` from `enums/orientations` (horizontal stays the default, no modifier).
+  - `components/ranges/Range.jsx` — new `orientation` prop ; in vertical mode the input drops `w-full` and is wrapped in a height container (new `height` prop, default `h-64`) so the CSS `clamp()` height resolves. Markers are not rendered in vertical mode (documented).
+- Lab — `/lab/ranges` showcase gains a vertical section (colours, sizes, custom height, value).
+
 **Fixes**
 - `MenuLink` — the tooltip text was forwarded as `label`, but `Tooltip` only reads `tip` (which sets the required `data-tip`). The text was dropped, so the bubble was empty wherever `MenuLink` / `MenuNavigation` enabled `showTooltip`. Now forwarded as `tip`.
 

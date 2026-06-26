@@ -13,6 +13,8 @@ const Range =
     error,
     color,
     size = 'md',
+    orientation = 'horizontal',
+    height = 'h-64',
     min = 0,
     max = 100,
     step = 1,
@@ -33,6 +35,8 @@ const Range =
     ...rangeProps
 }) =>
 {
+    const isVertical = orientation === 'vertical' ;
+
     const isControlled = controlledValue !== undefined ;
     const [ internalValue, setInternalValue ] = useState( defaultValue ?? min ) ;
 
@@ -54,12 +58,13 @@ const Range =
 
     const rangeClasses = getRangeClasses({
         color: hasError ? 'error' : color,
+        orientation,
         size,
         className: rangeClassName,
     }) ;
 
-    // Generate markers
-    const markers = showMarkers ? (() =>
+    // Generate markers (horizontal only — vertical markers are not supported yet)
+    const markers = ( showMarkers && !isVertical ) ? (() =>
     {
         const count = Math.floor(( max - min ) / step ) + 1 ;
         const items = [] ;
@@ -74,8 +79,8 @@ const Range =
         return items ;
     })() : null ;
 
-    // Generate marker labels
-    const labels = markerLabels ? markerLabels.map(( label, i ) => (
+    // Generate marker labels (horizontal only)
+    const labels = ( markerLabels && !isVertical ) ? markerLabels.map(( label, i ) => (
         <span key={ i } className="text-xs">{ label }</span>
     )) : null ;
 
@@ -119,12 +124,12 @@ const Range =
                     </span>
                 )}
 
-                <div className="flex-1 max-w-full">
+                <div className={ cn( isVertical ? height : 'flex-1 max-w-full' ) }>
                     <input
                         type="range"
                         id={ id }
                         name={ name }
-                        className={ cn( rangeClasses, 'w-full' ) }
+                        className={ cn( rangeClasses, !isVertical && 'w-full' ) }
                         min={ min }
                         max={ max }
                         step={ step }

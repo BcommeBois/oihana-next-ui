@@ -20,6 +20,8 @@ import {
     WARNING,
 } from '../colors' ;
 
+import { HORIZONTAL, VERTICAL } from '../enums/orientations' ;
+
 /**
  * Valid range colors.
  * @type {string[]}
@@ -70,6 +72,18 @@ const sizeMap =
     [ XS ] : 'range-xs',
 } ;
 
+/**
+ * Valid range orientations.
+ * @type {string[]}
+ */
+export const orientations = [ HORIZONTAL, VERTICAL ] ;
+
+// Horizontal is the default (no modifier class) ; only vertical adds one.
+const orientationMap =
+{
+    [ VERTICAL ] : 'range-vertical',
+} ;
+
 export const RANGE = 'range' ;
 
 /**
@@ -81,6 +95,7 @@ export const RANGE = 'range' ;
  * @param {string} [props.beforeClassName] - CSS string prepended.
  * @param {string} [props.className] - CSS string appended.
  * @param {string} [props.color] - Range color variant.
+ * @param {string} [props.orientation='horizontal'] - Range orientation ('horizontal' | 'vertical').
  * @param {string} [props.size='md'] - Range size (xs, sm, md, lg, xl).
  *
  * @returns {string} Combined class names.
@@ -90,8 +105,8 @@ export const RANGE = 'range' ;
  * getRangeClasses({ color: 'primary', size: 'lg' }) ;
  * // → 'range range-primary range-lg'
  *
- * getRangeClasses({ color: 'success' }) ;
- * // → 'range range-success range-md'
+ * getRangeClasses({ orientation: 'vertical', color: 'success' }) ;
+ * // → 'range range-vertical range-success range-md'
  * ```
  */
 export const getRangeClasses =
@@ -101,6 +116,7 @@ export const getRangeClasses =
     beforeClassName,
     className,
     color,
+    orientation = HORIZONTAL,
     size = MD,
 }
 = {} ) => cn
@@ -111,8 +127,9 @@ export const getRangeClasses =
 
         [ RANGE ] : true,
 
-        ...!!colorMap[color] && { [ colorMap[color] ] : true },
-        ...!!sizeMap[size]   && { [ sizeMap[size]   ] : true },
+        ...!!orientationMap[orientation] && { [ orientationMap[orientation] ] : true },
+        ...!!colorMap[color]             && { [ colorMap[color] ] : true },
+        ...!!sizeMap[size]               && { [ sizeMap[size]   ] : true },
 
         ...after,
     },
