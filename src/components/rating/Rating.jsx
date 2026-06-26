@@ -41,7 +41,7 @@ import cn             from '../../themes/helpers/cn' ;
  * @param {number} [props.defaultValue] - Default value for uncontrolled mode
  * @param {Function} [props.onChange] - Change handler (value) => void
  * @param {number} [props.count=5] - Number of stars/items
- * @param {import('../../themes/components/rating').RatingSize} [props.size='md'] - Size: 'xs', 'sm', 'md', 'lg', 'xl'
+ * @param {import('../../themes/components/rating').RatingSize | import('../../themes/components/rating').ResponsiveRatingSize} [props.size='md'] - Size: scalar ('xs'…'xl') or responsive object (e.g. `{ xs: 'sm', md: 'lg' }`)
  * @param {import('../../themes/components/mask').MaskShape} [props.shape='star-2'] - Mask shape
  * @param {import('../../themes/colors/backgroundColor').BackgroundColorValue} [props.color] - Background color
  * @param {boolean} [props.half=false] - Enable half-star ratings

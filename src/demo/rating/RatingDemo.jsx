@@ -673,6 +673,23 @@ const RatingDemo = () =>
                 </div>
             </div>
 
+            <Divider />
+
+            {/* Responsive size (daisyUI 5.6) */}
+            <div className="flex flex-col gap-4">
+                <h3 className="text-xl font-semibold">Responsive size</h3>
+                <p className="text-sm text-base-content/70">
+                    <code>size</code> accepts a breakpoint→size object. Resize the window:
+                    this rating grows <code>sm → md → lg → xl</code> across breakpoints.
+                </p>
+                <Rating
+                    name="rating-responsive"
+                    defaultValue={ 3 }
+                    color="warning"
+                    size={ { xs: 'sm', md: 'md', lg: 'lg', xl: 'xl' } }
+                />
+            </div>
+
         </Container>
     ) ;
 } ;

@@ -20,6 +20,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   - `components/ranges/Range.jsx` — new `orientation` prop ; in vertical mode the input drops `w-full` and is wrapped in a height container (new `height` prop, default `h-64`) so the CSS `clamp()` height resolves. Markers are not rendered in vertical mode (documented).
 - Lab — `/lab/ranges` showcase gains a vertical section (colours, sizes, custom height, value).
 
+**Components — Rating (responsive size)**
+- The Rating `size` now accepts a responsive breakpoint→size object (daisyUI 5.6 made `rating-*` size modifiers responsive).
+  - `themes/components/rating.js` — `size` resolved through `getResponsiveDefinition(create('rating-'))` (same helper as menu / gap), replacing the static map ; `xs` is the prefix-less default. A `@safelist` ships the responsive `sm:rating-*` … `2xl:rating-*` classes.
+  - `components/rating/Rating.jsx` — `size` prop widened (scalar or responsive object). Scalar usage is unchanged (no breaking change).
+- Lab — `/lab/rating` showcase gains a responsive-size example.
+
 **Fixes**
 - `MenuLink` — the tooltip text was forwarded as `label`, but `Tooltip` only reads `tip` (which sets the required `data-tip`). The text was dropped, so the bubble was empty wherever `MenuLink` / `MenuNavigation` enabled `showTooltip`. Now forwarded as `tip`.
 
