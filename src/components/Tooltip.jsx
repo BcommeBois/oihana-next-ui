@@ -45,6 +45,7 @@ import getTooltipClassNames from '../themes/components/tooltip' ;
 
 /**
  * @param {Object} props
+ * @param {import('../themes/components/tooltip').TooltipAlignment} [props.align] - Tooltip alignment ('start' | 'center' | 'end').
  * @param {React.ElementType} [props.as] - Root element type.
  * @param {React.ReactNode} [props.children] - Tooltip trigger content.
  * @param {string} [props.className] - Additional class name.
@@ -57,6 +58,7 @@ import getTooltipClassNames from '../themes/components/tooltip' ;
  */
 const Tooltip =
 ({
+    align ,
     as ,
     children ,
     className ,
@@ -73,7 +75,7 @@ const Tooltip =
 
     const Component = as || 'div' ;
 
-    const classNames = getTooltipClassNames({ className , color , open , position }) ;
+    const classNames = getTooltipClassNames({ align , className , color , open , position }) ;
 
     return (
         <Component

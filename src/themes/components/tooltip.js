@@ -19,6 +19,8 @@ import {
 }
 from '../colors' ;
 
+import { CENTER , END , START } from '../enums/alignments' ;
+
 // Colors
 
 /**
@@ -79,6 +81,27 @@ const positionMap =
     [ TOP    ] : 'tooltip-top' ,
 } ;
 
+// Alignments
+
+export { CENTER , END , START } from '../enums/alignments' ;
+
+/**
+ * @typedef {'start' | 'center' | 'end'} TooltipAlignment
+ */
+
+/**
+ * Valid tooltip alignments (independent from the position axis).
+ * @type {TooltipAlignment[]}
+ */
+export const alignments = [ START , CENTER , END ] ;
+
+const alignmentMap =
+{
+    [ START  ] : 'tooltip-start' ,
+    [ CENTER ] : 'tooltip-center' ,
+    [ END    ] : 'tooltip-end' ,
+} ;
+
 export const TOOLTIP         = 'tooltip' ;
 export const TOOLTIP_CONTENT = 'tooltip-content' ;
 
@@ -86,6 +109,7 @@ export const TOOLTIP_CONTENT = 'tooltip-content' ;
  * Generates a DaisyUI tooltip className expression.
  *
  * @param {Object} [props]
+ * @param {TooltipAlignment} [props.align] - Tooltip alignment ('start' | 'center' | 'end').
  * @param {Object} [props.after] - Class definitions to append.
  * @param {Object} [props.before] - Class definitions to prepend.
  * @param {string} [props.beforeClassName] - ClassName to prepend.
@@ -104,12 +128,13 @@ export const TOOLTIP_CONTENT = 'tooltip-content' ;
  * getTooltipClassNames({ position: 'bottom' , color: 'error' }) ;
  * // → 'tooltip tooltip-error tooltip-bottom'
  *
- * getTooltipClassNames({ open: true , color: 'info' , position: 'left' }) ;
- * // → 'tooltip tooltip-info tooltip-left tooltip-open'
+ * getTooltipClassNames({ position: 'top' , align: 'start' , color: 'info' }) ;
+ * // → 'tooltip tooltip-info tooltip-top tooltip-start'
  * ```
  */
 const getTooltipClassNames =
 ({
+    align ,
     after ,
     before ,
     beforeClassName ,
@@ -127,6 +152,7 @@ const getTooltipClassNames =
 
         ...!!colorMap[color]         && { [colorMap[color]]         : true } ,
         ...!!positionMap[position]   && { [positionMap[position]]   : true } ,
+        ...!!alignmentMap[align]     && { [alignmentMap[align]]     : true } ,
         ...open === true             && { 'tooltip-open'            : true } ,
 
         ...after ,

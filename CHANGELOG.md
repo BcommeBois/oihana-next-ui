@@ -8,6 +8,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Components — Tooltip (alignment)**
+- Added the daisyUI 5.6 tooltip **alignment** modifiers (`tooltip-start` / `tooltip-center` / `tooltip-end`), independent from the position axis.
+  - `themes/components/tooltip.js` — new `align` parameter in `getTooltipClassNames()`, reusing the shared `START` / `CENTER` / `END` constants from `enums/alignments` (re-exported).
+  - `components/Tooltip.jsx` — new `align` prop.
+- Lab — new `/lab/tooltips` showcase (Feedback → Tooltips) demoing positions, alignments, colours and rich content.
+
+**Fixes**
+- `MenuLink` — the tooltip text was forwarded as `label`, but `Tooltip` only reads `tip` (which sets the required `data-tip`). The text was dropped, so the bubble was empty wherever `MenuLink` / `MenuNavigation` enabled `showTooltip`. Now forwarded as `tip`.
+
+---
+
+## [0.2.4] — 2026-06-26
+
 **Components — Aura (new)**
 - New **Aura** component (daisyUI 5.6) — a border light effect that wraps any content.
   - `themes/effects/aura.js` — `getAuraClasses()` generator following the library conventions (`after` / `before` / `beforeClassName` / `className`), with exported constants for every variant, size and trigger (no magic strings).

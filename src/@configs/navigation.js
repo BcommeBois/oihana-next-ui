@@ -48,6 +48,7 @@ import { FaSpinner              as SpinnerIcon        } from "react-icons/fa";
 import { GrStatusPlaceholder    as StatusIcon         } from "react-icons/gr";
 import { BsTextareaResize       as TextAreaIcon       } from "react-icons/bs" ;
 import { TiMessages             as ToastIcon          } from "react-icons/ti" ;
+import { LuMessageSquareText    as TooltipIcon        } from "react-icons/lu";
 import { FaToggleOn             as ToggleIcon         } from "react-icons/fa";
 
 const navigation =
@@ -127,6 +128,7 @@ const navigation =
                     { id : 'radialProgress' , type : LINK  , Icon : RadialProgressIcon , path  : '/lab/radialProgress' } ,
                     { id : 'spinners'       , type : LINK  , Icon : SpinnerIcon        , path  : '/lab/spinners'       } ,
                     { id : 'toasts'         , type : LINK  , Icon : ToastIcon          , path  : '/lab/toasts'         } ,
+                    { id : 'tooltips'       , type : LINK  , Icon : TooltipIcon        , path  : '/lab/tooltips'       } ,
                 ]
             } ,
             {
