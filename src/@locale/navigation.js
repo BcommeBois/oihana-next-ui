@@ -46,6 +46,7 @@ const navigation =
             navigation   : 'Navigation' ,
                 lists          : 'Listes' ,
                 menus          : 'Menus' ,
+                megamenu       : 'Megamenu' ,
                 pagination     : 'Pagination' ,
             tests        : 'Tests' ,
 
@@ -96,6 +97,7 @@ const navigation =
             navigation   : 'Navigation' ,
                 lists          : 'Lists' ,
                 menus          : 'Menus' ,
+                megamenu       : 'Megamenu' ,
                 pagination     : 'Pagination' ,
             tests        : 'Tests' ,
 

@@ -16,6 +16,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   - **`duration`** is driven by the `--tw-duration` CSS variable applied inline, which is JIT-proof (a runtime `duration-[Nms]` class would never be emitted by Tailwind).
 - Lab — new `/lab/effects` showcase (Display → Effects) demoing variants, custom colours, the hover trigger, sizes and durations.
 
+**Components — Megamenu (new)**
+- New **Megamenu** component (daisyUI 5.6) — a large navigation bar where each item opens a native popover.
+  - `themes/navigation/megamenu.js` — `getMegamenuClasses()` generator (library conventions + exported constants for `width`, `size`, vertical) with a Tailwind safe list for the static modifiers.
+  - `components/menus/Megamenu.jsx` — data-driven (`items`, max 10), each entry rendering a trigger + popover. Unique HTML ids are derived from `useId()` (no manual wiring), content via `items[].content` (ReactNode) or the `items[].links` sugar (renders a `menu`).
+  - Modifiers : `width` (`wide` / `full`), `size` (`xs`–`xl`), `responsive` (mobile trigger button + `max-sm:megamenu-vertical`), `vertical`.
+  - **Multiple megamenus coexist on a page** — basic ones anchor each popover to its own trigger (DOM-order anchor resolution), and `wide` / `full` get a **unique per-instance anchor name** (inline `anchor-name` / `position-anchor`, JIT-proof), instead of daisyUI's shared `--megamenu` which would collide.
+  - Requires a browser with popover + CSS anchor positioning support (progressive enhancement, no polyfill).
+- Lab — new `/lab/megamenu` showcase (Navigation → Megamenu) demoing responsive small menus, wide, full-in-navbar and the five sizes coexisting.
+
 ---
 
 ## [0.2.3] — 2026-06-24
