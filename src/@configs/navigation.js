@@ -18,6 +18,7 @@ import { RxAvatar               as AvatarIcon         } from "react-icons/rx";
 import { LuBadgeAlert           as BadgeIcon          } from "react-icons/lu";
 import { RiCheckboxFill         as CheckBoxIcon       } from "react-icons/ri";
 import { LuListCollapse         as CollapseIcon       } from "react-icons/lu";
+import { LuSparkles             as EffectIcon         } from "react-icons/lu";
 import { CiGrid31               as FlexIcon           } from "react-icons/ci";
 import { IoMdGrid               as GridIcon           } from "react-icons/io";
 import { FaPager                as HeaderIcon         } from "react-icons/fa6";
@@ -91,6 +92,7 @@ const navigation =
                 [
                     { id : 'avatars'    , type : LINK  , Icon : AvatarIcon     , path  : '/lab/avatars'    } ,
                     { id : 'badges'     , type : LINK  , Icon : BadgeIcon      , path  : '/lab/badges'     } ,
+                    { id : 'effects'    , type : LINK  , Icon : EffectIcon     , path  : '/lab/effects'    } ,
                     { id : 'images'     , type : LINK  , Icon : ImageIcon      , path  : '/lab/images'     } ,
                     { id : 'lists'      , type : LINK  , Icon : ListIcon       , path  : '/lab/lists'      } ,
                     { id : 'masks'      , type : LINK  , Icon : MaskIcon       , path  : '/lab/masks'      } ,
