@@ -75,7 +75,7 @@ const MenuLink =
                 <Tooltip
                     className={ tooltipClassName }
                     color={ tooltipColor }
-                    label={ tooltip }
+                    tip={ tooltip }
                     position={ tooltipPosition }
                     show={ showTooltip && !disabled }
                 >
