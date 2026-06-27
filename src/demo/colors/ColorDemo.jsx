@@ -72,7 +72,12 @@ const ColorDemo = () =>
                 <span className="font-semibold">Standalone ColorPicker</span>
                 <div className="flex flex-wrap items-start gap-8">
                     <div className="rounded-box border border-base-300 bg-base-100 p-4 shadow-sm">
-                        <ColorPicker alpha value={ panel } onChange={ setPanel } />
+                        <ColorPicker
+                            alpha    = { true }
+                            value    = { panel }
+                            onChange = { setPanel }
+                            size = { 'md' }
+                        />
                     </div>
                     <div className="flex items-center gap-3">
                         <ColorIndicator color={ panel } size="xl" />

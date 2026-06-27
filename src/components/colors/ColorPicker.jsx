@@ -200,7 +200,7 @@ const ColorPicker =
                                 type       = "button"
                                 onClick    = { () => setHex( color ) }
                                 aria-label = { `Use ${ color }` }
-                                className  = "rounded-field outline-offset-2 transition-transform hover:scale-110 focus-visible:outline"
+                                className  = "rounded outline-offset-2 transition-transform hover:scale-110 focus-visible:outline"
                             >
                                 <ColorIndicator color={ color } size="md" />
                             </button>

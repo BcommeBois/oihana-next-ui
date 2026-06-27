@@ -110,8 +110,8 @@ const InputColor =
                 title             = { title }
                 maxWidth          = "max-w-xs"
                 showFooter        = { false }
-                modalBoxClassName = "px-3 py-4"
-                contentClassName  = "px-0"
+                modalBoxClassName = "w-fit p-3"
+                contentClassName  = "px-0 py-2"
                 { ...modalProps }
             >
                 <div className="flex justify-center">
