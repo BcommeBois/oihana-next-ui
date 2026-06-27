@@ -66,6 +66,7 @@ import getButtonClassNames from '../themes/components/button' ;
  * @param {number} [props.tabIndex] - Tab index.
  * @param {string} [props.title] - Accessible title (overrides i18n).
  * @param {string} [props.tooltip] - Tooltip text (overrides i18n).
+ * @param {import('../themes/components/tooltip').TooltipAlignment} [props.tooltipAlign] - Tooltip alignment ('start' | 'center' | 'end').
  * @param {string} [props.tooltipClassName] - Tooltip class name.
  * @param {import('../themes/components/tooltip').TooltipColorValue} [props.tooltipColor] - Tooltip color.
  * @param {import('../themes/components/tooltip').TooltipPosition} [props.tooltipPosition] - Tooltip position.
@@ -97,6 +98,7 @@ const Button =
     tabIndex ,
     title ,
     tooltip ,
+    tooltipAlign ,
     tooltipClassName ,
     tooltipColor ,
     tooltipPosition ,
@@ -115,6 +117,7 @@ const Button =
 
     return (
         <Tooltip
+            align     = { tooltipAlign }
             className = { tooltipClassName }
             color     = { tooltipColor }
             tip       = { resolvedTooltip }

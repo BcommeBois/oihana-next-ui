@@ -76,6 +76,7 @@ import MenuLink from './MenuLink' ;
  * @param {boolean} [props.showLabel] - Show labels.
  * @param {boolean} [props.showTooltip] - Show tooltips.
  * @param {string} [props.size] - Menu size.
+ * @param {import('../../themes/components/tooltip').TooltipAlignment} [props.tooltipAlign] - Tooltip alignment ('start' | 'center' | 'end').
  * @param {string} [props.tooltipClassName] - Tooltip classes.
  * @param {string} [props.tooltipColor] - Tooltip color.
  * @param {string} [props.tooltipPosition] - Tooltip position.
@@ -93,6 +94,7 @@ const MenuNavigation =
     showLabel ,
     showTooltip ,
     size ,
+    tooltipAlign ,
     tooltipClassName ,
     tooltipColor ,
     tooltipPosition ,
@@ -131,6 +133,7 @@ const MenuNavigation =
                         showLabel={ showLabel }
                         showIcon={ showIcon }
                         showTooltip={ showTooltip }
+                        tooltipAlign={ tooltipAlign }
                         tooltipClassName={ tooltipClassName }
                         tooltipColor={ tooltipColor }
                         tooltipPosition={ tooltipPosition }

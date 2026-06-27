@@ -25,6 +25,7 @@ import { BOTTOM } from '../../themes/enums/positions' ;
  * @param {boolean} [props.showLabel=true] - Show label.
  * @param {boolean} [props.showTooltip=false] - Show tooltip.
  * @param {string} [props.tooltip] - Tooltip text (defaults to label).
+ * @param {import('../../themes/components/tooltip').TooltipAlignment} [props.tooltipAlign] - Tooltip alignment ('start' | 'center' | 'end').
  * @param {string} [props.tooltipClassName] - Tooltip classes.
  * @param {string} [props.tooltipColor] - Tooltip color.
  * @param {string} [props.tooltipPosition] - Tooltip position.
@@ -43,6 +44,7 @@ const MenuLink =
     showLabel = true ,
     showTooltip = false ,
     tooltip: tooltipFromProps ,
+    tooltipAlign ,
     tooltipClassName ,
     tooltipColor ,
     tooltipPosition = BOTTOM ,
@@ -73,6 +75,7 @@ const MenuLink =
                 { ...props }
             >
                 <Tooltip
+                    align={ tooltipAlign }
                     className={ tooltipClassName }
                     color={ tooltipColor }
                     tip={ tooltip }

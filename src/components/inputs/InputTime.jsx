@@ -45,6 +45,7 @@ import { MdAccessTime as TimeIcon } from 'react-icons/md'
  * @param {boolean} [props.useFieldset=false] - Use fieldset/legend instead of label
  * @param {boolean} [props.useValidator=false] - Enable DaisyUI validator styling
  * @param {boolean} [props.showTooltip=true] - Show tooltip on AM/PM button
+ * @param {import('../../themes/components/tooltip').TooltipAlignment} [props.tooltipAlign] - Tooltip alignment ('start' | 'center' | 'end')
  * @param {string} [props.tooltipClassName] - Tooltip classes
  * @param {string} [props.tooltipColor] - Tooltip color
  * @param {string} [props.tooltipPosition] - Tooltip position
@@ -122,6 +123,7 @@ const InputTime =
     useValidator = false,
 
     showTooltip = true,
+    tooltipAlign,
     tooltipClassName,
     tooltipColor,
     tooltipPosition,
@@ -212,6 +214,7 @@ const InputTime =
             onChange         = { toggleMeridiem }
             title            = { meridiem }
             tooltip          = { meridiem }
+            tooltipAlign     = { tooltipAlign }
             tooltipClassName = { tooltipClassName }
             tooltipColor     = { tooltipColor }
             tooltipPosition  = { tooltipPosition }

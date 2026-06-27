@@ -30,6 +30,7 @@ import { HORIZONTAL } from '../../themes/enums/orientations' ;
  * @param {boolean} [props.showIndicator=true] - Show indicators.
  * @param {boolean} [props.showLabel=true] - Show language label.
  * @param {boolean} [props.showTooltip=true] - Show tooltips.
+ * @param {import('../../themes/components/tooltip').TooltipAlignment} [props.tooltipAlign] - Tooltip alignment ('start' | 'center' | 'end').
  * @param {string} [props.tooltipClassName] - Tooltip classes.
  * @param {string} [props.tooltipColor] - Tooltip color.
  * @param {string} [props.tooltipPosition] - Tooltip position.
@@ -50,6 +51,7 @@ const FlagMenu =
     showIndicator = true ,
     showLabel = true ,
     showTooltip = true ,
+    tooltipAlign ,
     tooltipClassName ,
     tooltipColor ,
     tooltipPosition ,
@@ -96,6 +98,7 @@ const FlagMenu =
                                 lang={ current }
                                 showIndicator={ hasIndicator }
                                 showTooltip={ showTooltip }
+                                tooltipAlign={ tooltipAlign }
                                 tooltipClassName={ tooltipClassName }
                                 tooltipColor={ tooltipColor }
                                 tooltipPosition={ tooltipPosition }

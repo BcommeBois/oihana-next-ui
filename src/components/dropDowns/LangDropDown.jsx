@@ -44,6 +44,7 @@ const getDisplayName = ( code , style ) => code
  * @param {React.Ref} [props.ref] - Forwarded ref.
  * @param {boolean} [props.showTooltip=true] - Show/hide tooltip on trigger.
  * @param {Intl.RelativeTimeFormatStyle} [props.style='long'] - Intl display name style.
+ * @param {import('../../themes/components/tooltip').TooltipAlignment} [props.tooltipAlign] - Tooltip alignment ('start' | 'center' | 'end').
  * @param {string} [props.tooltipClassName] - Tooltip class name.
  * @param {import('../../themes/components/tooltip').TooltipColorValue} [props.tooltipColor] - Tooltip color.
  * @param {import('../../themes/components/tooltip').TooltipPosition} [props.tooltipPosition='bottom'] - Tooltip position.
@@ -53,6 +54,7 @@ const LangDropDown =
     ref ,
     showTooltip     = true ,
     style           = 'long' ,
+    tooltipAlign ,
     tooltipClassName ,
     tooltipColor ,
     tooltipPosition = 'bottom' ,
@@ -113,6 +115,7 @@ const LangDropDown =
             ref       = { dropdownRef }
         >
             <Tooltip
+                align     = { tooltipAlign }
                 className = { cn( 'capitalize' , tooltipClassName ) }
                 color     = { tooltipColor }
                 tip       = { getDisplayName( lang , style ) }

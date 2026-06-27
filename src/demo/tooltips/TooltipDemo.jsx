@@ -1,5 +1,6 @@
 'use client' ;
 
+import Button    from '@/components/Button' ;
 import Container from '@/display/Container' ;
 import Divider   from '@/components/Divider' ;
 import Tooltip   from '@/components/Tooltip' ;
@@ -61,6 +62,28 @@ const TooltipDemo = () =>
                             <button className="btn w-64">bottom · end</button>
                         </Tooltip>
                     </div>
+                </div>
+            </div>
+
+            <Divider />
+
+            {/* Alignment forwarded through a wrapper (Button) */}
+            <div className="flex flex-col gap-4">
+                <h3 className="text-xl font-semibold">Alignment through a wrapper — Button (hover to reveal)</h3>
+                <p className="text-sm text-base-content/70">
+                    The new <code>align</code> is forwarded by the wrappers via a <code>tooltipAlign</code> prop
+                    (Button, LinkButton, LangDropDown, MenuLink, MenuNavigation, FlagItem, FlagMenu, InputTime).
+                </p>
+                <div className="flex flex-wrap gap-12 pt-4">
+                    <Button className="w-64" color="primary" tooltip="Aligned to start" tooltipPosition="top" tooltipAlign="start">
+                        top · start
+                    </Button>
+                    <Button className="w-64" color="primary" tooltip="Centered" tooltipPosition="top" tooltipAlign="center">
+                        top · center
+                    </Button>
+                    <Button className="w-64" color="primary" tooltip="Aligned to end" tooltipPosition="top" tooltipAlign="end">
+                        top · end
+                    </Button>
                 </div>
             </div>
 

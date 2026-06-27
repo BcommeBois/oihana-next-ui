@@ -21,6 +21,7 @@ import { BOTTOM } from '../../themes/enums/positions' ;
  * @param {boolean} [props.showIndicator] - Show indicator dot.
  * @param {boolean} [props.showTooltip=true] - Show tooltip.
  * @param {string} [props.tooltip] - Tooltip text (defaults to lang).
+ * @param {import('../../themes/components/tooltip').TooltipAlignment} [props.tooltipAlign] - Tooltip alignment ('start' | 'center' | 'end').
  * @param {string} [props.tooltipClassName] - Tooltip classes.
  * @param {string} [props.tooltipColor] - Tooltip color.
  * @param {string} [props.tooltipPosition] - Tooltip position.
@@ -36,6 +37,7 @@ const FlagItem =
     showIndicator ,
     showTooltip = true ,
     tooltip ,
+    tooltipAlign ,
     tooltipClassName ,
     tooltipColor ,
     tooltipPosition = BOTTOM ,
@@ -67,6 +69,7 @@ const FlagItem =
 
     return (
         <Tooltip
+            align={ tooltipAlign }
             className={ tooltipClassName }
             color={ tooltipColor }
             tip={ tooltip ?? lang }
