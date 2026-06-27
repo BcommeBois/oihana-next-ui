@@ -66,6 +66,17 @@ const ColorDemo = () =>
                 <InputColor label="Disabled" defaultValue="#CCCCCC" disabled />
             </div>
 
+            {/* Orientation override — the modal opens horizontal by default; force vertical here */}
+            <div className="flex flex-col gap-3 max-w-md">
+                <span className="font-semibold">Modal picker orientation</span>
+                <p className="text-sm opacity-70">
+                    The picker opens <span className="font-mono">horizontal</span> by default (folds to
+                    vertical on mobile). Pass <span className="font-mono">orientation="vertical"</span> for
+                    the stacked layout.
+                </p>
+                <InputColor label="Vertical picker" defaultValue="#06B6D4" orientation="vertical" />
+            </div>
+
             <Divider />
 
             {/* Standalone ColorPicker panel */}

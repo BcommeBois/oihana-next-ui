@@ -14,6 +14,9 @@ import ColorPicker   from '../colors/ColorPicker' ;
 
 import { MD } from '../../themes/sizing/sizes' ;
 
+import { HORIZONTAL } from '../../themes/enums/orientations' ;
+import { VIEWPORT }   from '../../themes/components/colorPicker' ;
+
 import { MdColorize as DefaultPickerIcon } from 'react-icons/md' ;
 
 /**
@@ -26,16 +29,20 @@ import { MdColorize as DefaultPickerIcon } from 'react-icons/md' ;
  * single value (controlled or uncontrolled via {@link useValue}).
  *
  * The Modal (native `<dialog>`) gives a centered, backdrop-dismissable, fully
- * responsive surface that works on mobile and every browser.
+ * responsive surface that works on mobile and every browser. The picker opens in
+ * the horizontal layout by default (square left, controls right) and folds back to
+ * vertical on small screens ; set `orientation="vertical"` for the stacked layout.
  *
  * @module components/inputs/InputColor
  *
  * @param {Object} props
  * @param {boolean} [props.alpha=false] - Allow an alpha channel ('#RRGGBBAA').
+ * @param {import('../../themes/components/colorPicker').ColorPickerCollapse} [props.collapse='viewport'] - How the horizontal picker folds back to vertical.
  * @param {string} [props.defaultValue] - Initial value (uncontrolled).
  * @param {boolean} [props.disabled=false] - Disable the field and the trigger.
  * @param {Object} [props.modalProps] - Extra props forwarded to the Modal (spread last, can override defaults).
  * @param {(value: string) => void} [props.onChange] - Change handler (receives '#RRGGBB[AA]').
+ * @param {import('../../themes/enums/orientations').Orientation} [props.orientation='horizontal'] - Picker layout inside the modal.
  * @param {React.ReactNode} [props.pickerIcon] - Custom trigger icon node (overrides `PickerIcon`).
  * @param {React.ComponentType} [props.PickerIcon] - Trigger icon component (default: eyedropper).
  * @param {Object} [props.pickerProps] - Extra props forwarded to the ColorPicker (presets, showPresets…).
@@ -61,10 +68,12 @@ import { MdColorize as DefaultPickerIcon } from 'react-icons/md' ;
 const InputColor =
 ({
     alpha = false ,
+    collapse = VIEWPORT ,
     defaultValue ,
     disabled = false ,
     modalProps ,
     onChange : onChangeFromProps ,
+    orientation = HORIZONTAL ,
     pickerIcon ,
     PickerIcon = DefaultPickerIcon ,
     pickerProps ,
@@ -79,6 +88,9 @@ const InputColor =
     const [ value , setValue ] = useValue( defaultValue , valueFromProps , onChangeFromProps ) ;
 
     const { modalRef , open } = useModal() ;
+
+    // The horizontal picker is wider than the vertical one — give the modal room for it.
+    const isHorizontal = orientation === HORIZONTAL ;
 
     // Trigger lives in the input's right-side action slot ; opens the picker modal.
     const trigger = (
@@ -108,7 +120,7 @@ const InputColor =
             <Modal
                 ref               = { modalRef }
                 title             = { title }
-                maxWidth          = "max-w-xs"
+                maxWidth          = { isHorizontal ? 'max-w-md' : 'max-w-xs' }
                 showFooter        = { false }
                 modalBoxClassName = "w-fit p-3"
                 contentClassName  = "px-0 py-2"
@@ -116,10 +128,12 @@ const InputColor =
             >
                 <div className="flex justify-center">
                     <ColorPicker
-                        alpha    = { alpha }
-                        presets  = { presets }
-                        value    = { value ?? '' }
-                        onChange = { setValue }
+                        alpha       = { alpha }
+                        collapse    = { collapse }
+                        orientation = { orientation }
+                        presets     = { presets }
+                        value       = { value ?? '' }
+                        onChange    = { setValue }
                         { ...pickerProps }
                     />
                 </div>
