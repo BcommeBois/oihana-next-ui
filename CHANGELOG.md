@@ -8,6 +8,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Components — Color picker (new, dependency-free)**
+- New **`InputColor`** (`components/inputs/InputColor.jsx`) — a hex field with a live colour preview that opens a visual picker inside a `Modal` (centered, responsive, works on mobile). Controlled / uncontrolled, `alpha`, sizes, and every `InputHexColor` prop forwarded.
+- New **`ColorPicker`** (`components/colors/ColorPicker.jsx`) — a self-contained, hand-rolled picker: saturation/brightness square + hue (+ optional alpha) tracks, an editable hex field, an eyedropper (native EyeDropper API — progressive, auto-hidden where unsupported, e.g. mobile) and a preset palette. Mouse, touch and keyboard. Keeps HSVA as the source of truth, so dragging into black/grey never loses the hue. Toggles: `alpha` / `showInput` / `showPresets` / `showEyeDropper` / `presets`.
+- New **`ColorIndicator`** (`components/colors/ColorIndicator.jsx`) — a presentational colour swatch (xs–xl, with an empty state), used by the picker presets.
+- Picker internals under `components/colors/picker/` (`Interactive`, `Saturation`, `Hue`, `Alpha`, `Pointer`) — pointer geometry adapted from react-beautiful-color (MIT).
+- New colour helpers `helpers/colors/{rgbToHsv,hsvToRgb,hexToHsva,hsvaToHex}.js` (HSV ↔ RGB ↔ hex), composing with `vegas-js-core` hex↔rgb. **No new runtime dependency.**
+- Theme generator `themes/components/colorPicker.js` (`getColorPickerClasses`, `getColorIndicatorClasses`, `DEFAULT_PRESETS`).
+- Lab — new **Colors** tab (`/lab/colors`, Form section) with `ColorDemo`; navigation + locale (fr / en) entries.
+
 ---
 
 ## [0.2.6] — 2026-06-27
