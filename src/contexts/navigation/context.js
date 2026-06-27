@@ -17,6 +17,9 @@ import { createContext } from 'react' ;
  *   priority chain: persisted → auto(pathname) → item.defaultOpen → defaultMode.
  * @property {string | null} pathname - Current pathname, captured by the
  *   provider so consumers (e.g. `Collapse`) don't have to read it again.
+ * @property {string | null} activePath - Longest LINK path matching the
+ *   current route (the single "winning" link). `null` when nothing
+ *   matches. Consumed by `Link` to decide its active state.
  */
 
 /**

@@ -4,17 +4,21 @@
  * @module components/menu/Link
  */
 
+import { use } from 'react' ;
+
 import NextLink from 'next/link' ;
 
 import { usePathname } from 'next/navigation' ;
 
 import isObject   from 'vegas-js-core/src/isPlainObject' ;
 import notEmpty   from 'vegas-js-core/src/strings/notEmpty' ;
-import startsWith from 'vegas-js-core/src/strings/startsWith' ;
 
 import cn from '../../../themes/helpers/cn' ;
 
 import Badge from '../../../components/Badge' ;
+
+import NavigationContext from '../../../contexts/navigation/context' ;
+import isPathMatch       from '../../../contexts/navigation/helpers/isPathMatch' ;
 
 /**
  * Returns a Badge element from a string or object definition.
@@ -106,7 +110,13 @@ const Link =
 {
     const pathname = usePathname() ;
 
-    const active = startsWith( pathname , path ) ;
+    // Defensive read: a Link may be rendered without a NavigationProvider
+    // (legacy / standalone). With a provider, the single winning path is
+    // pre-computed (longest match) → exact equality. Without, fall back to
+    // a local segment-aware match so a lone Link still highlights itself.
+    const navigation = use( NavigationContext ) ;
+
+    const active = navigation ? path === navigation.activePath : isPathMatch( pathname , path ) ;
 
     const classNames = cn
     (

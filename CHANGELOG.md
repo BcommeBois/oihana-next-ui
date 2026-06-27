@@ -8,6 +8,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+---
+
+## [0.2.5] — 2026-06-27
+
+**Navigation — active link (longest match wins)**
+- The active sidebar / menu link is now resolved as the **single longest matching path**, so a destination nested under another no longer lights up its parent. On `/me/customers`, only `/me/customers` is active — `/me` is not. Matching is **segment-aware** (`/me` no longer matches `/menu`), and a nested detail route keeps its parent link active (`/me/customers/137` → `/me/customers`).
+  - `contexts/navigation/helpers/isPathMatch.js` *(new)* — segment-aware matcher, the single source of truth for "active" (`/` only matches `/`).
+  - `contexts/navigation/helpers/findActiveLinkPath.js` *(new)* — walks the tree and returns the longest matching `LINK` path (`null` when nothing matches).
+  - `contexts/navigation/provider.js` — derives `activePath` (memoised on the navigation tree + pathname) and exposes it on the navigation context.
+  - `display/ui/navigation/Link.jsx` — active state is now `path === activePath`, with a defensive fallback to a local `isPathMatch` when a `Link` is rendered without a `NavigationProvider`.
+  - `contexts/navigation/helpers/containsActivePath.js` — collapses now use the same segment-aware matcher, so open / active-ancestor stays consistent with the link highlight.
+- No API change and no breaking change for consumers — navigation trees need no new field (no `exact` / `excludes`); the resolution is fully automatic.
+
 **Components — Tooltip (alignment)**
 - Added the daisyUI 5.6 tooltip **alignment** modifiers (`tooltip-start` / `tooltip-center` / `tooltip-end`), independent from the position axis.
   - `themes/components/tooltip.js` — new `align` parameter in `getTooltipClassNames()`, reusing the shared `START` / `CENTER` / `END` constants from `enums/alignments` (re-exported).

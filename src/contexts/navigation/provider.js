@@ -6,18 +6,24 @@ import { usePathname } from 'next/navigation' ;
 
 import useI18n from '../locale/useI18n' ;
 
-import {
+import
+{
     loadCollapseState ,
     persistCollapseState ,
-} from './helpers/collapseStorage' ;
+}
+from './helpers/collapseStorage' ;
+
 import {
-    COLLAPSE_MODES ,
-    COLLAPSE_MODE_VALUES ,
+    COLLAPSE_MODES        ,
+    COLLAPSE_MODE_VALUES  ,
     DEFAULT_COLLAPSE_MODE ,
-} from './helpers/constants' ;
+}
+from './helpers/constants' ;
+
 import findActiveAncestorIds from './helpers/findActiveAncestorIds' ;
-import mapI18nItem from './helpers/mapI18nItem' ;
-import resolveCollapseOpen from './helpers/resolveCollapseOpen' ;
+import findActiveLinkPath    from './helpers/findActiveLinkPath' ;
+import mapI18nItem           from './helpers/mapI18nItem' ;
+import resolveCollapseOpen   from './helpers/resolveCollapseOpen' ;
 
 import NavigationContext from './context' ;
 
@@ -71,6 +77,15 @@ const NavigationProvider =
     const navigation = Array.isArray( _navigation ) && _navigation.length > 0
                      ? _navigation.map( ( item ) => mapI18nItem( item , locale ) )
                      : null ;
+
+    // The single active link path: longest LINK path matching the
+    // current route. Drives the active-link highlight (see Link.jsx) so
+    // a nested destination (/me/customers) deactivates its parent (/me).
+    const activePath = useMemo
+    (
+        () => findActiveLinkPath( _navigation , pathname ) ,
+        [ _navigation , pathname ] ,
+    ) ;
 
     // Collapse state is initialised empty so the first server render is
     // deterministic (no localStorage on the server). Hydration happens in
@@ -188,15 +203,16 @@ const NavigationProvider =
 
     const value = useMemo( () =>
     ({
-        navigation ,
-        setNavigation ,
-        defaultMode ,
+        activePath ,
         collapses ,
-        setCollapse ,
+        defaultMode ,
         getCollapseOpen ,
+        navigation ,
         pathname ,
+        setNavigation ,
+        setCollapse ,
     })
-    , [ navigation , defaultMode , collapses , setCollapse , getCollapseOpen , pathname ] ) ;
+    , [ activePath , defaultMode , collapses , getCollapseOpen , navigation , pathname , setCollapse ] ) ;
 
     return (
         <NavigationContext value={ value }>

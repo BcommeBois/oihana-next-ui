@@ -6,8 +6,9 @@
  * @module contexts/navigation/helpers/containsActivePath
  */
 
-import notEmpty   from 'vegas-js-core/src/strings/notEmpty' ;
-import startsWith from 'vegas-js-core/src/strings/startsWith' ;
+import notEmpty from 'vegas-js-core/src/strings/notEmpty' ;
+
+import isPathMatch from './isPathMatch' ;
 
 /**
  * Walks the `items` tree under the given navigation node and returns
@@ -38,7 +39,7 @@ const containsActivePath = ( item , pathname ) =>
         return false ;
     }
 
-    if ( notEmpty( item.path ) && startsWith( pathname , item.path ) )
+    if ( notEmpty( item.path ) && isPathMatch( pathname , item.path ) )
     {
         return true ;
     }
