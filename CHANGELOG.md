@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+---
+
+## [0.2.6] — 2026-06-27
+
 **Components — Tooltip alignment forwarded by wrappers**
 - The daisyUI 5.6 tooltip `align` (added on `Tooltip` in 0.2.5) is now reachable through every component that wraps a `Tooltip`, via a new `tooltipAlign` pass-through prop: `Button`, `LinkButton`, `LangDropDown`, `MenuLink`, `MenuNavigation`, `FlagItem`, `FlagMenu`, `InputTime`. `SwapButton` already forwarded it transparently through `...rest`.
 - Lab — `/lab/tooltips` gains a wrapper example (Button, wide trigger) demoing `tooltipAlign` start / center / end.
