@@ -18,6 +18,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Theme generator `themes/components/colorPicker.js` (`getColorPickerClasses` — now `orientation` / `collapse`-aware, `getColorPickerSurfaceClasses` for the square + column structural classes, `getColorIndicatorClasses`, `DEFAULT_PRESETS`, and the `VIEWPORT` / `CONTAINER` / `NEVER` collapse constants). Responsive / container-query classes shipped via a `@safelist` block.
 - Lab — new **Colors** tab (`/lab/colors`, Form section) with `ColorDemo`; navigation + locale (fr / en) entries.
 
+**Components — Calendar (new, dependency-free, dayjs)**
+- New **`Calendar`** (`components/dates/Calendar.jsx`) — a self-contained, dayjs-based month calendar (single date for now; range, shortcuts and the input pickers land next). Controlled / uncontrolled via `useValue`, emits a native `Date`, with `min` / `max` bounds. **Locale-aware** via `useLang()`: month / weekday names and the **first day of week** follow the active language (fr / en), reusing the dayjs locale already set by the LangProvider. Selected / today / outside / disabled days use daisyUI **theme** colours.
+- Calendar internals under `components/dates/calendar/` (`Header`, `Weekdays`, `Day`) + helpers `helpers/date/{configureDayjs,getMonthMatrix}.js` (6×7 month grid + localized weekday labels). dayjs plugins `localeData` / `weekday` / `isBetween` are registered once in `configureDayjs`. **No new runtime dependency** (no react-day-picker / date-fns).
+- Theme generator `themes/components/calendar.js` (`getCalendarClasses` + `getCalendarDayClasses`, covering the selected / today / outside / disabled / range day modifiers).
+- Lab — new **Dates** tab (`/lab/dates`, Form section) with `DateDemo`; navigation + locale (fr / en) entries.
+
 ---
 
 ## [0.2.6] — 2026-06-27

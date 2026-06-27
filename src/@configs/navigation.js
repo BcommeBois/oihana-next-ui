@@ -5,6 +5,7 @@ import { COLLAPSE , LINK /* , DIVIDER */ } from '../contexts/navigation/types'
 import {
     MdOutlineSmartButton as ButtonIcon ,
     MdColorLens          as ColorIcon ,
+    MdCalendarMonth      as DatesIcon ,
     MdDashboard          as DashboardIcon ,
     MdDisplaySettings    as DisplayIcon ,
     MdDynamicForm        as FormIcon ,
@@ -140,6 +141,7 @@ const navigation =
                 [
                     { id : 'checkboxes' , type : LINK  , Icon : CheckBoxIcon  , path  : '/lab/checkboxes' } ,
                     { id : 'colors'     , type : LINK  , Icon : ColorIcon     , path  : '/lab/colors'     } ,
+                    { id : 'dates'      , type : LINK  , Icon : DatesIcon     , path  : '/lab/dates'      } ,
                     { id : 'inputs'     , type : LINK  , Icon : InputIcon     , path  : '/lab/inputs'     } ,
                     { id : 'radios'     , type : LINK  , Icon : RadioIcon     , path  : '/lab/radios'     } ,
                     { id : 'ranges'     , type : LINK  , Icon : RangeIcon     , path  : '/lab/ranges'     } ,
