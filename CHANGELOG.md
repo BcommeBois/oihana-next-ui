@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Fixes — FlagMenu / FlagItem (tooltip)**
+- `FlagItem` — the tooltip text and colour were forwarded as `label` / `level`, but `Tooltip` only reads `tip` (sets `data-tip`) and `color`. Both were dropped, so every flag tooltip was empty and uncoloured. Same class of bug as the earlier `MenuLink` fix. Now forwarded as `tip` / `color`.
+- `FlagMenu` — `tooltipColor` was never wired through to `FlagItem` (absent from the props and the JSDoc). Added the pass-through so the flag tooltips can be coloured.
+
 ---
 
 ## [0.2.5] — 2026-06-27

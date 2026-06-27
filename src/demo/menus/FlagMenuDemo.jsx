@@ -54,6 +54,21 @@ export default function FlagMenuDemo()
                 </div>
             </div>
 
+            {/* Colored Tooltip */}
+            <div className="card bg-base-200 shadow-xl">
+                <div className="card-body">
+                    <h2 className="card-title text-sm">FlagMenu - Tooltip coloré</h2>
+                    <FlagMenu
+                        lang={ currentLang }
+                        onChange={ setCurrentLang }
+                        showLabel
+                        showTooltip
+                        tooltipColor="primary"
+                        tooltipPosition="top"
+                    />
+                </div>
+            </div>
+
             {/* Vertical */}
             <div className="card bg-base-200 shadow-xl">
                 <div className="card-body">

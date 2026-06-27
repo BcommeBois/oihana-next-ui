@@ -31,6 +31,7 @@ import { HORIZONTAL } from '../../themes/enums/orientations' ;
  * @param {boolean} [props.showLabel=true] - Show language label.
  * @param {boolean} [props.showTooltip=true] - Show tooltips.
  * @param {string} [props.tooltipClassName] - Tooltip classes.
+ * @param {string} [props.tooltipColor] - Tooltip color.
  * @param {string} [props.tooltipPosition] - Tooltip position.
  * @param {string} [props.size] - Menu size.
  * @returns {React.JSX.Element}
@@ -50,6 +51,7 @@ const FlagMenu =
     showLabel = true ,
     showTooltip = true ,
     tooltipClassName ,
+    tooltipColor ,
     tooltipPosition ,
     size = XS ,
 }) =>
@@ -95,6 +97,7 @@ const FlagMenu =
                                 showIndicator={ hasIndicator }
                                 showTooltip={ showTooltip }
                                 tooltipClassName={ tooltipClassName }
+                                tooltipColor={ tooltipColor }
                                 tooltipPosition={ tooltipPosition }
                                 onClick={ event =>
                                 {

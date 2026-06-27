@@ -68,8 +68,8 @@ const FlagItem =
     return (
         <Tooltip
             className={ tooltipClassName }
-            label={ tooltip ?? lang }
-            level={ tooltipColor }
+            color={ tooltipColor }
+            tip={ tooltip ?? lang }
             position={ tooltipPosition }
             show={ showTooltip }
         >
