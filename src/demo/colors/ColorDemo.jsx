@@ -17,6 +17,7 @@ const ColorDemo = () =>
     const [ color      , setColor      ] = useState( '#FF5733' ) ;
     const [ colorAlpha , setColorAlpha ] = useState( '#3B82F6CC' ) ;
     const [ panel      , setPanel      ] = useState( '#22C55E' ) ;
+    const [ horiz      , setHoriz      ] = useState( '#8B5CF6' ) ;
 
     return (
         <Container className="flex flex-col gap-8 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-5xl">
@@ -82,6 +83,47 @@ const ColorDemo = () =>
                     <div className="flex items-center gap-3">
                         <ColorIndicator color={ panel } size="xl" />
                         <span className="font-mono">{ panel }</span>
+                    </div>
+                </div>
+            </div>
+
+            <Divider />
+
+            {/* Horizontal ColorPicker — square left, controls right, responsive collapse */}
+            <div className="flex flex-col gap-4">
+                <span className="font-semibold">Horizontal ColorPicker</span>
+                <p className="text-sm opacity-70">
+                    Square on the left, controls on the right. Resize the window / panel to see it
+                    collapse back to vertical : <span className="font-mono">collapse="viewport"</span> reacts
+                    to the screen, <span className="font-mono">collapse="container"</span> reacts to its own width.
+                </p>
+
+                <div className="flex flex-wrap items-start gap-8">
+                    {/* viewport collapse (sm breakpoint) */}
+                    <div className="flex flex-col gap-2">
+                        <span className="text-xs font-medium opacity-60">orientation="horizontal" · collapse="viewport"</span>
+                        <div className="rounded-box border border-base-300 bg-base-100 p-4 shadow-sm">
+                            <ColorPicker
+                                alpha
+                                orientation = "horizontal"
+                                collapse    = "viewport"
+                                value       = { horiz }
+                                onChange    = { setHoriz }
+                            />
+                        </div>
+                    </div>
+
+                    {/* container collapse — shrink the wrapper to watch it fold */}
+                    <div className="flex flex-col gap-2">
+                        <span className="text-xs font-medium opacity-60">collapse="container" (in a 22rem box → folds at &lt;28rem)</span>
+                        <div className="w-[22rem] resize-x overflow-auto rounded-box border border-base-300 bg-base-100 p-4 shadow-sm">
+                            <ColorPicker
+                                orientation = "horizontal"
+                                collapse    = "container"
+                                value       = { horiz }
+                                onChange    = { setHoriz }
+                            />
+                        </div>
                     </div>
                 </div>
             </div>

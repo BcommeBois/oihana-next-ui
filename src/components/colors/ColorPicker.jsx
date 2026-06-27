@@ -7,7 +7,9 @@ import useValue from '../../hooks/useValue' ;
 import hexToHsva from '../../helpers/colors/hexToHsva' ;
 import hsvaToHex from '../../helpers/colors/hsvaToHex' ;
 
-import getColorPickerClasses , { DEFAULT_PRESETS } from '../../themes/components/colorPicker' ;
+import getColorPickerClasses , { CONTAINER , DEFAULT_PRESETS , VIEWPORT , getColorPickerSurfaceClasses } from '../../themes/components/colorPicker' ;
+
+import { HORIZONTAL , VERTICAL } from '../../themes/enums/orientations' ;
 
 import InputHexColor from '../inputs/InputHexColor' ;
 
@@ -39,11 +41,20 @@ const HEX_RE = /^#?([0-9a-f]{6}|[0-9a-f]{8})$/i ;
  *
  * @module components/colors/ColorPicker
  *
+ * Two layouts are available via `orientation` : the default `vertical` stacks the
+ * square over the tracks / input / presets ; `horizontal` puts the square on the
+ * left and everything else in a right-hand column. The horizontal layout collapses
+ * back to a stacked, full-width vertical layout on small screens — controlled by
+ * `collapse` (`viewport` = the `sm` breakpoint, `container` = the picker's own width,
+ * `never` = stay horizontal).
+ *
  * @param {Object} props
  * @param {boolean} [props.alpha=false] - Enable the alpha track and emit '#RRGGBBAA'.
  * @param {string} [props.className] - Extra classes for the panel.
+ * @param {import('../../themes/components/colorPicker').ColorPickerCollapse} [props.collapse='viewport'] - When/how the horizontal layout collapses to vertical.
  * @param {string} [props.defaultValue] - Initial value (uncontrolled).
  * @param {(value: string) => void} [props.onChange] - Change handler.
+ * @param {import('../../themes/enums/orientations').Orientation} [props.orientation='vertical'] - Panel layout.
  * @param {string[]} [props.presets] - Preset swatches (defaults to a built-in palette).
  * @param {boolean} [props.showEyeDropper=true] - Show the screen eyedropper (when supported).
  * @param {boolean} [props.showInput=true] - Show the editable hex field.
@@ -56,13 +67,21 @@ const HEX_RE = /^#?([0-9a-f]{6}|[0-9a-f]{8})$/i ;
  * const [ color , setColor ] = useState( '#FF5733' ) ;
  * <ColorPicker value={ color } onChange={ setColor } />
  * ```
+ *
+ * @example
+ * ```jsx
+ * // Horizontal, collapses to vertical under the sm breakpoint
+ * <ColorPicker orientation="horizontal" value={ color } onChange={ setColor } />
+ * ```
  */
 const ColorPicker =
 ({
     alpha = false ,
     className ,
+    collapse = VIEWPORT ,
     defaultValue ,
     onChange : onChangeFromProps ,
+    orientation = VERTICAL ,
     presets = DEFAULT_PRESETS ,
     showEyeDropper = true ,
     showInput = true ,
@@ -146,14 +165,13 @@ const ColorPicker =
         }
     } ;
 
-    return (
-        <div className={ getColorPickerClasses({ className , size }) } { ...rest }>
+    const isHorizontal = orientation === HORIZONTAL ;
 
-            {/* Saturation / brightness square */}
-            <div className="relative aspect-square w-full rounded-box shadow-[inset_0_0_0_1px_rgba(0,0,0,0.1)]">
-                <Saturation hsva={ hsva } onChange={ update } />
-            </div>
+    const { square , column } = getColorPickerSurfaceClasses({ orientation , collapse , size }) ;
 
+    // Everything that sits below (vertical) / beside (horizontal) the square.
+    const controls = (
+        <>
             {/* Hue (+ alpha) tracks, with optional eyedropper */}
             <div className="flex items-center gap-3">
                 { showEyeDropper && eyeDropperSupported && (
@@ -208,9 +226,28 @@ const ColorPicker =
                     </div>
                 </div>
             )}
+        </>
+    ) ;
+
+    const panel = (
+        <div className={ getColorPickerClasses({ className , size , orientation , collapse }) } { ...rest }>
+
+            {/* Saturation / brightness square */}
+            <div className={ square }>
+                <Saturation hsva={ hsva } onChange={ update } />
+            </div>
+
+            { isHorizontal
+                ? <div className={ column }>{ controls }</div>
+                : controls }
 
         </div>
     ) ;
+
+    // A container query needs an ancestor query-container : the panel can't query itself.
+    return isHorizontal && collapse === CONTAINER
+        ? <div className="@container">{ panel }</div>
+        : panel ;
 } ;
 
 ColorPicker.displayName = 'ColorPicker' ;
