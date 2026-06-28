@@ -13,6 +13,8 @@ import useLang from '@/contexts/lang/useLang' ;
 import { getRangeShortcuts } from '@/helpers/date/shortcuts' ;
 import { YYYY_MM_DD } from '@/helpers/date/dateModes' ;
 
+import { MdToday , MdHistory , MdDateRange , MdCalendarMonth } from 'react-icons/md' ;
+
 const fmt = ( d ) => ( d ? d.toDateString() : '—' ) ;
 
 /**
@@ -44,6 +46,15 @@ const DateDemo = () =>
         ? { today : "Aujourd'hui" , yesterday : 'Hier' , last7 : '7 derniers jours' , last30 : '30 derniers jours' , thisMonth : 'Ce mois-ci' , lastMonth : 'Mois dernier' }
         : { today : 'Today' , yesterday : 'Yesterday' , last7 : 'Last 7 days' , last30 : 'Last 30 days' , thisMonth : 'This month' , lastMonth : 'Last month' } ;
     const rangeShortcuts = getRangeShortcuts().map( ( s ) => ({ ...s , label : labels[ s.id ] ?? s.label }) ) ;
+
+    // Same shortcuts, now with an icon each and a divider after the first two.
+    const iconById = { today : MdToday , yesterday : MdHistory , last7 : MdDateRange , last30 : MdDateRange , thisMonth : MdCalendarMonth , lastMonth : MdCalendarMonth } ;
+    const richShortcuts =
+    [
+        ...rangeShortcuts.slice( 0 , 2 ).map( ( s ) => ({ ...s , Icon : iconById[ s.id ] }) ) ,
+        { divider : true } ,
+        ...rangeShortcuts.slice( 2 ).map( ( s ) => ({ ...s , Icon : iconById[ s.id ] }) ) ,
+    ] ;
 
     return (
         <Container className="flex flex-col gap-8 bg-base-200/60 p-4 sm:p-8 rounded-box" maxWidth="max-w-5xl">
@@ -86,6 +97,17 @@ const DateDemo = () =>
                 </p>
                 <div className="w-fit max-w-full overflow-x-auto rounded-box border border-base-300 bg-base-100 p-3 shadow-sm">
                     <Calendar defaultMonth={ new Date( 2030 , 0 , 1 ) } />
+                </div>
+            </div>
+
+            <div className="flex flex-col gap-3">
+                <span className="font-semibold">Force the first day of week (weekStartsOn)</span>
+                <p className="text-xs opacity-50">
+                    Independent of the locale : <span className="font-mono">weekStartsOn="sun"</span> starts weeks on
+                    Sunday even in 🇫🇷 (which is Monday by default). Accepts 0–6 or 'sun'…'sat'.
+                </p>
+                <div className="w-fit max-w-full overflow-x-auto rounded-box border border-base-300 bg-base-100 p-3 shadow-sm">
+                    <Calendar weekStartsOn="sun" />
                 </div>
             </div>
 
@@ -146,6 +168,17 @@ const DateDemo = () =>
                             <Calendar mode="range" months={ 1 } disabledDates={ blocked } allowDisabledInRange defaultValue={{ from : null , to : null }} />
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <div className="flex flex-col gap-3">
+                <span className="font-semibold">Shortcuts with icons &amp; a divider</span>
+                <p className="text-xs opacity-50">
+                    Each shortcut carries an <span className="font-mono">Icon</span>; a <span className="font-mono">{ '{ divider: true }' }</span> item
+                    splits the list (a vertical rule in the mobile strip, a horizontal one in the column).
+                </p>
+                <div className="w-fit max-w-full overflow-x-auto rounded-box border border-base-300 bg-base-100 p-3 shadow-sm">
+                    <Calendar mode="range" months={ 1 } shortcuts={ richShortcuts } defaultValue={{ from : null , to : null }} />
                 </div>
             </div>
 

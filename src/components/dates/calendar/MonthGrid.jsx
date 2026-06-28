@@ -27,6 +27,7 @@ import Day      from './Day' ;
  * @param {boolean} [props.headerInteractive=false] - Make the header label open the quick month/year grids.
  * @param {() => void} [props.onMonthClick] - Open the months grid.
  * @param {() => void} [props.onYearClick] - Open the years grid.
+ * @param {number|string} [props.weekStartsOn] - Force the first day of week (0–6 or 'sun'…'sat').
  */
 const MonthGrid =
 ({
@@ -43,10 +44,11 @@ const MonthGrid =
     headerInteractive = false ,
     onMonthClick ,
     onYearClick ,
+    weekStartsOn ,
 }) =>
 {
-    const weeks    = useMemo( () => getMonthMatrix( month , lang ) , [ month , lang ] ) ;
-    const weekdays = useMemo( () => getWeekdayLabels( lang ) , [ lang ] ) ;
+    const weeks    = useMemo( () => getMonthMatrix( month , lang , weekStartsOn ) , [ month , lang , weekStartsOn ] ) ;
+    const weekdays = useMemo( () => getWeekdayLabels( lang , weekStartsOn ) , [ lang , weekStartsOn ] ) ;
     const days     = weeks.flat() ;
 
     return (

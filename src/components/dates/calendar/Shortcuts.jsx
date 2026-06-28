@@ -24,24 +24,45 @@ const WRAP =
  *
  * @module components/dates/calendar/Shortcuts
  *
+ * Items may carry an optional `Icon` (a component, e.g. from react-icons) shown
+ * before the label, and `{ divider: true }` items render a separator (a vertical
+ * rule in the mobile strip, a horizontal one in the `sm`+ column).
+ *
  * @param {Object} props
- * @param {{ id: string, label: string, value: Function }[]} props.items - Shortcut definitions.
+ * @param {{ id?: string, label?: string, value?: Function, Icon?: Function, divider?: boolean }[]} props.items - Shortcut definitions.
  * @param {(item: Object) => void} props.onSelect - Called with the clicked shortcut.
  * @param {string|null} [props.activeId] - Id of the shortcut matching the current selection (highlighted).
  */
 const Shortcuts = ({ items , onSelect , activeId }) =>
 (
     <div className={ WRAP }>
-        { items.map( ( item ) => (
-            <button
-                key       = { item.id }
-                type      = "button"
-                className = { cn( 'btn btn-ghost btn-sm shrink-0 justify-start font-normal sm:w-full' , item.id === activeId && 'btn-active' ) }
-                onClick   = { () => onSelect( item ) }
-            >
-                { item.label }
-            </button>
-        ) ) }
+        { items.map( ( item , index ) =>
+        {
+            if ( item.divider )
+            {
+                return (
+                    <div
+                        key       = { `divider-${ index }` }
+                        role      = "separator"
+                        className = "shrink-0 self-stretch w-px bg-base-300 sm:my-1 sm:h-px sm:w-full sm:self-auto"
+                    />
+                ) ;
+            }
+
+            const Icon = item.Icon ;
+
+            return (
+                <button
+                    key       = { item.id ?? index }
+                    type      = "button"
+                    className = { cn( 'btn btn-ghost btn-sm shrink-0 justify-start gap-2 font-normal sm:w-full' , item.id === activeId && 'btn-active' ) }
+                    onClick   = { () => onSelect( item ) }
+                >
+                    { Icon && <Icon className="size-4 shrink-0" /> }
+                    { item.label }
+                </button>
+            ) ;
+        } ) }
     </div>
 ) ;
 

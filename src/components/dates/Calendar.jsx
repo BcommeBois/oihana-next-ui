@@ -53,8 +53,9 @@ const YEARS_VIEW  = 'years' ;
  * @param {'single'|'range'} [props.mode='single'] - Selection mode.
  * @param {1|2|'auto'} [props.months=1] - Number of months shown. `'auto'` = 2 on `md`+ screens, 1 below.
  * @param {(value: Date|{from:Date|null,to:Date|null}) => void} [props.onChange] - Selection handler.
- * @param {boolean|{id:string,label:string,value:Function}[]} [props.shortcuts=false] - `true` for the default presets (Today, Last 7 days, This month… in range mode; Today / Yesterday / Tomorrow in single mode), or a custom array.
+ * @param {boolean|{id?:string,label?:string,value?:Function,Icon?:Function,divider?:boolean}[]} [props.shortcuts=false] - `true` for the default presets (Today, Last 7 days, This month… in range mode; Today / Yesterday / Tomorrow in single mode), or a custom array. Items may carry an `Icon` and `{ divider: true }` separators are supported.
  * @param {Date|{from:Date|null,to:Date|null}|null} [props.value] - Controlled value.
+ * @param {number|string} [props.weekStartsOn] - Force the first day of week (0–6, 0=Sunday, or 'sun'…'sat'); defaults to the locale.
  *
  * @example
  * ```jsx
@@ -80,6 +81,7 @@ const Calendar =
     onChange : onChangeFromProps ,
     shortcuts = false ,
     value : valueFromProps ,
+    weekStartsOn ,
     ...rest
 }) =>
 {
@@ -374,6 +376,7 @@ const Calendar =
                                 headerInteractive = { true }
                                 onMonthClick = { () => openMonths( i ) }
                                 onYearClick  = { () => openYears( i ) }
+                                weekStartsOn = { weekStartsOn }
                             />
                         ) ;
                     } ) }
