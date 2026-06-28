@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.2.7] — 2026-06-28
+
 **Components — Color picker (new, dependency-free)**
 - New **`InputColor`** (`components/inputs/InputColor.jsx`) — a hex field with a live colour preview that opens a visual picker inside a `Modal` (centered, responsive, works on mobile). Controlled / uncontrolled, `alpha`, sizes, and every `InputHexColor` prop forwarded. The modal picker opens in the **horizontal** layout by default (square left, controls right) and folds back to vertical on small screens; new `orientation` / `collapse` props are forwarded to the `ColorPicker` and the modal width adapts (`max-w-md` horizontal / `max-w-xs` vertical). Set `orientation="vertical"` for the stacked layout.
 - New **`ColorPicker`** (`components/colors/ColorPicker.jsx`) — a self-contained, hand-rolled picker: saturation/brightness square + hue (+ optional alpha) tracks, an editable hex field, an eyedropper (native EyeDropper API — progressive, auto-hidden where unsupported, e.g. mobile) and a preset palette. Mouse, touch and keyboard. Keeps HSVA as the source of truth, so dragging into black/grey never loses the hue. Toggles: `alpha` / `showInput` / `showPresets` / `showEyeDropper` / `presets`.
