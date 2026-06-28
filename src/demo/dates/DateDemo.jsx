@@ -7,6 +7,7 @@ import Divider   from '@/components/Divider' ;
 
 import Calendar from '@/components/dates/Calendar' ;
 import InputDatePicker from '@/components/inputs/InputDatePicker' ;
+import InputDateRangePicker from '@/components/inputs/InputDateRangePicker' ;
 
 import useLang from '@/contexts/lang/useLang' ;
 import { getRangeShortcuts } from '@/helpers/date/shortcuts' ;
@@ -19,9 +20,10 @@ const fmt = ( d ) => ( d ? d.toDateString() : '—' ) ;
  */
 const DateDemo = () =>
 {
-    const [ date     , setDate     ] = useState( new Date() ) ;
-    const [ range    , setRange    ] = useState({ from : null , to : null }) ;
-    const [ pickDate , setPickDate ] = useState( '' ) ;
+    const [ date      , setDate      ] = useState( new Date() ) ;
+    const [ range     , setRange     ] = useState({ from : null , to : null }) ;
+    const [ pickDate  , setPickDate  ] = useState( '' ) ;
+    const [ pickRange , setPickRange ] = useState( '' ) ;
 
     const today    = new Date() ;
     const inAMonth = new Date( today.getFullYear() , today.getMonth() + 1 , today.getDate() ) ;
@@ -114,6 +116,31 @@ const DateDemo = () =>
             </div>
             <p className="text-sm opacity-70">
                 Selected (responsive) : <span className="font-mono">{ pickDate || '—' }</span>
+            </p>
+
+            <Divider />
+
+            <h2 className="text-3xl font-bold">Input date range picker</h2>
+
+            <div className="grid max-w-3xl grid-cols-1 gap-6 md:grid-cols-2">
+                <InputDateRangePicker
+                    label="Period (responsive)"
+                    helper="Dual month on desktop, single on mobile. Closes when the range is complete; × to clear."
+                    value={ pickRange }
+                    onChange={ setPickRange }
+                    calendarProps={{ shortcuts : rangeShortcuts }}
+                />
+                <InputDateRangePicker label="Forced dropdown" display="dropdown" />
+                <InputDateRangePicker label="Forced modal" display="modal" />
+                <InputDateRangePicker
+                    label="With min / max (today → +1 month)"
+                    helper="Out-of-range days are disabled"
+                    min={ today }
+                    max={ inAMonth }
+                />
+            </div>
+            <p className="text-sm opacity-70">
+                Selected (responsive) : <span className="font-mono">{ pickRange || '—' }</span>
             </p>
 
         </Container>
