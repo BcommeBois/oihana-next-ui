@@ -18,8 +18,9 @@ const Dates = () =>
                 Date Components
             </h1>
             <p className="text-base-content/70 text-lg max-w-2xl mx-auto">
-                Our own dayjs-based calendar — single date for now. Range, shortcuts and the
-                input pickers (InputDatePicker / InputDateRangePicker) come next.
+                Our own dayjs-based calendar — single date and range, one or two months, with
+                shortcuts — and the two field pickers built on it, InputDatePicker and
+                InputDateRangePicker.
             </p>
         </Container>
 

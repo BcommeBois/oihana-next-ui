@@ -11,12 +11,14 @@ import InputDateRangePicker from '@/components/inputs/InputDateRangePicker' ;
 
 import useLang from '@/contexts/lang/useLang' ;
 import { getRangeShortcuts } from '@/helpers/date/shortcuts' ;
+import { YYYY_MM_DD } from '@/helpers/date/dateModes' ;
 
 const fmt = ( d ) => ( d ? d.toDateString() : '—' ) ;
 
 /**
- * Showcase for the date components. Step 2: the standalone Calendar — single date
- * and date range (one or two months). The input pickers come next.
+ * Showcase for the date family : the standalone dayjs Calendar (single date and
+ * range, one or two months, with shortcuts) and the two field pickers built on it,
+ * InputDatePicker and InputDateRangePicker.
  */
 const DateDemo = () =>
 {
@@ -39,7 +41,13 @@ const DateDemo = () =>
     return (
         <Container className="flex flex-col gap-8 bg-base-200/60 p-4 sm:p-8 rounded-box" maxWidth="max-w-5xl">
 
+            {/* ---------------------------------------------------------------- Calendar — single date */}
+
             <h2 className="text-3xl font-bold">Calendar — single date</h2>
+            <p className="text-sm opacity-70 -mt-4">
+                A self-contained, dayjs-based month calendar — no react-day-picker / date-fns. Locale-aware :
+                month / weekday names and the first day of week follow the language (switch 🇫🇷 / 🇬🇧).
+            </p>
 
             <div className="flex flex-wrap items-start gap-8">
                 <div className="w-fit max-w-full overflow-x-auto rounded-box border border-base-300 bg-base-100 p-3 shadow-sm">
@@ -64,12 +72,18 @@ const DateDemo = () =>
 
             <Divider />
 
+            {/* ---------------------------------------------------------------- Calendar — range */}
+
             <h2 className="text-3xl font-bold">Calendar — range</h2>
+            <p className="text-sm opacity-70 -mt-4">
+                The same calendar in range mode, over one or two months, with a live hover preview and
+                optional shortcuts (presets).
+            </p>
 
             <div className="flex flex-col gap-3">
                 <span className="font-semibold">Two months (auto: 2 on desktop, 1 on mobile)</span>
                 <p className="text-xs opacity-50">
-                    Shortcut labels follow the language (switch 🇫🇷 / 🇬🇧). On mobile they become a swipeable strip.
+                    Shortcut labels follow the language. On mobile they become a swipeable strip.
                 </p>
                 <div className="w-fit max-w-full overflow-x-auto rounded-box border border-base-300 bg-base-100 p-3 shadow-sm">
                     <Calendar
@@ -95,12 +109,20 @@ const DateDemo = () =>
 
             <Divider />
 
+            {/* ---------------------------------------------------------------- Input date picker */}
+
             <h2 className="text-3xl font-bold">Input date picker</h2>
+            <p className="text-sm opacity-70 -mt-4">
+                The masked field and the calendar share one value : typing updates the calendar, picking a
+                day fills the field and closes. The popover opens as a <span className="font-mono">dropdown</span> anchored
+                to the field on desktop and as a centered <span className="font-mono">modal</span> on mobile — force
+                either with <span className="font-mono">display="dropdown" | "modal"</span>.
+            </p>
 
             <div className="grid max-w-3xl grid-cols-1 gap-6 md:grid-cols-2">
                 <InputDatePicker
                     label="Date (responsive)"
-                    helper="Dropdown on desktop, modal on mobile. Type or pick; × to clear."
+                    helper="Type or pick; × to clear."
                     value={ pickDate }
                     onChange={ setPickDate }
                     calendarProps={{ shortcuts : true }}
@@ -118,14 +140,44 @@ const DateDemo = () =>
                 Selected (responsive) : <span className="font-mono">{ pickDate || '—' }</span>
             </p>
 
+            <div className="flex flex-col gap-3">
+                <span className="font-semibold">Sizes</span>
+                <div className="grid max-w-3xl grid-cols-1 gap-6 md:grid-cols-3">
+                    <InputDatePicker size="sm" label="Small"  defaultValue="24/12/2024" />
+                    <InputDatePicker size="md" label="Medium" defaultValue="24/12/2024" />
+                    <InputDatePicker size="lg" label="Large"  defaultValue="24/12/2024" />
+                </div>
+            </div>
+
+            <div className="flex flex-col gap-3">
+                <span className="font-semibold">Alternative format &amp; disabled</span>
+                <div className="grid max-w-3xl grid-cols-1 gap-6 md:grid-cols-2">
+                    <InputDatePicker
+                        label="ISO format (yyyy-mm-dd)"
+                        helper="Custom mode + separator"
+                        mode={ YYYY_MM_DD }
+                        separator="-"
+                        defaultValue="2024-12-24"
+                    />
+                    <InputDatePicker label="Disabled" defaultValue="24/12/2024" disabled />
+                </div>
+            </div>
+
             <Divider />
 
+            {/* ---------------------------------------------------------------- Input date range picker */}
+
             <h2 className="text-3xl font-bold">Input date range picker</h2>
+            <p className="text-sm opacity-70 -mt-4">
+                The range mirror : it maps the field's <span className="font-mono">{ '{ start, end }' }</span> to the
+                calendar's <span className="font-mono">{ '{ from, to }' }</span> and only closes once both endpoints are
+                picked. Same responsive popover, with a wider dual-month dropdown on desktop.
+            </p>
 
             <div className="grid max-w-3xl grid-cols-1 gap-6 md:grid-cols-2">
                 <InputDateRangePicker
                     label="Period (responsive)"
-                    helper="Dual month on desktop, single on mobile. Closes when the range is complete; × to clear."
+                    helper="Type or pick two days; × to clear."
                     value={ pickRange }
                     onChange={ setPickRange }
                     calendarProps={{ shortcuts : rangeShortcuts }}
@@ -142,6 +194,18 @@ const DateDemo = () =>
             <p className="text-sm opacity-70">
                 Selected (responsive) : <span className="font-mono">{ pickRange || '—' }</span>
             </p>
+
+            <div className="flex flex-col gap-3">
+                <span className="font-semibold">Custom range separator &amp; disabled</span>
+                <div className="grid max-w-3xl grid-cols-1 gap-6 md:grid-cols-2">
+                    <InputDateRangePicker
+                        label="Custom separator (→)"
+                        helper="rangeSeparator=' → '"
+                        rangeSeparator=" → "
+                    />
+                    <InputDateRangePicker label="Disabled" defaultValue="01/01/2024 – 31/01/2024" disabled />
+                </div>
+            </div>
 
         </Container>
     ) ;
