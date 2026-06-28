@@ -7,6 +7,9 @@ import Divider   from '@/components/Divider' ;
 
 import Calendar from '@/components/dates/Calendar' ;
 
+import useLang from '@/contexts/lang/useLang' ;
+import { getRangeShortcuts } from '@/helpers/date/shortcuts' ;
+
 const fmt = ( d ) => ( d ? d.toDateString() : '—' ) ;
 
 /**
@@ -21,13 +24,21 @@ const DateDemo = () =>
     const today    = new Date() ;
     const inAMonth = new Date( today.getFullYear() , today.getMonth() + 1 , today.getDate() ) ;
 
+    // Shortcut labels localized via the language context (anticipates i18n) — we
+    // reuse the default range shortcuts and override their labels by id.
+    const { lang } = useLang() ;
+    const labels = lang === 'fr'
+        ? { today : "Aujourd'hui" , yesterday : 'Hier' , last7 : '7 derniers jours' , last30 : '30 derniers jours' , thisMonth : 'Ce mois-ci' , lastMonth : 'Mois dernier' }
+        : { today : 'Today' , yesterday : 'Yesterday' , last7 : 'Last 7 days' , last30 : 'Last 30 days' , thisMonth : 'This month' , lastMonth : 'Last month' } ;
+    const rangeShortcuts = getRangeShortcuts().map( ( s ) => ({ ...s , label : labels[ s.id ] ?? s.label }) ) ;
+
     return (
-        <Container className="flex flex-col gap-8 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-5xl">
+        <Container className="flex flex-col gap-8 bg-base-200/60 p-4 sm:p-8 rounded-box" maxWidth="max-w-5xl">
 
             <h2 className="text-3xl font-bold">Calendar — single date</h2>
 
             <div className="flex flex-wrap items-start gap-8">
-                <div className="rounded-box border border-base-300 bg-base-100 p-3 shadow-sm">
+                <div className="w-fit max-w-full overflow-x-auto rounded-box border border-base-300 bg-base-100 p-3 shadow-sm">
                     <Calendar clearable value={ date } onChange={ setDate } />
                 </div>
                 <div className="flex flex-col gap-1">
@@ -42,7 +53,7 @@ const DateDemo = () =>
 
             <div className="flex flex-col gap-3">
                 <span className="font-semibold">With min / max bounds (today → +1 month)</span>
-                <div className="rounded-box border border-base-300 bg-base-100 p-3 shadow-sm w-fit">
+                <div className="w-fit max-w-full overflow-x-auto rounded-box border border-base-300 bg-base-100 p-3 shadow-sm">
                     <Calendar defaultValue={ today } min={ today } max={ inAMonth } />
                 </div>
             </div>
@@ -53,8 +64,18 @@ const DateDemo = () =>
 
             <div className="flex flex-col gap-3">
                 <span className="font-semibold">Two months (auto: 2 on desktop, 1 on mobile)</span>
-                <div className="rounded-box border border-base-300 bg-base-100 p-3 shadow-sm w-fit">
-                    <Calendar clearable mode="range" months="auto" value={ range } onChange={ setRange } />
+                <p className="text-xs opacity-50">
+                    Shortcut labels follow the language (switch 🇫🇷 / 🇬🇧). On mobile they become a swipeable strip.
+                </p>
+                <div className="w-fit max-w-full overflow-x-auto rounded-box border border-base-300 bg-base-100 p-3 shadow-sm">
+                    <Calendar
+                        clearable
+                        shortcuts={ rangeShortcuts }
+                        mode="range"
+                        months="auto"
+                        value={ range }
+                        onChange={ setRange }
+                    />
                 </div>
                 <p className="text-sm opacity-70">
                     From <span className="font-mono">{ fmt( range.from ) }</span> to <span className="font-mono">{ fmt( range.to ) }</span>
@@ -63,7 +84,7 @@ const DateDemo = () =>
 
             <div className="flex flex-col gap-3">
                 <span className="font-semibold">Single month range</span>
-                <div className="rounded-box border border-base-300 bg-base-100 p-3 shadow-sm w-fit">
+                <div className="w-fit max-w-full overflow-x-auto rounded-box border border-base-300 bg-base-100 p-3 shadow-sm">
                     <Calendar mode="range" months={ 1 } defaultValue={{ from : null , to : null }} />
                 </div>
             </div>

@@ -1,6 +1,6 @@
 'use client' ;
 
-import { useEffect , useState } from 'react' ;
+import { useEffect , useMemo , useState } from 'react' ;
 
 import useLang       from '../../contexts/lang/useLang' ;
 import useValue      from '../../hooks/useValue' ;
@@ -10,7 +10,10 @@ import dayjs from '../../helpers/date/configureDayjs' ;
 
 import getCalendarClasses from '../../themes/components/calendar' ;
 
+import { getRangeShortcuts , getSingleShortcuts } from '../../helpers/date/shortcuts' ;
+
 import MonthGrid from './calendar/MonthGrid' ;
+import Shortcuts from './calendar/Shortcuts' ;
 
 /** Single-date selection mode. */
 export const SINGLE = 'single' ;
@@ -40,6 +43,7 @@ const EMPTY_RANGE = { from : null , to : null } ;
  * @param {'single'|'range'} [props.mode='single'] - Selection mode.
  * @param {1|2|'auto'} [props.months=1] - Number of months shown. `'auto'` = 2 on `md`+ screens, 1 below.
  * @param {(value: Date|{from:Date|null,to:Date|null}) => void} [props.onChange] - Selection handler.
+ * @param {boolean|{id:string,label:string,value:Function}[]} [props.shortcuts=false] - `true` for the default presets (Today, Last 7 days, This month… in range mode; Today / Yesterday / Tomorrow in single mode), or a custom array.
  * @param {Date|{from:Date|null,to:Date|null}|null} [props.value] - Controlled value.
  *
  * @example
@@ -61,6 +65,7 @@ const Calendar =
     mode = SINGLE ,
     months = 1 ,
     onChange : onChangeFromProps ,
+    shortcuts = false ,
     value : valueFromProps ,
     ...rest
 }) =>
@@ -112,6 +117,22 @@ const Calendar =
     const isDisabled = ( day ) =>
         ( !!minDay && day.isBefore( minDay , 'day' ) ) ||
         ( !!maxDay && day.isAfter( maxDay , 'day' ) ) ;
+
+    const shortcutItems = useMemo( () =>
+    {
+        if ( shortcuts === true )
+        {
+            return isRange ? getRangeShortcuts() : getSingleShortcuts() ;
+        }
+        return Array.isArray( shortcuts ) ? shortcuts : [] ;
+    }
+    , [ shortcuts , isRange ] ) ;
+
+    const applyShortcut = ( item ) =>
+    {
+        setRawValue( typeof item.value === 'function' ? item.value() : item.value ) ;
+        setHovered( null ) ;
+    } ;
 
     const handlePick = day =>
     {
@@ -210,27 +231,47 @@ const Calendar =
         }
     } ;
 
+    // Highlight the shortcut whose value matches the current selection.
+    const activeShortcutId = shortcutItems.length === 0 ? null : ( shortcutItems.find( ( item ) =>
+    {
+        const v = typeof item.value === 'function' ? item.value() : item.value ;
+        if ( isRange )
+        {
+            return !!( v?.from && v?.to && selected.from && selected.to
+                && dayjs( v.from ).isSame( selected.from , 'day' )
+                && dayjs( v.to ).isSame( selected.to , 'day' ) ) ;
+        }
+        return !!( v && selected && dayjs( v ).isSame( selected , 'day' ) ) ;
+    } )?.id ?? null ) ;
+
     const monthsArr = Array.from( { length : monthCount } , ( _ , i ) => viewMonth.add( i , 'month' ) ) ;
 
     return (
         <div className={ getCalendarClasses({ className }) } onKeyDown={ handleKeyDown } { ...rest }>
-            <div className="flex flex-col gap-4 sm:flex-row">
-                {
-                    monthsArr.map( ( month , i ) => (
-                    <MonthGrid
-                        key         = { month.valueOf() }
-                        month       = { month }
-                        lang        = { lang }
-                        showPrev    = { i === 0 }
-                        showNext    = { i === monthCount - 1 }
-                        onPrev      = { () => setViewMonth( ( m ) => m.subtract( 1 , 'month' ) ) }
-                        onNext      = { () => setViewMonth( ( m ) => m.add( 1 , 'month' ) ) }
-                        getDayState = { ( day ) => getDayState( day , month ) }
-                        onPick      = { handlePick }
-                        onHover     = { handleHover }
-                        onLeave     = { () => setHovered( null ) }
-                    />
-                ) ) }
+            <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
+
+                { shortcutItems.length > 0 && (
+                    <Shortcuts items={ shortcutItems } onSelect={ applyShortcut } activeId={ activeShortcutId } />
+                )}
+
+                <div className="flex flex-col gap-4 sm:flex-row">
+                    {
+                        monthsArr.map( ( month , i ) => (
+                        <MonthGrid
+                            key         = { month.valueOf() }
+                            month       = { month }
+                            lang        = { lang }
+                            showPrev    = { i === 0 }
+                            showNext    = { i === monthCount - 1 }
+                            onPrev      = { () => setViewMonth( ( m ) => m.subtract( 1 , 'month' ) ) }
+                            onNext      = { () => setViewMonth( ( m ) => m.add( 1 , 'month' ) ) }
+                            getDayState = { ( day ) => getDayState( day , month ) }
+                            onPick      = { handlePick }
+                            onHover     = { handleHover }
+                            onLeave     = { () => setHovered( null ) }
+                        />
+                    ) ) }
+                </div>
             </div>
         </div>
     ) ;
