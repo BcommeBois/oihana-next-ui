@@ -11,6 +11,7 @@ import dayjs from '../../helpers/date/configureDayjs' ;
 import getCalendarClasses from '../../themes/components/calendar' ;
 
 import { getRangeShortcuts , getSingleShortcuts } from '../../helpers/date/shortcuts' ;
+import createDisabledMatcher from '../../helpers/date/matchDisabledDate' ;
 
 import MonthGrid from './calendar/MonthGrid' ;
 import MonthsGrid from './calendar/MonthsGrid' ;
@@ -41,10 +42,12 @@ const YEARS_VIEW  = 'years' ;
  * @module components/dates/Calendar
  *
  * @param {Object} props
+ * @param {boolean} [props.allowDisabledInRange=false] - Allow a selected range to span blocked days (by default a range stops before the first blocked day).
  * @param {boolean} [props.clearable=false] - Re-clicking the selected day (single) or a range endpoint clears the selection; `Escape` also clears.
  * @param {string} [props.className] - Extra classes for the panel.
  * @param {Date} [props.defaultMonth] - Month shown on first render when there is no value (quick navigation start).
  * @param {Date|{from:Date|null,to:Date|null}|null} [props.defaultValue] - Initial value (uncontrolled).
+ * @param {Date|{from?:Date,to?:Date}|Array|((date:Date)=>boolean)} [props.disabledDates] - Blackout days : a date, a `{from,to}` range, an array of those, or a predicate.
  * @param {Date} [props.max] - Latest selectable date (inclusive).
  * @param {Date} [props.min] - Earliest selectable date (inclusive).
  * @param {'single'|'range'} [props.mode='single'] - Selection mode.
@@ -64,10 +67,12 @@ const YEARS_VIEW  = 'years' ;
  */
 const Calendar =
 ({
+    allowDisabledInRange = false ,
     className ,
     clearable = false ,
     defaultMonth ,
     defaultValue ,
+    disabledDates ,
     max ,
     min ,
     mode = SINGLE ,
@@ -143,9 +148,37 @@ const Calendar =
     const pickMonth  = ( m ) => { setViewMonth( dayjs( new Date( pickerYear , m , 1 ) ).subtract( pickerIndex , 'month' ) ) ; setPickerIndex( null ) ; } ;
     const pickYear   = ( y ) => { setPickerYear( y ) ; setPickerKind( MONTHS_VIEW ) ; } ;
 
+    // Blackout dates (holidays / unavailable days). A day is disabled when out of
+    // the min/max bounds OR matched by `disabledDates`.
+    const isBlocked = useMemo( () => createDisabledMatcher( disabledDates ) , [ disabledDates ] ) ;
+
     const isDisabled = ( day ) =>
         ( !!minDay && day.isBefore( minDay , 'day' ) ) ||
-        ( !!maxDay && day.isAfter( maxDay , 'day' ) ) ;
+        ( !!maxDay && day.isAfter( maxDay , 'day' ) ) ||
+        isBlocked( day ) ;
+
+    // Furthest day reachable from `from` toward `end` without crossing a blocked
+    // day (so a range can never span one, unless `allowDisabledInRange`). `from`
+    // is assumed selectable. The span is bounded by the visible months → cheap.
+    const capTowardBlock = ( from , end ) =>
+    {
+        if ( !from || !end || allowDisabledInRange )
+        {
+            return end ;
+        }
+        const step = end.isBefore( from , 'day' ) ? -1 : 1 ;
+        let cursor = from ;
+        while ( !cursor.isSame( end , 'day' ) )
+        {
+            const nextDay = cursor.add( step , 'day' ) ;
+            if ( isBlocked( nextDay ) )
+            {
+                break ;
+            }
+            cursor = nextDay ;
+        }
+        return cursor ;
+    } ;
 
     const shortcutItems = useMemo( () =>
     {
@@ -198,8 +231,11 @@ const Calendar =
             return ;
         }
 
-        const lo = day.isBefore( fromDay , 'day' ) ? day : fromDay ;
-        const hi = day.isBefore( fromDay , 'day' ) ? fromDay : day ;
+        // Cap the second endpoint so the range never spans a blocked day (no-op
+        // when `allowDisabledInRange`) — commits exactly what the preview showed.
+        const end = capTowardBlock( fromDay , day ) ;
+        const lo  = end.isBefore( fromDay , 'day' ) ? end : fromDay ;
+        const hi  = end.isBefore( fromDay , 'day' ) ? fromDay : end ;
         setRawValue({ from : lo.toDate() , to : hi.toDate() }) ;
         setHovered( null ) ;
     } ;
@@ -212,8 +248,9 @@ const Calendar =
         }
     } ;
 
-    // Effective range endpoints (with the live hover preview while picking).
-    const previewEnd = ( isRange && fromDay && !toDay && hovered ) ? hovered : toDay ;
+    // Effective range endpoints (with the live hover preview while picking). The
+    // preview stops before the first blocked day (unless `allowDisabledInRange`).
+    const previewEnd = ( isRange && fromDay && !toDay && hovered ) ? capTowardBlock( fromDay , hovered ) : toDay ;
     let lo = fromDay ;
     let hi = previewEnd ;
     if ( lo && hi && hi.isBefore( lo , 'day' ) )

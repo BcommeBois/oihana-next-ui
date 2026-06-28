@@ -30,6 +30,13 @@ const DateDemo = () =>
     const today    = new Date() ;
     const inAMonth = new Date( today.getFullYear() , today.getMonth() + 1 , today.getDate() ) ;
 
+    // Blackout dates : a single blocked day + a blocked range (this month).
+    const blocked =
+    [
+        new Date( today.getFullYear() , today.getMonth() , 10 ) ,
+        { from : new Date( today.getFullYear() , today.getMonth() , 18 ) , to : new Date( today.getFullYear() , today.getMonth() , 22 ) } ,
+    ] ;
+
     // Shortcut labels localized via the language context (anticipates i18n) — we
     // reuse the default range shortcuts and override their labels by id.
     const { lang } = useLang() ;
@@ -116,6 +123,29 @@ const DateDemo = () =>
                 <span className="font-semibold">Single month range</span>
                 <div className="w-fit max-w-full overflow-x-auto rounded-box border border-base-300 bg-base-100 p-3 shadow-sm">
                     <Calendar mode="range" months={ 1 } defaultValue={{ from : null , to : null }} />
+                </div>
+            </div>
+
+            <div className="flex flex-col gap-3">
+                <span className="font-semibold">Blackout dates (disabledDates)</span>
+                <p className="text-xs opacity-50">
+                    The 10th and the 18th–22nd are blocked (struck through, inert). By default a range
+                    <span className="font-semibold"> stops before</span> a blocked day; the second calendar
+                    sets <span className="font-mono">allowDisabledInRange</span> so a range may span them.
+                </p>
+                <div className="flex flex-wrap items-start gap-6">
+                    <div className="flex flex-col gap-1">
+                        <span className="text-xs font-medium opacity-60">default — cannot span</span>
+                        <div className="w-fit max-w-full overflow-x-auto rounded-box border border-base-300 bg-base-100 p-3 shadow-sm">
+                            <Calendar mode="range" months={ 1 } disabledDates={ blocked } defaultValue={{ from : null , to : null }} />
+                        </div>
+                    </div>
+                    <div className="flex flex-col gap-1">
+                        <span className="text-xs font-medium opacity-60">allowDisabledInRange — may span</span>
+                        <div className="w-fit max-w-full overflow-x-auto rounded-box border border-base-300 bg-base-100 p-3 shadow-sm">
+                            <Calendar mode="range" months={ 1 } disabledDates={ blocked } allowDisabledInRange defaultValue={{ from : null , to : null }} />
+                        </div>
+                    </div>
                 </div>
             </div>
 
