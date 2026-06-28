@@ -25,6 +25,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Theme generator `themes/components/calendar.js` (`getCalendarClasses` + `getCalendarDayClasses`, covering the selected / today / outside / disabled / range day modifiers).
 - Lab — new **Dates** tab (`/lab/dates`, Form section) with `DateDemo`; navigation + locale (fr / en) entries.
 
+**Components — Date input picker (new)**
+- New **`InputDatePicker`** (`components/inputs/InputDatePicker.jsx`) — the masked `InputDate` paired with the visual `Calendar` in a responsive popover. The field and the calendar share one value (typing updates the calendar; picking a day fills the field and closes), a clear `×` button shows when the field has a value, and `min` / `max` flow to both. Popover via `display`: a **dropdown** anchored under the field on `md`+ screens, a **modal** (bottom-sheet) on mobile — force either with `display="dropdown" | "modal"`. `calendarProps` forwards shortcuts etc. *(The range picker lands next.)*
+- New **`CalendarPopover`** (`components/dates/CalendarPopover.jsx`) — the responsive host: a portaled `position: fixed` dropdown (flipped / clamped to the viewport, dismissed on outside-click / `Escape` / scroll) or a portaled bottom-sheet modal. New helper `helpers/date/formatDateForMode.js` (`Date` → the input's formatted string).
+
 ---
 
 ## [0.2.6] — 2026-06-27

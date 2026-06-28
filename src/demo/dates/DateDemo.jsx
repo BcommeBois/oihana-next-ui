@@ -6,6 +6,7 @@ import Container from '@/display/Container' ;
 import Divider   from '@/components/Divider' ;
 
 import Calendar from '@/components/dates/Calendar' ;
+import InputDatePicker from '@/components/inputs/InputDatePicker' ;
 
 import useLang from '@/contexts/lang/useLang' ;
 import { getRangeShortcuts } from '@/helpers/date/shortcuts' ;
@@ -18,8 +19,9 @@ const fmt = ( d ) => ( d ? d.toDateString() : '—' ) ;
  */
 const DateDemo = () =>
 {
-    const [ date  , setDate  ] = useState( new Date() ) ;
-    const [ range , setRange ] = useState({ from : null , to : null }) ;
+    const [ date     , setDate     ] = useState( new Date() ) ;
+    const [ range    , setRange    ] = useState({ from : null , to : null }) ;
+    const [ pickDate , setPickDate ] = useState( '' ) ;
 
     const today    = new Date() ;
     const inAMonth = new Date( today.getFullYear() , today.getMonth() + 1 , today.getDate() ) ;
@@ -88,6 +90,31 @@ const DateDemo = () =>
                     <Calendar mode="range" months={ 1 } defaultValue={{ from : null , to : null }} />
                 </div>
             </div>
+
+            <Divider />
+
+            <h2 className="text-3xl font-bold">Input date picker</h2>
+
+            <div className="grid max-w-3xl grid-cols-1 gap-6 md:grid-cols-2">
+                <InputDatePicker
+                    label="Date (responsive)"
+                    helper="Dropdown on desktop, modal on mobile. Type or pick; × to clear."
+                    value={ pickDate }
+                    onChange={ setPickDate }
+                    calendarProps={{ shortcuts : true }}
+                />
+                <InputDatePicker label="Forced dropdown" display="dropdown" />
+                <InputDatePicker label="Forced modal" display="modal" />
+                <InputDatePicker
+                    label="With min / max (today → +1 month)"
+                    helper="Out-of-range days are disabled"
+                    min={ today }
+                    max={ inAMonth }
+                />
+            </div>
+            <p className="text-sm opacity-70">
+                Selected (responsive) : <span className="font-mono">{ pickDate || '—' }</span>
+            </p>
 
         </Container>
     ) ;
