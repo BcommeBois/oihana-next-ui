@@ -22,7 +22,8 @@ const NavButton = ({ Icon , onClick , label , hidden }) =>
 
 /**
  * Calendar header — previous / next month buttons and the localised
- * "month year" label.
+ * "month year" label. When `interactive`, the label splits into a month button
+ * and a year button that open the quick month / year navigation grids.
  *
  * @module components/dates/calendar/Header
  *
@@ -33,14 +34,31 @@ const NavButton = ({ Icon , onClick , label , hidden }) =>
  * @param {() => void} props.onNext - Go to the next month.
  * @param {boolean} [props.showPrev=true] - Show the previous-month arrow.
  * @param {boolean} [props.showNext=true] - Show the next-month arrow.
+ * @param {boolean} [props.interactive=false] - Make the label clickable (quick month/year nav).
+ * @param {() => void} [props.onMonthClick] - Open the months grid (interactive only).
+ * @param {() => void} [props.onYearClick] - Open the years grid (interactive only).
  */
-const Header = ({ month , lang , onPrev , onNext , showPrev = true , showNext = true }) =>
+const Header = ({ month , lang , onPrev , onNext , showPrev = true , showNext = true , interactive = false , onMonthClick , onYearClick }) =>
 (
     <div className="flex items-center justify-between gap-2 pb-2">
         <NavButton Icon={ PrevIcon } onClick={ onPrev } label="Previous month" hidden={ !showPrev } />
-        <span className="font-semibold capitalize">
-            { month.locale( lang ).format( 'MMMM YYYY' ) }
-        </span>
+        { interactive
+            ? (
+                <span className="flex items-center gap-1">
+                    <button type="button" className="btn btn-ghost btn-sm font-semibold capitalize" onClick={ onMonthClick }>
+                        { month.locale( lang ).format( 'MMMM' ) }
+                    </button>
+                    <button type="button" className="btn btn-ghost btn-sm font-semibold" onClick={ onYearClick }>
+                        { month.format( 'YYYY' ) }
+                    </button>
+                </span>
+            )
+            : (
+                <span className="font-semibold capitalize">
+                    { month.locale( lang ).format( 'MMMM YYYY' ) }
+                </span>
+            )
+        }
         <NavButton Icon={ NextIcon } onClick={ onNext } label="Next month" hidden={ !showNext } />
     </div>
 ) ;

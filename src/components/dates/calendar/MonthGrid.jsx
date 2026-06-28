@@ -24,6 +24,9 @@ import Day      from './Day' ;
  * @param {(day: import('dayjs').Dayjs) => void} props.onPick - Day click.
  * @param {(day: import('dayjs').Dayjs) => void} props.onHover - Day hover (range preview).
  * @param {() => void} props.onLeave - Grid mouse-leave (clears the hover preview).
+ * @param {boolean} [props.headerInteractive=false] - Make the header label open the quick month/year grids.
+ * @param {() => void} [props.onMonthClick] - Open the months grid.
+ * @param {() => void} [props.onYearClick] - Open the years grid.
  */
 const MonthGrid =
 ({
@@ -37,6 +40,9 @@ const MonthGrid =
     onPick ,
     onHover ,
     onLeave ,
+    headerInteractive = false ,
+    onMonthClick ,
+    onYearClick ,
 }) =>
 {
     const weeks    = useMemo( () => getMonthMatrix( month , lang ) , [ month , lang ] ) ;
@@ -45,7 +51,17 @@ const MonthGrid =
 
     return (
         <div className="flex flex-col gap-1">
-            <Header month={ month } lang={ lang } showPrev={ showPrev } showNext={ showNext } onPrev={ onPrev } onNext={ onNext } />
+            <Header
+                month       = { month }
+                lang        = { lang }
+                showPrev    = { showPrev }
+                showNext    = { showNext }
+                onPrev      = { onPrev }
+                onNext      = { onNext }
+                interactive = { headerInteractive }
+                onMonthClick = { onMonthClick }
+                onYearClick  = { onYearClick }
+            />
             <Weekdays labels={ weekdays } />
             <div className="grid grid-cols-7 gap-0.5" onMouseLeave={ onLeave }>
                 { days.map( ( day ) => (

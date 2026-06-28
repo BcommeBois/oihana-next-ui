@@ -111,4 +111,45 @@ export const getCalendarDayClasses =
     ) ;
 } ;
 
+/** Base classes for a month / year cell of the quick-navigation grids. */
+export const CALENDAR_CELL = 'btn btn-sm rounded-field font-normal' ;
+
+/**
+ * Generates the className for a month / year cell (the quick month/year picker
+ * grids). Mirrors {@link getCalendarDayClasses} but for the wider (non-square)
+ * month / year buttons.
+ *
+ * @param {Object} [props]
+ * @param {Object} [props.after] - Class definitions to append.
+ * @param {Object} [props.before] - Class definitions to prepend.
+ * @param {string} [props.beforeClassName] - ClassName to prepend.
+ * @param {string} [props.className] - ClassName to append.
+ * @param {boolean} [props.active] - The current month / year.
+ * @param {boolean} [props.disabled] - Out of the allowed min / max range.
+ *
+ * @returns {string} The cell className expression.
+ */
+export const getCalendarCellClasses =
+({
+    after ,
+    before ,
+    beforeClassName ,
+    className ,
+    active ,
+    disabled ,
+}
+= {} ) => cn
+(
+    beforeClassName ,
+    CALENDAR_CELL ,
+    {
+        ...before ,
+        ...active && { 'btn-primary text-primary-content' : true } ,
+        ...!active && { 'btn-ghost' : true } ,
+        ...disabled && !active && { 'text-base-content/40' : true } ,
+        ...after ,
+    } ,
+    className ,
+) ;
+
 export default getCalendarClasses ;

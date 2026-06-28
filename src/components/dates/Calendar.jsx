@@ -13,6 +13,8 @@ import getCalendarClasses from '../../themes/components/calendar' ;
 import { getRangeShortcuts , getSingleShortcuts } from '../../helpers/date/shortcuts' ;
 
 import MonthGrid from './calendar/MonthGrid' ;
+import MonthsGrid from './calendar/MonthsGrid' ;
+import YearsGrid from './calendar/YearsGrid' ;
 import Shortcuts from './calendar/Shortcuts' ;
 
 /** Single-date selection mode. */
@@ -22,6 +24,10 @@ export const SINGLE = 'single' ;
 export const RANGE = 'range' ;
 
 const EMPTY_RANGE = { from : null , to : null } ;
+
+// Quick-navigation picker kinds (a month column shows one in place of its days).
+const MONTHS_VIEW = 'months' ;
+const YEARS_VIEW  = 'years' ;
 
 /**
  * Calendar — a self-contained, dayjs-based month calendar. Single date or date
@@ -37,6 +43,7 @@ const EMPTY_RANGE = { from : null , to : null } ;
  * @param {Object} props
  * @param {boolean} [props.clearable=false] - Re-clicking the selected day (single) or a range endpoint clears the selection; `Escape` also clears.
  * @param {string} [props.className] - Extra classes for the panel.
+ * @param {Date} [props.defaultMonth] - Month shown on first render when there is no value (quick navigation start).
  * @param {Date|{from:Date|null,to:Date|null}|null} [props.defaultValue] - Initial value (uncontrolled).
  * @param {Date} [props.max] - Latest selectable date (inclusive).
  * @param {Date} [props.min] - Earliest selectable date (inclusive).
@@ -59,6 +66,7 @@ const Calendar =
 ({
     className ,
     clearable = false ,
+    defaultMonth ,
     defaultValue ,
     max ,
     min ,
@@ -90,7 +98,15 @@ const Calendar =
         ? ( selected.from ? +new Date( selected.from ) : null )
         : ( selected ? +new Date( selected ) : null ) ;
 
-    const [ viewMonth , setViewMonth ] = useState( () => dayjs( anchorTime ?? undefined ).startOf( 'month' ) ) ;
+    const [ viewMonth , setViewMonth ] = useState( () => dayjs( anchorTime ?? defaultMonth ?? undefined ).startOf( 'month' ) ) ;
+
+    // Quick month / year navigation : which month column (if any) has its picker
+    // open, the kind of grid, and the working year / 12-year page. `null` index =
+    // every column shows its days.
+    const [ pickerIndex   , setPickerIndex   ] = useState( null ) ;
+    const [ pickerKind    , setPickerKind    ] = useState( MONTHS_VIEW ) ;
+    const [ pickerYear    , setPickerYear    ] = useState( () => dayjs( anchorTime ?? defaultMonth ?? undefined ).year() ) ;
+    const [ yearPageStart , setYearPageStart ] = useState( () => dayjs( anchorTime ?? defaultMonth ?? undefined ).year() - 4 ) ;
 
     // Bring the anchor's month into view when the value changes — but only when it
     // is not already visible, so picking a range endpoint in the second month of a
@@ -113,6 +129,19 @@ const Calendar =
 
     const minDay = min ? dayjs( min ).startOf( 'day' ) : null ;
     const maxDay = max ? dayjs( max ).startOf( 'day' ) : null ;
+
+    const minYear = minDay ? minDay.year() : null ;
+    const maxYear = maxDay ? maxDay.year() : null ;
+
+    // Quick-navigation handlers, per month column. Picking a month sets the anchor
+    // so the picked month lands in the column it was opened from (in a dual view
+    // the right column is anchor + 1). The years grid chains into the months grid
+    // (years → month → day).
+    const slotMonth  = ( index ) => viewMonth.add( index , 'month' ) ;
+    const openMonths = ( index ) => { setPickerIndex( index ) ; setPickerKind( MONTHS_VIEW ) ; setPickerYear( slotMonth( index ).year() ) ; } ;
+    const openYears  = ( index , fromYear ) => { setPickerIndex( index ) ; setPickerKind( YEARS_VIEW ) ; setYearPageStart( ( fromYear ?? slotMonth( index ).year() ) - 4 ) ; } ;
+    const pickMonth  = ( m ) => { setViewMonth( dayjs( new Date( pickerYear , m , 1 ) ).subtract( pickerIndex , 'month' ) ) ; setPickerIndex( null ) ; } ;
+    const pickYear   = ( y ) => { setPickerYear( y ) ; setPickerKind( MONTHS_VIEW ) ; } ;
 
     const isDisabled = ( day ) =>
         ( !!minDay && day.isBefore( minDay , 'day' ) ) ||
@@ -255,22 +284,62 @@ const Calendar =
                 )}
 
                 <div className="flex flex-col gap-4 sm:flex-row">
+                    { monthsArr.map( ( month , i ) =>
                     {
-                        monthsArr.map( ( month , i ) => (
-                        <MonthGrid
-                            key         = { month.valueOf() }
-                            month       = { month }
-                            lang        = { lang }
-                            showPrev    = { i === 0 }
-                            showNext    = { i === monthCount - 1 }
-                            onPrev      = { () => setViewMonth( ( m ) => m.subtract( 1 , 'month' ) ) }
-                            onNext      = { () => setViewMonth( ( m ) => m.add( 1 , 'month' ) ) }
-                            getDayState = { ( day ) => getDayState( day , month ) }
-                            onPick      = { handlePick }
-                            onHover     = { handleHover }
-                            onLeave     = { () => setHovered( null ) }
-                        />
-                    ) ) }
+                        if ( pickerIndex === i && pickerKind === MONTHS_VIEW )
+                        {
+                            return (
+                                <MonthsGrid
+                                    key          = { `picker-${ i }` }
+                                    year         = { pickerYear }
+                                    currentMonth = { slotMonth( i ).month() }
+                                    currentYear  = { slotMonth( i ).year() }
+                                    lang         = { lang }
+                                    minDay       = { minDay }
+                                    maxDay       = { maxDay }
+                                    onPick       = { pickMonth }
+                                    onPrevYear   = { () => setPickerYear( ( y ) => y - 1 ) }
+                                    onNextYear   = { () => setPickerYear( ( y ) => y + 1 ) }
+                                    onYearClick  = { () => openYears( i , pickerYear ) }
+                                />
+                            ) ;
+                        }
+
+                        if ( pickerIndex === i && pickerKind === YEARS_VIEW )
+                        {
+                            return (
+                                <YearsGrid
+                                    key         = { `picker-${ i }` }
+                                    pageStart   = { yearPageStart }
+                                    currentYear = { slotMonth( i ).year() }
+                                    minYear     = { minYear }
+                                    maxYear     = { maxYear }
+                                    onPick      = { pickYear }
+                                    onPrevPage  = { () => setYearPageStart( ( s ) => s - 12 ) }
+                                    onNextPage  = { () => setYearPageStart( ( s ) => s + 12 ) }
+                                />
+                            ) ;
+                        }
+
+                        return (
+                            <MonthGrid
+                                key          = { month.valueOf() }
+                                month        = { month }
+                                lang         = { lang }
+                                showPrev     = { i === 0 }
+                                showNext     = { i === monthCount - 1 }
+                                onPrev       = { () => setViewMonth( ( m ) => m.subtract( 1 , 'month' ) ) }
+                                onNext       = { () => setViewMonth( ( m ) => m.add( 1 , 'month' ) ) }
+                                getDayState  = { ( day ) => getDayState( day , month ) }
+                                onPick       = { handlePick }
+                                onHover      = { handleHover }
+                                onLeave      = { () => setHovered( null ) }
+                                headerInteractive = { true }
+                                onMonthClick = { () => openMonths( i ) }
+                                onYearClick  = { () => openYears( i ) }
+                            />
+                        ) ;
+                    } ) }
                 </div>
             </div>
         </div>

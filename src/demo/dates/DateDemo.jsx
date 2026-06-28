@@ -47,6 +47,8 @@ const DateDemo = () =>
             <p className="text-sm opacity-70 -mt-4">
                 A self-contained, dayjs-based month calendar — no react-day-picker / date-fns. Locale-aware :
                 month / weekday names and the first day of week follow the language (switch 🇫🇷 / 🇬🇧).
+                Click the <span className="font-semibold">month</span> or <span className="font-semibold">year</span> in
+                the header to jump quickly (month grid → year grid → back to days).
             </p>
 
             <div className="flex flex-wrap items-start gap-8">
@@ -67,6 +69,16 @@ const DateDemo = () =>
                 <span className="font-semibold">With min / max bounds (today → +1 month)</span>
                 <div className="w-fit max-w-full overflow-x-auto rounded-box border border-base-300 bg-base-100 p-3 shadow-sm">
                     <Calendar defaultValue={ today } min={ today } max={ inAMonth } />
+                </div>
+            </div>
+
+            <div className="flex flex-col gap-3">
+                <span className="font-semibold">Opens on a given month (defaultMonth)</span>
+                <p className="text-xs opacity-50">
+                    No value selected — the view starts on January 2030 via <span className="font-mono">defaultMonth</span>.
+                </p>
+                <div className="w-fit max-w-full overflow-x-auto rounded-box border border-base-300 bg-base-100 p-3 shadow-sm">
+                    <Calendar defaultMonth={ new Date( 2030 , 0 , 1 ) } />
                 </div>
             </div>
 
