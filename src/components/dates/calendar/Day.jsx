@@ -15,6 +15,7 @@ import { getCalendarDayClasses } from '../../../themes/components/calendar' ;
  * @param {boolean} [props.selected] - The selected day.
  * @param {boolean} [props.today] - Today's date.
  * @param {(day: import('dayjs').Dayjs) => void} props.onPick - Click handler.
+ * @param {(day: import('dayjs').Dayjs) => void} [props.onHover] - Hover handler (range preview).
  */
 const Day =
 ({
@@ -27,15 +28,18 @@ const Day =
     selected ,
     today ,
     onPick ,
+    onHover ,
 }) =>
 (
     <button
-        type         = "button"
-        className    = { getCalendarDayClasses({ disabled , inRange , outside , rangeEnd , rangeStart , selected , today }) }
-        disabled     = { disabled }
-        aria-pressed = { !!( selected || rangeStart || rangeEnd ) }
-        aria-label   = { day.format( 'D MMMM YYYY' ) }
-        onClick      = { () => onPick( day ) }
+        type          = "button"
+        className     = { getCalendarDayClasses({ disabled , inRange , outside , rangeEnd , rangeStart , selected , today }) }
+        aria-disabled = { disabled || undefined }
+        tabIndex      = { disabled ? -1 : undefined }
+        aria-pressed  = { !!( selected || rangeStart || rangeEnd ) }
+        aria-label    = { day.format( 'D MMMM YYYY' ) }
+        onClick       = { () => onPick( day ) }
+        onMouseEnter  = { () => onHover?.( day ) }
     >
         { day.date() }
     </button>

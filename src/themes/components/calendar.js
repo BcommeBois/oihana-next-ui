@@ -98,11 +98,12 @@ export const getCalendarDayClasses =
             // Today marker (only when it is not already an endpoint).
             ...today && !isEndpoint && { 'ring-1 ring-primary ring-inset' : true } ,
 
-            // Dim the previous / next month days but keep them readable (theme colour).
-            ...outside && !isEndpoint && !inRange && { 'text-base-content/40' : true } ,
-
-            // Out-of-range days.
-            ...disabled && { 'btn-disabled' : true } ,
+            // Visual hierarchy for non-selectable cells :
+            //   normal in-month  → full base-content (clickable)
+            //   other-month day  → muted but clearly clickable
+            //   out-of-range day → readable muted colour + line-through + inert
+            ...outside && !disabled && !isEndpoint && !inRange && { 'text-base-content/40' : true } ,
+            ...disabled && { 'text-base-content/55 line-through pointer-events-none' : true } ,
 
             ...after ,
         } ,
