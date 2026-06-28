@@ -8,6 +8,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Components — Time picker (new, dependency-free)**
+- New **`TimeColumns`** (`components/times/TimeColumns.jsx`) — a self-contained, column/list time picker built on the existing `Time` class + `useTime` hook (no analog clock). Hours and minutes, with optional **seconds** and an **AM/PM** column (`ampm`), stepped by `minuteStep` / `secondStep`, bounded by `min` / `max` (24-hour), plus a **Now** shortcut. Controlled / uncontrolled, sharing the value semantics of `InputTime` (`value` / `onChange` string + `onTime` `Time`). The selected value is brought into view only when off-screen, so clicking a visible value never moves the column and a manual scroll is not undone.
+- Column subcomponent `components/times/timecolumns/TimeColumn.jsx` (presentational scroll column) + helper `helpers/time/getTimeColumns.js` (pure column descriptors with per-option `selected` / `disabled`, bounds checked against 24-hour `min` / `max`). Theme generator `themes/components/timePicker.js` (`getTimeColumnsClasses` / `getTimeColumnClasses` / `getTimeOptionClasses`). **No new runtime dependency.**
+- Demoed (temporarily) in the `inputs` tab next to `InputTime`; moves to a dedicated `/lab/times` tab later. *(The InputTimePicker — masked field + popover — lands next.)*
+
 ## [0.2.7] — 2026-06-28
 
 **Components — Color picker (new, dependency-free)**
