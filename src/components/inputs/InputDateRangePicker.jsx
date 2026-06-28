@@ -1,9 +1,10 @@
 'use client' ;
 
-import { useState } from 'react' ;
+import { useRef , useState } from 'react' ;
 
 import cn from '../../themes/helpers/cn' ;
 import useValue from '../../hooks/useValue' ;
+import useBreakpoint from '../../themes/hooks/useBreakpoint' ;
 import useDropdownPosition from '../../themes/hooks/useDropdownPosition' ;
 
 import getButtonClassNames , { GHOST , SQUARE } from '../../themes/components/button' ;
@@ -35,14 +36,20 @@ const EMPTY_RANGE = { from : null , to : null } ;
  *
  * @module components/inputs/InputDateRangePicker
  *
+ * When a **footer** is active (see `footer`), picking dates only updates a draft —
+ * the field commits on **Apply** and reverts on **Cancel** / dismiss.
+ *
  * @param {Object} props
  * @param {boolean} [props.allowReversedRange=false] - Allow the end date before the start (forwarded to the field).
+ * @param {string} [props.applyLabel='Apply'] - Footer Apply button label.
  * @param {Object} [props.calendarProps] - Extra props forwarded to the `Calendar` (shortcuts, months…).
+ * @param {string} [props.cancelLabel='Cancel'] - Footer Cancel button label.
  * @param {boolean} [props.clearable=true] - Show the clear button when the field has a value.
  * @param {string} [props.dateSeparator='/'] - Date segments separator.
  * @param {string} [props.defaultValue=''] - Initial formatted value (uncontrolled).
  * @param {boolean} [props.disabled=false] - Disable the field and buttons.
  * @param {'responsive'|'dropdown'|'modal'} [props.display='responsive'] - Popover display mode.
+ * @param {'never'|'always'|'mobile'|'desktop'|boolean} [props.footer='never'] - Show an Apply / Cancel footer (deferred commit) — everywhere, only below `md`, only at `md`+, or never.
  * @param {Date} [props.max] - Latest selectable date.
  * @param {Date} [props.min] - Earliest selectable date.
  * @param {Object} [props.maxLength] - Maximal range length {day, month, year}.
@@ -65,12 +72,15 @@ const EMPTY_RANGE = { from : null , to : null } ;
 const InputDateRangePicker =
 ({
     allowReversedRange = false ,
+    applyLabel = 'Apply' ,
     calendarProps ,
+    cancelLabel = 'Cancel' ,
     clearable = true ,
     dateSeparator = '/' ,
     defaultValue = '' ,
     disabled = false ,
     display = 'responsive' ,
+    footer = 'never' ,
     max ,
     maxLength ,
     min ,
@@ -89,6 +99,17 @@ const InputDateRangePicker =
     const [ rangeValue , setRangeValue ] = useState( EMPTY_RANGE ) ;
     const [ open , setOpen ] = useState( false ) ;
 
+    // Footer (deferred commit) : whether it is active for the current viewport.
+    const isMdUp     = useBreakpoint( 'md' ) ;
+    const footerMode = footer === true ? 'always' : ( !footer ? 'never' : footer ) ;
+    const footerActive = footerMode === 'always'
+        || ( footerMode === 'mobile' && !isMdUp )
+        || ( footerMode === 'desktop' && isMdUp ) ;
+
+    // Snapshot of the committed range, taken when the popover opens, so Cancel /
+    // dismiss can revert the draft.
+    const committedRef = useRef( EMPTY_RANGE ) ;
+
     // Viewport-aware positioning : the dropdown flips (top/bottom) and aligns
     // (start/center/end) based on where the field sits. The panel is wide to fit
     // the dual-month range view.
@@ -103,6 +124,7 @@ const InputDateRangePicker =
     {
         if ( !open )
         {
+            committedRef.current = rangeValue ; // snapshot for Cancel / dismiss
             recalculate() ;
         }
         setOpen( ( previous ) => !previous ) ;
@@ -115,22 +137,53 @@ const InputDateRangePicker =
         onDateRange?.( dr ) ;
     } ;
 
-    // Calendar → field : keep the calendar in sync on every click, but only push the
-    // string (and close) once both endpoints are set. Pushing a partial range would
-    // be re-parsed as null by the field and wipe the in-progress selection.
+    // Commit a complete range to the field and close.
+    const commitRange = ( range ) =>
+    {
+        const str = formatDateForMode( range.from , mode , dateSeparator )
+                  + rangeSeparator
+                  + formatDateForMode( range.to , mode , dateSeparator ) ;
+        setStrValue( str ) ;
+        onDateRange?.( { start : range.from , end : range.to } ) ;
+        setOpen( false ) ;
+    } ;
+
+    // Calendar → field : keep the calendar in sync on every click. With a footer the
+    // pick only updates the draft (commit waits for Apply); without one, a complete
+    // range commits and closes immediately. Pushing a partial range would be
+    // re-parsed as null by the field and wipe the in-progress selection.
     const handlePick = ( next ) =>
     {
         setRangeValue( next ?? EMPTY_RANGE ) ;
 
-        if ( next?.from && next?.to )
+        if ( !footerActive && next?.from && next?.to )
         {
-            const str = formatDateForMode( next.from , mode , dateSeparator )
-                      + rangeSeparator
-                      + formatDateForMode( next.to , mode , dateSeparator ) ;
-            setStrValue( str ) ;
-            onDateRange?.( { start : next.from , end : next.to } ) ;
-            setOpen( false ) ;
+            commitRange( next ) ;
         }
+    } ;
+
+    const handleApply = () =>
+    {
+        if ( rangeValue?.from && rangeValue?.to )
+        {
+            commitRange( rangeValue ) ;
+        }
+    } ;
+
+    const handleCancel = () =>
+    {
+        setRangeValue( committedRef.current ) ;
+        setOpen( false ) ;
+    } ;
+
+    // Escape / outside click / backdrop : revert the draft when a footer is active.
+    const handlePopoverClose = () =>
+    {
+        if ( footerActive )
+        {
+            setRangeValue( committedRef.current ) ;
+        }
+        setOpen( false ) ;
     } ;
 
     const handleClear = () =>
@@ -192,10 +245,16 @@ const InputDateRangePicker =
             <CalendarPopover
                 anchorRef = { anchorRef }
                 isOpen    = { open }
-                onClose   = { () => setOpen( false ) }
+                onClose   = { handlePopoverClose }
                 display   = { display }
                 direction = { direction }
                 placement = { placement }
+                showFooter    = { footerActive }
+                onApply       = { handleApply }
+                onCancel      = { handleCancel }
+                applyDisabled = { !( rangeValue?.from && rangeValue?.to ) }
+                applyLabel    = { applyLabel }
+                cancelLabel   = { cancelLabel }
             >
                 <Calendar
                     mode     = "range"

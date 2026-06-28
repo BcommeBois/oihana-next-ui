@@ -282,6 +282,21 @@ const DateDemo = () =>
                 </div>
             </div>
 
+            <div className="flex flex-col gap-3">
+                <span className="font-semibold">Apply / Cancel footer (footer)</span>
+                <p className="text-xs opacity-50">
+                    With a footer, picking is deferred : the field commits on <span className="font-semibold">Apply</span> and
+                    reverts on <span className="font-semibold">Cancel</span> / Esc. Choose where it shows :
+                    <span className="font-mono"> "always"</span>, <span className="font-mono">"mobile"</span> (below md only),
+                    or <span className="font-mono">"desktop"</span> (md+ only). Resize the window to see the mobile / desktop ones toggle.
+                </p>
+                <div className="grid max-w-3xl grid-cols-1 gap-6 md:grid-cols-3">
+                    <InputDateRangePicker label="footer=always" footer="always" />
+                    <InputDateRangePicker label="footer=mobile" footer="mobile" helper="Footer only below md" />
+                    <InputDateRangePicker label="footer=desktop" footer="desktop" helper="Footer only at md+" />
+                </div>
+            </div>
+
         </Container>
     ) ;
 } ;

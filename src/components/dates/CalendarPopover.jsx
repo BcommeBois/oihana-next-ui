@@ -45,6 +45,12 @@ const clamp = ( value , min , max ) => Math.min( Math.max( value , min ) , max )
  * @param {'top'|'bottom'} [props.direction='bottom'] - Opening direction (from useDropdownPosition).
  * @param {'start'|'center'|'end'} [props.placement='start'] - Horizontal alignment (from useDropdownPosition).
  * @param {string} [props.panelClassName] - Extra classes for the panel.
+ * @param {boolean} [props.showFooter=false] - Render the Apply / Cancel footer.
+ * @param {() => void} [props.onApply] - Apply button handler.
+ * @param {() => void} [props.onCancel] - Cancel button handler.
+ * @param {boolean} [props.applyDisabled=false] - Disable the Apply button.
+ * @param {string} [props.applyLabel='Apply'] - Apply button label.
+ * @param {string} [props.cancelLabel='Cancel'] - Cancel button label.
  * @param {React.ReactNode} props.children - The calendar.
  */
 const CalendarPopover =
@@ -56,6 +62,12 @@ const CalendarPopover =
     direction = 'bottom' ,
     placement = 'start' ,
     panelClassName ,
+    showFooter = false ,
+    onApply ,
+    onCancel ,
+    applyDisabled = false ,
+    applyLabel = 'Apply' ,
+    cancelLabel = 'Cancel' ,
     children ,
 }) =>
 {
@@ -146,6 +158,19 @@ const CalendarPopover =
         return null ;
     }
 
+    const footer = showFooter
+        ? (
+            <div className="mt-3 flex justify-end gap-2 border-t border-base-300 pt-3">
+                <button type="button" className="btn btn-ghost btn-sm" onClick={ onCancel }>
+                    { cancelLabel }
+                </button>
+                <button type="button" className="btn btn-primary btn-sm" disabled={ applyDisabled } onClick={ onApply }>
+                    { applyLabel }
+                </button>
+            </div>
+        )
+        : null ;
+
     if ( asModal )
     {
         return (
@@ -157,6 +182,7 @@ const CalendarPopover =
                         className = { cn( 'relative z-10 w-fit max-w-full border border-base-300 bg-base-100 p-3 shadow-xl rounded-box' , panelClassName ) }
                     >
                         { children }
+                        { footer }
                     </div>
                 </div>
             </Portal>
@@ -171,6 +197,7 @@ const CalendarPopover =
                 style     = { coords ? { top : coords.top , left : coords.left } : { top : 0 , left : 0 , visibility : 'hidden' } }
             >
                 { children }
+                { footer }
             </div>
         </Portal>
     ) ;
