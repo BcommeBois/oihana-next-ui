@@ -1,9 +1,10 @@
 'use client' ;
 
-import { useRef , useState } from 'react' ;
+import { useState } from 'react' ;
 
 import cn from '../../themes/helpers/cn' ;
 import useValue from '../../hooks/useValue' ;
+import useDropdownPosition from '../../themes/hooks/useDropdownPosition' ;
 
 import getButtonClassNames , { GHOST , SQUARE } from '../../themes/components/button' ;
 
@@ -75,7 +76,23 @@ const InputDatePicker =
     const [ dateValue , setDateValue ] = useState( null ) ;
     const [ open , setOpen ] = useState( false ) ;
 
-    const anchorRef = useRef( null ) ;
+    // Viewport-aware positioning : the dropdown flips (top/bottom) and aligns
+    // (start/center/end) based on where the field sits in the page.
+    const { ref : anchorRef , direction , placement , recalculate } = useDropdownPosition({
+        panelWidth         : 340 ,
+        panelHeight        : 380 ,
+        preferredDirection : 'bottom' ,
+        preferredPlacement : 'start' ,
+    }) ;
+
+    const toggleOpen = () =>
+    {
+        if ( !open )
+        {
+            recalculate() ;
+        }
+        setOpen( ( previous ) => !previous ) ;
+    } ;
 
     const handleInputDate = ( date ) =>
     {
@@ -120,7 +137,7 @@ const InputDatePicker =
             aria-label = "Open calendar"
             disabled   = { disabled }
             className  = { cn( getButtonClassNames({ shape : SQUARE , size }) , 'join-item' ) }
-            onClick    = { () => setOpen( ( previous ) => !previous ) }
+            onClick    = { toggleOpen }
         >
             <CalendarIcon className="size-5" />
         </button>
@@ -143,7 +160,14 @@ const InputDatePicker =
                 actions   = { [ clearButton , trigger ] }
             />
 
-            <CalendarPopover anchorRef={ anchorRef } isOpen={ open } onClose={ () => setOpen( false ) } display={ display }>
+            <CalendarPopover
+                anchorRef = { anchorRef }
+                isOpen    = { open }
+                onClose   = { () => setOpen( false ) }
+                display   = { display }
+                direction = { direction }
+                placement = { placement }
+            >
                 <Calendar value={ dateValue } onChange={ handlePick } min={ min } max={ max } { ...calendarProps } />
             </CalendarPopover>
         </div>

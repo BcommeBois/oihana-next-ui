@@ -18,15 +18,20 @@ export const RESPONSIVE = 'responsive' ;
 
 const GAP = 6 ;
 
+const clamp = ( value , min , max ) => Math.min( Math.max( value , min ) , max ) ;
+
 /**
  * Responsive popover that hosts a {@link module:components/dates/Calendar} for the
  * date input pickers.
  *
- * - **dropdown** — portaled, `position: fixed` panel anchored under (or above) the
- *   field, flipped/clamped to stay in the viewport. No clipping by overflow
- *   ancestors. Closes on outside click / `Escape` / scroll / resize.
- * - **modal** — portaled bottom-sheet on mobile (centered card on `sm`+), with a
- *   backdrop. Closes on backdrop click / `Escape`.
+ * - **dropdown** — portaled, `position: fixed` panel anchored to the field. The
+ *   opening `direction` (top / bottom) and `placement` (start / center / end) come
+ *   from {@link module:themes/hooks/useDropdownPosition} (computed from where the
+ *   field sits in the viewport); the panel is then clamped to stay fully on-screen.
+ *   No clipping by overflow ancestors. Dismissed on outside click / `Escape` /
+ *   scroll / resize.
+ * - **modal** — portaled bottom-sheet on mobile (centered card on `sm`+), `w-fit`
+ *   so it hugs the calendar. Dismissed on backdrop click / `Escape`.
  *
  * `display='responsive'` (default) picks dropdown on `md`+ and modal below.
  *
@@ -37,6 +42,8 @@ const GAP = 6 ;
  * @param {boolean} props.isOpen - Open state.
  * @param {() => void} props.onClose - Close handler.
  * @param {'responsive'|'dropdown'|'modal'} [props.display='responsive'] - Display mode.
+ * @param {'top'|'bottom'} [props.direction='bottom'] - Opening direction (from useDropdownPosition).
+ * @param {'start'|'center'|'end'} [props.placement='start'] - Horizontal alignment (from useDropdownPosition).
  * @param {string} [props.panelClassName] - Extra classes for the panel.
  * @param {React.ReactNode} props.children - The calendar.
  */
@@ -46,6 +53,8 @@ const CalendarPopover =
     isOpen ,
     onClose ,
     display = RESPONSIVE ,
+    direction = 'bottom' ,
+    placement = 'start' ,
     panelClassName ,
     children ,
 }) =>
@@ -56,7 +65,7 @@ const CalendarPopover =
     const panelRef = useRef( null ) ;
     const [ coords , setCoords ] = useState( null ) ;
 
-    // ---- Dropdown positioning (fixed, from the anchor rect).
+    // ---- Dropdown positioning (fixed, from the anchor rect + computed direction/placement).
     useLayoutEffect( () =>
     {
         if ( !isOpen || asModal || !anchorRef?.current || !panelRef.current )
@@ -64,29 +73,25 @@ const CalendarPopover =
             return ;
         }
 
-        const rect   = anchorRef.current.getBoundingClientRect() ;
-        const panelW = panelRef.current.offsetWidth ;
-        const panelH = panelRef.current.offsetHeight ;
-        const vw     = window.innerWidth ;
-        const vh     = window.innerHeight ;
+        const rect = anchorRef.current.getBoundingClientRect() ;
+        const pw   = panelRef.current.offsetWidth ;
+        const ph   = panelRef.current.offsetHeight ;
+        const vw   = window.innerWidth ;
+        const vh   = window.innerHeight ;
 
-        // Below the field, or above when there isn't enough room below.
-        let top = rect.bottom + GAP ;
-        if ( top + panelH > vh && rect.top - GAP - panelH >= 0 )
-        {
-            top = rect.top - GAP - panelH ;
-        }
+        let top = direction === 'top' ? rect.top - GAP - ph : rect.bottom + GAP ;
+        let left = placement === 'end'
+            ? rect.right - pw
+            : placement === 'center'
+                ? rect.left + rect.width / 2 - pw / 2
+                : rect.left ;
 
-        // Left-aligned, clamped to keep the panel inside the viewport.
-        let left = rect.left ;
-        if ( left + panelW > vw - GAP )
-        {
-            left = Math.max( GAP , vw - GAP - panelW ) ;
-        }
+        top  = clamp( top  , GAP , Math.max( GAP , vh - ph - GAP ) ) ;
+        left = clamp( left , GAP , Math.max( GAP , vw - pw - GAP ) ) ;
 
         setCoords({ top , left }) ;
     }
-    , [ isOpen , asModal , anchorRef ] ) ;
+    , [ isOpen , asModal , anchorRef , direction , placement ] ) ;
 
     // ---- Dismiss : outside click, Escape, scroll / resize (dropdown only).
     useEffect( () =>
@@ -145,11 +150,11 @@ const CalendarPopover =
     {
         return (
             <Portal>
-                <div className="fixed inset-0 z-[60] flex items-end justify-center sm:items-center">
+                <div className="fixed inset-0 z-[60] flex items-center justify-center p-3">
                     <div className="absolute inset-0 bg-black/40" onClick={ onClose } />
                     <div
                         ref       = { panelRef }
-                        className = { cn( 'relative z-10 w-full max-w-sm border border-base-300 bg-base-100 p-3 shadow-xl rounded-t-box sm:rounded-box' , panelClassName ) }
+                        className = { cn( 'relative z-10 w-fit max-w-full border border-base-300 bg-base-100 p-3 shadow-xl rounded-box' , panelClassName ) }
                     >
                         { children }
                     </div>
@@ -162,7 +167,7 @@ const CalendarPopover =
         <Portal>
             <div
                 ref       = { panelRef }
-                className = { cn( 'fixed z-[60] w-fit max-w-[calc(100vw-12px)] overflow-x-auto border border-base-300 bg-base-100 p-3 shadow-lg rounded-box' , panelClassName ) }
+                className = { cn( 'fixed z-[60] w-fit max-w-[calc(100vw-12px)] border border-base-300 bg-base-100 p-3 shadow-lg rounded-box' , panelClassName ) }
                 style     = { coords ? { top : coords.top , left : coords.left } : { top : 0 , left : 0 , visibility : 'hidden' } }
             >
                 { children }
