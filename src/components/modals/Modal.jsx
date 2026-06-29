@@ -167,6 +167,10 @@ const Modal = ( props ) =>
         disabled,
         onClose,
 
+        // Popover mode (opt-in : render via the native Popover API instead of <dialog>)
+        usePopover = false,
+        id,
+
         // Content
         children,
 
@@ -218,9 +222,27 @@ const Modal = ( props ) =>
         }
     } ;
 
+    // Close the root, whichever kind it is (popover element vs native <dialog>).
+    const closeNode = () =>
+    {
+        const node = dialogRef.current ;
+        if ( !node )
+        {
+            return ;
+        }
+        if ( node.popover )
+        {
+            node.hidePopover?.() ;
+        }
+        else
+        {
+            node.close?.() ;
+        }
+    } ;
+
     const handleAgreeClick = () =>
     {
-        dialogRef.current?.close() ;
+        closeNode() ;
         onAgree?.() ;
     } ;
 
@@ -234,13 +256,13 @@ const Modal = ( props ) =>
 
         if ( e.target === e.currentTarget )
         {
-            dialogRef.current?.close() ;
+            closeNode() ;
         }
     } ;
 
     const handleCancelClick = () =>
     {
-        dialogRef.current?.close() ;
+        closeNode() ;
         onCancel?.() ;
     } ;
 
@@ -298,15 +320,20 @@ const Modal = ( props ) =>
         ? cn( 'shrink-0 bg-base-100 border-b border-base-300/60 z-10 p-2 pb-3' , headerClassName )
         : cn( 'sticky top-0 bg-base-100 border-b border-base-300/60 z-10 p-2 pb-3' , headerClassName ) ;
 
-    return (
-        <dialog
-            aria-labelledby = { showTitle && title ? titleId : undefined }
-            ref             = { handleRef }
-            className       = { modalClasses }
-            onClose         = { handleClose }
-            onCancel        = { handleEscapeKey }
-            onKeyDown       = { handleKeyDown }
-        >
+    // Popover mode : 'manual' disables the browser's auto-dismiss so `disableEscapeKeyDown`
+    // is honoured ; otherwise 'auto' (Escape closes natively, backdrop click via our handler).
+    const popoverMode = usePopover ? ( disableEscapeKeyDown ? 'manual' : 'auto' ) : undefined ;
+
+    const handlePopoverToggle = ( event ) =>
+    {
+        if ( event.newState === 'closed' )
+        {
+            onClose?.() ;
+        }
+    } ;
+
+    const body = (
+        <>
             {/* Backdrop */}
             { showBackdrop && (
                 <div
@@ -393,6 +420,35 @@ const Modal = ( props ) =>
                     </div>
                 )}
             </div>
+        </>
+    ) ;
+
+    if ( usePopover )
+    {
+        return (
+            <div
+                aria-labelledby = { showTitle && title ? titleId : undefined }
+                ref             = { handleRef }
+                id              = { id }
+                popover         = { popoverMode }
+                className       = { modalClasses }
+                onToggle        = { handlePopoverToggle }
+            >
+                { body }
+            </div>
+        ) ;
+    }
+
+    return (
+        <dialog
+            aria-labelledby = { showTitle && title ? titleId : undefined }
+            ref             = { handleRef }
+            className       = { modalClasses }
+            onClose         = { handleClose }
+            onCancel        = { handleEscapeKey }
+            onKeyDown       = { handleKeyDown }
+        >
+            { body }
         </dialog>
     ) ;
 } ;

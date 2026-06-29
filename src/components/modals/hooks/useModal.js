@@ -40,10 +40,21 @@ const useModal =
 
     const internalNode = useRef( null ) ;
 
+    // Native <dialog> closing fires a `close` event…
     const handleCloseEvent = useCallback(() =>
     {
         setIsOpen( false ) ;
         onCloseRef.current?.() ;
+    }
+    , [] ) ;
+
+    // …a popover element fires a `toggle` event (also on declarative open via
+    // `popovertarget`), so we sync `isOpen` and the callbacks from its newState.
+    const handleToggleEvent = useCallback(( event ) =>
+    {
+        const opened = event.newState === 'open' ;
+        setIsOpen( opened ) ;
+        ( opened ? onOpenRef : onCloseRef ).current?.() ;
     }
     , [] ) ;
 
@@ -63,16 +74,20 @@ const useModal =
             if ( internalNode.current )
             {
                 internalNode.current.removeEventListener( 'close', handleCloseEvent ) ;
+                internalNode.current.removeEventListener( 'toggle', handleToggleEvent ) ;
             }
 
             internalNode.current = node ;
 
             if ( node )
             {
+                // Only the relevant event ever fires per element type ; attaching
+                // both keeps the hook agnostic of dialog vs popover.
                 node.addEventListener( 'close' , handleCloseEvent ) ;
+                node.addEventListener( 'toggle' , handleToggleEvent ) ;
             }
         }
-    }), [ handleCloseEvent ]) ;
+    }), [ handleCloseEvent , handleToggleEvent ]) ;
 
     const open = useCallback(() =>
     {
@@ -81,17 +96,29 @@ const useModal =
             return ;
         }
 
-        const dialog = modalRef.current ;
+        const node = modalRef.current ;
 
-        if ( !dialog || dialog.open )
+        if ( !node )
         {
             return ;
         }
 
-        dialog.showModal() ;
+        if ( node.popover ) // popover element : the `toggle` event drives isOpen / onOpen
+        {
+            if ( !node.matches( ':popover-open' ) )
+            {
+                node.showPopover() ;
+            }
+            return ;
+        }
 
+        if ( node.open )
+        {
+            return ;
+        }
+
+        node.showModal() ;
         setIsOpen( true ) ;
-
         onOpenRef.current?.() ;
     }
     , [ lock, modalRef ] ) ;
@@ -103,16 +130,28 @@ const useModal =
             return ;
         }
 
-        const dialog = modalRef.current ;
+        const node = modalRef.current ;
 
-        setIsOpen( false ) ;
-
-        if ( !dialog || !dialog.open )
+        if ( !node )
         {
             return ;
         }
 
-        dialog.close() ;
+        if ( node.popover ) // popover element : the `toggle` event drives isOpen / onClose
+        {
+            if ( node.matches( ':popover-open' ) )
+            {
+                node.hidePopover() ;
+            }
+            return ;
+        }
+
+        setIsOpen( false ) ;
+
+        if ( node.open )
+        {
+            node.close() ;
+        }
     }
     , [ lock, modalRef ] ) ;
 
@@ -132,11 +171,12 @@ const useModal =
     // Close modal if locked
     useEffect(() =>
     {
-        if ( lock && modalRef.current?.open )
+        const node = modalRef.current ;
+        if ( lock && node && ( node.open || node.matches?.( ':popover-open' ) ) )
         {
             close() ;
         }
-    }, [ lock, close ]) ;
+    }, [ lock, close, modalRef ]) ;
 
     return { modalRef, open, close, toggle, isOpen } ;
 } ;

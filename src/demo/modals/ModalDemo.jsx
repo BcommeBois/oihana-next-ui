@@ -1,5 +1,7 @@
 'use client' ;
 
+import { useId } from 'react' ;
+
 import Checkbox from '@/components/checkboxes/Checkbox';
 import useModal from '@/components/modals/hooks/useModal' ;
 
@@ -30,6 +32,10 @@ const ModalDemo = () =>
 {
     // Simple modal
     const { modalRef: simpleRef, open: openSimple } = useModal() ;
+
+    // Popover-mode modals (opt-in usePopover)
+    const popoverId = `modal-popover-${ useId().replace( /:/g , '' ) }` ;
+    const { modalRef: popoverHookRef, open: openPopoverHook } = useModal() ;
 
     // Alert modals
     const { modalRef: alertSuccessRef, open: openAlertSuccess } = useModal({
@@ -105,6 +111,60 @@ const ModalDemo = () =>
                 >
                     <p className="py-2">
                         Press ESC key or click the button below to close
+                    </p>
+                </Modal>
+            </div>
+
+            <Divider />
+
+            {/* Popover mode (opt-in) */}
+            <div className="flex flex-col gap-4">
+                <h3 className="text-xl font-semibold border-b-2 border-secondary pb-2">
+                    Popover mode — light, non-blocking (<code className="badge badge-sm">usePopover</code>)
+                </h3>
+
+                <p className="text-sm text-base-content/70">
+                    Opt-in <code className="badge badge-sm">usePopover</code>: the modal renders through the
+                    browser's native Popover API instead of <code className="badge badge-sm">&lt;dialog&gt;</code>.
+                    It can be opened <strong>declaratively</strong> (a button with <code className="badge badge-sm">popovertarget</code>,
+                    no JS) or via <code className="badge badge-sm">useModal</code>. Escape and a backdrop click close it.
+                    It does <strong>not</strong> block the page — use it for light panels, not for blocking confirmations.
+                </p>
+
+                <div className="flex gap-2 flex-wrap">
+                    <button type="button" className="btn btn-secondary" popoverTarget={ popoverId }>
+                        Open (declarative — no JS)
+                    </button>
+
+                    <Button onClick={ openPopoverHook }>
+                        Open (via useModal)
+                    </Button>
+                </div>
+
+                {/* Declarative popover modal */}
+                <Modal
+                    usePopover
+                    id              = { popoverId }
+                    title           = "Popover modal (declarative)"
+                    showFooter      = { false }
+                    showCloseButton
+                >
+                    <p className="py-4">
+                        Opened by a button with <code className="badge badge-sm">popovertarget</code> — zero JavaScript.
+                        Press ESC or click the backdrop to close.
+                    </p>
+                </Modal>
+
+                {/* useModal-driven popover modal */}
+                <Modal
+                    usePopover
+                    ref          = { popoverHookRef }
+                    title        = "Popover modal (via useModal)"
+                    agree        = "Close"
+                    showDisagree = { false }
+                >
+                    <p className="py-4">
+                        Same popover mode, opened and closed through the <code className="badge badge-sm">useModal</code> hook.
                     </p>
                 </Modal>
             </div>
