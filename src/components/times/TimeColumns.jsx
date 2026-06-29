@@ -18,11 +18,11 @@ const toTime = ( value ) => value == null ? null : ( value instanceof Time ? val
 
 /**
  * TimeColumns — a self-contained, column/list time picker built on the `Time`
- * class and the {@link module:helpers/time/useTime} hook (no analog clock). Hours
+ * class and the {@link useTime} hook (no analog clock). Hours
  * and minutes, with optional **seconds** and an **AM/PM** column (`ampm`), stepped
  * by `minuteStep` / `secondStep`, bounded by `min` / `max` (24-hour). Controlled or
  * uncontrolled, with a **Now** shortcut. Shares the value semantics of
- * {@link module:components/inputs/InputTime}.
+ * {@link InputTime}.
  *
  * @module components/times/TimeColumns
  *

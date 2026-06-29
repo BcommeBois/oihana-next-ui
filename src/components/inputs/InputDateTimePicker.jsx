@@ -404,7 +404,7 @@ const InputDateTimePicker =
         )
         : null ;
 
-    const clearButton = clearable && value
+    const clearButton = clearable && fieldValue
         ? (
             <button
                 key        = "clear"
