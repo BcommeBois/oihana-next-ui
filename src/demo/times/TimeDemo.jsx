@@ -58,9 +58,11 @@ const TimeDemo = () =>
 
             <h2 className="text-3xl font-bold">InputTimePicker — field + popover</h2>
             <p className="text-sm opacity-70 -mt-4">
-                The masked InputTime + the column picker in a popover (dropdown on desktop, modal on mobile).
-                Type or pick; the popover stays open and closes on outside-click / Esc — or via the optional
-                Apply / Cancel <span className="font-mono">footer</span> (deferred commit).
+                The masked InputTime + the column picker in a popover : a <span className="font-mono">dropdown</span> on
+                desktop, a centered <span className="font-mono">modal</span> on mobile — force either with
+                <span className="font-mono"> display="dropdown" | "modal"</span>. Type or pick; the popover stays
+                open and closes on outside-click / Esc — or via the optional Apply / Cancel
+                <span className="font-mono"> footer</span> (deferred commit).
             </p>
 
             <div className="grid max-w-3xl grid-cols-1 gap-6 md:grid-cols-2">
@@ -72,6 +74,8 @@ const TimeDemo = () =>
                     minuteStep={ 5 }
                 />
                 <InputTimePicker ampm label="12h with AM/PM" defaultMeridiem="PM" />
+                <InputTimePicker label="Forced dropdown" display="dropdown" />
+                <InputTimePicker label="Forced modal" display="modal" />
                 <InputTimePicker useSeconds label="With seconds" />
                 <InputTimePicker
                     footer="always"
