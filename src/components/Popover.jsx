@@ -2,12 +2,15 @@
 
 import { useEffect , useLayoutEffect , useRef , useState } from 'react' ;
 
-import cn from '../../themes/helpers/cn' ;
-import useBreakpoint from '../../themes/hooks/useBreakpoint' ;
+import clamp from 'vegas-js-core/src/maths/clamp';
 
-import Portal from '../Portal' ;
+import cn from '../themes/helpers/cn' ;
 
-/** Always render as a dropdown anchored to the field. */
+import useBreakpoint from '../themes/hooks/useBreakpoint' ;
+
+import Portal from './Portal' ;
+
+/** Always render as a dropdown anchored to the trigger. */
 export const DROPDOWN = 'dropdown' ;
 
 /** Always render as a (bottom-sheet on mobile) modal. */
@@ -18,27 +21,26 @@ export const RESPONSIVE = 'responsive' ;
 
 const GAP = 6 ;
 
-const clamp = ( value , min , max ) => Math.min( Math.max( value , min ) , max ) ;
-
 /**
- * Responsive popover that hosts a {@link module:components/dates/Calendar} for the
- * date input pickers.
+ * Responsive popover that hosts arbitrary content (a calendar, a time picker, a
+ * menu…) as either a dropdown anchored to a trigger or a modal, with an optional
+ * Apply / Cancel footer.
  *
- * - **dropdown** — portaled, `position: fixed` panel anchored to the field. The
+ * - **dropdown** — portaled, `position: fixed` panel anchored to the trigger. The
  *   opening `direction` (top / bottom) and `placement` (start / center / end) come
  *   from {@link module:themes/hooks/useDropdownPosition} (computed from where the
- *   field sits in the viewport); the panel is then clamped to stay fully on-screen.
+ *   trigger sits in the viewport); the panel is then clamped to stay fully on-screen.
  *   No clipping by overflow ancestors. Dismissed on outside click / `Escape` /
  *   scroll / resize.
  * - **modal** — portaled bottom-sheet on mobile (centered card on `sm`+), `w-fit`
- *   so it hugs the calendar. Dismissed on backdrop click / `Escape`.
+ *   so it hugs the content. Dismissed on backdrop click / `Escape`.
  *
  * `display='responsive'` (default) picks dropdown on `md`+ and modal below.
  *
- * @module components/dates/CalendarPopover
+ * @module components/Popover
  *
  * @param {Object} props
- * @param {React.RefObject<HTMLElement>} props.anchorRef - The field element to anchor to.
+ * @param {React.RefObject<HTMLElement>} props.anchorRef - The trigger element to anchor to.
  * @param {boolean} props.isOpen - Open state.
  * @param {() => void} props.onClose - Close handler.
  * @param {'responsive'|'dropdown'|'modal'} [props.display='responsive'] - Display mode.
@@ -51,9 +53,9 @@ const clamp = ( value , min , max ) => Math.min( Math.max( value , min ) , max )
  * @param {boolean} [props.applyDisabled=false] - Disable the Apply button.
  * @param {string} [props.applyLabel='Apply'] - Apply button label.
  * @param {string} [props.cancelLabel='Cancel'] - Cancel button label.
- * @param {React.ReactNode} props.children - The calendar.
+ * @param {React.ReactNode} props.children - The popover content.
  */
-const CalendarPopover =
+const Popover =
 ({
     anchorRef ,
     isOpen ,
@@ -138,8 +140,9 @@ const CalendarPopover =
             }
         } ;
 
-        document.addEventListener( 'keydown' , onKey ) ;
+        document.addEventListener( 'keydown'   , onKey         ) ;
         document.addEventListener( 'mousedown' , onPointerDown ) ;
+
         window.addEventListener( 'resize' , onViewportChange ) ;
         window.addEventListener( 'scroll' , onViewportChange , true ) ;
 
@@ -147,6 +150,7 @@ const CalendarPopover =
         {
             document.removeEventListener( 'keydown' , onKey ) ;
             document.removeEventListener( 'mousedown' , onPointerDown ) ;
+
             window.removeEventListener( 'resize' , onViewportChange ) ;
             window.removeEventListener( 'scroll' , onViewportChange , true ) ;
         } ;
@@ -175,7 +179,7 @@ const CalendarPopover =
     {
         return (
             <Portal>
-                <div className="fixed inset-0 z-[60] flex items-center justify-center p-3">
+                <div className="fixed inset-0 z-60 flex items-center justify-center p-3">
                     <div className="absolute inset-0 bg-black/40" onClick={ onClose } />
                     <div
                         ref       = { panelRef }
@@ -193,7 +197,7 @@ const CalendarPopover =
         <Portal>
             <div
                 ref       = { panelRef }
-                className = { cn( 'fixed z-[60] w-fit max-w-[calc(100vw-12px)] border border-base-300 bg-base-100 p-3 shadow-lg rounded-box' , panelClassName ) }
+                className = { cn( 'fixed z-60 w-fit max-w-[calc(100vw-12px)] border border-base-300 bg-base-100 p-3 shadow-lg rounded-box' , panelClassName ) }
                 style     = { coords ? { top : coords.top , left : coords.left } : { top : 0 , left : 0 , visibility : 'hidden' } }
             >
                 { children }
@@ -203,6 +207,6 @@ const CalendarPopover =
     ) ;
 } ;
 
-CalendarPopover.displayName = 'CalendarPopover' ;
+Popover.displayName = 'Popover' ;
 
-export default CalendarPopover ;
+export default Popover ;

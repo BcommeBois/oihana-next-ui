@@ -13,6 +13,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Column subcomponent `components/times/timecolumns/TimeColumn.jsx` (presentational scroll column) + helper `helpers/time/getTimeColumns.js` (pure column descriptors with per-option `selected` / `disabled`, bounds checked against 24-hour `min` / `max`). Theme generator `themes/components/timePicker.js` (`getTimeColumnsClasses` / `getTimeColumnClasses` / `getTimeOptionClasses`). **No new runtime dependency.**
 - Demoed (temporarily) in the `inputs` tab next to `InputTime`; moves to a dedicated `/lab/times` tab later. *(The InputTimePicker — masked field + popover — lands next.)*
 
+**Changed — generic `Popover`**
+- Extracted the date pickers' responsive host into a generic **`Popover`** (`components/Popover.jsx`) — same Portal + dropdown / modal + viewport-clamped positioning + optional Apply / Cancel footer, now reusable by any picker (the upcoming time picker included). `InputDatePicker` / `InputDateRangePicker` retargeted to it, no behaviour change. **Breaking (path):** `components/dates/CalendarPopover` is removed — import `components/Popover` instead (`DROPDOWN` / `MODAL` / `RESPONSIVE` exports unchanged).
+
 ## [0.2.7] — 2026-06-28
 
 **Components — Color picker (new, dependency-free)**

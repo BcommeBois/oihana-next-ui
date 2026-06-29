@@ -14,7 +14,7 @@ import { DD_MM_YYYY } from '../../helpers/date/dateModes' ;
 
 import InputDateRange from './InputDateRange' ;
 import Calendar from '../dates/Calendar' ;
-import CalendarPopover from '../dates/CalendarPopover' ;
+import Popover from '../Popover' ;
 
 import { MdCalendarToday as CalendarIcon , MdClose as ClearIcon } from 'react-icons/md' ;
 
@@ -242,7 +242,7 @@ const InputDateRangePicker =
                 actions            = { [ clearButton , trigger ] }
             />
 
-            <CalendarPopover
+            <Popover
                 anchorRef = { anchorRef }
                 isOpen    = { open }
                 onClose   = { handlePopoverClose }
@@ -265,7 +265,7 @@ const InputDateRangePicker =
                     max      = { max }
                     { ...calendarProps }
                 />
-            </CalendarPopover>
+            </Popover>
         </div>
     ) ;
 } ;

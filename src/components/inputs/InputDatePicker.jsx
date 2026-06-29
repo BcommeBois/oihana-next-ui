@@ -13,7 +13,7 @@ import { DD_MM_YYYY } from '../../helpers/date/dateModes' ;
 
 import InputDate from './InputDate' ;
 import Calendar from '../dates/Calendar' ;
-import CalendarPopover from '../dates/CalendarPopover' ;
+import Popover from '../Popover' ;
 
 import { MdCalendarToday as CalendarIcon , MdClose as ClearIcon } from 'react-icons/md' ;
 
@@ -160,7 +160,7 @@ const InputDatePicker =
                 actions   = { [ clearButton , trigger ] }
             />
 
-            <CalendarPopover
+            <Popover
                 anchorRef = { anchorRef }
                 isOpen    = { open }
                 onClose   = { () => setOpen( false ) }
@@ -169,7 +169,7 @@ const InputDatePicker =
                 placement = { placement }
             >
                 <Calendar value={ dateValue } onChange={ handlePick } min={ min } max={ max } { ...calendarProps } />
-            </CalendarPopover>
+            </Popover>
         </div>
     ) ;
 } ;
