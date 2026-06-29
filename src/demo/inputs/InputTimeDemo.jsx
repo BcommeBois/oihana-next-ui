@@ -3,7 +3,6 @@
 import { useState } from 'react' ;
 import Container from '@/display/Container' ;
 import InputTime from '@/components/inputs/InputTime' ;
-import TimeColumns from '@/components/times/TimeColumns' ;
 
 const InputTimeDemo = () =>
 {
@@ -11,9 +10,6 @@ const InputTimeDemo = () =>
     const [ time12, setTime12 ] = useState( '02:30' ) ;
     const [ timeWithSeconds, setTimeWithSeconds ] = useState( '14:30:45' ) ;
     const [ timeObject, setTimeObject ] = useState( null ) ;
-
-    const [ cols24, setCols24 ] = useState( '09:30' ) ;
-    const [ cols12, setCols12 ] = useState( '02:15' ) ;
 
     return (
         <Container className="flex flex-col gap-6 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-7xl">
@@ -181,41 +177,6 @@ const InputTimeDemo = () =>
                     defaultMeridiem = "PM"
                     readOnly
                 />
-            </div>
-
-            {/* TimeColumns — standalone column picker (Lot T1, temp here; moves to /lab/times) */}
-            <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">TimeColumns — column picker (new)</h3>
-                <p className="text-sm opacity-70">
-                    A column/list time picker on the Time class — not the analog clock. Scroll a column or
-                    click a value; the selected value centers. "Now" jumps to the current time.
-                </p>
-
-                <div className="flex flex-wrap items-start gap-8">
-                    <div className="flex flex-col items-center gap-2">
-                        <span className="font-semibold">24h · minuteStep 5</span>
-                        <div className="rounded-box border border-base-300 bg-base-100 p-3 shadow-sm">
-                            <TimeColumns value={ cols24 } onChange={ setCols24 } minuteStep={ 5 } />
-                        </div>
-                        <span className="font-mono text-sm opacity-70">{ cols24 || '—' }</span>
-                    </div>
-
-                    <div className="flex flex-col items-center gap-2">
-                        <span className="font-semibold">12h · AM/PM · seconds</span>
-                        <div className="rounded-box border border-base-300 bg-base-100 p-3 shadow-sm">
-                            <TimeColumns ampm useSeconds value={ cols12 } onChange={ setCols12 } defaultMeridiem="PM" />
-                        </div>
-                        <span className="font-mono text-sm opacity-70">{ cols12 || '—' }</span>
-                    </div>
-
-                    <div className="flex flex-col items-center gap-2">
-                        <span className="font-semibold">Bounds 09:00 → 17:30</span>
-                        <div className="rounded-box border border-base-300 bg-base-100 p-3 shadow-sm">
-                            <TimeColumns defaultValue="10:00" min="09:00" max="17:30" minuteStep={ 15 } />
-                        </div>
-                        <span className="text-xs opacity-50">Out-of-range hours/minutes disabled</span>
-                    </div>
-                </div>
             </div>
 
         </Container>

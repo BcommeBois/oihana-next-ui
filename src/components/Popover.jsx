@@ -132,7 +132,7 @@ const Popover =
             onClose?.() ;
         } ;
 
-        const onViewportChange = () =>
+        const onResize = () =>
         {
             if ( !asModal )
             {
@@ -140,19 +140,31 @@ const Popover =
             }
         } ;
 
+        // Page scroll closes the dropdown (it would detach from the anchor) — but a
+        // scroll **inside** the panel (e.g. a time-picker column, or the columns'
+        // auto-centering) must NOT close it.
+        const onScroll = ( event ) =>
+        {
+            if ( asModal || panelRef.current?.contains( event.target ) )
+            {
+                return ;
+            }
+            onClose?.() ;
+        } ;
+
         document.addEventListener( 'keydown'   , onKey         ) ;
         document.addEventListener( 'mousedown' , onPointerDown ) ;
 
-        window.addEventListener( 'resize' , onViewportChange ) ;
-        window.addEventListener( 'scroll' , onViewportChange , true ) ;
+        window.addEventListener( 'resize' , onResize ) ;
+        window.addEventListener( 'scroll' , onScroll , true ) ;
 
         return () =>
         {
             document.removeEventListener( 'keydown' , onKey ) ;
             document.removeEventListener( 'mousedown' , onPointerDown ) ;
 
-            window.removeEventListener( 'resize' , onViewportChange ) ;
-            window.removeEventListener( 'scroll' , onViewportChange , true ) ;
+            window.removeEventListener( 'resize' , onResize ) ;
+            window.removeEventListener( 'scroll' , onScroll , true ) ;
         } ;
     }
     , [ isOpen , asModal , onClose , anchorRef ] ) ;

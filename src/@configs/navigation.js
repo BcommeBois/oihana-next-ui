@@ -13,6 +13,7 @@ import {
     MdScience            as LabIcon ,
     MdTexture            as PatternsIcon ,
     MdTextSnippet        as TypographyIcon ,
+    MdAccessTime         as TimesIcon ,
 } from 'react-icons/md' ;
 
 import { LuSquareMousePointer   as ActionIcon         } from "react-icons/lu";
@@ -142,6 +143,7 @@ const navigation =
                     { id : 'checkboxes' , type : LINK  , Icon : CheckBoxIcon  , path  : '/lab/checkboxes' } ,
                     { id : 'colors'     , type : LINK  , Icon : ColorIcon     , path  : '/lab/colors'     } ,
                     { id : 'dates'      , type : LINK  , Icon : DatesIcon     , path  : '/lab/dates'      } ,
+                    { id : 'times'      , type : LINK  , Icon : TimesIcon     , path  : '/lab/times'      } ,
                     { id : 'inputs'     , type : LINK  , Icon : InputIcon     , path  : '/lab/inputs'     } ,
                     { id : 'radios'     , type : LINK  , Icon : RadioIcon     , path  : '/lab/radios'     } ,
                     { id : 'ranges'     , type : LINK  , Icon : RangeIcon     , path  : '/lab/ranges'     } ,

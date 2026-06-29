@@ -49,6 +49,7 @@ import { MdAccessTime as TimeIcon } from 'react-icons/md'
  * @param {string} [props.tooltipClassName] - Tooltip classes
  * @param {string} [props.tooltipColor] - Tooltip color
  * @param {string} [props.tooltipPosition] - Tooltip position
+ * @param {React.ReactNode|React.ReactNode[]} [props.actions] - Extra action button(s) appended after the AM/PM toggle (e.g. a picker trigger)
  * @param {*} [props.ref] - Ref object to access the input element
  * @param {Object} props.rest - Other props passed to Input
  *
@@ -127,6 +128,8 @@ const InputTime =
     tooltipClassName,
     tooltipColor,
     tooltipPosition,
+
+    actions: extraActions,
 
     ref ,
 
@@ -222,9 +225,11 @@ const InputTime =
         />
     ) : null ;
 
-    // --------- Actions (AM/PM button)
+    // --------- Actions (AM/PM button + any extra actions, e.g. a picker trigger)
 
-    const actions = meridiemButton ? [ meridiemButton ] : null ;
+    const extra = Array.isArray( extraActions ) ? extraActions : ( extraActions ? [ extraActions ] : [] ) ;
+    const allActions = [ meridiemButton , ...extra ].filter( Boolean ) ;
+    const actions = allActions.length ? allActions : null ;
 
     // --------- Render
 
