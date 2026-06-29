@@ -44,6 +44,18 @@ const DATE_SEG = {
  * (month ≤ 12, day ≤ 31, hour ≤ 23 / 12, minute ≤ 59…). First digits are constrained
  * in the mask itself for immediate feedback.
  */
+/** Number of days in a month (1–12). February uses the year for the leap check;
+ *  when the year is unknown yet, the permissive 29 is used. */
+const daysInMonth = ( month , year ) =>
+{
+    if ( month === 2 )
+    {
+        if ( year == null ) { return 29 ; }
+        return ( ( year % 4 === 0 && year % 100 !== 0 ) || year % 400 === 0 ) ? 29 : 28 ;
+    }
+    return [ 31 , 28 , 31 , 30 , 31 , 30 , 31 , 31 , 30 , 31 , 30 , 31 ][ month - 1 ] ?? 31 ;
+} ;
+
 const buildDateTimeMask = ( mode , separator , useSeconds , ampm ) =>
 {
     const mask = [] ;
@@ -51,9 +63,10 @@ const buildDateTimeMask = ( mode , separator , useSeconds , ampm ) =>
 
     mode.split( /[/.\-]/ ).forEach( ( token , index , tokens ) =>
     {
-        const cfg = DATE_SEG[ token[ 0 ].toLowerCase() ] ?? DATE_SEG.y ;
+        const type = token[ 0 ].toLowerCase() ;
+        const cfg  = DATE_SEG[ type ] ?? DATE_SEG.y ;
         token.split( '' ).forEach( ( _ , i ) => mask.push( i === 0 ? cfg.first : /\d/ ) ) ;
-        segs.push({ max : cfg.max , min : cfg.min }) ;
+        segs.push({ type , max : cfg.max , min : cfg.min }) ;
         if ( index < tokens.length - 1 )
         {
             mask.push( separator ) ;
@@ -61,23 +74,27 @@ const buildDateTimeMask = ( mode , separator , useSeconds , ampm ) =>
     } ) ;
 
     mask.push( ' ' , ampm ? /[0-1]/ : /[0-2]/ , /\d/ ) ;
-    segs.push({ max : ampm ? 12 : 23 , min : ampm ? 1 : 0 }) ;
+    segs.push({ type : 'H' , max : ampm ? 12 : 23 , min : ampm ? 1 : 0 }) ;
 
     mask.push( ':' , /[0-5]/ , /\d/ ) ;
-    segs.push({ max : 59 , min : 0 }) ;
+    segs.push({ type : 'M' , max : 59 , min : 0 }) ;
 
     if ( useSeconds )
     {
         mask.push( ':' , /[0-5]/ , /\d/ ) ;
-        segs.push({ max : 59 , min : 0 }) ;
+        segs.push({ type : 'S' , max : 59 , min : 0 }) ;
     }
+
+    const dayIdx   = segs.findIndex( ( s ) => s.type === 'd' ) ;
+    const monthIdx = segs.findIndex( ( s ) => s.type === 'm' ) ;
+    const yearIdx  = segs.findIndex( ( s ) => s.type === 'y' ) ;
 
     const clamp = ({ value , selection }) =>
     {
-        let i = 0 ;
-        const fixed = value.replace( /\d+/g , ( group ) =>
+        // 1) per-segment static clamp (range of each field).
+        const groups = ( value.match( /\d+/g ) ?? [] ).map( ( group , i ) =>
         {
-            const seg = segs[ i++ ] ;
+            const seg = segs[ i ] ;
             if ( !seg || seg.max == null || group.length < 2 )
             {
                 return group ;
@@ -87,6 +104,22 @@ const buildDateTimeMask = ( mode , separator , useSeconds , ampm ) =>
             if ( seg.min != null && n < seg.min ) { n = seg.min ; }
             return String( n ).padStart( 2 , '0' ) ;
         } ) ;
+
+        // 2) day-within-month clamp, once day + month are complete.
+        if ( dayIdx >= 0 && monthIdx >= 0 && groups[ dayIdx ]?.length === 2 && groups[ monthIdx ]?.length === 2 )
+        {
+            const yearGroup = yearIdx >= 0 ? groups[ yearIdx ] : '' ;
+            const year      = yearGroup?.length === 4 ? parseInt( yearGroup , 10 ) : undefined ;
+            const dim       = daysInMonth( parseInt( groups[ monthIdx ] , 10 ) , year ) ;
+            if ( parseInt( groups[ dayIdx ] , 10 ) > dim )
+            {
+                groups[ dayIdx ] = String( dim ).padStart( 2 , '0' ) ;
+            }
+        }
+
+        // 3) rebuild, keeping every separator in place.
+        let i = 0 ;
+        const fixed = value.replace( /\d+/g , () => groups[ i++ ] ) ;
         return { value : fixed , selection } ;
     } ;
 
