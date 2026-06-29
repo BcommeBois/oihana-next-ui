@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.2.8] — 2026-06-29
+
 **Components — Date-time picker (new)**
 - New **`InputDateTimePicker`** (`components/inputs/InputDateTimePicker.jsx`) — a single masked `JJ/MM/AAAA HH:MM` field paired with a popover that hosts the `Calendar` **and** `TimeColumns` side by side. Combines the building blocks of `InputDatePicker` and `InputTimePicker`. The value is the combined string (e.g. `"25/12/2026 14:30"`, or with a trailing `AM` / `PM` when `ampm`) with the parsed `Date` via **`onDateTime`**. The popover stays open (date + time take several picks) and closes on outside-click / `Escape`, or via the optional Apply / Cancel **`footer`** (deferred commit). `ampm` adds an AM/PM toggle + column; `useSeconds`, `minuteStep` / `secondStep`, `min` / `max` (date bound), `mode` / `separator`, `calendarProps`, and the responsive `display` are all supported.
 - The combined field mask enforces the segment ranges — first digits constrained while typing (month `0-1`, day `0-3`, hour `0-2` / `0-1` in 12h, minute / second `0-5`) and a postprocessor clamps complete segments (month ≤ 12, hour ≤ 23 / 12, minute / second ≤ 59). The day is clamped to the **days-in-month** once day + month are entered (28 / 29 / 30 / 31 — February uses the year for the leap check), for any mode order. The hour bounds follow `ampm` (1–12) vs 24-hour (0–23).
