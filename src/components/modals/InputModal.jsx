@@ -40,6 +40,7 @@ const InputModal =
     helper,
     className,
     inputClassName,
+    size,
 
     // Action button
     actionLabel = 'Browse',
@@ -80,7 +81,7 @@ const InputModal =
     ...inputProps
 }) =>
 {
-    const { modalRef, open , close } = useModal({
+    const { modalRef, open , close , isOpen } = useModal({
         onOpen  : onModalOpen,
         onClose : onModalClose,
     }) ;
@@ -100,7 +101,10 @@ const InputModal =
     {
         onFocusFromProps?.( e ) ;
 
-        if ( openOnFocus && !disabled )
+        // Guard against the focus-return loop : closing the modal returns focus to
+        // this input, which would re-fire `focus` and reopen it. At that moment
+        // `isOpen` is still true (the close event updates it afterwards), so we skip.
+        if ( openOnFocus && !disabled && !isOpen )
         {
             open() ;
         }
@@ -108,10 +112,11 @@ const InputModal =
 
     const actionButton = showActionButton ? (
         <Button
-            color    = { actionColor }
-            onClick  = { open }
-            disabled = { disabled }
-            size     = "sm"
+            color     = { actionColor }
+            onClick   = { open }
+            disabled  = { disabled }
+            size      = { size }
+            className = "join-item"
         >
             { actionIcon }
             { actionLabel }
@@ -131,6 +136,7 @@ const InputModal =
                 error       = { error }
                 helper      = { helper }
                 className   = { className }
+                size        = { size }
                 actions     = { actionButton }
                 onFocus     = { handleFocus }
                 { ...inputProps }

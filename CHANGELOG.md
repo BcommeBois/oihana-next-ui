@@ -12,6 +12,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - **`Modal`** gains an opt-in **`usePopover`** prop — the modal renders through the native HTML Popover API (`popover` element) instead of `<dialog>`. It can be opened **declaratively** (a `<button popovertarget={id}>`, no JavaScript — new `id` prop) or through `useModal`, closes on `Escape` and backdrop click, and is **non-blocking** (it does not trap focus or block the page — for light panels, not for blocking confirmations). Default (`usePopover={false}`) is unchanged: still a `<dialog>`. daisyUI 5.6 already styles `.modal:popover-open`, so no theme change was needed.
 - **`useModal`** auto-adapts to the element kind (reads its `popover` attribute): `open` / `close` call `showPopover()` / `hidePopover()` for popovers and `showModal()` / `close()` for dialogs, syncing `isOpen` from the `toggle` event (popover, including declarative opens) or the `close` event (dialog). Fully backward compatible.
 
+**Fixes — InputModal**
+- `openOnFocus` no longer gets stuck reopening : closing the modal returned focus to the input, which re-fired `focus` and reopened it. Guarded on `isOpen` (still true at the focus-return moment) so the auto-reopen is skipped; a deliberate re-focus still opens it.
+- The action button (Browse / Clock…) now matches the field height — it dropped the forced `size="sm"`, takes the input `size` and a `join-item` class so it sits flush with the field (like the date / time pickers). New `size` prop forwarded to both the field and the button.
+
 ## [0.2.8] — 2026-06-29
 
 **Components — Date-time picker (new)**
