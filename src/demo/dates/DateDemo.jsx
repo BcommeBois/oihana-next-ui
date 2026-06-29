@@ -8,6 +8,7 @@ import Divider   from '@/components/Divider' ;
 import Calendar from '@/components/dates/Calendar' ;
 import InputDatePicker from '@/components/inputs/InputDatePicker' ;
 import InputDateRangePicker from '@/components/inputs/InputDateRangePicker' ;
+import InputDateTimePicker from '@/components/inputs/InputDateTimePicker' ;
 
 import useLang from '@/contexts/lang/useLang' ;
 import { getRangeShortcuts } from '@/helpers/date/shortcuts' ;
@@ -26,8 +27,10 @@ const DateDemo = () =>
 {
     const [ date      , setDate      ] = useState( new Date() ) ;
     const [ range     , setRange     ] = useState({ from : null , to : null }) ;
-    const [ pickDate  , setPickDate  ] = useState( '' ) ;
-    const [ pickRange , setPickRange ] = useState( '' ) ;
+    const [ pickDate     , setPickDate     ] = useState( '' ) ;
+    const [ pickRange    , setPickRange    ] = useState( '' ) ;
+    const [ pickDateTime , setPickDateTime ] = useState( '' ) ;
+    const [ dtObject     , setDtObject     ] = useState( null ) ;
 
     const today    = new Date() ;
     const inAMonth = new Date( today.getFullYear() , today.getMonth() + 1 , today.getDate() ) ;
@@ -296,6 +299,42 @@ const DateDemo = () =>
                     <InputDateRangePicker label="footer=desktop" footer="desktop" helper="Footer only at md+" />
                 </div>
             </div>
+
+            <Divider />
+
+            {/* ---------------------------------------------------------------- Input date-time picker */}
+
+            <h2 className="text-3xl font-bold">Input date-time picker</h2>
+            <p className="text-sm opacity-70 -mt-4">
+                A date field + a time field sharing one popover that hosts the calendar and the time
+                columns. The value is the combined string (e.g. <span className="font-mono">25/12/2026 14:30</span>);
+                the parsed <span className="font-mono">Date</span> comes via <span className="font-mono">onDateTime</span>.
+                The popover stays open and closes on outside-click / Esc — or via the optional footer.
+            </p>
+
+            <div className="grid max-w-3xl grid-cols-1 gap-6 md:grid-cols-2">
+                <InputDateTimePicker
+                    label="Appointment (responsive)"
+                    helper="Pick a day then a time; × to clear."
+                    value={ pickDateTime }
+                    onChange={ setPickDateTime }
+                    onDateTime={ setDtObject }
+                    minuteStep={ 5 }
+                    calendarProps={{ shortcuts : true }}
+                />
+                <InputDateTimePicker ampm useSeconds label="12h with seconds" />
+                <InputDateTimePicker label="Forced modal" display="modal" />
+                <InputDateTimePicker
+                    footer="always"
+                    label="With Apply / Cancel footer"
+                    helper="Picks are deferred until Apply"
+                    minuteStep={ 15 }
+                />
+            </div>
+            <p className="text-sm opacity-70">
+                Selected : <span className="font-mono">{ pickDateTime || '—' }</span>
+                { dtObject && <span className="opacity-60"> · { dtObject.toString() }</span> }
+            </p>
 
         </Container>
     ) ;
