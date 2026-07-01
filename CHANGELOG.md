@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.2.10] — 2026-07-01
+
 **Components — Button / IconBox (inline icon style)**
 - **`IconBox`** accepte désormais une prop **`style`** (`React.CSSProperties`) appliquée à la `<div>` conteneur ; le SVG hérite de la couleur via `currentColor`. Utile pour un réglage ponctuel (taille, marge, couleur inline) sans passer par une classe.
 - **`Button`** expose une prop **`iconStyle`** transmise à `IconBox` (`style`), pour styliser le wrapper de l'icône en inline sans toucher au `iconClassName`.
