@@ -21,6 +21,7 @@ import { RxAvatar               as AvatarIcon         } from "react-icons/rx";
 import { LuBadgeAlert           as BadgeIcon          } from "react-icons/lu";
 import { RiCheckboxFill         as CheckBoxIcon       } from "react-icons/ri";
 import { LuListCollapse         as CollapseIcon       } from "react-icons/lu";
+import { LuRows3                as AccordionIcon      } from "react-icons/lu";
 import { LuSparkles             as EffectIcon         } from "react-icons/lu";
 import { CiGrid31               as FlexIcon           } from "react-icons/ci";
 import { IoMdGrid               as GridIcon           } from "react-icons/io";
@@ -88,6 +89,7 @@ const navigation =
                     { id : 'infiniteScroll' , type : LINK  , Icon : InfiniteScrollIcon , path  : '/lab/infiniteScroll' } ,
                     { id : 'layout'         , type : LINK  , Icon : LayoutIcon         , path  : '/lab/layout'         } ,
                     { id : 'collapse'       , type : LINK  , Icon : CollapseIcon       , path  : '/lab/collapse'       } ,
+                    { id : 'accordion'      , type : LINK  , Icon : AccordionIcon      , path  : '/lab/accordion'      } ,
                     { id : 'patterns'       , type : LINK  , Icon : PatternsIcon       , path  : '/lab/patterns'       } ,
                 ]
             } ,

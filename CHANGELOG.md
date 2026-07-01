@@ -8,6 +8,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Components — Accordion (new)**
+- New **`Accordion`** (`components/layouts/Accordion.jsx`) — a data-driven wrapper over `Collapse` for show/hide lists. Takes an `items` array (`{ id, title, content, defaultOpen, disabled, className }`) and renders one `Collapse` per item. Exclusive by default (`mode="radio"` with a shared **auto-generated `name`** via `useId`, so multiple accordions on a page never clash); `allowMultiple` switches items to independent `checkbox` mode (several open at once). Props: `icon` (`arrow` / `plus`, applied to every item), `join` (items joined with shared border radius), `name` override, plus `className` / `itemClassName` / `titleClassName` / `contentClassName`. Sensible daisyUI defaults (item border, `font-semibold` title, `text-sm` content), all overridable. **No new theme generator** — reuses `themes/components/collapse.js`.
+- Lab — new **Accordion** tab (`/lab/accordion`, Layouts section) with `AccordionDemo` (arrow / plus / allowMultiple / join / disabled item); navigation + locale (fr « Accordéon » / en « Accordion ») entries.
+- Note: the searchable `details` variant (exclusive `<details name>`) is intentionally out of scope for now (would require `Collapse` to forward `name` to `<details>`); the radio/checkbox modes cover the common cases.
+
 **Components — Dock (new)**
 - New **`Dock`** (`components/menus/Dock.jsx`) — daisyUI `dock` (bottom navigation / bottom bar). Data-driven `items` array (`{ id, label, href, icon, onClick, active }`) or composable `DockItem` children. Items with an `href` render as Next links with active state auto-detected from the pathname (override via `active`); items with only `onClick` render as `<button>`. Props: `size` (`xs` / `sm` / `md` / `lg` / `xl`, responsive object supported), `position` (default `fixed`; pass `relative` / `static` to embed), `showLabel`, plus `itemClassName`. Custom colours via `className` (e.g. `bg-neutral text-neutral-content`).
 - New **`DockItem`** (`components/menus/DockItem.jsx`) — single link/button entry with `icon` + optional `.dock-label`, usable standalone.
