@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Components — Breadcrumbs (new)**
+- New **`Breadcrumbs`** (`components/menus/Breadcrumbs.jsx`) — daisyUI `breadcrumbs` wrapper rendered as a semantic `<nav aria-label="breadcrumb"><ul>`. Two usage modes: **data-driven** via an `items` array (`{ id, label, href, icon }`) — the common case — or **composable** `BreadcrumbItem` children. Items with an `href` render as clickable links (through the existing `Link`, so `aria-current` / active state come for free); items without one render as a plain `<span>` (the current page). Props: `size` (`xs` / `sm` / `md` / `lg`, default `sm`), `maxWidth` (e.g. `max-w-xs`) to enable horizontal scrolling, plus `itemClassName` / `linkClassName` pass-throughs.
+- New **`BreadcrumbItem`** (`components/menus/BreadcrumbItem.jsx`) — single `<li>` entry with optional leading `icon` (wrapped `inline-flex items-center gap-2`), usable standalone for custom breadcrumbs.
+- Theme generator **`themes/components/breadcrumbs.js`** (`getBreadcrumbsClasses`) — `breadcrumbs` base + size map + optional `maxWidth`. **No new runtime dependency.**
+- Lab — new **Breadcrumbs** tab (`/lab/breadcrumbs`, Navigation section) with `BreadcrumbsDemo` (items / icons / composable / sizes / max-width scroll); navigation + locale (fr « Fil d'Ariane » / en « Breadcrumbs ») entries.
+
 **Components — Modal popover mode (new)**
 - **`Modal`** gains an opt-in **`usePopover`** prop — the modal renders through the native HTML Popover API (`popover` element) instead of `<dialog>`. It can be opened **declaratively** (a `<button popovertarget={id}>`, no JavaScript — new `id` prop) or through `useModal`, closes on `Escape` and backdrop click, and is **non-blocking** (it does not trap focus or block the page — for light panels, not for blocking confirmations). Default (`usePopover={false}`) is unchanged: still a `<dialog>`. daisyUI 5.6 already styles `.modal:popover-open`, so no theme change was needed.
 - **`useModal`** auto-adapts to the element kind (reads its `popover` attribute): `open` / `close` call `showPopover()` / `hidePopover()` for popovers and `showModal()` / `close()` for dialogs, syncing `isOpen` from the `toggle` event (popover, including declarative opens) or the `close` event (dialog). Fully backward compatible.
