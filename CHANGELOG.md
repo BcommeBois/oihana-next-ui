@@ -8,6 +8,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Components — Dock (new)**
+- New **`Dock`** (`components/menus/Dock.jsx`) — daisyUI `dock` (bottom navigation / bottom bar). Data-driven `items` array (`{ id, label, href, icon, onClick, active }`) or composable `DockItem` children. Items with an `href` render as Next links with active state auto-detected from the pathname (override via `active`); items with only `onClick` render as `<button>`. Props: `size` (`xs` / `sm` / `md` / `lg` / `xl`, responsive object supported), `position` (default `fixed`; pass `relative` / `static` to embed), `showLabel`, plus `itemClassName`. Custom colours via `className` (e.g. `bg-neutral text-neutral-content`).
+- New **`DockItem`** (`components/menus/DockItem.jsx`) — single link/button entry with `icon` + optional `.dock-label`, usable standalone.
+- Theme generator **`themes/components/dock.js`** (`getDockClasses` / `getDockItemClasses`) — `dock` base + responsive size (via `getResponsiveDefinition`, safelisted) + `position` (via `getPosition`, default `fixed`) + `dock-active` modifier. **No new runtime dependency.**
+- Lab — new **Dock** tab (`/lab/dock`, Navigation section) with `DockDemo` (contained in a mobile-like `relative` frame: sizes / labels off / custom colours / composable + action button); navigation + locale (fr / en « Dock ») entries.
+- Note: for iOS add `<meta name="viewport" content="viewport-fit=cover">` to the root layout, and pad the page bottom so content is not hidden behind the fixed dock.
+
 **Components — Breadcrumbs (new)**
 - New **`Breadcrumbs`** (`components/menus/Breadcrumbs.jsx`) — daisyUI `breadcrumbs` wrapper rendered as a semantic `<nav aria-label="breadcrumb"><ul>`. Two usage modes: **data-driven** via an `items` array (`{ id, label, href, icon }`) — the common case — or **composable** `BreadcrumbItem` children. Items with an `href` render as clickable links (through the existing `Link`, so `aria-current` / active state come for free); items without one render as a plain `<span>` (the current page). Props: `size` (`xs` / `sm` / `md` / `lg`, default `sm`), `maxWidth` (e.g. `max-w-xs`) to enable horizontal scrolling, plus `itemClassName` / `linkClassName` pass-throughs.
 - New **`BreadcrumbItem`** (`components/menus/BreadcrumbItem.jsx`) — single `<li>` entry with optional leading `icon` (wrapped `inline-flex items-center gap-2`), usable standalone for custom breadcrumbs.

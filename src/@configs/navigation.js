@@ -35,6 +35,7 @@ import { BsFillMarkdownFill     as MarkdownIcon       } from 'react-icons/bs' ;
 import { GiDominoMask           as MaskIcon           } from "react-icons/gi";
 import { RiLayoutMasonryFill    as MasonryIcon        } from "react-icons/ri";
 import { TbSlashes             as BreadcrumbsIcon    } from "react-icons/tb";
+import { TbLayoutBottombar     as DockIcon           } from "react-icons/tb";
 import { TfiLayoutMenuSeparated as MenuIcon           } from "react-icons/tfi" ;
 import { LuLayoutPanelTop       as MegamenuIcon       } from "react-icons/lu";
 import { SiDialogflow           as ModalIcon          } from "react-icons/si";
@@ -117,6 +118,7 @@ const navigation =
                 items :
                 [
                     { id : 'breadcrumbs' , type : LINK  , Icon : BreadcrumbsIcon , path  : '/lab/breadcrumbs' } ,
+                    { id : 'dock'        , type : LINK  , Icon : DockIcon        , path  : '/lab/dock'        } ,
                     { id : 'pagination'  , type : LINK  , Icon : PaginationIcon  , path  : '/lab/pagination'  } ,
                     { id : 'menus'       , type : LINK  , Icon : MenuIcon        , path  : '/lab/menus'       } ,
                     { id : 'megamenu'    , type : LINK  , Icon : MegamenuIcon    , path  : '/lab/megamenu'    } ,
