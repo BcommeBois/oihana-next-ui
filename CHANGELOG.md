@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.2.9] — 2026-07-01
+
 **Components — Accordion (new)**
 - New **`Accordion`** (`components/layouts/Accordion.jsx`) — a data-driven wrapper over `Collapse` for show/hide lists. Takes an `items` array (`{ id, title, content, defaultOpen, disabled, className }`) and renders one `Collapse` per item. Exclusive by default (`mode="radio"` with a shared **auto-generated `name`** via `useId`, so multiple accordions on a page never clash); `allowMultiple` switches items to independent `checkbox` mode (several open at once). Props: `icon` (`arrow` / `plus`, applied to every item), `join` (items joined with shared border radius), `name` override, plus `className` / `itemClassName` / `titleClassName` / `contentClassName`. Sensible daisyUI defaults (item border, `font-semibold` title, `text-sm` content), all overridable. **No new theme generator** — reuses `themes/components/collapse.js`.
 - Lab — new **Accordion** tab (`/lab/accordion`, Layouts section) with `AccordionDemo` (arrow / plus / allowMultiple / join / disabled item); navigation + locale (fr « Accordéon » / en « Accordion ») entries.
