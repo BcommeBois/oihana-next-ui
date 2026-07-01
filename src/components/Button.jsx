@@ -54,6 +54,7 @@ import getButtonClassNames from '../themes/components/button' ;
  * @param {boolean} [props.glass] - Glass effect.
  * @param {React.ReactNode} [props.icon] - Icon component.
  * @param {string} [props.iconClassName] - Icon wrapper class name.
+ * @param {React.CSSProperties} [props.iconStyle] - Inline style applied to the icon wrapper.
  * @param {boolean} [props.join] - DaisyUI join-item modifier.
  * @param {Function} [props.onClick] - Click handler.
  * @param {string} [props.path] - i18n path for label, title and tooltip.
@@ -86,6 +87,7 @@ const Button =
     glass ,
     icon ,
     iconClassName ,
+    iconStyle ,
     join ,
     onClick ,
     path ,
@@ -156,6 +158,7 @@ const Button =
                         disabled  = { disabled }
                         icon      = { icon }
                         size      = { size }
+                        style     = { iconStyle }
                     />
                 }
                 { children ?? i18n?.label }

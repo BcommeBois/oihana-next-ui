@@ -39,6 +39,7 @@ import buttonIconSizeMap from '../../themes/sizing/buttonIconSize' ;
  * @param {React.ReactNode} [props.icon] - Icon component to render.
  * @param {boolean} [props.join] - DaisyUI join-item modifier.
  * @param {'xs' | 'sm' | 'md' | 'lg'} [props.size] - Icon container size.
+ * @param {React.CSSProperties} [props.style] - Inline style applied to the container (the SVG inherits the color via currentColor).
  * @param {string} [props.title] - Accessible title passed to the icon.
  */
 const IconBox =
@@ -51,6 +52,7 @@ const IconBox =
     icon: Icon ,
     join ,
     size ,
+    style ,
     title ,
 }) =>
 {
@@ -77,6 +79,7 @@ const IconBox =
                 } ,
                 className ,
             )}
+            style = { style }
         >
             <Icon title={ title } />
         </div>
