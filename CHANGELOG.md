@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Components — I18n (I18nText, new)**
+- New **`I18nText`** (`components/i18n/I18nText.jsx`) — resolves ONE locale string client-side via `useI18n`, so it reacts instantly to a language switch (no navigation, no frozen server-resolved prop). Renders as plain text (a JSX child). Props: `path` (locale bundle), `field` (dot-path within the bundle), `fallback` (rendered when the field is missing), `args` (positional values for `fastformat` interpolation `{0}`, `{1}`, …). Returns `null` when the field is missing and no `fallback` is given.
+- Lab — new `I18nTextDemo` in the Typography tab (`/lab/typography`) showing a plain string, `args` interpolation and a `fallback` case ; values update live when the app's global language is switched (no in-demo toggle needed — it reacts to the existing flag menu).
+- New **`app.lab.i18n`** demo locale bundle (`@locale/app/lab/i18n.js`, fr/en: `title` / `intro` / `count` pattern) registered in the lab locale index.
+- Cleanup — removed a dead `BadgeDemo` import from the Typography lab page (never rendered).
+
 **Components — I18n (I18nTextArea, new)**
 - New **`I18nTextArea`** (`components/i18n/I18nTextArea.jsx`) — a single `TextArea` for a multi-language text field. The value is a `{ [lang]: string }` map ; a `FlagMenu` above the textarea swaps the edited language, and each language with non-empty content carries a dot indicator so the user sees at a glance which translations are filled. The whole map is **one value** (single dirty signal for the parent form). Languages default to the `useLang` context (`['fr', 'en']`), the active language to the current UI language ; both overridable via `languages` / `defaultLang`. Forwards every other prop to `TextArea` (label, helper, error, autosize, minRows, maxRows, placeholder, disabled, …).
 - Lab — new `I18nTextAreaDemo` (controlled `{ fr, en }` field with live JSON preview + a disabled variant), wired into the TextArea lab « I18n » tab (`/lab/textareas`).

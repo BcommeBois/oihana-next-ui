@@ -13,7 +13,7 @@ import H6         from '@/components/typography/H6' ;
 import Paragraph  from '@/components/typography/Paragraph' ;
 import Typography from '@/components/typography/Typography' ;
 
-import BadgeDemo from '@/demo/BadgeDemo';
+import I18nTextDemo from '@/demo/typography/I18nTextDemo';
 
 /**
  * Typography showcase page.
@@ -255,6 +255,9 @@ const TypographyShowcase = ({ path = 'app.test' }) =>
                         </div>
                     </div>
                 </section>
+
+                {/* I18nText — client-side, reacts to global language switch */}
+                <I18nTextDemo />
 
             </Container>
 
