@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Components — Button (RevokeButton, new)**
+- New **`RevokeButton`** (`components/buttons/RevokeButton.jsx`) — a *soft-cancel* affordance mirroring `RemoveButton` but with semantics for actions that flip a document to a `cancelled` state while keeping the audit trail (invitation / session / policy-assignment revoke), where `RemoveButton` would be misleading because the row stays in the database. Pre-configured `MdRemoveCircle` icon + `Jump` motion; forwards every `MotionButton`/`Button` prop (`color`, `shape`, `size`, `motion`, `motionProps`, …). Defaults: `color="primary"`, `shape="circle"`, `size="md"`, i18n `path="components.buttons.revoke"`.
+- New **`revoke`** locale (`@locale/components/buttons/revoke.js`, fr « Révoquer » / en « Revoke ») registered in the buttons locale index — resolves the button's label / title / tooltip.
+- Lab — `RevokeButton` added to `ButtonDemo` (Buttons tab, `/lab/buttons`), one instance per daisyUI color.
+- Fix — `RevokeButton` now imports `Jump` / `MotionButton` via **relative paths** (like its sibling buttons) instead of the `oihana-next-ui/…` self-package specifier.
+
 ## [0.2.10] — 2026-07-01
 
 **Components — Button / IconBox (inline icon style)**

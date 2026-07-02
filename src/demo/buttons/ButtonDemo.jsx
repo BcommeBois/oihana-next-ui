@@ -12,6 +12,7 @@ import LessButton       from '@/components/buttons/LessButton' ;
 import MoreButton       from '@/components/buttons/MoreButton' ;
 import RefreshButton    from '@/components/buttons/RefreshButton' ;
 import RemoveButton     from '@/components/buttons/RemoveButton' ;
+import RevokeButton     from '@/components/buttons/RevokeButton' ;
 import SaveButton       from '@/components/buttons/SaveButton' ;
 import SwapButton       from '@/components/buttons/SwapButton' ;
 
@@ -38,6 +39,9 @@ const ButtonDemo = () =>
                         <div className="flex flex-wrap items-center gap-3 justify-center">
                             { COLORS.map( c => <RemoveButton key={ c } color={ c } /> ) }
                             { COLORS.map( c => <DownloadButton key={ c } color={ c } style="outline" /> ) }
+                        </div>
+                        <div className="flex flex-wrap items-center gap-3 justify-center">
+                            { COLORS.map( c => <RevokeButton key={ c } color={ c } /> ) }
                         </div>
                     </div>
                 </div>

@@ -7,6 +7,7 @@ import less       from './less'
 import more       from './more'
 import refresh    from './refresh'
 import remove     from './remove'
+import revoke     from './revoke'
 import save       from './save'
 
 const buttons =
@@ -20,6 +21,7 @@ const buttons =
     more ,
     refresh ,
     remove ,
+    revoke ,
     save ,
 };
 
