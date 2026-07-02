@@ -12,11 +12,13 @@ import TextAreaDemo          from '@/demo/inputs/TextAreaDemo' ;
 import TextAreaTransformDemo from '@/demo/inputs/TextAreaTransformDemo' ;
 import TextAreaMarkdownDemo  from '@/demo/inputs/TextAreaMarkdownDemo' ;
 import TextAreaCodeDemo      from '@/demo/inputs/TextAreaCodeDemo' ;
+import I18nTextAreaDemo      from '@/demo/inputs/I18nTextAreaDemo' ;
 
 import {
     MdCode ,
     MdFormatAlignLeft ,
     MdTextFields ,
+    MdTranslate ,
     MdViewModule ,
 } from 'react-icons/md' ;
 
@@ -65,6 +67,13 @@ const TextAreas = ({ path = 'app.test' }) =>
             icon        : MdCode ,
             description : 'TextArea for code editing' ,
             component   : <TextAreaCodeDemo /> ,
+        } ,
+        {
+            key         : 'text-i18n' ,
+            label       : 'I18n' ,
+            icon        : MdTranslate ,
+            description : 'Multi-language TextArea (one { lang: text } value)' ,
+            component   : <I18nTextAreaDemo /> ,
         } ,
     ] ;
 

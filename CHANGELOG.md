@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Components — I18n (I18nTextArea, new)**
+- New **`I18nTextArea`** (`components/i18n/I18nTextArea.jsx`) — a single `TextArea` for a multi-language text field. The value is a `{ [lang]: string }` map ; a `FlagMenu` above the textarea swaps the edited language, and each language with non-empty content carries a dot indicator so the user sees at a glance which translations are filled. The whole map is **one value** (single dirty signal for the parent form). Languages default to the `useLang` context (`['fr', 'en']`), the active language to the current UI language ; both overridable via `languages` / `defaultLang`. Forwards every other prop to `TextArea` (label, helper, error, autosize, minRows, maxRows, placeholder, disabled, …).
+- Lab — new `I18nTextAreaDemo` (controlled `{ fr, en }` field with live JSON preview + a disabled variant), wired into the TextArea lab « I18n » tab (`/lab/textareas`).
+- Note — the `languages` prop currently drives the filled-indicators map only ; the flags rendered come from the `useLang` context (`FlagMenu` has no `languages` prop yet).
+- Fix — the group heading now renders as a styled `<span>` instead of a `<label>` without `htmlFor` (it labels the flags + textarea group, not a single control), fixing the `noLabelWithoutControl` a11y lint.
+
 **Components — Input (InputAction, new)**
 - New **`InputAction`** (`components/inputs/InputAction.jsx`) — a text input with a single trailing action button, built on the `Input` `actions` slot (daisyUI `.join`, `btn-square`). Typical use : a `+` button to commit the current draft into a parent collection (tags, allowed IPs, …). Pressing **Enter** fires `onAction` (cancellable via `submitOnEnter={false}`); the button carries an optional daisyUI tooltip, colour/style (`actionColor` / `actionStyle`), `actionDisabled`, `actionType` and an a11y `actionAriaLabel` (falls back to `actionTooltip`). Inherits the input's `error` (button turns `btn-error`) and `disabled` state. Forwards every other prop to `Input` (label, helper, placeholder, masks, …).
 - Lab — new `InputActionDemo` (tag-list builder: commit on `+`/Enter, `actionDisabled` while empty, coloured/custom-icon action, Enter-disabled variant, error state, disabled field), wired into the Inputs lab « Action » tab (`/lab/inputs`, Text category).
