@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.2.12] — 2026-07-02
+
 **Components — FAB / Speed Dial (new)**
 - New **`Fab`** (`components/menus/Fab.jsx`) — a Floating Action Button that sticks to a corner of the screen (daisyUI `.fab`, `position: fixed` by default) and reveals its Speed Dial buttons on focus/hover. The open/close behaviour is **pure CSS — no client state**. The trigger is rendered as a focusable `<div tabindex="0" role="button">` (not a `<button>`) to work around a Safari focus bug, per daisyUI's recommendation. Built on top of `Button`, so every sub-button inherits icon / color / shape / tooltip / i18n support. Data-driven via an `actions` array (`{ id, icon, text, label, color, circle, onClick, tooltip, tooltipPosition }`) or fully composable via `children`. Props: `icon` / `label` / `color` / `size` (trigger, default `lg`), `flower` (quarter-circle arc, up to 4 actions), `position` (default `fixed`; `absolute` / `relative` to embed), `mainAction` **or** `closeButton` (mutually-exclusive slot shown when open), `className` / `actionClassName`. In vertical mode an action's `label` is a side label; in `flower` mode it becomes the button's tooltip.
 - Theme generator **`themes/components/fab.js`** (`getFabClasses`) — `fab` base + optional `fab-flower` modifier + position (via `getPosition`, default `fixed`). Exports the `FAB` / `FAB_FLOWER` / `FAB_CLOSE` / `FAB_MAIN_ACTION` constants. **No new runtime dependency.**
