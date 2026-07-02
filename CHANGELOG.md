@@ -8,6 +8,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Components — Input (InputAction, new)**
+- New **`InputAction`** (`components/inputs/InputAction.jsx`) — a text input with a single trailing action button, built on the `Input` `actions` slot (daisyUI `.join`, `btn-square`). Typical use : a `+` button to commit the current draft into a parent collection (tags, allowed IPs, …). Pressing **Enter** fires `onAction` (cancellable via `submitOnEnter={false}`); the button carries an optional daisyUI tooltip, colour/style (`actionColor` / `actionStyle`), `actionDisabled`, `actionType` and an a11y `actionAriaLabel` (falls back to `actionTooltip`). Inherits the input's `error` (button turns `btn-error`) and `disabled` state. Forwards every other prop to `Input` (label, helper, placeholder, masks, …).
+- Lab — new `InputActionDemo` (tag-list builder: commit on `+`/Enter, `actionDisabled` while empty, coloured/custom-icon action, Enter-disabled variant, error state, disabled field), wired into the Inputs lab « Action » tab (`/lab/inputs`, Text category).
+- Fix — jsdoc `@module` corrected from `components/inputs/ActionInput` to `components/inputs/InputAction`.
+
 **Components — Button (RevokeButton, new)**
 - New **`RevokeButton`** (`components/buttons/RevokeButton.jsx`) — a *soft-cancel* affordance mirroring `RemoveButton` but with semantics for actions that flip a document to a `cancelled` state while keeping the audit trail (invitation / session / policy-assignment revoke), where `RemoveButton` would be misleading because the row stays in the database. Pre-configured `MdRemoveCircle` icon + `Jump` motion; forwards every `MotionButton`/`Button` prop (`color`, `shape`, `size`, `motion`, `motionProps`, …). Defaults: `color="primary"`, `shape="circle"`, `size="md"`, i18n `path="components.buttons.revoke"`.
 - New **`revoke`** locale (`@locale/components/buttons/revoke.js`, fr « Révoquer » / en « Revoke ») registered in the buttons locale index — resolves the button's label / title / tooltip.

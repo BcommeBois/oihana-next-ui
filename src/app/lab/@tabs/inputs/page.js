@@ -8,6 +8,7 @@ import Divider  from '@/components/Divider' ;
 import Container from '@/display/Container' ;
 import Page      from '@/display/Page' ;
 
+import InputActionDemo     from '@/demo/inputs/InputActionDemo' ;
 import InputCardDemo       from '@/demo/inputs/InputCardDemo' ;
 import InputClearDemo      from '@/demo/inputs/InputClearDemo' ;
 import InputCounterDemo    from '@/demo/inputs/InputCounterDemo' ;
@@ -35,6 +36,7 @@ import {
     MdLock ,
     MdPercent ,
     MdPin ,
+    MdPlaylistAdd ,
     MdPlusOne ,
     MdSearch ,
     MdTextFields ,
@@ -84,6 +86,14 @@ const Inputs = ({ path = 'app.test' }) =>
             description : 'Search input with icon' ,
             category    : 'Text' ,
             component   : <InputSearchDemo /> ,
+        } ,
+        {
+            key         : 'action' ,
+            label       : 'Action' ,
+            icon        : MdPlaylistAdd ,
+            description : 'Input with a trailing action button (commit on + / Enter)' ,
+            category    : 'Text' ,
+            component   : <InputActionDemo /> ,
         } ,
         // Numbers & Values
         {
