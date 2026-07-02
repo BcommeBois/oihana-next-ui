@@ -50,6 +50,7 @@ import { IoMdRadioButtonOn      as RadioIcon          } from "react-icons/io";
 import { LuSlidersHorizontal    as RangeIcon          } from "react-icons/lu";
 import { MdOutlineStarRate      as RatingIcon         } from "react-icons/md";
 import { VscListSelection       as SelectIcon         } from "react-icons/vsc" ;
+import { LuRectangleHorizontal  as SkeletonIcon       } from "react-icons/lu";
 import { FaSpinner              as SpinnerIcon        } from "react-icons/fa";
 import { GrStatusPlaceholder    as StatusIcon         } from "react-icons/gr";
 import { BsTextareaResize       as TextAreaIcon       } from "react-icons/bs" ;
@@ -135,6 +136,7 @@ const navigation =
                     { id : 'loading'        , type : LINK  , Icon : LoadingIcon        , path  : '/lab/loading'        } ,
                     { id : 'progress'       , type : LINK  , Icon : ProgressIcon       , path  : '/lab/progress'       } ,
                     { id : 'radialProgress' , type : LINK  , Icon : RadialProgressIcon , path  : '/lab/radialProgress' } ,
+                    { id : 'skeleton'       , type : LINK  , Icon : SkeletonIcon       , path  : '/lab/skeleton'       } ,
                     { id : 'spinners'       , type : LINK  , Icon : SpinnerIcon        , path  : '/lab/spinners'       } ,
                     { id : 'toasts'         , type : LINK  , Icon : ToastIcon          , path  : '/lab/toasts'         } ,
                     { id : 'tooltips'       , type : LINK  , Icon : TooltipIcon        , path  : '/lab/tooltips'       } ,

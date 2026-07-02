@@ -8,6 +8,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Components — Skeleton (new)**
+- New **`Skeleton`** (`components/Skeleton.jsx`) — a placeholder for a component's loading state (daisyUI `.skeleton`). Shape, size and radius come from utility classes passed via `className` (`h-32 w-32`, `rounded-full`, `h-4 w-28`…), mirroring the daisyUI usage. Props: `as` (element type, default `div`), `text` (bool → adds `skeleton-text`, animating the text color instead of the background — the "AI is thinking…" case), `children`; forwards every other prop. Renders as plain markup with no client state.
+- Theme generator **`themes/components/skeleton.js`** (`getSkeletonClasses`) — `skeleton` base + optional `skeleton-text` modifier (via `text`). Exports the `SKELETON` / `SKELETON_TEXT` constants. **No new runtime dependency.**
+- Lab — new **Skeleton** tab (`/lab/skeleton`, Feedback section) with `SkeletonDemo` (basic square, circle-with-content avatar, rectangle-with-content card, animated gradient text, custom element); navigation + locale (fr/en « Skeleton ») entries.
+
 ## [0.2.11] — 2026-07-02
 
 **Components — Menu (FlagMenu — `languages` prop)**
