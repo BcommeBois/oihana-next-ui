@@ -17,6 +17,7 @@ import {
 } from 'react-icons/md' ;
 
 import { LuSquareMousePointer   as ActionIcon         } from "react-icons/lu";
+import { LuCirclePlus           as FabIcon            } from "react-icons/lu";
 import { RxAvatar               as AvatarIcon         } from "react-icons/rx";
 import { LuBadgeAlert           as BadgeIcon          } from "react-icons/lu";
 import { RiCheckboxFill         as CheckBoxIcon       } from "react-icons/ri";
@@ -75,6 +76,7 @@ const navigation =
                 items :
                 [
                     { id : 'buttons' , type : LINK  , Icon : ButtonIcon , path  : '/lab/buttons' } ,
+                    { id : 'fab'     , type : LINK  , Icon : FabIcon    , path  : '/lab/fab'     } ,
                     { id : 'modals'  , type : LINK  , Icon : ModalIcon  , path  : '/lab/modals'  } ,
                 ]
             } ,
