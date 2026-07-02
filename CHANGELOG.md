@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.2.11] — 2026-07-02
+
 **Components — Menu (FlagMenu — `languages` prop)**
 - **`FlagMenu`** now accepts an optional **`languages`** prop to override the rendered language list. When omitted it falls back to the `useLang` context languages, so **all existing usages are unchanged** (fully backward-compatible). This makes the flag list the single source of truth for callers that need a custom set independent of the global context.
 - **`I18nTextArea`** now forwards its `languages` prop to `FlagMenu`, so the rendered flags, the filled-indicators map and the initial active language all derive from the **same** list (fixes the earlier mismatch where `languages` drove only the indicators).
