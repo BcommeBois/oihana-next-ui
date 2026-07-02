@@ -24,6 +24,7 @@ import { HORIZONTAL } from '../../themes/enums/orientations' ;
  * @param {Object} [props.indicators] - Indicator states per language.
  * @param {string} [props.labelClassName] - Label classes.
  * @param {string} [props.lang] - Controlled language value.
+ * @param {string[]} [props.languages] - Override the language list (defaults to the `useLang` context languages).
  * @param {string} [props.menuClassName] - Items container classes.
  * @param {Function} [props.onChange] - Language change handler.
  * @param {string} [props.orientation] - Menu orientation.
@@ -45,6 +46,7 @@ const FlagMenu =
     indicators ,
     labelClassName ,
     lang: langFromProps ,
+    languages: languagesFromProps ,
     menuClassName ,
     onChange: onChangeFromProps ,
     orientation = HORIZONTAL ,
@@ -58,7 +60,11 @@ const FlagMenu =
     size = XS ,
 }) =>
 {
-    const { languages } = useLang() ;
+    const { languages : ctxLanguages } = useLang() ;
+
+    const languages = ( Array.isArray( languagesFromProps ) && languagesFromProps.length > 0 )
+                    ? languagesFromProps
+                    : ctxLanguages ;
 
     const [ lang , setLang ] = useValue( defaultLang , langFromProps , onChangeFromProps ) ;
 
@@ -86,13 +92,13 @@ const FlagMenu =
         <ul className={ menuClasses }>
             <div className={ itemsClasses }>
                 {
-                    languages.map( ( current , index ) =>
+                    languages.map( current =>
                     {
                         const hasIndicator = showIndicator && indicators?.[ current ] ;
 
                         return (
                             <FlagItem
-                                key={ `item-${ index }` }
+                                key={ current }
                                 active={ current === lang }
                                 disabled={ disabled }
                                 lang={ current }

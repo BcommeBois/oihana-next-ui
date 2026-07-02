@@ -11,6 +11,7 @@ import FlagMenu from '@/components/menus/FlagMenu' ;
 export default function FlagMenuDemo()
 {
     const [ currentLang , setCurrentLang ] = useState( 'fr' ) ;
+    const [ customLang  , setCustomLang  ] = useState( 'es' ) ;
 
     return (
         <>
@@ -93,6 +94,20 @@ export default function FlagMenuDemo()
                         showLabel
                         showTooltip
                         indicators={{ en: true , fr: false }}
+                    />
+                </div>
+            </div>
+
+            {/* Custom languages (overrides the useLang context list) */}
+            <div className="card bg-base-200 shadow-xl">
+                <div className="card-body">
+                    <h2 className="card-title text-sm">FlagMenu - Langues custom</h2>
+                    <FlagMenu
+                        lang={ customLang }
+                        languages={ [ 'fr' , 'en' , 'es' , 'de' , 'it' ] }
+                        onChange={ setCustomLang }
+                        showLabel
+                        showTooltip
                     />
                 </div>
             </div>

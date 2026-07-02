@@ -129,6 +129,7 @@ const I18nTextArea =
                 disabled    = { disabled }
                 indicators  = { indicators }
                 lang        = { activeLang }
+                languages   = { languages }
                 onChange    = { setActiveLang }
                 showLabel   = { false }
             />

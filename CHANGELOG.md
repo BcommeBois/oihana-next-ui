@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Components — Menu (FlagMenu — `languages` prop)**
+- **`FlagMenu`** now accepts an optional **`languages`** prop to override the rendered language list. When omitted it falls back to the `useLang` context languages, so **all existing usages are unchanged** (fully backward-compatible). This makes the flag list the single source of truth for callers that need a custom set independent of the global context.
+- **`I18nTextArea`** now forwards its `languages` prop to `FlagMenu`, so the rendered flags, the filled-indicators map and the initial active language all derive from the **same** list (fixes the earlier mismatch where `languages` drove only the indicators).
+- Cleanup — `FlagMenu` items are now keyed by their language code instead of the array index (`noArrayIndexKey`), which is stable now that the list can vary.
+- Lab — new « Langues custom » example in `FlagMenuDemo` (`/lab/menus`) rendering `['fr','en','es','de','it']` regardless of the context.
+
 **Components — I18n (I18nText, new)**
 - New **`I18nText`** (`components/i18n/I18nText.jsx`) — resolves ONE locale string client-side via `useI18n`, so it reacts instantly to a language switch (no navigation, no frozen server-resolved prop). Renders as plain text (a JSX child). Props: `path` (locale bundle), `field` (dot-path within the bundle), `fallback` (rendered when the field is missing), `args` (positional values for `fastformat` interpolation `{0}`, `{1}`, …). Returns `null` when the field is missing and no `fallback` is given.
 - Lab — new `I18nTextDemo` in the Typography tab (`/lab/typography`) showing a plain string, `args` interpolation and a `fallback` case ; values update live when the app's global language is switched (no in-demo toggle needed — it reacts to the existing flag menu).
@@ -17,7 +23,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 **Components — I18n (I18nTextArea, new)**
 - New **`I18nTextArea`** (`components/i18n/I18nTextArea.jsx`) — a single `TextArea` for a multi-language text field. The value is a `{ [lang]: string }` map ; a `FlagMenu` above the textarea swaps the edited language, and each language with non-empty content carries a dot indicator so the user sees at a glance which translations are filled. The whole map is **one value** (single dirty signal for the parent form). Languages default to the `useLang` context (`['fr', 'en']`), the active language to the current UI language ; both overridable via `languages` / `defaultLang`. Forwards every other prop to `TextArea` (label, helper, error, autosize, minRows, maxRows, placeholder, disabled, …).
 - Lab — new `I18nTextAreaDemo` (controlled `{ fr, en }` field with live JSON preview + a disabled variant), wired into the TextArea lab « I18n » tab (`/lab/textareas`).
-- Note — the `languages` prop currently drives the filled-indicators map only ; the flags rendered come from the `useLang` context (`FlagMenu` has no `languages` prop yet).
+- The `languages` prop drives the rendered flags, the filled-indicators map and the initial active language consistently (it is forwarded to `FlagMenu` — see the FlagMenu entry above).
 - Fix — the group heading now renders as a styled `<span>` instead of a `<label>` without `htmlFor` (it labels the flags + textarea group, not a single control), fixing the `noLabelWithoutControl` a11y lint.
 
 **Components — Input (InputAction, new)**
