@@ -11,12 +11,14 @@ import Page      from '@/display/Page' ;
 import TextAreaDemo          from '@/demo/inputs/TextAreaDemo' ;
 import TextAreaTransformDemo from '@/demo/inputs/TextAreaTransformDemo' ;
 import TextAreaMarkdownDemo  from '@/demo/inputs/TextAreaMarkdownDemo' ;
-import TextAreaCodeDemo      from '@/demo/inputs/TextAreaCodeDemo' ;
-import I18nTextAreaDemo      from '@/demo/inputs/I18nTextAreaDemo' ;
+import TextAreaCodeDemo          from '@/demo/inputs/TextAreaCodeDemo' ;
+import I18nTextAreaDemo          from '@/demo/inputs/I18nTextAreaDemo' ;
+import I18nTextAreaMarkdownDemo  from '@/demo/inputs/I18nTextAreaMarkdownDemo' ;
 
 import {
     MdCode ,
     MdFormatAlignLeft ,
+    MdGTranslate ,
     MdTextFields ,
     MdTranslate ,
     MdViewModule ,
@@ -74,6 +76,13 @@ const TextAreas = ({ path = 'app.test' }) =>
             icon        : MdTranslate ,
             description : 'Multi-language TextArea (one { lang: text } value)' ,
             component   : <I18nTextAreaDemo /> ,
+        } ,
+        {
+            key         : 'text-i18n-markdown' ,
+            label       : 'I18n Markdown' ,
+            icon        : MdGTranslate ,
+            description : 'Multi-language Markdown editor (one { lang: text } value, preview follows the active language)' ,
+            component   : <I18nTextAreaMarkdownDemo /> ,
         } ,
     ] ;
 
