@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.2.13] — 2026-07-03
+
 **Components — I18n (I18nTextAreaMarkdown, new)**
 - New **`I18nTextAreaMarkdown`** (`components/i18n/I18nTextAreaMarkdown.jsx`) — a single Markdown editor for a multi-language rich-text field, third member of the I18n family (`I18nInput` / `I18nTextArea`). The value is a `{ [lang]: string }` map ; a `FlagMenu` above the editor swaps **both the editor content and the Markdown preview** to the active language, and each language with non-empty content carries a dot indicator. The whole map is **one value** (single dirty signal for the parent form). Built on the shared `useI18nField` hook. Forwards every other prop to `TextAreaMarkdown` (`showPreview`, `previewPosition`, `markdownProps`, helper, error, autosize, minRows, maxRows, …).
 - Lab — new `I18nTextAreaMarkdownDemo` (controlled `{ fr, en }` « Description » with side-by-side preview + live JSON preview, `previewPosition="tab"` variant, disabled variant), wired into the TextArea lab « I18n Markdown » tab (`/lab/textareas`).
