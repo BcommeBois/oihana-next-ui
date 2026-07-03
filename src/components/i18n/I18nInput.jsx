@@ -1,18 +1,18 @@
 'use client' ;
 
 /**
- * I18nTextArea — single TextArea for a multi-language text field.
+ * I18nInput — single Input for a multi-language text field.
  *
  * The form field stores its value as a `{ [lang]: string }` map (e.g.
  * `{ fr: '...' , en: '...' }`). The component exposes a `FlagMenu`
- * above a single `TextArea` ; clicking a flag swaps the textarea
- * content to the corresponding language. Languages with non-empty
- * content carry a small dot indicator on their flag, so the user
- * sees at a glance which translations are filled and which are not.
+ * above a single `Input` ; clicking a flag swaps the input content
+ * to the corresponding language. Languages with non-empty content
+ * carry a small dot indicator on their flag, so the user sees at a
+ * glance which translations are filled and which are not.
  *
- * The textarea is **a single field for dirty-detection purposes** :
- * the parent form receives one value object via `onChange` and treats
- * it as a whole. Filling `fr` and clearing `en` both produce a single
+ * The input is **a single field for dirty-detection purposes** : the
+ * parent form receives one value object via `onChange` and treats it
+ * as a whole. Filling `fr` and clearing `en` both produce a single
  * dirty signal.
  *
  * Defaults to the languages exposed by the `useLang` context (the
@@ -20,28 +20,30 @@
  * and to the user's current UI language. Both can be overridden via
  * `languages` and `defaultLang` props.
  *
- * Forwards every other prop to oihana-next-ui's `TextArea` (label,
- * helper, error, autosize, minRows, maxRows, placeholder, disabled,
- * required, …).
+ * Forwards every other prop to oihana-next-ui's `Input` (icon, helper,
+ * error, placeholder, color, size, actions, maxLength, transform, …).
+ * Note : HTML5 validation props (`required`, `pattern`, `minLength`, …)
+ * only apply to the **currently visible language** — use the flag
+ * indicators to assess overall completeness.
+ *
+ * @module components/i18n/I18nInput
  *
  * @example
  * ```jsx
- * const [ description , setDescription ] = useState( { fr : '' , en : '' } ) ;
+ * const [ title , setTitle ] = useState( { fr : '' , en : '' } ) ;
  *
- * <I18nTextArea
- *     label    = "Description"
- *     helper   = "Décrivez votre service"
- *     value    = { description }
- *     onChange = { setDescription }
- *     autosize
- *     minRows  = { 2 }
- *     maxRows  = { 5 }
+ * <I18nInput
+ *     label       = "Titre"
+ *     helper      = "Le titre affiché sur la fiche"
+ *     placeholder = "Mon service…"
+ *     value       = { title }
+ *     onChange    = { setTitle }
  * />
  * ```
  */
 
 import FlagMenu from '../menus/FlagMenu' ;
-import TextArea from '../inputs/TextArea' ;
+import Input    from '../inputs/Input' ;
 
 import useI18nField from '../../hooks/useI18nField' ;
 
@@ -53,15 +55,15 @@ import useI18nField from '../../hooks/useI18nField' ;
  * @param {Object}        props
  * @param {I18nValue}     [props.value]               - Map of `{ lang: text }`.
  * @param {Function}      [props.onChange]            - `(I18nValue) => void`.
- * @param {string}        [props.label]               - Field label, rendered above the flag menu (so the user reads « Description » → flags → textarea).
+ * @param {string}        [props.label]               - Field label, rendered above the flag menu (so the user reads « Titre » → flags → input).
  * @param {string[]}      [props.languages]           - Override the lang list (defaults to `useLang().languages`).
  * @param {string}        [props.defaultLang]         - Initial active language (defaults to `useLang().lang`, then the first available).
  * @param {boolean}       [props.disabled=false]
  * @param {string}        [props.flagMenuClassName]   - Extra classes for the FlagMenu container.
  *
- * Other props are forwarded to oihana-next-ui's `TextArea`.
+ * Other props are forwarded to oihana-next-ui's `Input`.
  */
-const I18nTextArea =
+const I18nInput =
 ({
     value = {} ,
     onChange ,
@@ -70,7 +72,7 @@ const I18nTextArea =
     defaultLang ,
     disabled = false ,
     flagMenuClassName ,
-    ...textAreaProps
+    ...inputProps
 }) =>
 {
     const {
@@ -101,17 +103,17 @@ const I18nTextArea =
                 showLabel   = { false }
             />
 
-            <TextArea
+            <Input
                 disabled = { disabled }
                 value    = { currentValue }
                 onChange = { handleValueChange }
-                { ...textAreaProps }
+                { ...inputProps }
             />
 
         </div>
     ) ;
 } ;
 
-I18nTextArea.displayName = 'I18nTextArea' ;
+I18nInput.displayName = 'I18nInput' ;
 
-export default I18nTextArea ;
+export default I18nInput ;

@@ -8,6 +8,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Components — I18n (I18nInput, new)**
+- New **`I18nInput`** (`components/i18n/I18nInput.jsx`) — a single `Input` for a multi-language text field, the input twin of `I18nTextArea`. The value is a `{ [lang]: string }` map ; a `FlagMenu` above the input swaps the edited language, and each language with non-empty content carries a dot indicator so the user sees at a glance which translations are filled. The whole map is **one value** (single dirty signal for the parent form). Languages default to the `useLang` context (`['fr', 'en']`), the active language to the current UI language ; both overridable via `languages` / `defaultLang`. Forwards every other prop to `Input` (icon, helper, error, placeholder, color, size, actions, maxLength, transform, …). Note : HTML5 validation props (`required`, `pattern`, `minLength`, …) only apply to the **currently visible language** — the flag indicators carry the overall completeness (documented in the jsdoc).
+- Lab — new `I18nInputDemo` (controlled `{ fr, en }` « Titre » field with live JSON preview, « Slogan » with icon + `maxLength`, disabled variant), wired into the Inputs lab « I18n » tab (`/lab/inputs`, Text category).
+
+**Hooks — useI18nField (new)**
+- New **`useI18nField`** (`hooks/useI18nField.js`) — the shared plumbing of multi-language fields, extracted from `I18nTextArea` : language-list resolution (props → `useLang` context → `['fr','en']`), initial active language (`defaultLang` → current UI lang → first), per-language « filled » indicators for the `FlagMenu`, active-language value extraction and `{ ...value , [lang] : text }` merge. The change handler accepts either a raw value or a DOM change event, so it plugs directly onto any field component (`Input` emits raw values, a native `<textarea>` emits events).
+- Refactor — **`I18nTextArea`** now consumes `useI18nField` (behaviour and API strictly unchanged) ; `I18nInput` and `I18nTextArea` share the exact same logic, and future I18n fields (`I18nTextAreaMarkdown`, …) will build on the same hook.
+
+**Components — Menu (FlagItem — indicator alignment fix)**
+- Fix — **`FlagItem`** now always renders the daisyUI `indicator` wrapper and only toggles the dot inside it, so every flag shares the same DOM structure. Previously the wrapper was conditional : flags **with** a dot (`inline-flex`, baseline-aligned) sat a few pixels lower than flags **without** one (plain block `<li>`), visibly misaligning the `FlagMenu` as soon as a single language was filled. Also keeps the DOM stable while typing (no re-mount when a language flips empty ↔ filled). Benefits every `FlagMenu` with indicators (`I18nInput`, `I18nTextArea`, …).
+
 ## [0.2.12] — 2026-07-02
 
 **Components — FAB / Speed Dial (new)**

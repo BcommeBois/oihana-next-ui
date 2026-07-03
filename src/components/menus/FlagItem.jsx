@@ -58,14 +58,17 @@ const FlagItem =
         </li>
     ) ;
 
-    const content = showIndicator
-        ? (
-            <div className="indicator">
+    // Always render the indicator wrapper so every flag shares the same
+    // DOM structure — a conditional wrapper vertically misaligns the
+    // flags with a dot against the ones without.
+    const content = (
+        <div className="indicator">
+            { showIndicator && (
                 <span className="indicator-item bg-primary rounded-full w-1.5! h-1.5!" />
-                { flag }
-            </div>
-        )
-        : flag ;
+            ) }
+            { flag }
+        </div>
+    ) ;
 
     return (
         <Tooltip

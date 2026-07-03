@@ -8,6 +8,7 @@ import Divider  from '@/components/Divider' ;
 import Container from '@/display/Container' ;
 import Page      from '@/display/Page' ;
 
+import I18nInputDemo       from '@/demo/inputs/I18nInputDemo' ;
 import InputActionDemo     from '@/demo/inputs/InputActionDemo' ;
 import InputCardDemo       from '@/demo/inputs/InputCardDemo' ;
 import InputClearDemo      from '@/demo/inputs/InputClearDemo' ;
@@ -41,6 +42,7 @@ import {
     MdSearch ,
     MdTextFields ,
     MdSchedule ,
+    MdTranslate ,
     MdVerified ,
     MdViewModule ,
 } from 'react-icons/md' ;
@@ -94,6 +96,14 @@ const Inputs = ({ path = 'app.test' }) =>
             description : 'Input with a trailing action button (commit on + / Enter)' ,
             category    : 'Text' ,
             component   : <InputActionDemo /> ,
+        } ,
+        {
+            key         : 'i18n-input' ,
+            label       : 'I18n' ,
+            icon        : MdTranslate ,
+            description : 'Multi-language input storing a { lang : text } map' ,
+            category    : 'Text' ,
+            component   : <I18nInputDemo /> ,
         } ,
         // Numbers & Values
         {
