@@ -37,6 +37,13 @@ const GAP = 6 ;
  *
  * `display='responsive'` (default) picks dropdown on `md`+ and modal below.
  *
+ * When the trigger sits inside an open `<dialog>` (a {@link module:components/modals/Modal}),
+ * the panel portals **into that dialog** instead of `document.body` : body-level
+ * content under a modal dialog is inert and paints below the top layer, so the
+ * panel would be invisible and unclickable. Children of the dialog stay
+ * interactive and paint within its top-layer entry (same technique as the toast
+ * provider).
+ *
  * @module components/Popover
  *
  * @param {Object} props
@@ -119,6 +126,10 @@ const Popover =
         {
             if ( event.key === 'Escape' )
             {
+                // Consume the key : without preventDefault a host <dialog> (Modal)
+                // would also receive its native Escape-cancel and close along with
+                // the popover — Escape must dismiss the topmost surface only.
+                event.preventDefault() ;
                 onClose?.() ;
             }
         } ;
@@ -174,6 +185,15 @@ const Popover =
         return null ;
     }
 
+    // Inside a host <dialog> (a Modal) the panel must portal INTO that dialog,
+    // not to document.body : children of a modal dialog stay interactive (not
+    // inert) and paint within its top-layer entry, while a body-level panel
+    // would sit under the dialog's backdrop and be inert. The panel is
+    // position:fixed, so it stays out of the .modal grid flow and its viewport
+    // coordinates remain valid. Standalone (no open ancestor dialog) : body.
+    const hostDialog   = anchorRef?.current?.closest?.( 'dialog[open]' ) ?? null ;
+    const containerRef = hostDialog ? { current : hostDialog } : undefined ;
+
     const footer = showFooter
         ? (
             <div className="mt-3 flex justify-end gap-2 border-t border-base-300 pt-3">
@@ -190,7 +210,7 @@ const Popover =
     if ( asModal )
     {
         return (
-            <Portal>
+            <Portal containerRef={ containerRef }>
                 <div className="fixed inset-0 z-60 flex items-center justify-center p-3">
                     <div className="absolute inset-0 bg-black/40" onClick={ onClose } />
                     <div
@@ -206,7 +226,7 @@ const Popover =
     }
 
     return (
-        <Portal>
+        <Portal containerRef={ containerRef }>
             <div
                 ref       = { panelRef }
                 className = { cn( 'fixed z-60 w-fit max-w-[calc(100vw-12px)] border border-base-300 bg-base-100 p-3 shadow-lg rounded-box' , panelClassName ) }

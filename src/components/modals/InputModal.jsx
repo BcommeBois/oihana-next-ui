@@ -63,6 +63,7 @@ const InputModal =
     placement,
     disableBackdropClick,
     disableEscapeKeyDown,
+    portal = false,
 
     // Behavior
     openOnFocus = false,
@@ -160,6 +161,7 @@ const InputModal =
                 placement            = { placement }
                 disableBackdropClick = { disableBackdropClick }
                 disableEscapeKeyDown = { disableEscapeKeyDown }
+                portal               = { portal }
             >
                 { children }
             </Modal>

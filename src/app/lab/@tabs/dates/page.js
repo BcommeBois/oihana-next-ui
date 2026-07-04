@@ -4,7 +4,8 @@ import Container from '@/display/Container' ;
 import Divider   from '@/components/Divider' ;
 import Page      from '@/display/Page' ;
 
-import DateDemo from '@/demo/dates/DateDemo' ;
+import DateDemo           from '@/demo/dates/DateDemo' ;
+import PickersInModalDemo from '@/demo/dates/PickersInModalDemo' ;
 
 /**
  * Date components showcase page (lab/dates).
@@ -27,6 +28,13 @@ const Dates = () =>
         <Divider />
 
         <DateDemo />
+
+        <Divider />
+
+        {/* Popover-based pickers nested inside a Modal — inert/top-layer regression */}
+        <Container className="flex flex-col gap-8 bg-base-200/60 p-4 sm:p-8 rounded-box" maxWidth="max-w-5xl">
+            <PickersInModalDemo />
+        </Container>
 
     </Page>
 ) ;

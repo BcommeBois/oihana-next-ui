@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.2.17] — 2026-07-04
+
+**Components — Popover (nested-in-Modal fix) & date / time pickers**
+- Fix — **the Popover-based pickers (`InputDatePicker`, `InputDateRangePicker`, `InputTimePicker`, `InputDateTimePicker`) now work inside a `Modal`**. The Popover panel was portaled to `document.body` : under an open modal `<dialog>` that subtree is **inert** and paints **below the top layer**, so the calendar / time columns opened invisible and unclickable. The panel now portals **into the ancestor `dialog[open]`** of its anchor when one exists (children of a modal dialog stay interactive and paint within its top-layer entry — same technique as the toast provider) ; standalone usage still portals to `document.body`, strictly unchanged. The panel being `position: fixed`, it stays out of the `.modal` grid flow and its viewport coordinates remain valid. **No API change** — the four pickers are fixed at once.
+- Fix — **`Popover`** : the `Escape` handler now **consumes the key** (`preventDefault`) — without it, once the panel is reachable inside a modal, `Escape` closed the picker **and** triggered the host dialog's native cancel (both surfaces closed). `Escape` now dismisses the topmost surface only : the picker when open, then the host modal.
+- **`InputModal`** now accepts and forwards the **`portal`** prop to its `Modal` (it passes an explicit prop list, so `portal` could not reach the dialog before) — enabling `InputModal`-in-`Modal` usage, like `AlertModal` / `ConfirmModal` which already forward every prop.
+- Lab — new **`PickersInModalDemo`** regression demo on `/lab/dates` (« Pickers inside a Modal ») : an « Éditer » host modal containing an `InputDatePicker`, an `InputTimePicker` and a deferred-commit `InputDateTimePicker` (`footer`, French labels), with the acceptance checklist (panel above the modal and clickable, picks update the fields, `Escape` ordering, outside-click, standalone unchanged).
+
 ## [0.2.16] — 2026-07-04
 
 **Components — Lists (SortableList / SortableListRow, new — drag-and-drop reorder)**
