@@ -61,10 +61,11 @@ import KanbanColumn from './KanbanColumn' ;
  * @param {boolean} [props.disabled=false] - Disable dragging for all cards
  * @param {(column: *) => (string|number)} [props.getColumnId] - Accessor for the unique identifier of a column (defaults to `column.id`)
  * @param {(item: *) => (string|number)} [props.getItemId] - Accessor for the unique identifier of a card (defaults to `item.id`)
- * @param {(columns: Array, change: { item: *, fromColumn: string|number, toColumn: string|number, fromIndex: number, toIndex: number }) => (void|Promise)} [props.onChange] - Callback invoked with the updated columns
+ * @param {(columns: Array, change: Object) => (void|Promise)} [props.onChange] - Callback invoked with the updated columns ; `change` is `{ type : 'card' , item , fromColumn , toColumn , fromIndex , toIndex }` for a card move, `{ type : 'column' , column , fromIndex , toIndex }` for a column move
  * @param {(item: *, column: *, index: number) => React.ReactElement} props.renderCard - Renders a KanbanCard for an item
  * @param {(column: *) => React.ReactNode} [props.renderFooter] - Optional custom column footer
  * @param {(column: *) => React.ReactNode} [props.renderHeader] - Optional custom column header (overrides title/count)
+ * @param {boolean} [props.reorderableColumns=false] - Allow reordering the columns themselves by dragging their headers
  */
 const Kanban =
 ({
@@ -78,10 +79,11 @@ const Kanban =
     renderCard ,
     renderFooter ,
     renderHeader ,
+    reorderableColumns = false ,
     ...rest
 }) =>
 {
-    const { columns : currentColumns , moveItem } = useKanban({ defaultColumns , columns , onChange , getColumnId }) ;
+    const { columns : currentColumns , moveItem , moveColumn } = useKanban({ defaultColumns , columns , onChange , getColumnId }) ;
 
     const getColId  = getColumnId ?? ( column => column?.id ) ;
     const getCardId = getItemId   ?? ( item => item?.id ?? item ) ;
@@ -103,13 +105,23 @@ const Kanban =
         return record ;
     } ;
 
-    const onDragStart = () =>
+    const onDragStart = ( event ) =>
     {
-        setLiveItems( buildRecord() ) ;
+        // The live snapshot only concerns cards — a column drag stays in a
+        // single container and is handled by the engine's optimistic sorting.
+        if ( event?.operation?.source?.type === 'card' )
+        {
+            setLiveItems( buildRecord() ) ;
+        }
     } ;
 
     const onDragOver = ( event ) =>
     {
+        if ( event?.operation?.source?.type !== 'card' )
+        {
+            return ;
+        }
+
         setLiveItems( record => move( record ?? buildRecord() , event ) ) ;
     } ;
 
@@ -142,6 +154,16 @@ const Kanban =
             return ;
         }
 
+        // Column drag : same-container reorder, the sortable indexes are reliable.
+        if ( source.type === 'column' )
+        {
+            if ( source.sortable )
+            {
+                moveColumn( source.sortable.initialIndex , source.sortable.index ) ;
+            }
+            return ;
+        }
+
         // The dragged card may have been remounted while crossing columns, which
         // resets its sortable initialIndex/initialGroup — so the move is computed
         // by diffing the committed state against the final live snapshot instead.
@@ -169,14 +191,16 @@ const Kanban =
             onDragEnd   = { onDragEnd }
         >
             <div className={ getKanbanClasses({ className }) } { ...rest }>
-                { displayColumns.map( column => (
+                { displayColumns.map( ( column , columnIndex ) => (
                     <KanbanColumn
-                        key    = { getColId( column ) }
-                        id     = { getColId( column ) }
-                        title  = { column.title }
-                        count  = { column.items?.length ?? 0 }
-                        header = { renderHeader?.( column ) }
-                        footer = { renderFooter?.( column ) }
+                        key      = { getColId( column ) }
+                        id       = { getColId( column ) }
+                        index    = { columnIndex }
+                        sortable = { reorderableColumns }
+                        title    = { column.title }
+                        count    = { column.items?.length ?? 0 }
+                        header   = { renderHeader?.( column ) }
+                        footer   = { renderFooter?.( column ) }
                     >
                         { ( column.items ?? [] ).map( ( item , index ) =>
                         {

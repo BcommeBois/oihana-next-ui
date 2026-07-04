@@ -25,6 +25,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 **Lab**
 - New **« Kanban » section** in the navigation (fr « Kanban » / en « Kanban ») with a **« Tableau » / « Board »** entry (`/lab/kanban`, kanban icon) : `KanbanDemo` with a basic uncontrolled board (4 columns, « Done » starting empty), a **controlled** board with live per-column counts, an **async change** simulating an API call with a « Simulate API failure » toggle showing the full-board optimistic revert, and a props reference table.
 
+**Components — Kanban (reorderable columns)**
+- **`Kanban`** gains a **`reorderableColumns`** prop (default `false`) : when enabled, the **columns themselves can be reordered by dragging their header** (grab cursor, `touch-none`), while their body stays reserved for card drags. Off by default — existing boards are strictly unchanged.
+- **`onChange` change payload now carries a `type` discriminant** (non-breaking addition) : `{ type : 'card' , item , fromColumn , toColumn , fromIndex , toIndex }` for a card move, `{ type : 'column' , column , fromIndex , toIndex }` for a column move — both with the same optimistic apply-then-revert contract. `useKanban` gains the matching **`moveColumn( fromIndex , toIndex )`**.
+- Under the hood, **`KanbanColumn`** switches from a plain droppable to a unified sortable (type `'column'`, accepting cards and columns, low collision priority, dragging disabled unless `sortable`) — card-drop behaviour is unchanged, and a dragged column keeps its lifted style (`KANBAN_COLUMN_DRAG`).
+
+**Lab**
+- Three new examples on `/lab/kanban` : **Reorderable Columns** (with a live readout of the last `change`, discriminating card vs column moves), **Project Board** (rich cards composed with `Avatar`, tags and due-date `Badge` — showcasing `renderCard` freedom), and **Editable Board** (an « Add a card » button per column via `renderFooter` and a remove button on each card — plain `setState`, the board is your data).
+
 ## [0.2.17] — 2026-07-04
 
 **Components — Popover (nested-in-Modal fix) & date / time pickers**

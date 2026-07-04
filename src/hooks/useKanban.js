@@ -6,9 +6,11 @@ import { arrayMove } from './useSortableList' ;
  * React hook to manage the columns of a kanban board (controlled or uncontrolled).
  *
  * The whole board is one value : an array of columns, each carrying its `items`.
- * Moving a card — within a column or across columns — always produces a single
- * `onChange( nextColumns , change )` call, where `change` describes the move
- * (`{ item , fromColumn , toColumn , fromIndex , toIndex }`).
+ * Moving a card — within a column or across columns — or moving a whole column
+ * always produces a single `onChange( nextColumns , change )` call, where
+ * `change` describes the move :
+ * - card   : `{ type : 'card' , item , fromColumn , toColumn , fromIndex , toIndex }`
+ * - column : `{ type : 'column' , column , fromIndex , toIndex }`
  *
  * In uncontrolled mode (with `defaultColumns`), the hook owns the state and applies
  * moves optimistically : if `onChange` returns a rejected promise, the previous
@@ -21,7 +23,7 @@ import { arrayMove } from './useSortableList' ;
  * @param {(columns: Array, change: { item: *, fromColumn: string|number, toColumn: string|number, fromIndex: number, toIndex: number }) => (void|Promise)} [props.onChange] - Callback invoked with the updated columns.
  * @param {(column: *) => (string|number)} [props.getColumnId] - Accessor for the unique identifier of a column (defaults to `column.id`).
  *
- * @returns {{ columns: Array, moveItem: (fromColumn: string|number, toColumn: string|number, fromIndex: number, toIndex: number) => void, isControlled: boolean }} The current columns, a move function, and the controlled state.
+ * @returns {{ columns: Array, moveItem: (fromColumn: string|number, toColumn: string|number, fromIndex: number, toIndex: number) => void, moveColumn: (fromIndex: number, toIndex: number) => void, isControlled: boolean }} The current columns, the move functions, and the controlled state.
  *
  * @example
  * ```js
@@ -90,7 +92,7 @@ const useKanban = ({ defaultColumns , columns , onChange , getColumnId } = {} ) 
 
         if ( typeof onChange === 'function' )
         {
-            const result = onChange( next , { item , fromColumn , toColumn , fromIndex , toIndex } ) ;
+            const result = onChange( next , { type : 'card' , item , fromColumn , toColumn , fromIndex , toIndex } ) ;
 
             if ( !isControlled && result && typeof result.catch === 'function' )
             {
@@ -99,7 +101,40 @@ const useKanban = ({ defaultColumns , columns , onChange , getColumnId } = {} ) 
         }
     } ;
 
-    return { columns : currentColumns , moveItem , isControlled } ;
+    const moveColumn = ( fromIndex , toIndex ) =>
+    {
+        if ( fromIndex === toIndex )
+        {
+            return ;
+        }
+
+        const previous = currentColumns ;
+        const column   = previous[ fromIndex ] ;
+
+        if ( column === undefined )
+        {
+            return ;
+        }
+
+        const next = arrayMove( previous , fromIndex , toIndex ) ;
+
+        if ( !isControlled )
+        {
+            setColumns( next ) ;
+        }
+
+        if ( typeof onChange === 'function' )
+        {
+            const result = onChange( next , { type : 'column' , column , fromIndex , toIndex } ) ;
+
+            if ( !isControlled && result && typeof result.catch === 'function' )
+            {
+                result.catch( () => setColumns( previous ) ) ;
+            }
+        }
+    } ;
+
+    return { columns : currentColumns , moveItem , moveColumn , isControlled } ;
 } ;
 
 export default useKanban ;
