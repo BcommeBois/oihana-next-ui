@@ -60,7 +60,7 @@ import getGridClassNames from '../../themes/layout/getGridClassNames' ;
  * // Responsive grid with custom styling
  * <Grid
  *     className="*:bg-base-200 *:shadow *:rounded-md *:p-4"
- *     cols={[1, 2, 3]}
+ *     cols={{ xs: 1, md: 2, xl: 3 }}
  *     gap={4}
  *     width="full"
  * >
@@ -197,6 +197,7 @@ const Grid =
     return (
         <Component
             className = { classNames }
+            ref       = { ref }
             { ...rest }
         >
             { children }
