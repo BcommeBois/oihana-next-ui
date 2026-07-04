@@ -348,6 +348,8 @@ const Modal = ( props ) =>
         <>
             {/* Backdrop */}
             { showBackdrop && (
+                // biome-ignore lint/a11y/noStaticElementInteractions: the backdrop is a decorative dismiss surface — Escape (native dialog cancel) is the keyboard equivalent
+                // biome-ignore lint/a11y/useKeyWithClickEvents: same — keyboard dismissal goes through Escape, not the backdrop
                 <div
                     className = { backdropClasses }
                     onClick   = { handleBackdropClick }
@@ -379,6 +381,7 @@ const Modal = ( props ) =>
 
                             { showCloseButton && (
                                 <button
+                                    type       = "button"
                                     aria-label = { closeTitle }
                                     className  = { cn( "btn btn-md btn-circle btn-ghost" , closeClassName ) }
                                     onClick    = { handleCancelClick }
@@ -438,6 +441,7 @@ const Modal = ( props ) =>
     const node = usePopover
         ? (
             <div
+                role            = "dialog"
                 aria-labelledby = { showTitle && title ? titleId : undefined }
                 ref             = { handleRef }
                 id              = { id }

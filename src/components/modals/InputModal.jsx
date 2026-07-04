@@ -82,7 +82,7 @@ const InputModal =
     ...inputProps
 }) =>
 {
-    const { modalRef, open , close , isOpen } = useModal({
+    const { modalRef, open , isOpen } = useModal({
         onOpen  : onModalOpen,
         onClose : onModalClose,
     }) ;

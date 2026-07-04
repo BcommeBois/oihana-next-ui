@@ -185,14 +185,25 @@ const Popover =
         return null ;
     }
 
-    // Inside a host <dialog> (a Modal) the panel must portal INTO that dialog,
-    // not to document.body : children of a modal dialog stay interactive (not
-    // inert) and paint within its top-layer entry, while a body-level panel
-    // would sit under the dialog's backdrop and be inert. The panel is
-    // position:fixed, so it stays out of the .modal grid flow and its viewport
-    // coordinates remain valid. Standalone (no open ancestor dialog) : body.
-    const hostDialog   = anchorRef?.current?.closest?.( 'dialog[open]' ) ?? null ;
-    const containerRef = hostDialog ? { current : hostDialog } : undefined ;
+    // Inside a top-layer host — a modal <dialog> (Modal) or an open popover
+    // element (Modal usePopover) — the panel must portal INTO that host, not to
+    // document.body : children of the host stay interactive (not inert) and
+    // paint within its top-layer entry, while a body-level panel would sit
+    // under the host's backdrop / surface (and be inert under a modal dialog).
+    // The panel is position:fixed, so it stays out of the .modal grid flow and
+    // its viewport coordinates remain valid. Standalone (no top-layer
+    // ancestor) : document.body. `:popover-open` can be unsupported (older
+    // browsers) — fall back to the dialog-only lookup rather than throwing.
+    let hostTopLayer = null ;
+    try
+    {
+        hostTopLayer = anchorRef?.current?.closest?.( 'dialog[open], [popover]:popover-open' ) ?? null ;
+    }
+    catch
+    {
+        hostTopLayer = anchorRef?.current?.closest?.( 'dialog[open]' ) ?? null ;
+    }
+    const containerRef = hostTopLayer ? { current : hostTopLayer } : undefined ;
 
     const footer = showFooter
         ? (
@@ -212,6 +223,8 @@ const Popover =
         return (
             <Portal containerRef={ containerRef }>
                 <div className="fixed inset-0 z-60 flex items-center justify-center p-3">
+                    {/* biome-ignore lint/a11y/noStaticElementInteractions: the backdrop is a decorative dismiss surface — Escape is the keyboard equivalent */}
+                    {/* biome-ignore lint/a11y/useKeyWithClickEvents: same — keyboard dismissal goes through Escape, not the backdrop */}
                     <div className="absolute inset-0 bg-black/40" onClick={ onClose } />
                     <div
                         ref       = { panelRef }

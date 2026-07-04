@@ -19,6 +19,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 **Components — Modal (rules-of-hooks fix)**
 - Fix — **`Modal`** called `useBreakpoint` **conditionally** (`fullScreenBreakpoint ? useBreakpoint( … ) : true`) : if `fullScreenBreakpoint` appeared or disappeared between two renders of the same instance, the hook order broke (React crash). The hook is now called unconditionally with a fallback key, its result ignored when no breakpoint is requested — behaviour strictly unchanged.
 
+**Components — Popover / Modal / InputModal (cleanups)**
+- **`Popover`** : the host lookup now also recognises an **open popover element** (`dialog[open], [popover]:popover-open`) — a picker anchored inside a `usePopover`-mode `Modal` portals into that top-layer host too (same invisibility issue as the modal-dialog case). Guarded with a fallback to the dialog-only selector on browsers without `:popover-open` support.
+- A11y — `Modal` : the header close button carries an explicit `type="button"` (inside a `<form>` it could submit the form) ; the `usePopover` variant carries `role="dialog"` (it already had `aria-labelledby`). The backdrop click-to-dismiss surfaces (`Modal`, `Popover`) are documented as decorative via targeted `biome-ignore` justifications — `Escape` is the keyboard equivalent.
+- Cleanup — `InputModal` : dropped an unused `close` binding. **`biome lint` is now clean** on `Modal` / `Popover` / `InputModal`.
+
 ## [0.2.16] — 2026-07-04
 
 **Components — Lists (SortableList / SortableListRow, new — drag-and-drop reorder)**
