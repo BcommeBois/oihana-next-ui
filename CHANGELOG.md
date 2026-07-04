@@ -40,6 +40,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 **Lab**
 - New `SortableGridDemo` on `/lab/grid` (below the Grid demo) : responsive sortable photo gallery (`cols={ { xs : 2 , md : 3 , xl : 4 } }`, whole cards draggable, images `draggable={false}`), **controlled** grid with live order readout, **overlay drag handles** variant (cards with a favorite button), **async reorder** with a « Simulate API failure » toggle showing the optimistic revert, and a props reference table.
 
+**Components — Layouts (SortableFlex / SortableFlexItem, new — drag-and-drop reorder)**
+- New **`SortableFlex`** (`components/layouts/SortableFlex.jsx`) — a `Flex` whose items can be **reordered by drag and drop** (pointer, touch and keyboard), completing the wave-1 sortable family (`SortableList` / `SortableGrid`) with the **same API** : controlled (`items` + `onReorder`) or uncontrolled (`defaultItems`) with **optimistic revert** on rejected `onReorder` promise, `renderItem` returning a `SortableFlexItem` (`id` / `index` / `handle` / `disabled` injected), stable ids via `getItemId`. Every other prop is forwarded to `Flex` (`direction`, `wrap`, `gap`, alignment, …) — suited to **reorderable tags, chips, pills and toolbars**, horizontal, vertical (`direction="col"`) or wrapping rows. Same encapsulated engine, same shared `useSortableList` hook.
+- New **`SortableFlexItem`** (`components/layouts/SortableFlexItem.jsx`) — the draggable item (`as` configurable) : lifted style while dragged, and an optional **inline drag handle** rendered as the first child in the flow (`btn-xs`, keyboard-focusable, `touch-none`) — suited to compact chips where the grid's overlay handle would cover the content. Like `SortableGridItem`, `handle` defaults to `false` (whole items draggable).
+- Theme — `themes/components/sortable.js` gains the **`getSortableInlineHandleClasses`** generator and the `SORTABLE_ITEM_HANDLE_INLINE` constant.
+
+**Lab**
+- New `SortableFlexDemo` on `/lab/flex` (below the Flex demo) : **wrapping reorderable tags** (whole chips draggable), **controlled pills** with live `A → B → …` order readout and index-aware rendering, a **vertical `direction="col"`** stacked example, **inline drag handles** on removable chips (the `×` button stays clickable, dragging only from the handle), **async reorder** with a « Simulate API failure » toggle showing the optimistic revert, and a props reference table.
+
 ## [0.2.16] — 2026-07-04
 
 **Components — Lists (SortableList / SortableListRow, new — drag-and-drop reorder)**

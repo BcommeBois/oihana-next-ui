@@ -4,6 +4,8 @@ import Container from '@/display/Container' ;
 import Page      from '@/display/Page' ;
 import FlexDemo  from '@/demo/layouts/FlexDemo' ;
 
+import SortableFlexDemo from '@/demo/layouts/SortableFlexDemo' ;
+
 /**
  * Flex showcase page.
  */
@@ -19,6 +21,16 @@ const FlexPage = () =>
 
         <Container maxWidth="max-w-6xl">
                 <FlexDemo />
+        </Container>
+
+        <Container className="text-center" maxWidth="max-w-4xl">
+            <h1 className="text-4xl font-bold bg-linear-to-r from-secondary to-primary inline-block text-transparent bg-clip-text">
+                Sortable Flex Component
+            </h1>
+        </Container>
+
+        <Container maxWidth="max-w-6xl">
+            <SortableFlexDemo />
         </Container>
     </Page>
 ) ;
