@@ -31,6 +31,7 @@ import { SlPicture              as ImageIcon          } from "react-icons/sl";
 import { RiInputField           as InputIcon          } from "react-icons/ri" ;
 import { TbInfinity             as InfiniteScrollIcon } from "react-icons/tb";
 import { LuLayoutDashboard      as LayoutIcon         } from "react-icons/lu";
+import { TbLayoutKanban         as KanbanIcon         } from "react-icons/tb";
 import { CiBoxList              as ListIcon           } from "react-icons/ci";
 import { RiProgress7Line        as LoadingIcon        } from "react-icons/ri";
 import { BsFillMarkdownFill     as MarkdownIcon       } from 'react-icons/bs' ;
@@ -94,6 +95,15 @@ const navigation =
                     { id : 'collapse'       , type : LINK  , Icon : CollapseIcon       , path  : '/lab/collapse'       } ,
                     { id : 'accordion'      , type : LINK  , Icon : AccordionIcon      , path  : '/lab/accordion'      } ,
                     { id : 'patterns'       , type : LINK  , Icon : PatternsIcon       , path  : '/lab/patterns'       } ,
+                ]
+            } ,
+            {
+                id   : 'kanban'   ,
+                type : COLLAPSE   ,
+                Icon : KanbanIcon ,
+                items :
+                [
+                    { id : 'kanbanBoard' , type : LINK  , Icon : KanbanIcon , path  : '/lab/kanban' } ,
                 ]
             } ,
             {

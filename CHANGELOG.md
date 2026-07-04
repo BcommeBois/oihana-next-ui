@@ -8,6 +8,23 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.3.0] — 2026-07-04
+
+**Components — Kanban (Kanban / KanbanColumn / KanbanCard, new — drag-and-drop board)**
+- New **`Kanban`** (`components/kanban/Kanban.jsx`) — a kanban board : cards **reorder within a column and move across columns** by drag and drop (pointer, touch and keyboard), columns accept cards **even when empty** (highlighted while hovered). The whole board is **one value** — an array of columns `[ { id , title , items : [...] } ]` — controlled (`columns` + `onChange`) or uncontrolled (`defaultColumns`). Any move produces a **single `onChange( nextColumns , change )`** call with `change = { item , fromColumn , toColumn , fromIndex , toIndex }` : pose `nextColumns` as-is, and/or use `change` for a targeted API call ; in uncontrolled mode a rejected promise **restores the previous board** (optimistic revert). Cards are declared through `renderCard( item , column , index )` returning a `KanbanCard` (`id` / `index` / `group` / `disabled` injected) ; `renderHeader` / `renderFooter` customize columns ; stable ids via `item.id` / `column.id` or `getItemId` / `getColumnId`. While a card is dragged the board keeps a **live snapshot in sync with the engine** (`onDragOver` + `@dnd-kit/helpers`'s `move`) and the consumer state is committed **once, on drop** — the commit is computed by diffing the committed state against the final snapshot by card id, making it immune to React remounts when a card crosses columns.
+- New **`KanbanColumn`** (`components/kanban/KanbanColumn.jsx`) — droppable column : default header (title + count `Badge`), card body accepting drops even when empty (visual `ring` feedback), optional `footer` slot (e.g. an « add card » button).
+- New **`KanbanCard`** (`components/kanban/KanbanCard.jsx`) — the draggable card (whole-card drag) : `title` or arbitrary `children`, lifted style while dragged.
+- Theme — new **`themes/components/kanban.js`** module : `getKanbanClasses` / `getKanbanColumnClasses` / `getKanbanColumnBodyClasses` / `getKanbanCardClasses` generators + `KANBAN*` constants.
+
+**Hooks — useKanban (new)**
+- New **`useKanban`** (`hooks/useKanban.js`) — the board-state plumbing : columns controlled/uncontrolled on the `useValue` pattern, `moveItem( fromColumn , toColumn , fromIndex , toIndex )` handling intra- and cross-column moves immutably (reuses `arrayMove`), optimistic apply-then-revert around `onChange`.
+
+**Dependencies**
+- New runtime dependency **`@dnd-kit/helpers`**, **pinned exactly to `0.5.0`** (aligned with `@dnd-kit/react`) — its `move()` helper keeps the live board snapshot in sync with the engine during cross-column drags.
+
+**Lab**
+- New **« Kanban » section** in the navigation (fr « Kanban » / en « Kanban ») with a **« Tableau » / « Board »** entry (`/lab/kanban`, kanban icon) : `KanbanDemo` with a basic uncontrolled board (4 columns, « Done » starting empty), a **controlled** board with live per-column counts, an **async change** simulating an API call with a « Simulate API failure » toggle showing the full-board optimistic revert, and a props reference table.
+
 ## [0.2.17] — 2026-07-04
 
 **Components — Popover (nested-in-Modal fix) & date / time pickers**
