@@ -1,6 +1,7 @@
 'use client' ;
 
-import ListDemo from '@/demo/lists/ListDemo';
+import ListDemo         from '@/demo/lists/ListDemo';
+import SortableListDemo from '@/demo/lists/SortableListDemo' ;
 import Container from '@/display/Container';
 import Page           from '@/display/Page' ;
 
@@ -21,6 +22,14 @@ const ModalShowcase = ({ path = 'app.test' }) =>
             </Container>
 
             <ListDemo />
+
+            <Container className="text-center" maxWidth="max-w-4xl">
+                <h1 className="text-4xl font-bold bg-linear-to-r from-secondary to-primary inline-block text-transparent bg-clip-text">
+                    Sortable List Component
+                </h1>
+            </Container>
+
+            <SortableListDemo />
 
         </Page>
     ) ;

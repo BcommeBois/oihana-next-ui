@@ -8,6 +8,25 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.2.16] — 2026-07-04
+
+**Components — Lists (SortableList / SortableListRow, new — drag-and-drop reorder)**
+- New **`SortableList`** (`components/lists/SortableList.jsx`) — a `List` whose rows can be **reordered by drag and drop** (pointer, touch and keyboard). Works **controlled** (`items` + `onReorder`) or **uncontrolled** (`defaultItems`) ; in uncontrolled mode reorders are **optimistic** : `onReorder( items , { from , to , item } )` may return a promise, and a rejection (e.g. a failed API call) **restores the previous order** automatically. Rows are declared through `renderItem( item , index )` returning a `SortableListRow` — `SortableList` injects `id` / `index` / `handle` / `disabled` into it (explicit props win). Items need a **stable unique id** (`item.id` by default, customizable via `getItemId`). Other props (`className`, `as`, …) are forwarded to `List`. The DnD engine (`@dnd-kit/react`, new dnd-kit architecture) is **fully encapsulated — it never appears in the public API**, so the foundation can evolve without breaking consumers.
+- New **`SortableListRow`** (`components/lists/SortableListRow.jsx`) — the draggable row : accepts **all `ListRow` props**, plus `handle` (default `true` — renders an accessible **drag-handle button** (`aria-label` via `handleLabel`, keyboard-focusable, `touch-none` so mobile scroll and drag don't fight) injected before `leading` ; `handle={false}` makes the **whole row draggable**), `handleClassName` and `group`. While dragged, the row gets a lifted style (shadow + ring, `LIST_ROW_DRAGGING`) and items **FLIP-animate** into their new positions (provided by the engine). Keyboard reordering works out of the box (Tab to a handle, Enter to lift, arrows to move, Enter to drop).
+- Theme — `themes/components/list.js` gains the **`getSortableListRowClasses`** / **`getSortableHandleClasses`** generators and the `LIST_ROW_DRAGGING` / `SORTABLE_HANDLE` constants.
+
+**Hooks — useSortableList (new)**
+- New **`useSortableList`** (`hooks/useSortableList.js`) — the order-state plumbing of sortable collections, following the `useValue` controlled/uncontrolled pattern : `{ defaultItems , items , onReorder }` → `{ items , reorder( from , to ) , isControlled }`, with the optimistic apply-then-revert behaviour described above. Also exports a pure **`arrayMove`** helper. Designed to be reused by the upcoming `SortableGrid` / `SortableFlex`.
+
+**Components — Lists (List / ListRow — ref + rest props)**
+- **`List`** and **`ListRow`** now accept a **`ref`** (React 19 ref-as-prop) and **forward arbitrary props** (`...rest`) to their root element — required by the DnD layer (node refs, ARIA attributes, sensor listeners) and useful for any integration. **All existing usages unchanged.**
+
+**Dependencies**
+- New runtime dependency **`@dnd-kit/react`**, **pinned exactly to `0.5.0`** (the actively-developed new dnd-kit architecture ; pinned deliberately while it is 0.x semver — bumps are reviewed manually).
+
+**Lab**
+- New `SortableListDemo` on `/lab/lists` (below the List demo) : uncontrolled list with drag handles, **controlled** list with whole-row dragging and live order readout, **async reorder** simulating an API call with a « Simulate API failure » toggle showing the optimistic revert, and a props reference table.
+
 ## [0.2.15] — 2026-07-04
 
 **Components — Inputs (InputColor — Apply / Cancel footer, deferred commit)**

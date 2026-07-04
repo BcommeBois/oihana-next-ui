@@ -79,6 +79,7 @@ import Checkbox from '../../components/checkboxes/Checkbox' ;
  * @param {string} [props.leadingClassName] - Additional classes for leading container
  * @param {Function} [props.onClick] - Row click handler
  * @param {Function} [props.onSelect] - Selection change handler: (checked) => void
+ * @param {React.Ref} [props.ref] - Reference to the root element
  * @param {boolean} [props.selectable] - Show checkbox for selection
  * @param {boolean} [props.selected] - Selected state
  * @param {string} [props.subtitle] - Subtitle text
@@ -108,6 +109,7 @@ const ListRow =
     leadingClassName ,
     onClick ,
     onSelect ,
+    ref ,
     selectable = false ,
     selected = false ,
     subtitle ,
@@ -116,6 +118,7 @@ const ListRow =
     titleClassName ,
     wrap ,
     wrapClassName ,
+    ...rest
 }) =>
 {
     const Component = as ?? 'li' ;
@@ -217,6 +220,8 @@ const ListRow =
         <Component
             className = { rowClasses }
             onClick   = { handleRowClick }
+            ref       = { ref }
+            { ...rest }
         >
             { leadingElement }
             { avatarOrCheckbox }

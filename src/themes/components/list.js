@@ -7,10 +7,12 @@
 
 import cn from '../helpers/cn' ;
 
-export const LIST          = 'list' ;
-export const LIST_ROW      = 'list-row' ;
-export const LIST_COL_GROW = 'list-col-grow' ;
-export const LIST_COL_WRAP = 'list-col-wrap' ;
+export const LIST              = 'list' ;
+export const LIST_ROW          = 'list-row' ;
+export const LIST_COL_GROW     = 'list-col-grow' ;
+export const LIST_COL_WRAP     = 'list-col-wrap' ;
+export const LIST_ROW_DRAGGING = 'relative z-10 bg-base-100 rounded-box shadow-lg ring-1 ring-base-300' ;
+export const SORTABLE_HANDLE   = 'btn btn-ghost btn-square btn-sm cursor-grab active:cursor-grabbing touch-none' ;
 
 /**
  * Generates list container class names.
@@ -89,6 +91,46 @@ export const getListColWrapClasses =
 = {} ) => cn
 (
     LIST_COL_WRAP ,
+    className ,
+) ;
+
+/**
+ * Generates sortable list-row class names.
+ *
+ * @param {Object} [props]
+ * @param {boolean} [props.dragging] - Whether the row is the source of a drag operation
+ * @param {string} [props.className] - Additional classes
+ *
+ * @returns {string} Combined class names
+ */
+export const getSortableListRowClasses =
+({
+    dragging ,
+    className ,
+}
+= {} ) => cn
+(
+    {
+        [ LIST_ROW_DRAGGING ] : dragging ,
+    } ,
+    className ,
+) ;
+
+/**
+ * Generates sortable drag handle class names.
+ *
+ * @param {Object} [props]
+ * @param {string} [props.className] - Additional classes
+ *
+ * @returns {string} Combined class names
+ */
+export const getSortableHandleClasses =
+({
+    className ,
+}
+= {} ) => cn
+(
+    SORTABLE_HANDLE ,
     className ,
 ) ;
 

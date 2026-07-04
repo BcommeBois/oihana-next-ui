@@ -38,12 +38,15 @@ import getListClasses from '../../themes/components/list' ;
  * @param {React.ElementType} [props.as='ul'] - Root element type
  * @param {React.ReactNode} [props.children] - List rows
  * @param {string} [props.className] - Additional classes
+ * @param {React.Ref} [props.ref] - Reference to the root element
  */
 const List =
 ({
     as ,
     children ,
     className ,
+    ref ,
+    ...rest
 }) =>
 {
     const Component = as ?? 'ul' ;
@@ -51,7 +54,7 @@ const List =
     const listClasses = getListClasses({ className }) ;
 
     return (
-        <Component className={ listClasses }>
+        <Component className={ listClasses } ref={ ref } { ...rest }>
             { children }
         </Component>
     ) ;
