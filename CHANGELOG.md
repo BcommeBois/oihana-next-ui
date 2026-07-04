@@ -16,6 +16,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - **`InputModal`** now accepts and forwards the **`portal`** prop to its `Modal` (it passes an explicit prop list, so `portal` could not reach the dialog before) — enabling `InputModal`-in-`Modal` usage, like `AlertModal` / `ConfirmModal` which already forward every prop.
 - Lab — new **`PickersInModalDemo`** regression demo on `/lab/dates` (« Pickers inside a Modal ») : an « Éditer » host modal containing an `InputDatePicker`, an `InputTimePicker` and a deferred-commit `InputDateTimePicker` (`footer`, French labels), with the acceptance checklist (panel above the modal and clickable, picks update the fields, `Escape` ordering, outside-click, standalone unchanged).
 
+**Components — Modal (rules-of-hooks fix)**
+- Fix — **`Modal`** called `useBreakpoint` **conditionally** (`fullScreenBreakpoint ? useBreakpoint( … ) : true`) : if `fullScreenBreakpoint` appeared or disappeared between two renders of the same instance, the hook order broke (React crash). The hook is now called unconditionally with a fallback key, its result ignored when no breakpoint is requested — behaviour strictly unchanged.
+
 ## [0.2.16] — 2026-07-04
 
 **Components — Lists (SortableList / SortableListRow, new — drag-and-drop reorder)**

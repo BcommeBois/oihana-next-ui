@@ -213,9 +213,10 @@ const Modal = ( props ) =>
         }
     }
 
-    const isAboveBreakpoint = fullScreenBreakpoint
-                            ? useBreakpoint( fullScreenBreakpoint )
-                            : true ;
+    // Hooks must run unconditionally (same order on every render) : when no
+    // breakpoint is requested we still call the hook with a fallback key and
+    // simply ignore its result below.
+    const isAboveBreakpoint = useBreakpoint( fullScreenBreakpoint ?? 'md' ) ;
 
     const isFullScreen = fullScreen || ( fullScreenBreakpoint ? !isAboveBreakpoint : false ) ;
 
