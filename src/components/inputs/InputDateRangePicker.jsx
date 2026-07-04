@@ -21,9 +21,9 @@ import { MdCalendarToday as CalendarIcon , MdClose as ClearIcon } from 'react-ic
 const EMPTY_RANGE = { from : null , to : null } ;
 
 /**
- * InputDateRangePicker — the masked {@link module:components/inputs/InputDateRange}
+ * InputDateRangePicker — the masked {@link InputDateRange}
  * paired with a visual {@link module:components/dates/Calendar} (range mode) in a
- * responsive popover. The range mirror of {@link module:components/inputs/InputDatePicker}.
+ * responsive popover. The range mirror of {@link InputDatePicker}.
  *
  * The text field and the calendar share one range : typing a full range updates the
  * calendar, picking two endpoints fills the field and closes the popover. The popover
@@ -45,6 +45,7 @@ const EMPTY_RANGE = { from : null , to : null } ;
  * @param {Object} [props.calendarProps] - Extra props forwarded to the `Calendar` (shortcuts, months…).
  * @param {string} [props.cancelLabel='Cancel'] - Footer Cancel button label.
  * @param {boolean} [props.clearable=true] - Show the clear button when the field has a value.
+ * @param {string} [props.clearLabel='Clear date range'] - Clear button aria-label (localizable).
  * @param {string} [props.dateSeparator='/'] - Date segments separator.
  * @param {string} [props.defaultValue=''] - Initial formatted value (uncontrolled).
  * @param {boolean} [props.disabled=false] - Disable the field and buttons.
@@ -60,6 +61,7 @@ const EMPTY_RANGE = { from : null , to : null } ;
  * @param {string} [props.rangeSeparator=' – '] - Separator between the two dates.
  * @param {boolean} [props.showIcon=false] - Show the left calendar icon of the field.
  * @param {import('../../themes/sizing/sizes').Size} [props.size] - Field + button size.
+ * @param {string} [props.triggerLabel='Open calendar'] - Trigger button aria-label (localizable).
  * @param {string} [props.value] - Controlled formatted value.
  * @param {Object} props.rest - Other props forwarded to InputDateRange (label, error, helper…).
  *
@@ -76,6 +78,7 @@ const InputDateRangePicker =
     calendarProps ,
     cancelLabel = 'Cancel' ,
     clearable = true ,
+    clearLabel = 'Clear date range' ,
     dateSeparator = '/' ,
     defaultValue = '' ,
     disabled = false ,
@@ -91,6 +94,7 @@ const InputDateRangePicker =
     rangeSeparator = ' – ' ,
     showIcon = false ,
     size ,
+    triggerLabel = 'Open calendar' ,
     value : valueFromProps ,
     ...rest
 }) =>
@@ -152,7 +156,7 @@ const InputDateRangePicker =
     // pick only updates the draft (commit waits for Apply); without one, a complete
     // range commits and closes immediately. Pushing a partial range would be
     // re-parsed as null by the field and wipe the in-progress selection.
-    const handlePick = ( next ) =>
+    const handlePick = next =>
     {
         setRangeValue( next ?? EMPTY_RANGE ) ;
 
@@ -198,7 +202,7 @@ const InputDateRangePicker =
             <button
                 key        = "clear"
                 type       = "button"
-                aria-label = "Clear date range"
+                aria-label = { clearLabel }
                 disabled   = { disabled }
                 className  = { cn( getButtonClassNames({ shape : SQUARE , size , style : GHOST }) , 'join-item' ) }
                 onClick    = { handleClear }
@@ -212,7 +216,7 @@ const InputDateRangePicker =
         <button
             key        = "trigger"
             type       = "button"
-            aria-label = "Open calendar"
+            aria-label = { triggerLabel }
             disabled   = { disabled }
             className  = { cn( getButtonClassNames({ shape : SQUARE , size }) , 'join-item' ) }
             onClick    = { toggleOpen }

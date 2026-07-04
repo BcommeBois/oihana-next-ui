@@ -53,9 +53,11 @@ const HEX_RE = /^#?([0-9a-f]{6}|[0-9a-f]{8})$/i ;
  * @param {string} [props.className] - Extra classes for the panel.
  * @param {import('../../themes/components/colorPicker').ColorPickerCollapse} [props.collapse='viewport'] - When/how the horizontal layout collapses to vertical.
  * @param {string} [props.defaultValue] - Initial value (uncontrolled).
+ * @param {string} [props.eyeDropperLabel='Pick a color from the screen'] - Eyedropper button aria-label (localizable).
  * @param {(value: string) => void} [props.onChange] - Change handler.
  * @param {import('../../themes/enums/orientations').Orientation} [props.orientation='vertical'] - Panel layout.
  * @param {string[]} [props.presets] - Preset swatches (defaults to a built-in palette).
+ * @param {string} [props.presetsLabel='Presets'] - Heading above the preset palette (localizable).
  * @param {boolean} [props.showEyeDropper=true] - Show the screen eyedropper (when supported).
  * @param {boolean} [props.showInput=true] - Show the editable hex field.
  * @param {boolean} [props.showPresets=true] - Show the preset palette.
@@ -80,9 +82,11 @@ const ColorPicker =
     className ,
     collapse = VIEWPORT ,
     defaultValue ,
+    eyeDropperLabel = 'Pick a color from the screen' ,
     onChange : onChangeFromProps ,
     orientation = VERTICAL ,
     presets = DEFAULT_PRESETS ,
+    presetsLabel = 'Presets' ,
     showEyeDropper = true ,
     showInput = true ,
     showPresets = true ,
@@ -179,7 +183,7 @@ const ColorPicker =
                         type       = "button"
                         className  = "btn btn-ghost btn-square btn-sm shrink-0"
                         onClick    = { handleEyeDropper }
-                        aria-label = "Pick a color from the screen"
+                        aria-label = { eyeDropperLabel }
                     >
                         <EyeDropperIcon className="size-5" />
                     </button>
@@ -210,7 +214,7 @@ const ColorPicker =
             {/* Presets */}
             { showPresets && presets?.length > 0 && (
                 <div className="flex flex-col gap-2">
-                    <span className="text-xs font-medium opacity-60">Presets</span>
+                    <span className="text-xs font-medium opacity-60">{ presetsLabel }</span>
                     <div className="flex flex-wrap gap-1.5">
                         { presets.map( ( color ) => (
                             <button

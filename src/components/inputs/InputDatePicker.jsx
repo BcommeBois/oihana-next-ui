@@ -18,8 +18,7 @@ import Popover from '../Popover' ;
 import { MdCalendarToday as CalendarIcon , MdClose as ClearIcon } from 'react-icons/md' ;
 
 /**
- * InputDatePicker — the masked {@link module:components/inputs/InputDate} paired
- * with a visual {@link module:components/dates/Calendar} in a responsive popover.
+ * InputDatePicker — the masked {@link InputDate} paired with a visual {@link Calendar} in a responsive popover.
  *
  * The text field and the calendar share one value : typing updates the calendar,
  * picking a day fills the field and closes the popover. A clear `×` button appears
@@ -33,6 +32,7 @@ import { MdCalendarToday as CalendarIcon , MdClose as ClearIcon } from 'react-ic
  * @param {Object} props
  * @param {Object} [props.calendarProps] - Extra props forwarded to the `Calendar` (shortcuts…).
  * @param {boolean} [props.clearable=true] - Show the clear button when the field has a value.
+ * @param {string} [props.clearLabel='Clear date'] - Clear button aria-label (localizable).
  * @param {string} [props.defaultValue=''] - Initial formatted value (uncontrolled).
  * @param {boolean} [props.disabled=false] - Disable the field and buttons.
  * @param {'responsive'|'dropdown'|'modal'} [props.display='responsive'] - Popover display mode.
@@ -44,6 +44,7 @@ import { MdCalendarToday as CalendarIcon , MdClose as ClearIcon } from 'react-ic
  * @param {string} [props.separator='/'] - Segment separator.
  * @param {boolean} [props.showIcon=false] - Show the left calendar icon of the field.
  * @param {import('../../themes/sizing/sizes').Size} [props.size] - Field + button size.
+ * @param {string} [props.triggerLabel='Open calendar'] - Trigger button aria-label (localizable).
  * @param {string} [props.value] - Controlled formatted value.
  * @param {Object} props.rest - Other props forwarded to InputDate (label, error, helper…).
  *
@@ -57,6 +58,7 @@ const InputDatePicker =
 ({
     calendarProps ,
     clearable = true ,
+    clearLabel = 'Clear date' ,
     defaultValue = '' ,
     disabled = false ,
     display = 'responsive' ,
@@ -68,6 +70,7 @@ const InputDatePicker =
     separator = '/' ,
     showIcon = false ,
     size ,
+    triggerLabel = 'Open calendar' ,
     value : valueFromProps ,
     ...rest
 }) =>
@@ -120,7 +123,7 @@ const InputDatePicker =
             <button
                 key        = "clear"
                 type       = "button"
-                aria-label = "Clear date"
+                aria-label = { clearLabel }
                 disabled   = { disabled }
                 className  = { cn( getButtonClassNames({ shape : SQUARE , size , style : GHOST }) , 'join-item' ) }
                 onClick    = { handleClear }
@@ -134,7 +137,7 @@ const InputDatePicker =
         <button
             key        = "trigger"
             type       = "button"
-            aria-label = "Open calendar"
+            aria-label = { triggerLabel }
             disabled   = { disabled }
             className  = { cn( getButtonClassNames({ shape : SQUARE , size }) , 'join-item' ) }
             onClick    = { toggleOpen }

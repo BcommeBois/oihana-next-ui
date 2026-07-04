@@ -32,6 +32,7 @@ import { MdAccessTime as ClockIcon , MdClose as ClearIcon } from 'react-icons/md
  * @param {string} [props.applyLabel='Apply'] - Footer Apply button label.
  * @param {string} [props.cancelLabel='Cancel'] - Footer Cancel button label.
  * @param {boolean} [props.clearable=true] - Show the clear button when the field has a value.
+ * @param {string} [props.clearLabel='Clear time'] - Clear button aria-label (localizable).
  * @param {string} [props.defaultMeridiem] - Initial meridiem (uncontrolled, AM/PM).
  * @param {string} [props.defaultValue=''] - Initial time string (uncontrolled).
  * @param {boolean} [props.disabled=false] - Disable the field and buttons.
@@ -47,6 +48,7 @@ import { MdAccessTime as ClockIcon , MdClose as ClearIcon } from 'react-icons/md
  * @param {number} [props.secondStep=1] - Seconds increment in the picker.
  * @param {boolean} [props.showIcon=false] - Show the left clock icon of the field.
  * @param {import('../../themes/sizing/sizes').Size} [props.size] - Field + button size.
+ * @param {string} [props.triggerLabel='Open time picker'] - Trigger button aria-label (localizable).
  * @param {boolean} [props.useMinutes=true] - Include minutes in the field format.
  * @param {boolean} [props.useSeconds=false] - Add a seconds column / field segment.
  * @param {string} [props.value] - Controlled time string.
@@ -64,6 +66,7 @@ const InputTimePicker =
     applyLabel = 'Apply' ,
     cancelLabel = 'Cancel' ,
     clearable = true ,
+    clearLabel = 'Clear time' ,
     defaultMeridiem ,
     defaultValue = '' ,
     disabled = false ,
@@ -79,6 +82,7 @@ const InputTimePicker =
     secondStep = 1 ,
     showIcon = false ,
     size ,
+    triggerLabel = 'Open time picker' ,
     useMinutes = true ,
     useSeconds = false ,
     value : valueFromProps ,
@@ -197,7 +201,7 @@ const InputTimePicker =
             <button
                 key        = "clear"
                 type       = "button"
-                aria-label = "Clear time"
+                aria-label = { clearLabel }
                 disabled   = { disabled }
                 className  = { cn( getButtonClassNames({ shape : SQUARE , size , style : GHOST }) , 'join-item' ) }
                 onClick    = { handleClear }
@@ -211,7 +215,7 @@ const InputTimePicker =
         <button
             key        = "trigger"
             type       = "button"
-            aria-label = "Open time picker"
+            aria-label = { triggerLabel }
             disabled   = { disabled }
             className  = { cn( getButtonClassNames({ shape : SQUARE , size }) , 'join-item' ) }
             onClick    = { toggleOpen }

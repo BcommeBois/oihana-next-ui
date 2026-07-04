@@ -52,6 +52,7 @@ import { MdColorize as DefaultPickerIcon , MdClose as ClearIcon } from 'react-ic
  * @param {string} [props.applyLabel='Apply'] - Footer Apply button label (when `footer`).
  * @param {string} [props.cancelLabel='Cancel'] - Footer Cancel button label (when `footer`).
  * @param {boolean} [props.clearable=false] - Show a clear button (left of the trigger) when the field has a value.
+ * @param {string} [props.clearLabel='Clear color'] - Clear button aria-label (localizable).
  * @param {import('../../themes/components/colorPicker').ColorPickerCollapse} [props.collapse='viewport'] - How the horizontal picker folds back to vertical.
  * @param {string} [props.defaultValue] - Initial value (uncontrolled).
  * @param {boolean} [props.disabled=false] - Disable the field and the trigger.
@@ -93,6 +94,7 @@ const InputColor =
     applyLabel = 'Apply' ,
     cancelLabel = 'Cancel' ,
     clearable = false ,
+    clearLabel = 'Clear color' ,
     collapse = VIEWPORT ,
     defaultValue ,
     disabled = false ,
@@ -138,7 +140,7 @@ const InputColor =
             <button
                 key        = "clear"
                 type       = "button"
-                aria-label = "Clear color"
+                aria-label = { clearLabel }
                 disabled   = { disabled }
                 className  = { cn( getButtonClassNames({ shape : SQUARE , size , style : GHOST }) , 'join-item' ) }
                 onClick    = { () => setValue( '' ) }

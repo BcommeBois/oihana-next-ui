@@ -5,6 +5,8 @@ import { useEffect , useMemo , useRef , useState } from 'react' ;
 import { useMaskito } from '@maskito/react' ;
 import { maskitoParseDate } from '@maskito/kit' ;
 
+import daysInMonthOf from 'vegas-js-core/src/date/daysInMonth' ;
+
 import cn from '../../themes/helpers/cn' ;
 import useValue from '../../hooks/useValue' ;
 import useMergeRefs from '../../hooks/useMergeRefs' ;
@@ -44,17 +46,14 @@ const DATE_SEG = {
  * (month ≤ 12, day ≤ 31, hour ≤ 23 / 12, minute ≤ 59…). First digits are constrained
  * in the mask itself for immediate feedback.
  */
-/** Number of days in a month (1–12). February uses the year for the leap check;
- *  when the year is unknown yet, the permissive 29 is used. */
-const daysInMonth = ( month , year ) =>
-{
-    if ( month === 2 )
-    {
-        if ( year == null ) { return 29 ; }
-        return ( ( year % 4 === 0 && year % 100 !== 0 ) || year % 400 === 0 ) ? 29 : 28 ;
-    }
-    return [ 31 , 28 , 31 , 30 , 31 , 30 , 31 , 31 , 30 , 31 , 30 , 31 ][ month - 1 ] ?? 31 ;
-} ;
+/**
+ * Number of days in a month (`month` 1–12 here). Delegates to vegas-js-core's
+ * `daysInMonth( year , monthIndex0 )` — note the arg order and the 0-based month.
+ * When the year is unknown mid-typing, a leap year (2000) is used as a fallback so
+ * February stays permissive (29, letting a 29/02 be typed until the year is known);
+ * the fallback year is irrelevant for the other months.
+ */
+const daysInMonth = ( month , year ) => daysInMonthOf( year ?? 2000 , month - 1 ) ;
 
 const buildDateTimeMask = ( mode , separator , useSeconds , ampm ) =>
 {
@@ -162,6 +161,7 @@ const splitField = ( field ) =>
  * @param {Object} [props.calendarProps] - Extra props forwarded to the `Calendar` (shortcuts, months…).
  * @param {string} [props.cancelLabel='Cancel'] - Footer Cancel button label.
  * @param {boolean} [props.clearable=true] - Show the clear button when there is a value.
+ * @param {string} [props.clearLabel='Clear date-time'] - Clear button aria-label (localizable).
  * @param {string} [props.defaultValue=''] - Initial combined value (uncontrolled).
  * @param {boolean} [props.disabled=false] - Disable the field and buttons.
  * @param {'responsive'|'dropdown'|'modal'} [props.display='responsive'] - Popover display mode.
@@ -176,6 +176,7 @@ const splitField = ( field ) =>
  * @param {string} [props.separator='/'] - Date segment separator.
  * @param {boolean} [props.showIcon=true] - Show the left icon of the field.
  * @param {import('../../themes/sizing/sizes').Size} [props.size] - Field + button size.
+ * @param {string} [props.triggerLabel='Open date-time picker'] - Trigger button aria-label (localizable).
  * @param {boolean} [props.useSeconds=false] - Add a seconds segment / column.
  * @param {string} [props.value] - Controlled combined value.
  * @param {Object} props.rest - Other props forwarded to Input (label, error, helper…).
@@ -193,6 +194,7 @@ const InputDateTimePicker =
     calendarProps ,
     cancelLabel = 'Cancel' ,
     clearable = true ,
+    clearLabel = 'Clear date-time' ,
     defaultValue = '' ,
     disabled = false ,
     display = 'responsive' ,
@@ -207,6 +209,7 @@ const InputDateTimePicker =
     separator = '/' ,
     showIcon = true ,
     size ,
+    triggerLabel = 'Open date-time picker' ,
     useSeconds = false ,
     value : valueFromProps ,
     ...rest
@@ -409,7 +412,7 @@ const InputDateTimePicker =
             <button
                 key        = "clear"
                 type       = "button"
-                aria-label = "Clear date-time"
+                aria-label = { clearLabel }
                 disabled   = { disabled }
                 className  = { cn( getButtonClassNames({ shape : SQUARE , size , style : GHOST }) , 'join-item' ) }
                 onClick    = { handleClear }
@@ -423,7 +426,7 @@ const InputDateTimePicker =
         <button
             key        = "trigger"
             type       = "button"
-            aria-label = "Open date-time picker"
+            aria-label = { triggerLabel }
             disabled   = { disabled }
             className  = { cn( getButtonClassNames({ shape : SQUARE , size }) , 'join-item' ) }
             onClick    = { toggleOpen }

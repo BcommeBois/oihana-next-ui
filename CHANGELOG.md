@@ -24,6 +24,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - A11y — `Modal` : the header close button carries an explicit `type="button"` (inside a `<form>` it could submit the form) ; the `usePopover` variant carries `role="dialog"` (it already had `aria-labelledby`). The backdrop click-to-dismiss surfaces (`Modal`, `Popover`) are documented as decorative via targeted `biome-ignore` justifications — `Escape` is the keyboard equivalent.
 - Cleanup — `InputModal` : dropped an unused `close` binding. **`biome lint` is now clean** on `Modal` / `Popover` / `InputModal`.
 
+**Components — Pickers (localizable aria-labels / labels)**
+- The icon buttons of the picker family now expose **localizable labels** instead of hardcoded English, in the spirit of the existing `applyLabel` / `cancelLabel` : `InputDatePicker`, `InputDateRangePicker`, `InputTimePicker`, `InputDateTimePicker` and `InputColor` gain **`clearLabel`** (clear button aria-label) and the four date/time pickers gain **`triggerLabel`** (open-picker button aria-label). `ColorPicker` gains **`eyeDropperLabel`** (eyedropper aria-label) and **`presetsLabel`** (the visible « Presets » heading). All default to their previous English strings — **every existing usage is unchanged**.
+- Refactor — **`InputDateTimePicker`** drops its local `daysInMonth` copy and delegates to **`vegas-js-core`**'s `daysInMonth` (a thin adapter bridges the arg order / 0-based month, and keeps a leap-year fallback so February stays permissive while the year is still being typed). Verified identical on 96 cases (null/undefined/leap/century years × 12 months) — **behaviour unchanged**.
+
 ## [0.2.16] — 2026-07-04
 
 **Components — Lists (SortableList / SortableListRow, new — drag-and-drop reorder)**
