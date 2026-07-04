@@ -12,6 +12,7 @@ export const SORTABLE_ITEM_DRAGGING      = 'z-10 shadow-lg ring-1 ring-base-300'
 export const SORTABLE_ITEM_HANDLE        = 'absolute top-2 right-2 z-20 btn btn-ghost btn-square btn-xs bg-base-100/70 backdrop-blur-sm cursor-grab active:cursor-grabbing touch-none' ;
 export const SORTABLE_ITEM_HANDLE_INLINE = 'btn btn-ghost btn-square btn-xs cursor-grab active:cursor-grabbing touch-none' ;
 export const SORTABLE_COLUMN_OVER        = 'rounded-box ring-2 ring-primary/40' ;
+export const SORTABLE_TABLE_ROW_DRAG     = 'relative z-10 bg-base-200 shadow-lg' ;
 
 /**
  * Generates sortable item class names.
@@ -72,6 +73,28 @@ export const getSortableColumnClasses =
 (
     {
         [ SORTABLE_COLUMN_OVER ] : over ,
+    } ,
+    className ,
+) ;
+
+/**
+ * Generates sortable table-row class names.
+ *
+ * @param {Object} [props]
+ * @param {boolean} [props.dragging] - Whether the row is the source of a drag operation
+ * @param {string} [props.className] - Additional classes
+ *
+ * @returns {string} Combined class names
+ */
+export const getSortableTableRowClasses =
+({
+    dragging ,
+    className ,
+}
+= {} ) => cn
+(
+    {
+        [ SORTABLE_TABLE_ROW_DRAG ] : dragging ,
     } ,
     className ,
 ) ;

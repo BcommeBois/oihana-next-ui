@@ -55,6 +55,7 @@ import { VscListSelection       as SelectIcon         } from "react-icons/vsc" ;
 import { LuRectangleHorizontal  as SkeletonIcon       } from "react-icons/lu";
 import { FaSpinner              as SpinnerIcon        } from "react-icons/fa";
 import { GrStatusPlaceholder    as StatusIcon         } from "react-icons/gr";
+import { LuTable                as TableIcon          } from "react-icons/lu";
 import { BsTextareaResize       as TextAreaIcon       } from "react-icons/bs" ;
 import { TiMessages             as ToastIcon          } from "react-icons/ti" ;
 import { LuMessageSquareText    as TooltipIcon        } from "react-icons/lu";
@@ -94,6 +95,7 @@ const navigation =
                     { id : 'layout'         , type : LINK  , Icon : LayoutIcon         , path  : '/lab/layout'         } ,
                     { id : 'collapse'       , type : LINK  , Icon : CollapseIcon       , path  : '/lab/collapse'       } ,
                     { id : 'accordion'      , type : LINK  , Icon : AccordionIcon      , path  : '/lab/accordion'      } ,
+                    { id : 'table'          , type : LINK  , Icon : TableIcon          , path  : '/lab/table'          } ,
                     { id : 'patterns'       , type : LINK  , Icon : PatternsIcon       , path  : '/lab/patterns'       } ,
                 ]
             } ,

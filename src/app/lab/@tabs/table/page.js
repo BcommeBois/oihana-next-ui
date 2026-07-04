@@ -4,6 +4,8 @@ import Page      from '@/display/Page' ;
 import Container from '@/display/Container' ;
 import TableDemo from '@/demo/layouts/TableDemo' ;
 
+import SortableTableDemo from '@/demo/layouts/SortableTableDemo' ;
+
 /**
  * Table showcase page.
  */
@@ -19,6 +21,16 @@ const TablePage = () =>
 
         <Container maxWidth="max-w-6xl">
             <TableDemo />
+        </Container>
+
+        <Container className="text-center" maxWidth="max-w-4xl">
+            <h1 className="text-4xl font-bold bg-linear-to-r from-secondary to-primary inline-block text-transparent bg-clip-text">
+                Sortable Table Component
+            </h1>
+        </Container>
+
+        <Container maxWidth="max-w-6xl">
+            <SortableTableDemo />
         </Container>
     </Page>
 ) ;
