@@ -4,7 +4,7 @@ import cn from '../../themes/helpers/cn' ;
 
 import useValue from '../../hooks/useValue' ;
 
-import getButtonClassNames , { SQUARE } from '../../themes/components/button' ;
+import getButtonClassNames , { GHOST , SQUARE } from '../../themes/components/button' ;
 
 import Modal    from '../modals/Modal' ;
 import useModal from '../modals/hooks/useModal' ;
@@ -17,7 +17,7 @@ import { MD } from '../../themes/sizing/sizes' ;
 import { HORIZONTAL } from '../../themes/enums/orientations' ;
 import { VIEWPORT }   from '../../themes/components/colorPicker' ;
 
-import { MdColorize as DefaultPickerIcon } from 'react-icons/md' ;
+import { MdColorize as DefaultPickerIcon , MdClose as ClearIcon } from 'react-icons/md' ;
 
 /**
  * InputColor — a hex color input paired with our own visual color picker.
@@ -37,6 +37,7 @@ import { MdColorize as DefaultPickerIcon } from 'react-icons/md' ;
  *
  * @param {Object} props
  * @param {boolean} [props.alpha=false] - Allow an alpha channel ('#RRGGBBAA').
+ * @param {boolean} [props.clearable=false] - Show a clear button (left of the trigger) when the field has a value.
  * @param {import('../../themes/components/colorPicker').ColorPickerCollapse} [props.collapse='viewport'] - How the horizontal picker folds back to vertical.
  * @param {string} [props.defaultValue] - Initial value (uncontrolled).
  * @param {boolean} [props.disabled=false] - Disable the field and the trigger.
@@ -68,6 +69,7 @@ import { MdColorize as DefaultPickerIcon } from 'react-icons/md' ;
 const InputColor =
 ({
     alpha = false ,
+    clearable = false ,
     collapse = VIEWPORT ,
     defaultValue ,
     disabled = false ,
@@ -92,9 +94,26 @@ const InputColor =
     // The horizontal picker is wider than the vertical one — give the modal room for it.
     const isHorizontal = orientation === HORIZONTAL ;
 
+    // Clear button — sits left of the trigger, only when there is a value.
+    const clearButton = clearable && value
+        ? (
+            <button
+                key        = "clear"
+                type       = "button"
+                aria-label = "Clear color"
+                disabled   = { disabled }
+                className  = { cn( getButtonClassNames({ shape : SQUARE , size , style : GHOST }) , 'join-item' ) }
+                onClick    = { () => setValue( '' ) }
+            >
+                <ClearIcon className="size-5" />
+            </button>
+        )
+        : null ;
+
     // Trigger lives in the input's right-side action slot ; opens the picker modal.
     const trigger = (
         <button
+            key        = "trigger"
             type       = "button"
             className  = { cn( getButtonClassNames({ shape : SQUARE , size }) , 'join-item' , triggerClassName ) }
             onClick    = { open }
@@ -114,7 +133,7 @@ const InputColor =
                 size     = { size }
                 value    = { value ?? '' }
                 onChange = { setValue }
-                actions  = { trigger }
+                actions  = { [ clearButton , trigger ] }
             />
 
             <Modal

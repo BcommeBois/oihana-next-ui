@@ -16,6 +16,7 @@ const ColorDemo = () =>
 {
     const [ color      , setColor      ] = useState( '#FF5733' ) ;
     const [ colorAlpha , setColorAlpha ] = useState( '#3B82F6CC' ) ;
+    const [ clearMe    , setClearMe    ] = useState( '#EF4444' ) ;
     const [ panel      , setPanel      ] = useState( '#22C55E' ) ;
     const [ horiz      , setHoriz      ] = useState( '#8B5CF6' ) ;
 
@@ -35,6 +36,21 @@ const ColorDemo = () =>
                 />
                 <p className="text-sm opacity-70">
                     Selected : <span className="font-mono">{ color || '—' }</span>
+                </p>
+            </div>
+
+            {/* InputColor — clearable : a × button appears left of the trigger when there is a value */}
+            <div className="flex flex-col gap-4 max-w-md">
+                <InputColor
+                    clearable
+                    label       = "Clearable color"
+                    value       = { clearMe }
+                    onChange    = { setClearMe }
+                    placeholder = "FFFFFF"
+                    helper      = "clearable — the × button clears the field (default : off)"
+                />
+                <p className="text-sm opacity-70">
+                    Selected : <span className="font-mono">{ clearMe || '—' }</span>
                 </p>
             </div>
 

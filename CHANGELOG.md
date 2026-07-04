@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.2.14] — 2026-07-04
+
+**Components — Inputs (InputColor — `clearable` prop)**
+- **`InputColor`** now accepts an optional **`clearable`** prop (default `false`) : when enabled and the field has a value, a ghost `×` button appears **left of the picker trigger** (same pattern and placement as `InputDatePicker` / `InputTimePicker` / `InputDateTimePicker`). Clicking it resets the value to `''` — the button then disappears, the preview swatch falls back to the neutral state, and the button follows the `disabled` state. Implemented through the existing `actions` array slot of the base `Input` (`actions = [ clearButton , trigger ]`) — no change to `Input` / `InputHexColor` and **all existing usages are unchanged**.
+- Lab — new « Clearable color » example in `ColorDemo` (`/lab/colors`) : a controlled `InputColor` with `clearable`, live selected-value readout.
+
 ## [0.2.13] — 2026-07-03
 
 **Components — I18n (I18nTextAreaMarkdown, new)**
