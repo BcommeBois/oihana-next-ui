@@ -9,6 +9,8 @@ import InputColor     from '@/components/inputs/InputColor' ;
 import ColorPicker    from '@/components/colors/ColorPicker' ;
 import ColorIndicator from '@/components/colors/ColorIndicator' ;
 
+import InputColorInModalDemo from './InputColorInModalDemo' ;
+
 /**
  * Showcase for the color picker family : InputColor, ColorPicker, ColorIndicator.
  */
@@ -111,6 +113,11 @@ const ColorDemo = () =>
                 </p>
                 <InputColor label="Vertical picker" defaultValue="#06B6D4" orientation="vertical" />
             </div>
+
+            <Divider />
+
+            {/* InputColor nested inside another Modal — nested-dialog regression */}
+            <InputColorInModalDemo />
 
             <Divider />
 

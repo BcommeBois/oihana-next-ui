@@ -1,10 +1,11 @@
 'use client' ;
 
-import { useId , useRef } from 'react'
+import { useEffect , useId , useRef , useState } from 'react'
 
 import useBreakpoint from '../../themes/hooks/useBreakpoint'
 
 import Button from '../Button'
+import Portal from '../Portal'
 
 import { MdOutlineClose as CloseIcon } from "react-icons/md";
 
@@ -106,6 +107,7 @@ const FOOTER_NODE_OVERRIDE_PROPS =
  * @param {string}  [props.responsivePlacement] - Responsive placement (e.g. `'sm:modal-middle'`).
  * @param {boolean} [props.disableBackdropClick=false] - Prevent close on backdrop click.
  * @param {boolean} [props.disableEscapeKeyDown=false] - Prevent close on `Escape`.
+ * @param {boolean} [props.portal=false] - Render the modal through a portal on `document.body`, detached from the parent DOM subtree. Required when the modal lives inside another `Modal` : two DOM-nested modal `<dialog>` elements trigger the browser's native nested-dialog handling, which closes the ancestor dialog when the inner one is used — and no JS handler can intercept it.
  * @param {string}  [props.contentClassName] - Extra classes on the content wrapper. In custom-footer mode, the default is `flex-1 min-h-0 overflow-y-auto p-2 py-4`; in standard mode, `overflow-y-auto h-full p-2 py-4`.
  * @param {string}  [props.modalBoxClassName] - Extra classes on the modal-box.
  *
@@ -166,6 +168,7 @@ const Modal = ( props ) =>
         disableEscapeKeyDown = false,
         disabled,
         onClose,
+        portal = false,
 
         // Popover mode (opt-in : render via the native Popover API instead of <dialog>)
         usePopover = false,
@@ -187,6 +190,14 @@ const Modal = ( props ) =>
 
     const dialogRef = useRef( null ) ;
     const titleId   = useId() ;
+
+    // The portal target only exists client-side : render in place until mounted
+    // (keeps SSR markup and hydration consistent — the dialog is closed and
+    // invisible at that point), then move to document.body. useModal's ref setter
+    // re-attaches its listeners when the node is swapped.
+    const [ mounted , setMounted ] = useState( false ) ;
+
+    useEffect( () => { setMounted( true ) ; } , [] ) ;
 
     const hasCustomFooter = footerNode !== undefined && footerNode !== null ;
 
@@ -423,9 +434,8 @@ const Modal = ( props ) =>
         </>
     ) ;
 
-    if ( usePopover )
-    {
-        return (
+    const node = usePopover
+        ? (
             <div
                 aria-labelledby = { showTitle && title ? titleId : undefined }
                 ref             = { handleRef }
@@ -436,21 +446,23 @@ const Modal = ( props ) =>
             >
                 { body }
             </div>
+        )
+        : (
+            <dialog
+                aria-labelledby = { showTitle && title ? titleId : undefined }
+                ref             = { handleRef }
+                className       = { modalClasses }
+                onClose         = { handleClose }
+                onCancel        = { handleEscapeKey }
+                onKeyDown       = { handleKeyDown }
+            >
+                { body }
+            </dialog>
         ) ;
-    }
 
-    return (
-        <dialog
-            aria-labelledby = { showTitle && title ? titleId : undefined }
-            ref             = { handleRef }
-            className       = { modalClasses }
-            onClose         = { handleClose }
-            onCancel        = { handleEscapeKey }
-            onKeyDown       = { handleKeyDown }
-        >
-            { body }
-        </dialog>
-    ) ;
+    return portal && mounted
+        ? <Portal>{ node }</Portal>
+        : node ;
 } ;
 
 Modal.displayName = 'Modal' ;

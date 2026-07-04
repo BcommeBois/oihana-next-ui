@@ -38,7 +38,10 @@ import { MdColorize as DefaultPickerIcon , MdClose as ClearIcon } from 'react-ic
  * make the two buttons localizable.
  *
  * The Modal (native `<dialog>`) gives a centered, backdrop-dismissable, fully
- * responsive surface that works on mobile and every browser. The picker opens in
+ * responsive surface that works on mobile and every browser. The picker modal is
+ * **portaled** to `document.body`, so `InputColor` can live inside another
+ * {@link Modal} without the browser's nested-dialog handling closing the host
+ * modal while picking a color. The picker opens in
  * the horizontal layout by default (square left, controls right) and folds back to
  * vertical on small screens ; set `orientation="vertical"` for the stacked layout.
  *
@@ -175,6 +178,7 @@ const InputColor =
                 ref               = { modalRef }
                 title             = { title }
                 maxWidth          = { isHorizontal ? 'max-w-md' : 'max-w-xs' }
+                portal
                 showFooter        = { footer }
                 agree             = { applyLabel }
                 disagree          = { cancelLabel }

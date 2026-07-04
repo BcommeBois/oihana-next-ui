@@ -27,6 +27,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 **Lab**
 - New `SortableListDemo` on `/lab/lists` (below the List demo) : uncontrolled list with drag handles, **controlled** list with whole-row dragging and live order readout, **async reorder** simulating an API call with a « Simulate API failure » toggle showing the optimistic revert, and a props reference table.
 
+**Components — Modal (`portal` prop, new) & Inputs (InputColor — nested-modal fix)**
+- Fix — **`InputColor` used inside another `Modal` no longer closes the host modal** when the picker is used (saturation / hue drag, presets, hex field, eyedropper) or dismissed (Apply / Cancel / ×, backdrop, `Escape`). The picker `<dialog>` was a DOM descendant of the host `<dialog>` — two DOM-nested modal dialogs trigger the browser's **native** nested-dialog handling, which closes the ancestor and cannot be intercepted from JS. The picker modal is now **portaled to `document.body`** : the two dialogs are siblings in the top layer, `Escape` closes the topmost first (the picker when open, then the host), and only the picker's own dismissals close it. `ColorPicker` / `Interactive` are untouched and standalone `InputColor` behaviour is strictly unchanged.
+- New — **`Modal`** accepts an optional **`portal`** prop (default `false`) : renders the modal through the existing `Portal` component onto `document.body`, detached from the parent DOM subtree, after mount (SSR / hydration-safe — until mounted the dialog renders in place, closed and invisible ; `useModal`'s ref setter re-attaches its listeners on the node swap). Works in `usePopover` mode too. **Reusable for any modal-in-modal** (`InputModal`, edit forms…) — `InputColor` passes it by default (overridable via `modalProps`).
+- Fix — **`useModal`** : the `toggle` listener now ignores `<dialog>` nodes — modern browsers fire `toggle` on dialogs too (not only on popover elements), so `onOpen` / `onClose` were called **twice** per open / close.
+- Lab — new **`InputColorInModalDemo`** regression demo in `ColorDemo` (`/lab/colors`, « InputColor inside a Modal ») : an « Éditer » host modal containing a live `InputColor` and a deferred-commit one (`footer` + `clearable`, French labels), covering the full acceptance checklist (drag, presets, hex, every dismissal path, `Escape` ordering, clear, live vs deferred commit).
+
 ## [0.2.15] — 2026-07-04
 
 **Components — Inputs (InputColor — Apply / Cancel footer, deferred commit)**

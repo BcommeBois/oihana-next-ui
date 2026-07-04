@@ -50,8 +50,15 @@ const useModal =
 
     // …a popover element fires a `toggle` event (also on declarative open via
     // `popovertarget`), so we sync `isOpen` and the callbacks from its newState.
+    // Modern browsers fire `toggle` on <dialog> elements too — those are already
+    // driven by `open()` and the `close` event, so only popover nodes are handled
+    // here (otherwise onOpen / onClose would fire twice on a dialog).
     const handleToggleEvent = useCallback(( event ) =>
     {
+        if ( !event.target?.popover )
+        {
+            return ;
+        }
         const opened = event.newState === 'open' ;
         setIsOpen( opened ) ;
         ( opened ? onOpenRef : onCloseRef ).current?.() ;
@@ -81,8 +88,9 @@ const useModal =
 
             if ( node )
             {
-                // Only the relevant event ever fires per element type ; attaching
-                // both keeps the hook agnostic of dialog vs popover.
+                // Attaching both keeps the hook agnostic of dialog vs popover ;
+                // the toggle handler ignores <dialog> nodes (modern browsers fire
+                // `toggle` on those too, `close` already drives them).
                 node.addEventListener( 'close' , handleCloseEvent ) ;
                 node.addEventListener( 'toggle' , handleToggleEvent ) ;
             }
