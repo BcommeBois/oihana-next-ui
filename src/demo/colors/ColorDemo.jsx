@@ -17,6 +17,7 @@ const ColorDemo = () =>
     const [ color      , setColor      ] = useState( '#FF5733' ) ;
     const [ colorAlpha , setColorAlpha ] = useState( '#3B82F6CC' ) ;
     const [ clearMe    , setClearMe    ] = useState( '#EF4444' ) ;
+    const [ deferred   , setDeferred   ] = useState( '#0EA5E9' ) ;
     const [ panel      , setPanel      ] = useState( '#22C55E' ) ;
     const [ horiz      , setHoriz      ] = useState( '#8B5CF6' ) ;
 
@@ -51,6 +52,24 @@ const ColorDemo = () =>
                 />
                 <p className="text-sm opacity-70">
                     Selected : <span className="font-mono">{ clearMe || '—' }</span>
+                </p>
+            </div>
+
+            {/* InputColor — footer : deferred commit, localized Apply / Cancel */}
+            <div className="flex flex-col gap-4 max-w-md">
+                <InputColor
+                    footer
+                    label       = "Deferred commit (footer)"
+                    applyLabel  = "Appliquer"
+                    cancelLabel = "Annuler"
+                    title       = "Choisir une couleur"
+                    value       = { deferred }
+                    onChange    = { setDeferred }
+                    placeholder = "FFFFFF"
+                    helper      = "footer — the picker edits a draft ; Appliquer commits it, Annuler / backdrop / Escape discard it"
+                />
+                <p className="text-sm opacity-70">
+                    Selected : <span className="font-mono">{ deferred || '—' }</span>
                 </p>
             </div>
 

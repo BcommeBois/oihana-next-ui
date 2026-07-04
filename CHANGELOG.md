@@ -8,6 +8,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.2.15] — 2026-07-04
+
+**Components — Inputs (InputColor — Apply / Cancel footer, deferred commit)**
+- **`InputColor`** now accepts an optional **`footer`** prop (default `false`) : when enabled, the picker modal gains an **Apply / Cancel footer** and switches to a **deferred commit** — the picker edits a draft seeded from the current value when the modal opens ; **Apply** commits the draft to the value, while **Cancel**, the backdrop, `Escape` or the header close button all discard it (the draft is re-seeded on the next open). Without `footer`, the live behaviour is strictly unchanged (every drag / pick updates the value immediately).
+- The buttons are **localizable** via **`applyLabel`** / **`cancelLabel`** (defaults `'Apply'` / `'Cancel'`) — same prop names as the date / time pickers (`InputDateTimePicker`…), mapped onto the existing standard footer of the `Modal` (`agree` / `disagree` / `onAgree`) : no new UI, no change to `Modal` / `ColorPicker`, **all existing usages unchanged**.
+- Lab — new « Deferred commit (footer) » example in `ColorDemo` (`/lab/colors`) : a controlled `InputColor` with `footer`, French labels (`Appliquer` / `Annuler`), localized modal title and live selected-value readout.
+
 ## [0.2.14] — 2026-07-04
 
 **Components — Inputs (InputColor — `clearable` prop)**
