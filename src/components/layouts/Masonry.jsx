@@ -1,10 +1,9 @@
 'use client' ;
 
-import isPlainObject from 'vegas-js-core/src/isPlainObject' ;
-
 import Flex from './Flex' ;
 import Grid from './Grid' ;
 import useBreakpoints, { XXL } from '../../themes/hooks/useBreakpoints' ;
+import resolveColumnCount from '../../themes/helpers/resolveColumnCount' ;
 
 /**
  * Masonry layout component that distributes children across responsive columns.
@@ -130,44 +129,7 @@ const Masonry =
 
     // --------- Determine current column count based on breakpoint
 
-    const getCurrentColumnCount = () =>
-    {
-        // If columns is a plain number, return it directly
-        if ( !isPlainObject( columns ) )
-        {
-            return columns || 1 ;
-        }
-
-        // Responsive columns object - cascade from largest to smallest
-        if ( xxl )
-        {
-            return columns?.xxl ?? columns?.xl ?? columns?.lg ?? columns?.md ?? columns?.sm ?? columns?.xs ?? 1 ;
-        }
-
-        if ( xl )
-        {
-            return columns?.xl ?? columns?.lg ?? columns?.md ?? columns?.sm ?? columns?.xs ?? 1 ;
-        }
-
-        if ( lg )
-        {
-            return columns?.lg ?? columns?.md ?? columns?.sm ?? columns?.xs ?? 1 ;
-        }
-
-        if ( md )
-        {
-            return columns?.md ?? columns?.sm ?? columns?.xs ?? 1 ;
-        }
-
-        if ( sm )
-        {
-            return columns?.sm ?? columns?.xs ?? 1 ;
-        }
-
-        return columns?.xs ?? 1 ;
-    } ;
-
-    const currentColumns = getCurrentColumnCount() ;
+    const currentColumns = resolveColumnCount( columns , { sm , md , lg , xl , xxl } ) ;
 
     // --------- Distribute children across columns
 

@@ -4,6 +4,8 @@ import Page      from '@/display/Page' ;
 import Container from '@/display/Container' ;
 import MasonryDemo from '@/demo/layouts/MasonryDemo' ;
 
+import SortableMasonryDemo from '@/demo/layouts/SortableMasonryDemo' ;
+
 /**
  * Masonry showcase page.
  */
@@ -19,6 +21,16 @@ const MasonryPage = () =>
 
         <Container maxWidth="max-w-6xl">
             <MasonryDemo />
+        </Container>
+
+        <Container className="text-center" maxWidth="max-w-4xl">
+            <h1 className="text-4xl font-bold bg-linear-to-r from-secondary to-primary inline-block text-transparent bg-clip-text">
+                Sortable Masonry Component
+            </h1>
+        </Container>
+
+        <Container maxWidth="max-w-6xl">
+            <SortableMasonryDemo />
         </Container>
     </Page>
 ) ;
