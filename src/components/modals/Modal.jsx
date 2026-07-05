@@ -98,6 +98,8 @@ const FOOTER_NODE_OVERRIDE_PROPS =
  * @param {React.ReactNode} [props.icon] - Icon shown left of the title.
  * @param {React.ReactNode} [props.headerOptions] - Extra nodes injected in the header row.
  * @param {React.ReactNode} [props.footerOptions] - Extra nodes rendered alongside agree/disagree (standard mode only).
+ * @param {(event: MouseEvent) => void} [props.onAgree] - Called with the click event when the agree button is pressed (standard mode ; ignored when `footerNode` is set).
+ * @param {(event: MouseEvent) => void} [props.onCancel] - Called with the click event when the disagree button or the header close button is pressed (standard mode ; ignored when `footerNode` is set).
  * @param {React.ReactNode} [props.footerNode] - **Custom footer** that fully replaces the standard footer. Activates the flex-column layout (sticky footer + internal content scroll). When set, all `agree*`/`disagree*`/`footer*`/`onAgree`/`onCancel`/`showFooter` props are ignored.
  * @param {React.ReactNode} [props.children] - Modal body content.
  * @param {string} [props.maxWidth='max-w-2xl'] - Tailwind max-width class for the modal-box.
@@ -107,6 +109,7 @@ const FOOTER_NODE_OVERRIDE_PROPS =
  * @param {string}  [props.responsivePlacement] - Responsive placement (e.g. `'sm:modal-middle'`).
  * @param {boolean} [props.disableBackdropClick=false] - Prevent close on backdrop click.
  * @param {boolean} [props.disableEscapeKeyDown=false] - Prevent close on `Escape`.
+ * @param {(event: Event) => void} [props.onClose] - Called with the native `close` event (or the popover `toggle` event) when the modal closes. Fires only for this modal's **own** dialog : lifecycle events bubbled up (through the React tree) from a portaled descendant modal are ignored, so dismissing a nested picker never closes its ancestor.
  * @param {boolean} [props.portal=false] - Render the modal through a portal on `document.body`, detached from the parent DOM subtree. Required when the modal lives inside another `Modal` : two DOM-nested modal `<dialog>` elements trigger the browser's native nested-dialog handling, which closes the ancestor dialog when the inner one is used — and no JS handler can intercept it.
  * @param {string}  [props.contentClassName] - Extra classes on the content wrapper. In custom-footer mode, the default is `flex-1 min-h-0 overflow-y-auto p-2 py-4`; in standard mode, `overflow-y-auto h-full p-2 py-4`.
  * @param {string}  [props.modalBoxClassName] - Extra classes on the modal-box.
@@ -252,10 +255,21 @@ const Modal = ( props ) =>
         }
     } ;
 
-    const handleAgreeClick = () =>
+    // A portaled descendant is a DOM sibling but a REACT-tree descendant, so React
+    // bubbles its close / cancel / toggle events up to THIS modal's handlers. We
+    // ignore any lifecycle event that does not emanate from OUR own node, otherwise
+    // closing an inner (portaled) modal would fire our onClose and dismiss the
+    // ancestor too. We `return` (never stopPropagation) : the guard only prevents
+    // THIS modal's onClose from firing for a foreign event, while letting it keep
+    // bubbling — composable with 3+ nested modals, and blocking no third-party
+    // listener. `dialogRef.current` is the <dialog> (or the popover element in
+    // popover mode), so a single guard covers both modes.
+    const isOwnEvent = e => e.target === dialogRef.current ;
+
+    const handleAgreeClick = e =>
     {
         closeNode() ;
-        onAgree?.() ;
+        onAgree?.( e ) ;
     } ;
 
     const handleBackdropClick = ( e ) =>
@@ -272,19 +286,32 @@ const Modal = ( props ) =>
         }
     } ;
 
-    const handleCancelClick = () =>
+    const handleCancelClick = e =>
     {
         closeNode() ;
-        onCancel?.() ;
+        onCancel?.( e ) ;
     } ;
 
-    const handleClose = () =>
+    const handleClose = e =>
     {
-        onClose?.() ;
+        if ( !isOwnEvent( e ) )
+        {
+            return ;
+        }
+
+        onClose?.( e ) ;
     } ;
 
+    // Native `cancel` event (Escape). Scoped to our own dialog so an inner portaled
+    // modal's Escape is not swallowed here — it stays handled by its own modal, and
+    // the host's `disableEscapeKeyDown` never preventDefaults the picker's Escape.
     const handleEscapeKey = event =>
     {
+        if ( !isOwnEvent( event ) )
+        {
+            return ;
+        }
+
         if ( disableEscapeKeyDown )
         {
             event.preventDefault() ;
@@ -293,6 +320,15 @@ const Modal = ( props ) =>
 
     const handleKeyDown = event =>
     {
+        // A keydown target is a child element (input…), not the <dialog>, so we use
+        // DOM containment rather than `isOwnEvent`. A portaled descendant is NOT a
+        // DOM child, so its keydown is ignored here (and stays handled by its own
+        // modal).
+        if ( !event.currentTarget.contains( event.target ) )
+        {
+            return ;
+        }
+
         if ( disableEscapeKeyDown && event.key === 'Escape' )
         {
             event.preventDefault() ;
@@ -332,15 +368,20 @@ const Modal = ( props ) =>
         ? cn( 'shrink-0 bg-base-100 border-b border-base-300/60 z-10 p-2 pb-3' , headerClassName )
         : cn( 'sticky top-0 bg-base-100 border-b border-base-300/60 z-10 p-2 pb-3' , headerClassName ) ;
 
-    // Popover mode : 'manual' disables the browser's auto-dismiss so `disableEscapeKeyDown`
-    // is honoured ; otherwise 'auto' (Escape closes natively, backdrop click via our handler).
+    // Popover mode : 'manual' disables the browser's auto-dismiss so `disableEscapeKeyDown` is honored ;
+    // otherwise 'auto' (Escape closes natively, backdrop click via our handler).
     const popoverMode = usePopover ? ( disableEscapeKeyDown ? 'manual' : 'auto' ) : undefined ;
 
-    const handlePopoverToggle = ( event ) =>
+    const handlePopoverToggle = event =>
     {
+        if ( !isOwnEvent( event ) )
+        {
+            return ;
+        }
+
         if ( event.newState === 'closed' )
         {
-            onClose?.() ;
+            onClose?.( event ) ;
         }
     } ;
 
