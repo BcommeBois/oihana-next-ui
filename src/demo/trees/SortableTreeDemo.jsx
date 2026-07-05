@@ -1,6 +1,6 @@
 'use client' ;
 
-import { useState } from 'react' ;
+import { useRef , useState } from 'react' ;
 
 import Badge    from '@/components/Badge' ;
 import Button   from '@/components/Button' ;
@@ -10,12 +10,27 @@ import Divider  from '@/components/Divider' ;
 import SortableTree     from '@/components/trees/SortableTree' ;
 import SortableTreeItem from '@/components/trees/SortableTreeItem' ;
 
+import insertNode from '@/helpers/trees/insertNode' ;
+import removeNode from '@/helpers/trees/removeNode' ;
+
 import Container from '@/display/Container' ;
 
-import { MdFolder , MdInsertDriveFile , MdUnfoldLess , MdUnfoldMore } from 'react-icons/md' ;
+import { MdAdd , MdClose , MdFolder , MdInsertDriveFile , MdUnfoldLess , MdUnfoldMore } from 'react-icons/md' ;
 
 // Ids of every node that has children (for expand-all / collapse-all).
 const folderIdsOf = ( nodes ) => nodes.flatMap( n => ( n.children?.length ? [ n.id , ...folderIdsOf( n.children ) ] : [] ) ) ;
+
+const makeCrudTree = () =>
+[
+    {
+        id : 'crud-src' , label : 'src' , type : 'folder' , children :
+        [
+            { id : 'crud-comp' , label : 'components' , type : 'folder' , children : [ { id : 'crud-btn' , label : 'Button.jsx' , type : 'file' } ] } ,
+            { id : 'crud-index' , label : 'index.js' , type : 'file' } ,
+        ] ,
+    } ,
+    { id : 'crud-readme' , label : 'README.md' , type : 'file' } ,
+] ;
 
 const makeTree = ( prefix ) =>
 [
@@ -93,6 +108,66 @@ const SortableTreeDemo = () =>
     // --------- Frozen tree (no drag, no collapse)
 
     const [ frozenTree ] = useState( () => makeTree( 'frozen' ) ) ;
+
+    // --------- Add / remove nodes dynamically
+
+    const [ crudTree , setCrudTree ]           = useState( makeCrudTree ) ;
+    const [ crudCollapsed , setCrudCollapsed ] = useState( [] ) ;
+    const crudCounter = useRef( 1 ) ;
+
+    const addChild = ( parentId ) =>
+    {
+        const n    = crudCounter.current++ ;
+        const node = { id : `crud-new-${ n }` , label : `New file ${ n }` , type : 'file' } ;
+        setCrudTree( current => insertNode( current , parentId , node ) ) ;
+        // Reveal the insertion by expanding the target folder.
+        if ( parentId != null )
+        {
+            setCrudCollapsed( ids => ids.filter( id => id !== parentId ) ) ;
+        }
+    } ;
+
+    const addFolder = ( parentId ) =>
+    {
+        const n    = crudCounter.current++ ;
+        const node = { id : `crud-new-${ n }` , label : `New folder ${ n }` , type : 'folder' , children : [] } ;
+        setCrudTree( current => insertNode( current , parentId , node ) ) ;
+        if ( parentId != null )
+        {
+            setCrudCollapsed( ids => ids.filter( id => id !== parentId ) ) ;
+        }
+    } ;
+
+    const removeItem = ( id ) => setCrudTree( current => removeNode( current , id ) ) ;
+
+    const renderCrudNode = ( node ) => (
+        <SortableTreeItem>
+            <span className="flex items-center gap-2 grow">
+                { node.type === 'folder'
+                    ? <MdFolder className="text-warning" size={ 18 } />
+                    : <MdInsertDriveFile className="opacity-50" size={ 16 } /> }
+                <span className="text-sm grow">{ node.label }</span>
+                { node.type === 'folder' && (
+                    <button
+                        type="button"
+                        aria-label={ `Add a file to ${ node.label }` }
+                        className="btn btn-ghost btn-xs btn-square"
+                        onClick={ () => addChild( node.id ) }
+                    >
+                        <MdAdd size={ 14 } />
+                    </button>
+                )}
+                <button
+                    type="button"
+                    aria-label={ `Remove ${ node.label }` }
+                    className="btn btn-ghost btn-xs btn-square text-error"
+                    onClick={ () => removeItem( node.id ) }
+                >
+                    <MdClose size={ 14 } />
+                </button>
+            </span>
+        </SortableTreeItem>
+    ) ;
 
     // --------- Controlled tree with live JSON preview
 
@@ -370,6 +445,51 @@ const SortableTreeDemo = () =>
 
                 <div className="mockup-code text-xs">
                     <pre data-prefix="1"><code>&lt;SortableTree disabled collapsible={'{ false }'} defaultItems={'{ tree }'} renderNode={'{ ... }'} /&gt;</code></pre>
+                </div>
+            </div>
+
+            <Divider />
+
+            {/* Add / remove dynamically */}
+            <div className="flex flex-col gap-4 w-full">
+                <h3 className="text-xl font-semibold border-b-2 border-secondary pb-2">
+                    Add / Remove Nodes Dynamically (insert into a subfolder)
+                </h3>
+
+                <p className="text-sm opacity-70">
+                    The tree is a controlled nested value, so add / remove are plain state updates. Each folder has a
+                    « + » button that inserts a child into <b>that folder's</b> <code className="text-xs">children</code>{' '}
+                    (targeted by its id) — the folder auto-expands to reveal it ; every node has a « × » to delete it
+                    (with its subtree). Reordering by drag still works alongside.
+                </p>
+
+                <div className="flex gap-2 flex-wrap">
+                    <Button size="sm" color="ghost" icon={ MdInsertDriveFile } onClick={ () => addChild( null ) }>
+                        Add top-level file
+                    </Button>
+                    <Button size="sm" color="ghost" icon={ MdFolder } onClick={ () => addFolder( null ) }>
+                        Add top-level folder
+                    </Button>
+                </div>
+
+                <div className="w-full max-w-lg">
+                    <SortableTree
+                        items={ crudTree }
+                        onChange={ next => setCrudTree( next ) }
+                        collapsed={ crudCollapsed }
+                        onCollapsedChange={ setCrudCollapsed }
+                        renderNode={ renderCrudNode }
+                    />
+                </div>
+
+                <div className="mockup-code text-xs">
+                    <pre data-prefix="1"><code>import insertNode from 'oihana-next-ui/helpers/trees/insertNode' ;</code></pre>
+                    <pre data-prefix="2"><code>import removeNode from 'oihana-next-ui/helpers/trees/removeNode' ;</code></pre>
+                    <pre data-prefix="3"><code></code></pre>
+                    <pre data-prefix="4"><code>{'// add into a subfolder (by id) — or null for the top level'}</code></pre>
+                    <pre data-prefix="5"><code>setTree( t =&gt; insertNode( t , folderId , newNode ) ) ;</code></pre>
+                    <pre data-prefix="6"><code>{'// remove a node and its subtree'}</code></pre>
+                    <pre data-prefix="7"><code>setTree( t =&gt; removeNode( t , nodeId ) ) ;</code></pre>
                 </div>
             </div>
 
