@@ -8,6 +8,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.4.0] — 2026-07-05
+
+**Components — Trees (SortableTree / SortableTreeItem, new — multi-level drag-and-drop reorder)**
+- New **`SortableTree`** (`components/trees/SortableTree.jsx`) — a multi-level list whose nodes can be **reordered among siblings** and **reparented** (indent / outdent) by drag and drop (pointer, touch and keyboard). Dragging a row **vertically** reorders it ; dragging it **horizontally** projects its target depth from the pointer's position, and the target parent is derived from it. Dragging a folder moves its **whole subtree** (collapsed during the drag), which also makes it structurally impossible to drop a node into its own descendants. The depth at any position is clamped so the tree stays valid (you cannot go deeper than one level below the row above, nor shallower than the row below). The whole tree is **one value** — a nested array `[ { id , children : [...] } ]` — controlled (`items` + `onChange`) or uncontrolled (`defaultItems`) ; a move produces a single `onChange( nextTree , change )` with `change = { item , fromParent , toParent , fromIndex , toIndex }`, and in uncontrolled mode a rejected promise **restores the previous tree** (optimistic revert). Nodes are declared through `renderNode( item , { depth , collapsed , childCount } )` returning a `SortableTreeItem`. Props : `indent` (px per level, default 24), `defaultCollapsed`, `handle`, `disabled`, `getItemId`. The DnD engine (`@dnd-kit/react`) stays fully encapsulated.
+- New **`SortableTreeItem`** (`components/trees/SortableTreeItem.jsx`) — the draggable row : a drag handle (default), an automatic expand/collapse chevron when the node has children, and arbitrary content. The whole card is indented per depth via `margin-inline-start` (no wasted left gutter), and follows the projected depth live while dragged. Lifted style while dragged (`TREE_ITEM_DRAGGING`).
+- New **`useSortableTree`** hook (`hooks/useSortableTree.js`) — the tree-state plumbing : nested tree controlled/uncontrolled on the `useValue` pattern, with the optimistic apply-then-revert commit.
+- New **`helpers/treeUtils.js`** — pure `flattenTree` / `buildTree` / `removeChildrenOf` / `getProjection` powering the flatten → project → rebuild cycle (a single sortable container of indented rows, rebuilt into a nested tree on drop).
+- Theme — new **`themes/components/tree.js`** module : `getTreeClasses` / `getTreeItemClasses` / `getTreeToggleClasses` / `getTreeHandleClasses` generators + `TREE*` constants.
+
+**Lab**
+- New **« Arbre » / « Tree »** entry (`/lab/tree`, list-tree icon) in the Layouts section (nav + fr/en labels) with `SortableTreeDemo` : a file-tree example (reorder + indent / outdent + collapse), a **controlled** tree with a live structure preview, and an **async change** simulating an API call with a « Simulate API failure » toggle showing the optimistic revert.
+
 ## [0.3.0] — 2026-07-04
 
 **Components — Kanban (Kanban / KanbanColumn / KanbanCard, new — drag-and-drop board)**

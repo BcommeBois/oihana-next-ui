@@ -33,6 +33,7 @@ import { TbInfinity             as InfiniteScrollIcon } from "react-icons/tb";
 import { LuLayoutDashboard      as LayoutIcon         } from "react-icons/lu";
 import { TbLayoutKanban         as KanbanIcon         } from "react-icons/tb";
 import { CiBoxList              as ListIcon           } from "react-icons/ci";
+import { LuListTree             as TreeIcon           } from "react-icons/lu";
 import { RiProgress7Line        as LoadingIcon        } from "react-icons/ri";
 import { BsFillMarkdownFill     as MarkdownIcon       } from 'react-icons/bs' ;
 import { GiDominoMask           as MaskIcon           } from "react-icons/gi";
@@ -96,6 +97,7 @@ const navigation =
                     { id : 'collapse'       , type : LINK  , Icon : CollapseIcon       , path  : '/lab/collapse'       } ,
                     { id : 'accordion'      , type : LINK  , Icon : AccordionIcon      , path  : '/lab/accordion'      } ,
                     { id : 'table'          , type : LINK  , Icon : TableIcon          , path  : '/lab/table'          } ,
+                    { id : 'tree'           , type : LINK  , Icon : TreeIcon           , path  : '/lab/tree'           } ,
                     { id : 'patterns'       , type : LINK  , Icon : PatternsIcon       , path  : '/lab/patterns'       } ,
                 ]
             } ,
