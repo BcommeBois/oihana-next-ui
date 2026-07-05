@@ -112,12 +112,15 @@ export const removeChildrenOf = ( flatItems , ids ) =>
  * @param {number} dragOffset - The horizontal drag offset in pixels.
  * @param {number} indent - The indentation width per depth level, in pixels.
  * @param {Object} [options]
- * @param {number} [options.maxDepth] - Optional global maximum depth.
+ * @param {number} [options.maxDepth] - Optional global maximum depth (already accounting for the dragged subtree height).
+ * @param {(draggedItem: *, parentItem: *|null) => boolean} [options.canNest] - Whether the dragged node may become a child of a given parent (null = top level). When it rejects the projected parent, the depth walks up to the nearest valid ancestor ; if none is valid at this position, `allowed` is false.
  *
- * @returns {{ depth: number, maxDepth: number, minDepth: number, parentId: string|number|null }|null}
+ * @returns {{ depth: number, maxDepth: number, minDepth: number, parentId: string|number|null, allowed: boolean }|null}
  */
 export const getProjection = ( flatItems , activeId , overId , dragOffset , indent , options = {} ) =>
 {
+    const { canNest } = options ;
+
     const overIndex   = flatItems.findIndex( entry => entry.id === overId ) ;
     const activeIndex = flatItems.findIndex( entry => entry.id === activeId ) ;
 
@@ -142,28 +145,18 @@ export const getProjection = ( flatItems , activeId , overId , dragOffset , inde
         maxDepth = Math.min( maxDepth , options.maxDepth ) ;
     }
 
-    let depth = projectedDepth ;
-
-    if ( depth > maxDepth )
+    // The parent id implied by a given candidate depth at this insertion position.
+    const parentIdForDepth = ( candidate ) =>
     {
-        depth = maxDepth ;
-    }
-    else if ( depth < minDepth )
-    {
-        depth = minDepth ;
-    }
-
-    const getParentId = () =>
-    {
-        if ( depth === 0 || !previousItem )
+        if ( candidate <= 0 || !previousItem )
         {
             return null ;
         }
-        if ( depth === previousItem.depth )
+        if ( candidate === previousItem.depth )
         {
             return previousItem.parentId ;
         }
-        if ( depth > previousItem.depth )
+        if ( candidate > previousItem.depth )
         {
             return previousItem.id ;
         }
@@ -171,10 +164,31 @@ export const getProjection = ( flatItems , activeId , overId , dragOffset , inde
         const parent = newItems
             .slice( 0 , overIndex )
             .reverse()
-            .find( entry => entry.depth === depth ) ;
+            .find( entry => entry.depth === candidate ) ;
 
         return parent?.parentId ?? null ;
     } ;
 
-    return { depth , maxDepth , minDepth , parentId : getParentId() } ;
+    const itemForId = ( id ) => id == null ? null : ( newItems.find( entry => entry.id === id )?.item ?? null ) ;
+
+    let depth    = Math.max( minDepth , Math.min( projectedDepth , maxDepth ) ) ;
+    let parentId = parentIdForDepth( depth ) ;
+    let allowed  = true ;
+
+    // Walk up to the nearest depth whose parent accepts the dragged node.
+    if ( typeof canNest === 'function' )
+    {
+        while ( !canNest( activeItem.item , itemForId( parentId ) ) )
+        {
+            if ( depth <= minDepth )
+            {
+                allowed = false ;
+                break ;
+            }
+            depth   -= 1 ;
+            parentId = parentIdForDepth( depth ) ;
+        }
+    }
+
+    return { depth , maxDepth , minDepth , parentId , allowed } ;
 } ;

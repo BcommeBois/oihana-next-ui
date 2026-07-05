@@ -46,6 +46,7 @@ import {
  * @param {number} [props.childCount=0] - Number of children (injected ; drives the toggle)
  * @param {string} [props.className] - Additional classes for the row
  * @param {boolean} [props.collapsed] - Whether the node is collapsed (injected)
+ * @param {boolean} [props.collapsible=true] - Whether the expand/collapse chevron is shown (injected)
  * @param {number} [props.depth=0] - Display depth of the row (injected)
  * @param {boolean} [props.disabled] - Disable dragging for this row
  * @param {boolean} [props.handle=true] - Show a drag handle (when false, the whole row is draggable)
@@ -63,6 +64,7 @@ const SortableTreeItem =
     childCount = 0 ,
     className ,
     collapsed = false ,
+    collapsible = true ,
     depth = 0 ,
     disabled = false ,
     handle = true ,
@@ -98,7 +100,7 @@ const SortableTreeItem =
                 </button>
             )}
 
-            { childCount > 0 ? (
+            { collapsible && childCount > 0 ? (
                 <button
                     aria-expanded = { !collapsed }
                     aria-label    = { toggleLabel }
