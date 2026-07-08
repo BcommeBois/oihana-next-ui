@@ -14,6 +14,9 @@ const RangeDemo = () =>
     const [ rating, setRating ] = useState( 3 ) ;
     const [ temperature, setTemperature ] = useState( 20 ) ;
 
+    const [ priceRange, setPriceRange ] = useState([ 200, 750 ]) ;
+    const [ yearRange, setYearRange ] = useState([ 2010, 2020 ]) ;
+
     return (
         <Container className="flex flex-col gap-6 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-7xl">
 
@@ -450,6 +453,103 @@ const RangeDemo = () =>
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <Divider />
+
+            {/* Dual Range (start + end) */}
+            <div className="flex flex-col gap-4">
+                <h3 className="text-xl font-semibold">Dual Range (start + end)</h3>
+                <p className="text-sm text-base-content/70">
+                    <code>range</code> — two draggable handles pick a start and an end value.
+                    <code>value</code>/<code>defaultValue</code> are <code>[start, end]</code> tuples and
+                    <code>onChange</code> returns a sorted <code>[start, end]</code>. Horizontal only.
+                </p>
+
+                {/* Uncontrolled, simple */}
+                <Range range defaultValue={[ 30, 70 ]} />
+
+                {/* Controlled price range */}
+                <Range
+                    range
+                    label="Price range"
+                    min={ 0 }
+                    max={ 1000 }
+                    step={ 10 }
+                    value={ priceRange }
+                    onChange={ setPriceRange }
+                    showValue
+                    valuePosition="top"
+                    formatValue={ (v) => `€${v}` }
+                    color="primary"
+                />
+
+                <div className="flex items-center gap-2">
+                    <span>Selected:</span>
+                    <Badge color="primary">{ priceRange[ 0 ] } → { priceRange[ 1 ] }</Badge>
+                    <button className="btn btn-sm" onClick={() => setPriceRange([ 250, 500 ])}>
+                        Reset to 250–500
+                    </button>
+                </div>
+
+                {/* Inline value + custom format */}
+                <Range
+                    range
+                    label="Year"
+                    min={ 2000 }
+                    max={ 2026 }
+                    step={ 1 }
+                    value={ yearRange }
+                    onChange={ setYearRange }
+                    showValue
+                    valuePosition="inline"
+                    color="accent"
+                />
+
+                {/* Colors */}
+                <div className="flex flex-col gap-3">
+                    <Range range label="Secondary" color="secondary" defaultValue={[ 20, 60 ]} />
+                    <Range range label="Success" color="success" defaultValue={[ 40, 80 ]} />
+                    <Range range label="Warning" color="warning" defaultValue={[ 10, 50 ]} />
+                    <Range range label="Error" color="error" defaultValue={[ 30, 90 ]} />
+                </div>
+
+                {/* Sizes */}
+                <div className="flex flex-col gap-3">
+                    <Range range label="Extra Small" size="xs" color="primary" defaultValue={[ 20, 60 ]} />
+                    <Range range label="Small" size="sm" color="primary" defaultValue={[ 25, 65 ]} />
+                    <Range range label="Medium" size="md" color="primary" defaultValue={[ 30, 70 ]} />
+                    <Range range label="Large" size="lg" color="primary" defaultValue={[ 35, 75 ]} />
+                    <Range range label="Extra Large" size="xl" color="primary" defaultValue={[ 40, 80 ]} />
+                </div>
+
+                {/* With helper + error */}
+                <Range
+                    range
+                    label="Budget"
+                    helper="Drag both handles to set a min and max"
+                    min={ 0 }
+                    max={ 5000 }
+                    step={ 100 }
+                    defaultValue={[ 1000, 3500 ]}
+                    showValue
+                    formatValue={ (v) => `€${v}` }
+                    color="success"
+                />
+
+                <Range
+                    range
+                    label="Invalid range"
+                    error="Start must be at least 500"
+                    min={ 0 }
+                    max={ 1000 }
+                    defaultValue={[ 100, 400 ]}
+                    showValue
+                    formatValue={ (v) => `€${v}` }
+                />
+
+                {/* Disabled */}
+                <Range range label="Disabled" defaultValue={[ 30, 70 ]} disabled />
             </div>
 
             <Divider />

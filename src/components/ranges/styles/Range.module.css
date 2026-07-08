@@ -1,0 +1,32 @@
+/*
+ * Dual-thumb range styling.
+ *
+ * Two DaisyUI `.range` inputs are stacked on top of each other so the user can
+ * drag a start and an end handle. DaisyUI draws its track + progress fill via
+ * the thumb box-shadow ; we neutralise both here and redraw a rail + selection
+ * bar as plain divs behind the inputs, keeping the native (and accessible)
+ * thumbs on top.
+ */
+
+.dualRange
+{
+    /* Kill DaisyUI's progress fill (the colored trail behind each thumb). */
+    --range-fill : 0 ;
+
+    /* Only the thumbs stay interactive ; the rail/selection are drawn behind. */
+    pointer-events : none ;
+
+    /* Stack every input in the same box. */
+    position : absolute ;
+    inset    : 0 ;
+    width    : 100% ;
+    margin   : 0 ;
+}
+
+/* Remove DaisyUI's track background — our own rail div renders it instead. */
+.dualRange::-webkit-slider-runnable-track { background : transparent ; }
+.dualRange::-moz-range-track               { background : transparent ; }
+
+/* Re-enable pointer interaction on the handles only. */
+.dualRange::-webkit-slider-thumb { pointer-events : auto ; }
+.dualRange::-moz-range-thumb     { pointer-events : auto ; }

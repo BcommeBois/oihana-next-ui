@@ -8,6 +8,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.5.0] — 2026-07-08
+
+**Components — Range / DualRange (dual-thumb range, new — pick a start and an end)**
+- New **`DualRange`** (`components/ranges/DualRange.jsx`) — a **dual-thumb range** : two draggable handles pick a **start** and an **end** value. `value` / `defaultValue` are a **`[start, end]`** tuple and **`onChange` receives a `[start, end]`** pair (always ordered). Controlled (`value` + `onChange`) or uncontrolled (`defaultValue`) on the existing pattern. **Horizontal only** for now (the `orientation` / `height` / marker props of the single-thumb mode do not apply). Usable **standalone** (`import DualRange from 'oihana-next-ui/components/ranges/DualRange'`) or through `Range`.
+- **`Range`** gains a **`range`** prop (default `false`) that **delegates to `DualRange`** — a convenience switch on the existing component. The single-thumb mode is **strictly unchanged**.
+- **The handles cannot cross** — the start is clamped to the end (`Math.min`) and the end to the start (`Math.max`), so they may **touch but never swap**, and the internal state stays an ordered `[start, end]` pair. When both handles jam together the **z-index of the start handle is raised in the upper half of the track** so it never stays trapped under the end handle — the pair can always be pulled apart again from either extremity.
+- Built as **two stacked DaisyUI `range` inputs** : DaisyUI's own progress fill is neutralised (`--range-fill: 0`) and its track background removed, then a **rail + a colored selection bar** are drawn behind, keeping the **native (accessible) thumbs** on top. The full DaisyUI vocabulary still applies — **`color`** (via `getBackgroundColor` for the selection bar), **`size`** (`xs → xl`, thumb + track sized accordingly), **`min` / `max` / `step`**, **`disabled`**, plus the shared chrome (`label`, `helper` / `error`, `showValue` with `top` / `inline` / `bottom`, `formatValue` applied to both bounds and joined as « start – end »).
+- New co-located **`components/ranges/styles/Range.module.css`** holding the dual-thumb overrides (neutralised fill / track, pointer-events scoped to the thumbs).
+
+**Lab**
+- New **« Dual Range (start + end) »** section on `/lab/ranges` : a simple uncontrolled range, a **controlled** price range (with a live `Badge` readout and a reset button), an inline-value year range, the full **color** and **size** matrices, `helper` / `error` states, and a disabled example.
+
 ## [0.4.0] — 2026-07-05
 
 **Components — Trees (SortableTree / SortableTreeItem, new — multi-level drag-and-drop reorder)**
