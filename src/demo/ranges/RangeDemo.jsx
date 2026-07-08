@@ -530,6 +530,22 @@ const RangeDemo = () =>
                     />
                 </div>
 
+                {/* Click on the rail moves the nearest handle */}
+                <div className="flex flex-col gap-1">
+                    <p className="text-sm text-base-content/70">
+                        Click anywhere on the rail below — the <strong>nearest handle</strong> jumps to
+                        that spot (like a native slider). Works on every dual range now.
+                    </p>
+                    <DualRange
+                        label="Click the rail"
+                        min={ 0 }
+                        max={ 100 }
+                        defaultValue={[ 30, 70 ]}
+                        showValue
+                        color="success"
+                    />
+                </div>
+
                 {/* onChangeEnd — commit on release */}
                 <div className="flex flex-col gap-2">
                     <p className="text-sm text-base-content/70">

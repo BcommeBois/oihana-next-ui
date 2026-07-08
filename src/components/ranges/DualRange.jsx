@@ -158,6 +158,28 @@ const DualRange =
     // Commit-on-release : fire once when the drag / key interaction ends.
     const handleEnd = () => onChangeEnd?.( [ lo, hi ] ) ;
 
+    // Click on the rail : move the nearest handle to the clicked position. A
+    // pointerdown landing on a thumb (target is an <input>) is left to the
+    // native drag ; only clicks on the rail / selection bar are handled here.
+    const handleTrackPointerDown = ( e ) =>
+    {
+        if ( disabled || e.target.tagName === 'INPUT' ) return ;
+
+        const rect     = e.currentTarget.getBoundingClientRect() ;
+        const fraction = Math.max( 0, Math.min( 1, ( e.clientX - rect.left ) / rect.width ) ) ;
+
+        let val = min + fraction * ( max - min ) ;
+        val = Math.round( val / step ) * step ;
+        val = Math.max( min, Math.min( max, val ) ) ;
+
+        const next = Math.abs( val - lo ) <= Math.abs( val - hi )
+            ? [ Math.min( val, hi - minGap ), hi ]
+            : [ lo, Math.max( val, lo + minGap ) ] ;
+
+        commit( next ) ;
+        onChangeEnd?.( next ) ;
+    } ;
+
     const inputProps = ( thumbValue, handler, z, ariaLabel ) => ({
         type               : 'range',
         className          : cn( rangeClasses, styles.dualRange ),
@@ -209,8 +231,9 @@ const DualRange =
                 )}
 
                 <div
-                    className={ cn( 'relative w-full', disabled && 'opacity-50' ) }
+                    className={ cn( 'relative w-full', !disabled && 'cursor-pointer', disabled && 'opacity-50' ) }
                     style={{ height : `${ thumbRem }rem` }}
+                    onPointerDown={ handleTrackPointerDown }
                 >
                     {/* Rail */}
                     <div

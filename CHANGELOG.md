@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Components — DualRange (click on the rail)**
+- **`DualRange`** now moves the **nearest handle** when the rail (or the selection bar) is **clicked / tapped**, matching the native single-thumb range behaviour that the two-input trick had removed (the inputs are `pointer-events:none` except for their thumbs). A pointerdown that lands on a thumb is still handled by the native drag ; only clicks on the track jump the closest handle to that position (snapped to `step`, clamped by `minGap`), firing `onChange` + `onChangeEnd`. The track shows a `cursor-pointer` when enabled.
+
 **Components — DualRange (`onChangeEnd`)**
 - **`DualRange`** gains an **`onChangeEnd`** prop — called once with the ordered `[start, end]` when the interaction **ends** (pointer up / touch end / key up), alongside `onChange` which keeps firing on every drag tick. Lets consumers run expensive work (an API-backed filter, a heavy recompute) on release instead of on every pixel.
 
