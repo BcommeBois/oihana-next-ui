@@ -6,6 +6,7 @@ import Container from '@/display/Container' ;
 import Badge     from '@/components/Badge' ;
 import Divider   from '@/components/Divider' ;
 import Range     from '@/components/ranges/Range' ;
+import DualRange from '@/components/ranges/DualRange' ;
 
 const RangeDemo = () =>
 {
@@ -468,6 +469,23 @@ const RangeDemo = () =>
 
                 {/* Uncontrolled, simple */}
                 <Range range defaultValue={[ 30, 70 ]} />
+
+                {/* Standalone DualRange component (same result, imported directly) */}
+                <div className="flex flex-col gap-1">
+                    <p className="text-sm text-base-content/70">
+                        Same thing via the dedicated <code>DualRange</code> component
+                        (<code>import DualRange from &apos;.../components/ranges/DualRange&apos;</code>) —
+                        no <code>range</code> prop needed.
+                    </p>
+                    <DualRange
+                        label="Standalone DualRange"
+                        min={ 0 }
+                        max={ 100 }
+                        defaultValue={[ 25, 65 ]}
+                        showValue
+                        color="secondary"
+                    />
+                </div>
 
                 {/* Controlled price range */}
                 <Range
