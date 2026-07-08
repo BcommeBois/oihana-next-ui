@@ -8,17 +8,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
-**Components — DualRange (click on the rail)**
-- **`DualRange`** now moves the **nearest handle** when the rail (or the selection bar) is **clicked / tapped**, matching the native single-thumb range behaviour that the two-input trick had removed (the inputs are `pointer-events:none` except for their thumbs). A pointerdown that lands on a thumb is still handled by the native drag ; only clicks on the track jump the closest handle to that position (snapped to `step`, clamped by `minGap`), firing `onChange` + `onChangeEnd`. The track shows a `cursor-pointer` when enabled.
+## [0.6.0] — 2026-07-08
 
-**Components — DualRange (`onChangeEnd`)**
-- **`DualRange`** gains an **`onChangeEnd`** prop — called once with the ordered `[start, end]` when the interaction **ends** (pointer up / touch end / key up), alongside `onChange` which keeps firing on every drag tick. Lets consumers run expensive work (an API-backed filter, a heavy recompute) on release instead of on every pixel.
-
-**Components — DualRange (`minGap`)**
-- **`DualRange`** gains a **`minGap`** prop (default `0`) — the minimum distance kept between the two handles. The existing non-crossing clamp is extended so the start stops at `end - minGap` and the end at `start + minGap` : useful for a price filter that must not let start and end collapse onto the same value. Assumes `max - min >= minGap`.
-
-**Components — DualRange (accessibility)**
-- **`DualRange`** now gives each handle a **distinct accessible name** and a **formatted value** for assistive tech — the two overlapping `<input type="range">` were previously announced as two identical, unlabeled sliders reading the raw number. Each thumb gets an **`aria-label`** (`« <label> — start »` / `« <label> — end »`, or `« Range start »` / `« Range end »` without a label) and an **`aria-valuetext`** built from `formatValue` (e.g. « €250 » instead of « 250 »). Two optional props, **`startAriaLabel`** / **`endAriaLabel`**, override the names (useful for i18n). Native keyboard support (arrow keys) was already there ; this only adds the announced semantics.
+**Components — DualRange (accessibility, `minGap`, `onChangeEnd`, click-to-move)**
+- **Accessibility** — each handle now gets a **distinct accessible name** and a **formatted value** for assistive tech (the two overlapping `<input type="range">` were previously announced as two identical, unlabeled sliders reading the raw number). Each thumb gets an **`aria-label`** (`« <label> — start »` / `« <label> — end »`, or `« Range start »` / `« Range end »` without a label) and an **`aria-valuetext`** built from `formatValue` (e.g. « €250 » instead of « 250 »). Two optional props, **`startAriaLabel`** / **`endAriaLabel`**, override the names (useful for i18n). Native keyboard support (arrow keys) was already there ; this only adds the announced semantics.
+- **`minGap`** (default `0`) — the minimum distance kept between the two handles. The non-crossing clamp is extended so the start stops at `end - minGap` and the end at `start + minGap` : useful for a price filter that must not let start and end collapse onto the same value. Assumes `max - min >= minGap`.
+- **`onChangeEnd`** — called once with the ordered `[start, end]` when the interaction **ends** (pointer up / touch end / key up), alongside `onChange` which keeps firing on every drag tick. Lets consumers run expensive work (an API-backed filter, a heavy recompute) on release instead of on every pixel.
+- **Click on the rail** — clicking / tapping the rail (or the selection bar) now moves the **nearest handle** to that position, matching the native single-thumb range behaviour that the two-input trick had removed (the inputs are `pointer-events:none` except for their thumbs). A pointerdown that lands on a thumb is still handled by the native drag ; only clicks on the track jump the closest handle (snapped to `step`, clamped by `minGap`), firing `onChange` + `onChangeEnd`. The track shows a `cursor-pointer` when enabled.
 
 ## [0.5.0] — 2026-07-08
 
