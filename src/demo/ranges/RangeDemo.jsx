@@ -487,6 +487,29 @@ const RangeDemo = () =>
                     />
                 </div>
 
+                {/* Accessibility: labeled handles + formatted value text */}
+                <div className="flex flex-col gap-1">
+                    <p className="text-sm text-base-content/70">
+                        Each handle is now labeled for screen readers
+                        (<code>aria-label</code> « start » / « end ») and exposes the
+                        <strong> formatted</strong> value (<code>aria-valuetext</code>, here « 5°C » / « 25°C »).
+                        Override the names with <code>startAriaLabel</code> / <code>endAriaLabel</code>.
+                        Inspect the two inputs to verify.
+                    </p>
+                    <DualRange
+                        label="Temperature"
+                        min={ -10 }
+                        max={ 40 }
+                        step={ 1 }
+                        defaultValue={[ 5, 25 ]}
+                        showValue
+                        formatValue={ (v) => `${v}°C` }
+                        startAriaLabel="Minimum temperature"
+                        endAriaLabel="Maximum temperature"
+                        color="info"
+                    />
+                </div>
+
                 {/* Controlled price range */}
                 <Range
                     range

@@ -47,6 +47,8 @@ const sortPair = ([ a, b ]) => a <= b ? [ a, b ] : [ b, a ] ;
  * @param {string} [props.rangeClassName] - Extra classes on the range inputs.
  * @param {string} [props.id] - Id applied to the start input.
  * @param {string} [props.name] - Base name ; inputs get `${name}-start` / `${name}-end`.
+ * @param {string} [props.startAriaLabel] - Accessible name of the start handle (defaults to `${label} — start`).
+ * @param {string} [props.endAriaLabel] - Accessible name of the end handle (defaults to `${label} — end`).
  *
  * @example
  * ```jsx
@@ -83,6 +85,8 @@ const DualRange =
     rangeClassName,
     id,
     name,
+    startAriaLabel,
+    endAriaLabel,
 }) =>
 {
     const isControlled = controlledValue !== undefined ;
@@ -141,14 +145,21 @@ const DualRange =
     const fmt = ( v ) => formatValue ? formatValue( v ) : v ;
     const displayValue = `${ fmt( lo ) } – ${ fmt( hi ) }` ;
 
-    const inputProps = ( thumbValue, handler, z ) => ({
-        type      : 'range',
-        className : cn( rangeClasses, styles.dualRange ),
+    // Distinct accessible names + formatted value text so a screen reader
+    // announces « <label> — start : €250 » rather than two identical sliders.
+    const startName = startAriaLabel ?? ( label ? `${ label } — start` : 'Range start' ) ;
+    const endName   = endAriaLabel   ?? ( label ? `${ label } — end`   : 'Range end'   ) ;
+
+    const inputProps = ( thumbValue, handler, z, ariaLabel ) => ({
+        type               : 'range',
+        className          : cn( rangeClasses, styles.dualRange ),
         min, max, step,
-        value     : thumbValue,
-        onChange  : handler,
+        value              : thumbValue,
+        onChange           : handler,
         disabled,
-        style     : { zIndex : z },
+        style              : { zIndex : z },
+        'aria-label'       : ariaLabel,
+        'aria-valuetext'   : String( fmt( thumbValue ) ),
     }) ;
 
     const helperOrError = ( error || helper ) && (
@@ -206,8 +217,8 @@ const DualRange =
                         }}
                     />
 
-                    <input id={ id } name={ name ? `${ name }-start` : undefined } { ...inputProps( lo, handleLow, lowZ ) } />
-                    <input name={ name ? `${ name }-end` : undefined } { ...inputProps( hi, handleHigh, 20 ) } />
+                    <input id={ id } name={ name ? `${ name }-start` : undefined } { ...inputProps( lo, handleLow, lowZ, startName ) } />
+                    <input name={ name ? `${ name }-end` : undefined } { ...inputProps( hi, handleHigh, 20, endName ) } />
                 </div>
             </div>
 

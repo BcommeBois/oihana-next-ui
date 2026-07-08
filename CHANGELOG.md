@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Components — DualRange (accessibility)**
+- **`DualRange`** now gives each handle a **distinct accessible name** and a **formatted value** for assistive tech — the two overlapping `<input type="range">` were previously announced as two identical, unlabeled sliders reading the raw number. Each thumb gets an **`aria-label`** (`« <label> — start »` / `« <label> — end »`, or `« Range start »` / `« Range end »` without a label) and an **`aria-valuetext`** built from `formatValue` (e.g. « €250 » instead of « 250 »). Two optional props, **`startAriaLabel`** / **`endAriaLabel`**, override the names (useful for i18n). Native keyboard support (arrow keys) was already there ; this only adds the announced semantics.
+
 ## [0.5.0] — 2026-07-08
 
 **Components — Range / DualRange (dual-thumb range, new — pick a start and an end)**
