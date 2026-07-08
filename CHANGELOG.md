@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Components — DualRange (`onChangeEnd`)**
+- **`DualRange`** gains an **`onChangeEnd`** prop — called once with the ordered `[start, end]` when the interaction **ends** (pointer up / touch end / key up), alongside `onChange` which keeps firing on every drag tick. Lets consumers run expensive work (an API-backed filter, a heavy recompute) on release instead of on every pixel.
+
 **Components — DualRange (`minGap`)**
 - **`DualRange`** gains a **`minGap`** prop (default `0`) — the minimum distance kept between the two handles. The existing non-crossing clamp is extended so the start stops at `end - minGap` and the end at `start + minGap` : useful for a price filter that must not let start and end collapse onto the same value. Assumes `max - min >= minGap`.
 

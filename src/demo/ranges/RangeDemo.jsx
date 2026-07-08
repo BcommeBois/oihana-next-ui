@@ -17,6 +17,7 @@ const RangeDemo = () =>
 
     const [ priceRange, setPriceRange ] = useState([ 200, 750 ]) ;
     const [ yearRange, setYearRange ] = useState([ 2010, 2020 ]) ;
+    const [ committedRange, setCommittedRange ] = useState([ 20, 80 ]) ;
 
     return (
         <Container className="flex flex-col gap-6 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-7xl">
@@ -527,6 +528,28 @@ const RangeDemo = () =>
                         formatValue={ (v) => `€${v}` }
                         color="primary"
                     />
+                </div>
+
+                {/* onChangeEnd — commit on release */}
+                <div className="flex flex-col gap-2">
+                    <p className="text-sm text-base-content/70">
+                        <code>onChangeEnd</code> fires <strong>once on release</strong> (not on every tick) —
+                        ideal for API-backed filters. Drag below : the live value updates continuously,
+                        the badge only updates when you let go.
+                    </p>
+                    <DualRange
+                        label="Filter (commits on release)"
+                        min={ 0 }
+                        max={ 100 }
+                        defaultValue={[ 20, 80 ]}
+                        showValue
+                        onChangeEnd={ setCommittedRange }
+                        color="accent"
+                    />
+                    <div className="flex items-center gap-2">
+                        <span>Committed on release:</span>
+                        <Badge color="accent">{ committedRange[ 0 ] } → { committedRange[ 1 ] }</Badge>
+                    </div>
                 </div>
 
                 {/* Controlled price range */}

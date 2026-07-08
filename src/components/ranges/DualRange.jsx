@@ -39,7 +39,8 @@ const sortPair = ([ a, b ]) => a <= b ? [ a, b ] : [ b, a ] ;
  * @param {number} [props.minGap=0] - Minimum distance kept between the two handles (e.g. a price filter that forbids start === end). Requires `max - min >= minGap`.
  * @param {[number, number]} [props.value] - Controlled `[start, end]` tuple.
  * @param {[number, number]} [props.defaultValue] - Uncontrolled initial `[start, end]` tuple.
- * @param {(pair:[number, number]) => void} [props.onChange] - Called with the ordered `[start, end]`.
+ * @param {(pair:[number, number]) => void} [props.onChange] - Called with the ordered `[start, end]` on every drag tick.
+ * @param {(pair:[number, number]) => void} [props.onChangeEnd] - Called with the ordered `[start, end]` once, on release (pointer up / key up). Use for expensive work (API calls) to avoid firing on every tick.
  * @param {boolean} [props.showValue=false] - Display the current « start – end » value.
  * @param {'top'|'inline'|'bottom'} [props.valuePosition='top'] - Where the value is displayed.
  * @param {(v:number) => (string|number)} [props.formatValue] - Formats each bound.
@@ -79,6 +80,7 @@ const DualRange =
     value: controlledValue,
     defaultValue,
     onChange,
+    onChangeEnd,
     showValue = false,
     valuePosition = 'top',
     formatValue,
@@ -153,12 +155,18 @@ const DualRange =
     const startName = startAriaLabel ?? ( label ? `${ label } — start` : 'Range start' ) ;
     const endName   = endAriaLabel   ?? ( label ? `${ label } — end`   : 'Range end'   ) ;
 
+    // Commit-on-release : fire once when the drag / key interaction ends.
+    const handleEnd = () => onChangeEnd?.( [ lo, hi ] ) ;
+
     const inputProps = ( thumbValue, handler, z, ariaLabel ) => ({
         type               : 'range',
         className          : cn( rangeClasses, styles.dualRange ),
         min, max, step,
         value              : thumbValue,
         onChange           : handler,
+        onPointerUp        : handleEnd,
+        onKeyUp            : handleEnd,
+        onTouchEnd         : handleEnd,
         disabled,
         style              : { zIndex : z },
         'aria-label'       : ariaLabel,
