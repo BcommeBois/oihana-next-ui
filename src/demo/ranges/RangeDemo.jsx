@@ -510,6 +510,25 @@ const RangeDemo = () =>
                     />
                 </div>
 
+                {/* minGap — minimum distance between handles */}
+                <div className="flex flex-col gap-1">
+                    <p className="text-sm text-base-content/70">
+                        <code>minGap</code> — the handles keep at least a fixed distance apart
+                        (here <code>minGap={ 10 }</code>, so start and end can never get closer than 10).
+                    </p>
+                    <DualRange
+                        label="Price range (min gap 10)"
+                        min={ 0 }
+                        max={ 100 }
+                        step={ 1 }
+                        minGap={ 10 }
+                        defaultValue={[ 30, 60 ]}
+                        showValue
+                        formatValue={ (v) => `€${v}` }
+                        color="primary"
+                    />
+                </div>
+
                 {/* Controlled price range */}
                 <Range
                     range

@@ -36,6 +36,7 @@ const sortPair = ([ a, b ]) => a <= b ? [ a, b ] : [ b, a ] ;
  * @param {number} [props.min=0] - Minimum bound.
  * @param {number} [props.max=100] - Maximum bound.
  * @param {number} [props.step=1] - Step increment.
+ * @param {number} [props.minGap=0] - Minimum distance kept between the two handles (e.g. a price filter that forbids start === end). Requires `max - min >= minGap`.
  * @param {[number, number]} [props.value] - Controlled `[start, end]` tuple.
  * @param {[number, number]} [props.defaultValue] - Uncontrolled initial `[start, end]` tuple.
  * @param {(pair:[number, number]) => void} [props.onChange] - Called with the ordered `[start, end]`.
@@ -74,6 +75,7 @@ const DualRange =
     min = 0,
     max = 100,
     step = 1,
+    minGap = 0,
     value: controlledValue,
     defaultValue,
     onChange,
@@ -114,9 +116,10 @@ const DualRange =
         onChange?.( next ) ;
     } ;
 
-    // Clamp so the handles never cross : the start can't pass the end and vice versa.
-    const handleLow  = ( e ) => commit([ Math.min( Number( e.target.value ), raw[ 1 ] ), raw[ 1 ] ]) ;
-    const handleHigh = ( e ) => commit([ raw[ 0 ], Math.max( Number( e.target.value ), raw[ 0 ] ) ]) ;
+    // Clamp so the handles never cross, keeping at least `minGap` between them :
+    // the start stops at `end - minGap`, the end at `start + minGap`.
+    const handleLow  = ( e ) => commit([ Math.min( Number( e.target.value ), raw[ 1 ] - minGap ), raw[ 1 ] ]) ;
+    const handleHigh = ( e ) => commit([ raw[ 0 ], Math.max( Number( e.target.value ), raw[ 0 ] + minGap ) ]) ;
 
     const hasError = Boolean( error ) ;
 
