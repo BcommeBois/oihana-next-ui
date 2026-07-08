@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
-## [0.5.0] — 2026-07-08
+## [0.6.0] — 2026-07-08
 
 **Components — Range / DualRange (dual-thumb range, new — pick a start and an end)**
 - New **`DualRange`** (`components/ranges/DualRange.jsx`) — a **dual-thumb range** : two draggable handles pick a **start** and an **end** value. `value` / `defaultValue` are a **`[start, end]`** tuple and **`onChange` receives a `[start, end]`** pair (always ordered). Controlled (`value` + `onChange`) or uncontrolled (`defaultValue`) on the existing pattern. **Horizontal only** for now (the `orientation` / `height` / marker props of the single-thumb mode do not apply). Usable **standalone** (`import DualRange from 'oihana-next-ui/components/ranges/DualRange'`) or through `Range`.
