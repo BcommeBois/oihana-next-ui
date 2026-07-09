@@ -1,10 +1,12 @@
 'use client' ;
 
-import I18nMetas from '@/components/i18n/I18nMetas.jsx';
-import useI18n   from '@/contexts/locale/useI18n.js';
-import BadgeDemo from '@/demo/BadgeDemo';
-import Container from '@/display/Container';
-import Page      from '@/display/Page' ;
+import I18nMetas      from '@/components/i18n/I18nMetas.jsx';
+import useI18n        from '@/contexts/locale/useI18n.js';
+import BadgeDemo      from '@/demo/BadgeDemo';
+import LabelBadgeDemo from '@/demo/LabelBadgeDemo';
+import Container      from '@/display/Container';
+import Divider        from '@/components/Divider' ;
+import Page           from '@/display/Page' ;
 
 /**
  * Badges showcase page.
@@ -32,6 +34,10 @@ const BadgeShowcase = ( { path = 'app.lab.badges' } ) =>
             </Container>
 
             <BadgeDemo />
+
+            <Divider />
+
+            <LabelBadgeDemo />
 
         </Page>
     ) ;

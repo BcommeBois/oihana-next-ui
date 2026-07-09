@@ -8,6 +8,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.7.0] — 2026-07-09
+
+**Components — LabelBadge (two-sided « shields.io » badge, new — a neutral label + a colored value)**
+- New **`LabelBadge`** (`components/LabelBadge.jsx`) — a **two-sided badge** in the shields.io style : a **label** segment on the left and a **value** segment on the right, each with its own color. Built on the DaisyUI **`.badge` shell** (`p-0 gap-0 overflow-hidden`) so **radius (`--radius-selector`), height, spacing, font-size and border all follow the current theme** ; the two inner segments fill the shell and are **clipped to the theme radius** (flat inner corners, rounded outer corners, no double border). Usable **standalone** (`import LabelBadge from 'oihana-next-ui/components/LabelBadge'`).
+- **Colors on both sides** — **`color`** (right) and **`labelColor`** (left, default `neutral`) each accept **either a DaisyUI token** (`primary`, `secondary`, `accent`, `info`, `success`, `warning`, `error`, `neutral` → `bg-*` + `text-*-content`) **or any custom CSS color** (`#cb3837`, `oklch(…)`, …) applied through an **inline style**. **`textColor`** / **`labelTextColor`** force the text color of each segment when needed (e.g. dark text on a light custom fill).
+- **Style variants** — **`style`** = `solid` (default), **`soft`** (`/15` tint + colored text, `color-mix` for custom colors) or **`outline`** (transparent fill, colored text, `border-l` divider). **Sizes** `xs → xl` reuse the `badge-*` classes, so the pill scales exactly like `Badge` (segment horizontal padding scales with the size).
+- **Content & element** — `label` and `value` (or `children`) accept any **ReactNode**, so an icon fits naturally on either side ; each segment carries a `gap-1` so an **icon + text** label is spaced correctly (flex collapses a literal whitespace node). **`as`** / `href` render the badge as a link (`<LabelBadge as="a" …>`), plus `className` / `labelClassName` / `valueClassName` escape hatches (merged through `tailwind-merge`).
+- **No wrap** — like `Badge` (see 0.6.1), the shell inherits **`whitespace-nowrap`** from the shared `getBadgeClassNames`, and since `white-space` cascades, **both segments stay single-line** even at `size="xs"` with a multi-word label — the pill keeps its natural width instead of wrapping and overflowing its fixed height.
+- New generator **`themes/components/labelBadge.js`** — `getLabelBadgeClassNames` (the shell), `getLabelBadgeSegment` (per-segment className + inline style) and `resolveSegment` (DaisyUI token → classes / custom CSS color → `style`). Color/size class names are kept as **full literals** so Tailwind's scanner picks them up.
+
+**Lab**
+- New **« LabelBadge Examples »** section on `/lab/badges` (below the existing `Badge` demo, split by a `Divider`) : a shields.io recreation (GitHub / Demo links with icons, npm / downloads / license), the full **size** and **DaisyUI color** matrices, **custom CSS colors** (hex + `oklch`), the three **style variants**, and **custom label colors** (token vs CSS, forced `labelTextColor`, combined with `soft` / `outline`).
+
 ## [0.6.1] — 2026-07-09
 
 **Fixed**
