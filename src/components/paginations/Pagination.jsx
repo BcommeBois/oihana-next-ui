@@ -1,11 +1,14 @@
 'use client' ;
 
-import { useId } from 'react' ;
+import { useId , useRef , useState } from 'react' ;
 
 import cn from '../../themes/helpers/cn' ;
 
+import useBreakpoint from '../../themes/hooks/useBreakpoint' ;
+
 import Button          from '../Button' ;
 import PaginationRange from './PaginationRange' ;
+import Popover , { RESPONSIVE } from '../Popover' ;
 import Typography      from '../typography/Typography' ;
 
 import getPaginationData from '../helpers/getPaginationData' ;
@@ -17,6 +20,7 @@ import {
     MdChevronRight as DefaultRightIcon ,
     MdFirstPage    as DefaultFirstPageIcon ,
     MdLastPage     as DefaultLastPageIcon ,
+    MdUnfoldMore   as DefaultJumpIcon ,
 }
 from "react-icons/md" ;
 
@@ -55,6 +59,16 @@ from "react-icons/md" ;
  *     labelAlign="start"
  *     onChange={(offset) => navigate(`/items?page=${offset}`)}
  * />
+ *
+ * // Compact below the md breakpoint, with a "go to page" modal on mobile
+ * <Pagination
+ *     limit={48}
+ *     offset={0}
+ *     total={10269}
+ *     compactBelow="md"
+ *     jumpMode="modal"
+ *     onChange={(offset) => loadData(offset)}
+ * />
  * ```
  */
 
@@ -73,6 +87,10 @@ from "react-icons/md" ;
  * @prop {string} [color='ghost'] - Button color
  * @prop {boolean} [disabled=false] - Disable all buttons
  * @prop {string} [size='sm'] - Button size
+ *
+ * @prop {boolean} [compact=false] - Force the compact layout (prev / page control / next)
+ * @prop {'sm'|'md'|'lg'|'xl'|'2xl'|false} [compactBelow=false] - Auto-switch to compact below this breakpoint (false disables the responsive switch)
+ * @prop {'input'|'modal'} [jumpMode='input'] - Page jump control in compact mode: inline number input, or a Popover (dropdown on desktop, bottom-sheet on mobile)
  *
  * @prop {boolean|string} [label=false] - Show label (true for default, string for custom)
  * @prop {'start'|'center'|'end'} [labelAlign='center'] - Label alignment when position is top/bottom
@@ -113,6 +131,10 @@ const Pagination =
     disabled = false ,
     size = 'sm' ,
 
+    compact = false ,
+    compactBelow = false ,
+    jumpMode = 'input' ,
+
     label = false ,
     labelAlign = 'center' ,
     labelClassName ,
@@ -131,14 +153,17 @@ const Pagination =
     PrevIcon = DefaultLeftIcon ,
 }) =>
 {
-    const labelId = useId() ;
+    const labelId     = useId() ;
+    const jumpFieldId = useId() ;
 
     // --------- i18n
 
     const {
         ariaLabel        : ariaLabelFromI18n    = 'Pagination navigation' ,
+        cancel           : cancelLabel          = 'Cancel' ,
         currentPage      : currentPageFromI18n  = 'Current page' ,
         first            : firstLabel           = 'First' ,
+        go               : goLabel              = 'Go' ,
         goToFirstPage    : goToFirstPageLabel   = 'Go to first page' ,
         goToLastPage     : goToLastPageLabel    = 'Go to last page' ,
         goToNextPage     : goToNextPageLabel    = 'Go to next page' ,
@@ -146,10 +171,23 @@ const Pagination =
         goToPreviousPage : goToPreviousPageLabel= 'Go to previous page' ,
         last             : lastLabel            = 'Last' ,
         next             : nextLabel            = 'Next' ,
+        of               : ofLabel              = 'of' ,
         page             : pageLabel            = 'Page' ,
+        pageNumber       : pageNumberLabel      = 'Page number' ,
         previous         : prevLabel            = 'Previous' ,
     }
     = useI18n( path ) ;
+
+    // --------- Compact mode (opt-in)
+
+    const compactBreakpoint = compactBelow || 'md' ;
+    const isAtBreakpoint    = useBreakpoint( compactBreakpoint ) ;
+    const isCompact         = compact || ( !!compactBelow && ! isAtBreakpoint ) ;
+
+    const jumpTriggerRef = useRef( null ) ;
+    const jumpInputRef   = useRef( null ) ;
+
+    const [ jumpOpen , setJumpOpen ] = useState( false ) ;
 
     // --------- Calculate pagination data
 
@@ -183,6 +221,55 @@ const Pagination =
         if ( onChange && ! disabled )
         {
             onChange( targetOffset , targetPage , paginationData ) ;
+        }
+    } ;
+
+    // --------- Jump to an arbitrary page (compact mode)
+
+    const goToPage = ( targetPage ) =>
+    {
+        const clamped      = Math.min( Math.max( 1 , targetPage ) , pageCount ) ;
+        const targetOffset = ( clamped - 1 ) * limit ;
+
+        if ( onChange && ! disabled )
+        {
+            onChange( targetOffset , clamped , paginationData ) ;
+        }
+    } ;
+
+    const commitJump = () =>
+    {
+        const value = parseInt( jumpInputRef.current?.value , 10 ) ;
+
+        if ( ! Number.isNaN( value ) )
+        {
+            goToPage( value ) ;
+        }
+    } ;
+
+    const closeJump = () => setJumpOpen( false ) ;
+
+    const applyJump = () =>
+    {
+        commitJump() ;
+        closeJump() ;
+    } ;
+
+    const handleInlineJumpKeyDown = ( event ) =>
+    {
+        if ( event.key === 'Enter' )
+        {
+            commitJump() ;
+            event.currentTarget.blur() ;
+        }
+    } ;
+
+    const handleModalJumpKeyDown = ( event ) =>
+    {
+        if ( event.key === 'Enter' )
+        {
+            event.preventDefault() ;
+            applyJump() ;
         }
     } ;
 
@@ -316,7 +403,7 @@ const Pagination =
 
     // --------- Label
 
-    const defaultLabelText = `${ pageLabel } ${ currentPage } of ${ pageCount }` ;
+    const defaultLabelText = `${ pageLabel } ${ currentPage } ${ ofLabel } ${ pageCount }` ;
 
     const labelText = labelFormat
         ? labelFormat( currentPage , pageCount , offset , total )
@@ -347,6 +434,124 @@ const Pagination =
         </Typography>
     ) ;
 
+    // --------- Compact layout (prev / page control / next)
+
+    if ( isCompact )
+    {
+        const compactPrev = (
+            <Button
+                aria-label = { goToPreviousPageLabel }
+                color      = { color }
+                disabled   = { disabled || ! hasPrev }
+                icon       = { PrevIcon }
+                onClick    = { handlePageClick( prevOffset , currentPage - 1 ) }
+                size       = { size }
+                tooltip    = { prevLabel }
+            />
+        ) ;
+
+        const compactNext = (
+            <Button
+                aria-label = { goToNextPageLabel }
+                color      = { color }
+                disabled   = { disabled || ! hasNext }
+                icon       = { NextIcon }
+                onClick    = { handlePageClick( nextOffset , currentPage + 1 ) }
+                size       = { size }
+                tooltip    = { nextLabel }
+            />
+        ) ;
+
+        // Inline number input : type a page, Enter / blur commits (clamped 1..pageCount).
+        const inlineJump = (
+            <div className="flex items-center gap-1.5">
+                <input
+                    ref          = { jumpInputRef }
+                    aria-label   = { pageNumberLabel }
+                    className    = { cn( 'input w-14 text-center' , `input-${ size }` ) }
+                    defaultValue = { currentPage }
+                    disabled     = { disabled }
+                    inputMode    = "numeric"
+                    key          = { currentPage }
+                    max          = { pageCount }
+                    min          = { 1 }
+                    onBlur       = { commitJump }
+                    onKeyDown    = { handleInlineJumpKeyDown }
+                    type         = "number"
+                />
+                <span className="whitespace-nowrap text-sm text-base-content/70">
+                    { ofLabel } { pageCount }
+                </span>
+            </div>
+        ) ;
+
+        // Trigger + Popover (dropdown on desktop, bottom-sheet on mobile).
+        const modalJump = (
+            <>
+                <button
+                    ref           = { jumpTriggerRef }
+                    aria-haspopup = "dialog"
+                    aria-label    = { goToPageLabel }
+                    className     = { cn( 'btn btn-ghost gap-1 whitespace-nowrap' , `btn-${ size }` ) }
+                    disabled      = { disabled }
+                    onClick       = { () => setJumpOpen( true ) }
+                    type          = "button"
+                >
+                    { pageLabel } { currentPage } { ofLabel } { pageCount }
+                    <DefaultJumpIcon aria-hidden="true" className="opacity-60" />
+                </button>
+
+                <Popover
+                    anchorRef   = { jumpTriggerRef }
+                    applyLabel  = { goLabel }
+                    cancelLabel = { cancelLabel }
+                    display     = { RESPONSIVE }
+                    isOpen      = { jumpOpen }
+                    onApply     = { applyJump }
+                    onCancel    = { closeJump }
+                    onClose     = { closeJump }
+                    showFooter
+                >
+                    <div className="flex flex-col gap-2 p-1">
+                        <label className="text-sm font-medium" htmlFor={ jumpFieldId }>
+                            { goToPageLabel }
+                        </label>
+                        <div className="flex items-center gap-2">
+                            <input
+                                ref          = { jumpInputRef }
+                                aria-label   = { pageNumberLabel }
+                                autoFocus
+                                className    = "input input-sm w-24"
+                                defaultValue = { currentPage }
+                                id           = { jumpFieldId }
+                                inputMode    = "numeric"
+                                key          = { `${ currentPage }-${ jumpOpen }` }
+                                max          = { pageCount }
+                                min          = { 1 }
+                                onKeyDown    = { handleModalJumpKeyDown }
+                                type         = "number"
+                            />
+                            <span className="whitespace-nowrap text-sm text-base-content/70">
+                                { ofLabel } { pageCount }
+                            </span>
+                        </div>
+                    </div>
+                </Popover>
+            </>
+        ) ;
+
+        return (
+            <nav
+                aria-label = { ariaLabelFromI18n }
+                className  = { cn( 'flex w-full min-w-0 max-w-full items-center justify-center gap-2' , className ) }
+            >
+                { compactPrev }
+                { jumpMode === 'modal' ? modalJump : inlineJump }
+                { compactNext }
+            </nav>
+        ) ;
+    }
+
     // --------- Pagination buttons group
 
     const paginationGroup = (
@@ -367,10 +572,19 @@ const Pagination =
         </div>
     ) ;
 
+    // The join is inline-flex and never wraps : keep it on one line but let it
+    // scroll **inside its own strip** on narrow widths, so it can never push the
+    // page itself into a horizontal scroll.
+    const scrollableGroup = (
+        <div className="flex min-w-0 max-w-full overflow-x-auto">
+            { paginationGroup }
+        </div>
+    ) ;
+
     // --------- Container classes based on label position
 
     const containerClasses = cn(
-        'flex gap-4' ,
+        'flex w-full min-w-0 max-w-full gap-4' ,
         {
             // Horizontal layouts (label left/right)
             'flex-row flex-wrap items-center justify-between' : labelPosition === 'right' ,
@@ -390,7 +604,7 @@ const Pagination =
             className  = { containerClasses }
         >
             { labelPosition === 'top' && labelElement }
-            { paginationGroup }
+            { scrollableGroup }
             { labelPosition !== 'top' && labelElement }
         </nav>
     ) ;

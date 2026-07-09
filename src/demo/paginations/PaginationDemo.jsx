@@ -123,6 +123,12 @@ const PaginationDemo = () =>
     const manyPagesLimit = 10 ;
     const manyPagesTotal = 1000 ; // 100 pages
 
+    // --------- Compact (mobile-safe)
+
+    const [ compactOffset , setCompactOffset ] = useState( 0 ) ;
+    const compactLimit = 48 ;
+    const compactTotal = 10269 ; // 215 pages — mirrors a large product listing
+
     return (
         <Container className="flex flex-col gap-6 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-7xl">
 
@@ -626,6 +632,69 @@ const PaginationDemo = () =>
                     <pre data-prefix="4"><code>&lt;div className="flex justify-center"&gt;</code></pre>
                     <pre data-prefix="5"><code>    &lt;Pagination /&gt;</code></pre>
                     <pre data-prefix="6"><code>&lt;/div&gt;</code></pre>
+                </div>
+            </div>
+
+            <Divider />
+
+            {/* Compact (mobile-safe) */}
+            <div className="flex flex-col gap-6">
+                <h3 className="text-xl font-semibold border-b-2 border-primary pb-2">
+                    Compact (mobile-safe)
+                </h3>
+
+                <p className="text-sm text-base-content/70">
+                    The default layout never pushes the page into a horizontal scroll: the button
+                    strip scrolls inside its own row on narrow widths. The opt-in compact mode
+                    collapses the strip to <code>‹ page control ›</code> with a jump-to-page control.
+                    Resize the window below <code>md</code> to see <code>compactBelow</code> switch.
+                </p>
+
+                {/* Responsive auto-switch */}
+                <div className="flex flex-col gap-2 p-4 bg-base-100 rounded-box">
+                    <code className="badge badge-sm">compactBelow="md" (full ≥ md, compact below)</code>
+                    <Pagination
+                        limit        = { compactLimit }
+                        offset       = { compactOffset }
+                        total        = { compactTotal }
+                        onChange     = { ( offset ) => setCompactOffset( offset ) }
+                        compactBelow = "md"
+                        label
+                    />
+                </div>
+
+                {/* Forced compact — inline input */}
+                <div className="flex flex-col gap-2 p-4 bg-base-100 rounded-box">
+                    <code className="badge badge-sm">compact jumpMode="input"</code>
+                    <Pagination
+                        limit    = { compactLimit }
+                        offset   = { compactOffset }
+                        total    = { compactTotal }
+                        onChange = { ( offset ) => setCompactOffset( offset ) }
+                        compact
+                        jumpMode = "input"
+                    />
+                </div>
+
+                {/* Forced compact — modal / popover */}
+                <div className="flex flex-col gap-2 p-4 bg-base-100 rounded-box">
+                    <code className="badge badge-sm">compact jumpMode="modal"</code>
+                    <Pagination
+                        limit    = { compactLimit }
+                        offset   = { compactOffset }
+                        total    = { compactTotal }
+                        onChange = { ( offset ) => setCompactOffset( offset ) }
+                        compact
+                        jumpMode = "modal"
+                    />
+                </div>
+
+                <div className="mockup-code text-xs">
+                    <pre data-prefix="$"><code className="text-warning">// Auto compact below the md breakpoint</code></pre>
+                    <pre data-prefix="1"><code>&lt;Pagination compactBelow="md" /&gt;</code></pre>
+                    <pre data-prefix=" "><code></code></pre>
+                    <pre data-prefix="$"><code className="text-warning">// Always compact, with a jump-to-page modal</code></pre>
+                    <pre data-prefix="2"><code>&lt;Pagination compact jumpMode="modal" /&gt;</code></pre>
                 </div>
             </div>
 

@@ -8,6 +8,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Components — Pagination (mobile overflow fix + opt-in compact mode)**
+- **Fixed — no more horizontal page scroll on narrow widths.** The `.badge`-like `.join` group is `inline-flex` and never wraps, so with many pages (or long page numbers) it could grow wider than the viewport and push the whole page into a horizontal scroll — and the right-hand `label` (« Page 1 / 214 ») could spill off-screen. The `nav` is now bounded (`w-full min-w-0 max-w-full`) and the button strip lives in its **own `overflow-x-auto` row**, so at worst the strip scrolls **inside itself** — the page never does. Behavior on desktop is unchanged.
+- **Added — opt-in `compact` layout.** New **`compact`** (force) and **`compactBelow`** (`'sm' | 'md' | … | false`, default **`false`** — the responsive switch is **off by default**) collapse the strip to **`‹ page control ›`** (previous / page control / next) for small screens.
+- **Added — jump to page.** In compact mode, **`jumpMode='input'`** (default) shows an inline, clamped number input (Enter / blur commits), and **`jumpMode='modal'`** shows a trigger that opens a `Popover` — a dropdown on desktop, a bottom-sheet on mobile — with a page field and a Go / Cancel footer.
+- **i18n** — new keys `cancel`, `go`, `of`, `pageNumber` (fr / en), and the default label separator (« of » / « sur ») is now driven by the `of` key instead of being **hard-coded in English**.
+- **Lab** — new **« Compact (mobile-safe) »** section on `/lab/pagination` : `compactBelow="md"`, plus forced `compact` with both `jumpMode="input"` and `jumpMode="modal"`.
+
 ## [0.7.1] — 2026-07-09
 
 **Components — LabelBadge (accessibility, robustness, truncation)**
