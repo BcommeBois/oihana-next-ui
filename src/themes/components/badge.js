@@ -114,13 +114,13 @@ export const BADGE = 'badge' ;
  * @example
  * ```js
  * getBadgeClassNames({ color: 'primary' }) ;
- * // → 'badge badge-primary'
+ * // → 'badge whitespace-nowrap badge-primary'
  *
  * getBadgeClassNames({ color: 'error' , style: 'outline' }) ;
- * // → 'badge badge-error badge-outline'
+ * // → 'badge whitespace-nowrap badge-error badge-outline'
  *
  * getBadgeClassNames({ color: 'info' , style: 'soft' , size: 'lg' }) ;
- * // → 'badge badge-info badge-soft badge-lg'
+ * // → 'badge whitespace-nowrap badge-info badge-soft badge-lg'
  * ```
  */
 const getBadgeClassNames =
@@ -137,6 +137,7 @@ const getBadgeClassNames =
 (
     beforeClassName ,
     BADGE ,
+    'whitespace-nowrap' ,
     {
         ...before ,
 

@@ -8,6 +8,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.6.1] — 2026-07-09
+
+**Fixed**
+- **Badge** — a badge no longer **wraps and overflows** its fixed-height pill. `.badge` (daisyUI v5) has a fixed `height` and no `white-space`, so a multi-word label (e.g. « Sur commande ») in a narrow container (a mobile table cell) wrapped to a second line that spilled outside the pill. `getBadgeClassNames` now adds a base **`whitespace-nowrap`** — kept single-line by default and **overridable** (`className='whitespace-normal'` wins through `tailwind-merge`).
+
 ## [0.6.0] — 2026-07-08
 
 **Components — Range / DualRange (dual-thumb range, new — pick a start and an end)**
