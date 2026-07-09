@@ -3,8 +3,10 @@ const pagination =
     fr :
     {
         ariaLabel        : 'Navigation par pages' ,
+        cancel           : 'Annuler' ,
         currentPage      : 'Page actuelle' ,
         first            : 'Première' ,
+        go               : 'Aller' ,
         goToFirstPage    : 'Aller à la première page' ,
         goToLastPage     : 'Aller à la dernière page' ,
         goToNextPage     : 'Aller à la page suivante' ,
@@ -12,14 +14,18 @@ const pagination =
         goToPreviousPage : 'Aller à la page précédente' ,
         last             : 'Dernière' ,
         next             : 'Suivante' ,
+        of               : 'sur' ,
         page             : 'Page' ,
+        pageNumber       : 'Numéro de page' ,
         previous         : 'Précédente' ,
     } ,
     en :
     {
         ariaLabel        : 'Pagination navigation' ,
+        cancel           : 'Cancel' ,
         currentPage      : 'Current page' ,
         first            : 'First' ,
+        go               : 'Go' ,
         goToFirstPage    : 'Go to first page' ,
         goToLastPage     : 'Go to last page' ,
         goToNextPage     : 'Go to next page' ,
@@ -27,7 +33,9 @@ const pagination =
         goToPreviousPage : 'Go to previous page' ,
         last             : 'Last' ,
         next             : 'Next' ,
+        of               : 'of' ,
         page             : 'Page' ,
+        pageNumber       : 'Page number' ,
         previous         : 'Previous' ,
     } ,
 } ;
