@@ -141,6 +141,7 @@ export const LABEL_BADGE = 'label-badge' ;
  *
  * @param {Object} [props]
  * @param {LabelBadgeColor | string} [props.color] - DaisyUI token or CSS color.
+ * @param {boolean} [props.divider] - Draw the `outline` left divider on a right segment (default `true`).
  * @param {'left' | 'right'} [props.side] - Which side the segment sits on.
  * @param {LabelBadgeStyle} [props.style] - Visual variant.
  *
@@ -149,12 +150,14 @@ export const LABEL_BADGE = 'label-badge' ;
 export const resolveSegment =
 ({
     color ,
+    divider = true ,
     side = 'right' ,
     style = SOLID ,
 }
 = {} ) =>
 {
     const isDaisy = colors.includes( color ) ;
+    const outlineDivider = side === 'right' && divider ;
 
     // Custom CSS color → inline style.
     if ( color && !isDaisy )
@@ -166,7 +169,7 @@ export const resolveSegment =
 
         if ( style === OUTLINE )
         {
-            return { className : side === 'right' ? 'border-l border-base-300' : '' , style : { color } } ;
+            return { className : outlineDivider ? 'border-l border-base-300' : '' , style : { color } } ;
         }
 
         return { className : '' , style : { backgroundColor : color , color : '#fff' } } ; // solid
@@ -181,7 +184,7 @@ export const resolveSegment =
 
     if ( style === OUTLINE )
     {
-        return { className : cn( colorText[c] , side === 'right' && 'border-l border-base-300' ) } ;
+        return { className : cn( colorText[c] , outlineDivider && 'border-l border-base-300' ) } ;
     }
 
     return { className : cn( solidBg[c] , solidText[c] ) } ; // solid
@@ -228,6 +231,7 @@ export const getLabelBadgeClassNames =
  * @param {Object} [props]
  * @param {string} [props.className] - ClassName to append.
  * @param {LabelBadgeColor | string} [props.color] - DaisyUI token or CSS color.
+ * @param {boolean} [props.divider] - Draw the `outline` left divider on a right segment (default `true`).
  * @param {'left' | 'right'} [props.side] - Which side the segment sits on.
  * @param {LabelBadgeSize} [props.size] - Badge size (drives horizontal padding).
  * @param {LabelBadgeStyle} [props.style] - Visual variant.
@@ -238,13 +242,14 @@ export const getLabelBadgeSegment =
 ({
     className ,
     color ,
+    divider = true ,
     side = 'right' ,
     size ,
     style = SOLID ,
 }
 = {} ) =>
 {
-    const { className : colorClassName , style : inlineStyle } = resolveSegment({ color , side , style }) ;
+    const { className : colorClassName , style : inlineStyle } = resolveSegment({ color , divider , side , style }) ;
 
     return {
         className : cn

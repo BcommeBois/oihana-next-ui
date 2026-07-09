@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.7.1] — 2026-07-09
+
+**Components — LabelBadge (accessibility, robustness, truncation)**
+- **Empty segment guard** — a side whose content is `null` / `undefined` is **no longer rendered**, so omitting `label` (or `value`) no longer leaves an **empty padded neutral nub** ; the badge now **degrades to a single pill**. The `outline` left divider (`border-l`) is dropped when the value stands alone (new `divider` flag threaded through `resolveSegment` / `getLabelBadgeSegment`).
+- **Accessible name** — when `label` and `value` are plain strings, an accessible name (`"<label>: <value>"`) is derived and, on the default (non-interactive) `span`, a **`role="img"`** is set so the badge is announced as a single unit instead of relying on generic-container `aria-label` (which screen readers ignore). A caller-supplied `aria-label` / `role` still wins ; on `as="a"` no `role="img"` is forced (the link already carries the name).
+- **Truncation** — new **`maxValueWidth`** prop (number → px, or a CSS width) truncates a long value (`truncate`) and adds a native **`title`** tooltip with the full text — useful for long repo paths / branch names.
+- **Docs** — JSDoc now states that **decorative icons** in `label` / `value` should be marked `aria-hidden` (or given a `title`) by the caller ; the lab demo marks its icons accordingly and gains a **« Truncation & Single-sided »** section.
+
 ## [0.7.0] — 2026-07-09
 
 **Components — LabelBadge (two-sided « shields.io » badge, new — a neutral label + a colored value)**

@@ -22,19 +22,19 @@ const LabelBadgeDemo = () =>
                     <LabelBadge
                         as="a"
                         href="https://github.com/BcommeBois/oihana-next-ui"
-                        label={ <><FaGithub /> GitHub</> }
+                        label={ <><FaGithub aria-hidden /> GitHub</> }
                         value="BcommeBois/oihana-next-ui"
                     />
                     <LabelBadge
                         as="a"
                         href="https://oihana-next-ui.vercel.app"
-                        label={ <><SiVercel /> Demo</> }
+                        label={ <><SiVercel aria-hidden /> Demo</> }
                         value="oihana-next-ui.vercel.app"
                     />
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2">
-                    <LabelBadge label={ <><FaNpm /> npm</> } value="v0.6.1" color="#cb3837" />
+                    <LabelBadge label={ <><FaNpm aria-hidden /> npm</> } value="v0.6.1" color="#cb3837" />
                     <LabelBadge label="downloads" value="9.6k" color="success" />
                     <LabelBadge label="license" value="MPL-2.0" color="warning" />
                 </div>
@@ -76,7 +76,7 @@ const LabelBadgeDemo = () =>
                 <div className="flex flex-wrap items-center gap-2">
                     <LabelBadge label="build" value="passing" color="#16a34a" />
                     <LabelBadge label="coverage" value="98%" color="#7c3aed" />
-                    <LabelBadge label={ <><MdStar /> stars</> } value="1.2k" color="#0ea5e9" />
+                    <LabelBadge label={ <><MdStar aria-hidden /> stars</> } value="1.2k" color="#0ea5e9" />
                     <LabelBadge label="hot" value="oklch(0.7 0.2 30)" color="oklch(0.7 0.2 30)" />
                 </div>
             </div>
@@ -127,6 +127,24 @@ const LabelBadgeDemo = () =>
                     <LabelBadge label="branch" value="main" labelColor="secondary" color="primary" style="soft" />
                     <LabelBadge label="branch" value="dev" labelColor="accent" color="info" style="outline" />
                     <LabelBadge label="ci" value="queued" labelColor="#7c3aed" color="#f59e0b" style="soft" />
+                </div>
+            </div>
+
+            {/* Truncation & single-sided */}
+            <div className="flex flex-col gap-4">
+                <h3 className="text-xl font-semibold">Truncation & Single-sided</h3>
+
+                {/* Long value truncated (hover for the full text) */}
+                <div className="flex flex-wrap items-center gap-2">
+                    <LabelBadge label="repo" value="BcommeBois/oihana-next-ui/tree/main/src/components" color="primary" maxValueWidth={ 180 } />
+                    <LabelBadge label="branch" value="feature/label-badge-accessibility-and-truncation" color="info" style="soft" maxValueWidth={ 160 } />
+                </div>
+
+                {/* Only one side provided → degrades to a single pill (no empty nub) */}
+                <div className="flex flex-wrap items-center gap-2">
+                    <LabelBadge value="value only" color="success" />
+                    <LabelBadge label="label only" labelColor="secondary" />
+                    <LabelBadge value="outline single" color="accent" style="outline" />
                 </div>
             </div>
 
