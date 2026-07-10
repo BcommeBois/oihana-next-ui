@@ -1,6 +1,6 @@
 'use client' ;
 
-import { useId , useRef , useState } from 'react' ;
+import { useEffect , useId , useRef , useState } from 'react' ;
 
 import cn from '../../themes/helpers/cn' ;
 
@@ -189,6 +189,17 @@ const Pagination =
 
     const [ jumpOpen , setJumpOpen ] = useState( false ) ;
 
+    // Focus (and select) the page field when the jump dialog opens.
+    useEffect( () =>
+    {
+        if ( jumpOpen )
+        {
+            jumpInputRef.current?.focus() ;
+            jumpInputRef.current?.select?.() ;
+        }
+    }
+    , [ jumpOpen ] ) ;
+
     // --------- Calculate pagination data
 
     const paginationData = getPaginationData({ offset , limit , total , pageOffset }) ;
@@ -374,17 +385,11 @@ const Pagination =
     ) ;
 
     const minRange = showMinRange && minPage > 2 && (
-        <PaginationRange
-            aria-label = { `${ pageLabel }s 2 to ${ minPage - 1 }` }
-            disabled   = { disabled }
-        />
+        <PaginationRange disabled={ disabled } />
     ) ;
 
     const maxRange = showMaxRange && maxPage < pageCount - 1 && (
-        <PaginationRange
-            aria-label = { `${ pageLabel }s ${ maxPage + 1 } to ${ pageCount - 1 }` }
-            disabled   = { disabled }
-        />
+        <PaginationRange disabled={ disabled } />
     ) ;
 
     const maxRangeButton = showMaxRange && (
@@ -419,9 +424,11 @@ const Pagination =
         end    : 'self-end' ,
     } ;
 
+    // The visible label is purely visual : announcements go through the single
+    // sr-only live region below (so page changes are announced consistently in
+    // every mode — compact / no-label included — without double-speaking).
     const labelElement = label && (
         <Typography
-            aria-live = "polite"
             as        = "div"
             className = { cn(
                 'text-sm text-base-content/70' ,
@@ -432,6 +439,13 @@ const Pagination =
         >
             { labelText }
         </Typography>
+    ) ;
+
+    // Single source of spoken page-change announcements, present in every layout.
+    const liveRegion = (
+        <span aria-atomic="true" aria-live="polite" className="sr-only">
+            { `${ pageLabel } ${ currentPage } ${ ofLabel } ${ pageCount }` }
+        </span>
     ) ;
 
     // --------- Compact layout (prev / page control / next)
@@ -520,7 +534,6 @@ const Pagination =
                             <input
                                 ref          = { jumpInputRef }
                                 aria-label   = { pageNumberLabel }
-                                autoFocus
                                 className    = "input input-sm w-24"
                                 defaultValue = { currentPage }
                                 id           = { jumpFieldId }
@@ -545,6 +558,7 @@ const Pagination =
                 aria-label = { ariaLabelFromI18n }
                 className  = { cn( 'flex w-full min-w-0 max-w-full items-center justify-center gap-2' , className ) }
             >
+                { liveRegion }
                 { compactPrev }
                 { jumpMode === 'modal' ? modalJump : inlineJump }
                 { compactNext }
@@ -572,15 +586,6 @@ const Pagination =
         </div>
     ) ;
 
-    // The join is inline-flex and never wraps : keep it on one line but let it
-    // scroll **inside its own strip** on narrow widths, so it can never push the
-    // page itself into a horizontal scroll.
-    const scrollableGroup = (
-        <div className="flex min-w-0 max-w-full overflow-x-auto">
-            { paginationGroup }
-        </div>
-    ) ;
-
     // --------- Container classes based on label position
 
     const containerClasses = cn(
@@ -603,8 +608,9 @@ const Pagination =
             aria-label = { ariaLabelFromI18n }
             className  = { containerClasses }
         >
+            { liveRegion }
             { labelPosition === 'top' && labelElement }
-            { scrollableGroup }
+            { paginationGroup }
             { labelPosition !== 'top' && labelElement }
         </nav>
     ) ;

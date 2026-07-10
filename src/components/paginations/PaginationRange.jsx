@@ -5,15 +5,17 @@ import cn from '../../themes/helpers/cn' ;
 /**
  * Pagination range indicator (...).
  *
+ * Purely **decorative** : it is `aria-hidden` so assistive tech skips the « … »
+ * (the adjacent boundary buttons — first / last page — already expose the jump),
+ * instead of announcing a labelled separator.
+ *
  * @param {Object} props
- * @param {string} [props.ariaLabel] - ARIA label for accessibility
  * @param {string} [props.className] - Additional classes
  * @param {boolean} [props.disabled=false] - Disabled state
  * @param {string} [props.label='···'] - Range indicator text
  */
 const PaginationRange =
 ({
-    ariaLabel ,
     className ,
     disabled = false ,
     label = '···' ,
@@ -21,13 +23,12 @@ const PaginationRange =
 {
     return (
         <div
-            aria-label = { ariaLabel }
-            className  = { cn(
+            aria-hidden = "true"
+            className   = { cn(
                 'flex items-center px-3 text-base-content/50' ,
                 disabled && 'opacity-30' ,
                 className
             )}
-            role = "separator"
         >
             { label }
         </div>
