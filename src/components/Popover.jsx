@@ -60,6 +60,10 @@ const GAP = 6 ;
  * @param {boolean} [props.applyDisabled=false] - Disable the Apply button.
  * @param {string} [props.applyLabel='Apply'] - Apply button label.
  * @param {string} [props.cancelLabel='Cancel'] - Cancel button label.
+ * @param {string} [props.ariaLabel] - Accessible name for the panel (when there is no visible title).
+ * @param {string} [props.ariaLabelledBy] - Id of the element that labels the panel (takes precedence over ariaLabel).
+ * @param {React.RefObject<HTMLElement>} [props.initialFocusRef] - Element to focus on open (defaults to the panel itself).
+ * @param {boolean} [props.trapFocus] - Trap Tab inside the panel (defaults to true in modal mode, false as a dropdown).
  * @param {React.ReactNode} props.children - The popover content.
  */
 const Popover =
@@ -77,11 +81,17 @@ const Popover =
     applyDisabled = false ,
     applyLabel = 'Apply' ,
     cancelLabel = 'Cancel' ,
+    ariaLabel ,
+    ariaLabelledBy ,
+    initialFocusRef ,
+    trapFocus ,
     children ,
 }) =>
 {
     const isMdUp  = useBreakpoint( 'md' ) ;
     const asModal = display === MODAL || ( display === RESPONSIVE && !isMdUp ) ;
+
+    const shouldTrap = trapFocus ?? asModal ;
 
     const panelRef = useRef( null ) ;
     const [ coords , setCoords ] = useState( null ) ;
@@ -131,6 +141,36 @@ const Popover =
                 // the popover — Escape must dismiss the topmost surface only.
                 event.preventDefault() ;
                 onClose?.() ;
+                return ;
+            }
+
+            // Focus trap (modal) : keep Tab cycling inside the panel.
+            if ( event.key === 'Tab' && shouldTrap && panelRef.current )
+            {
+                const focusables = panelRef.current.querySelectorAll(
+                    'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+                ) ;
+
+                if ( focusables.length === 0 )
+                {
+                    event.preventDefault() ;
+                    panelRef.current.focus() ;
+                    return ;
+                }
+
+                const first = focusables[ 0 ] ;
+                const last  = focusables[ focusables.length - 1 ] ;
+
+                if ( event.shiftKey && document.activeElement === first )
+                {
+                    event.preventDefault() ;
+                    last.focus() ;
+                }
+                else if ( ! event.shiftKey && document.activeElement === last )
+                {
+                    event.preventDefault() ;
+                    first.focus() ;
+                }
             }
         } ;
 
@@ -178,7 +218,36 @@ const Popover =
             window.removeEventListener( 'scroll' , onScroll , true ) ;
         } ;
     }
-    , [ isOpen , asModal , onClose , anchorRef ] ) ;
+    , [ isOpen , asModal , onClose , anchorRef , shouldTrap ] ) ;
+
+    // ---- Focus management : move focus into the panel on open and restore it to
+    // the trigger on close — a dialog should capture focus, not leave it behind.
+    useEffect( () =>
+    {
+        if ( !isOpen )
+        {
+            return ;
+        }
+
+        // Restore to whatever held focus when we opened (the trigger the user
+        // clicked) ; fall back to the anchor. Captured now, before we move focus.
+        const active    = typeof document !== 'undefined' ? document.activeElement : null ;
+        const restoreTo = ( active instanceof HTMLElement ) ? active : ( anchorRef?.current ?? null ) ;
+
+        // Next frame : the portal is mounted and (for dropdowns) positioned.
+        const raf = requestAnimationFrame( () =>
+        {
+            const target = initialFocusRef?.current ?? panelRef.current ;
+            target?.focus?.() ;
+        } ) ;
+
+        return () =>
+        {
+            cancelAnimationFrame( raf ) ;
+            restoreTo?.focus?.() ;
+        } ;
+    }
+    , [ isOpen , anchorRef , initialFocusRef ] ) ;
 
     if ( !isOpen )
     {
@@ -227,8 +296,13 @@ const Popover =
                     {/* biome-ignore lint/a11y/useKeyWithClickEvents: same — keyboard dismissal goes through Escape, not the backdrop */}
                     <div className="absolute inset-0 bg-black/40" onClick={ onClose } />
                     <div
-                        ref       = { panelRef }
-                        className = { cn( 'relative z-10 w-fit max-w-full border border-base-300 bg-base-100 p-3 shadow-xl rounded-box' , panelClassName ) }
+                        ref             = { panelRef }
+                        aria-label      = { ariaLabel }
+                        aria-labelledby = { ariaLabelledBy }
+                        aria-modal      = "true"
+                        className       = { cn( 'relative z-10 w-fit max-w-full border border-base-300 bg-base-100 p-3 shadow-xl rounded-box' , panelClassName ) }
+                        role            = "dialog"
+                        tabIndex        = { -1 }
                     >
                         { children }
                         { footer }
@@ -241,9 +315,13 @@ const Popover =
     return (
         <Portal containerRef={ containerRef }>
             <div
-                ref       = { panelRef }
-                className = { cn( 'fixed z-60 w-fit max-w-[calc(100vw-12px)] border border-base-300 bg-base-100 p-3 shadow-lg rounded-box' , panelClassName ) }
-                style     = { coords ? { top : coords.top , left : coords.left } : { top : 0 , left : 0 , visibility : 'hidden' } }
+                ref             = { panelRef }
+                aria-label      = { ariaLabel }
+                aria-labelledby = { ariaLabelledBy }
+                className       = { cn( 'fixed z-60 w-fit max-w-[calc(100vw-12px)] border border-base-300 bg-base-100 p-3 shadow-lg rounded-box' , panelClassName ) }
+                role            = "dialog"
+                style           = { coords ? { top : coords.top , left : coords.left } : { top : 0 , left : 0 , visibility : 'hidden' } }
+                tabIndex        = { -1 }
             >
                 { children }
                 { footer }

@@ -8,6 +8,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.7.2] — 2026-07-10
+
+**Components — Popover (dialog accessibility)**
+- **The floating panel is now a proper dialog.** It gets **`role="dialog"`** (plus **`aria-modal="true"`** in the modal / bottom-sheet branch), and new **`ariaLabel`** / **`ariaLabelledBy`** props give it an accessible name. Previously the trigger advertised `aria-haspopup="dialog"` but the panel had no dialog semantics.
+- **Focus management.** On open, focus moves **into** the panel (a new **`initialFocusRef`** prop, else the panel itself — `tabIndex={-1}`) ; on close, focus is **restored** to whatever held it when the popover opened (the trigger). In the modal branch, **Tab is trapped** inside the panel (new **`trapFocus`** prop, defaulting to `true` as a modal / `false` as a dropdown).
+- Fully backward-compatible — every consumer (`InputDatePicker`, `InputTimePicker`, `InputDateRangePicker`, `InputDateTimePicker`, `Pagination`) benefits without code changes. The pagination « go to page » dialog now passes `ariaLabel` + `initialFocusRef`, replacing its own focus effect.
+
 **Components — Pagination (mobile overflow fix + opt-in compact mode)**
 - **Fixed — no more horizontal page scroll on narrow widths.** When the pagination sits inside a flex parent, the `nav` could not shrink (`min-width: auto`), so the `.join` strip + the right-hand `label` (« Page 1 / 214 ») were laid out on a single line that pushed the whole page into a horizontal scroll and sent the label off-screen. The `nav` is now bounded (`w-full min-w-0 max-w-full`), so `flex-wrap` drops the label to its own line instead of overflowing — **no scroll container, no scrollbar**. Desktop is unchanged; the compact mode below is the intended path for genuinely tiny screens.
 - **Added — opt-in `compact` layout.** New **`compact`** (force) and **`compactBelow`** (`'sm' | 'md' | … | false`, default **`false`** — the responsive switch is **off by default**) collapse the strip to **`‹ page control ›`** (previous / page control / next) for small screens.

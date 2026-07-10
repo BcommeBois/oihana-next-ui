@@ -1,6 +1,6 @@
 'use client' ;
 
-import { useEffect , useId , useRef , useState } from 'react' ;
+import { useId , useRef , useState } from 'react' ;
 
 import cn from '../../themes/helpers/cn' ;
 
@@ -197,17 +197,6 @@ const Pagination =
     const jumpInputRef   = useRef( null ) ;
 
     const [ jumpOpen , setJumpOpen ] = useState( false ) ;
-
-    // Focus (and select) the page field when the jump dialog opens.
-    useEffect( () =>
-    {
-        if ( jumpOpen )
-        {
-            jumpInputRef.current?.focus() ;
-            jumpInputRef.current?.select?.() ;
-        }
-    }
-    , [ jumpOpen ] ) ;
 
     // --------- Calculate pagination data
 
@@ -564,14 +553,16 @@ const Pagination =
                 </button>
 
                 <Popover
-                    anchorRef   = { jumpTriggerRef }
-                    applyLabel  = { goLabel }
-                    cancelLabel = { cancelLabel }
-                    display     = { RESPONSIVE }
-                    isOpen      = { jumpOpen }
-                    onApply     = { applyJump }
-                    onCancel    = { closeJump }
-                    onClose     = { closeJump }
+                    anchorRef       = { jumpTriggerRef }
+                    applyLabel      = { goLabel }
+                    ariaLabel       = { goToPageLabel }
+                    cancelLabel     = { cancelLabel }
+                    display         = { RESPONSIVE }
+                    initialFocusRef = { jumpInputRef }
+                    isOpen          = { jumpOpen }
+                    onApply         = { applyJump }
+                    onCancel        = { closeJump }
+                    onClose         = { closeJump }
                     showFooter
                 >
                     <div className="flex flex-col gap-2 p-1">
@@ -589,6 +580,7 @@ const Pagination =
                                 key          = { `${ currentPage }-${ jumpOpen }` }
                                 max          = { pageCount }
                                 min          = { 1 }
+                                onFocus      = { ( event ) => event.target.select() }
                                 onKeyDown    = { handleModalJumpKeyDown }
                                 type         = "number"
                             />
