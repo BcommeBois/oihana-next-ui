@@ -8,6 +8,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.7.3] — 2026-07-10
+
+**Hooks — `useServiceWorkerUpdate` (PWA « update available » detection)**
+- **New hook** driving the canonical PWA update flow. It registers the Service Worker, watches for a newer worker parking in `waiting` (`updatefound` → `installed` with an existing `controller`), and exposes reactive `updateAvailable` + an imperative `applyUpdate()` that posts `SKIP_WAITING` to the waiting worker and reloads exactly once on `controllerchange`. Optionally reads a `/version.json` manifest (no-store) to surface the *next* version number. Proactively calls `registration.update()` on a timer and on tab refocus so long-lived tabs notice a release without a navigation. Renders no UI — the consuming app owns the modal / banner and its i18n. Exposes a named `SKIP_WAITING_MESSAGE` for the SW contract. `ServiceWorker` stays for register-only use.
+
+**Scaffolds — Service Worker templates + `inject-version`**
+- **Update-ready by default.** `sw.minimal.template.js` / `sw.offline.template.js` no longer call `skipWaiting()` unconditionally — the new worker waits and swaps on a `{ type: 'SKIP_WAITING' }` message, which is what `useServiceWorkerUpdate` drives.
+- **Injectable cache prefix.** `CACHE_NAME` now uses a `__CACHE_PREFIX__` placeholder instead of a hard-coded `oihana-ui`. `inject-version` reads `package.json` `pwa.cachePrefix` (default `app`) and also emits `public/version.json`. Consuming apps set their own prefix in `package.json` — no more hand-editing the copied template.
+
 ## [0.7.2] — 2026-07-10
 
 **Components — Popover (dialog accessibility)**

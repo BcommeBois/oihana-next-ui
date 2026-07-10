@@ -21,6 +21,11 @@ import { useEffect } from "react" ;
  * Registers the service worker on mount.
  * Renders nothing — this is a side-effect-only component.
  *
+ * Register-only : it does NOT detect updates. For the « update available →
+ * reload » flow (new-version modal / banner), use the `useServiceWorkerUpdate`
+ * hook instead — it registers the SW itself and surfaces `updateAvailable` +
+ * `applyUpdate()`.
+ *
  * @param {Object} props
  * @param {string} [props.path='/sw.js'] - Service worker file path.
  * @param {RegistrationOptions} [props.options] - Service worker registration options.
@@ -47,21 +52,24 @@ const ServiceWorker =
  }) =>
 {
     useEffect( () =>
+    {
+        if ( !( 'serviceWorker' in navigator ) )
         {
-            if ( !( 'serviceWorker' in navigator ) ) return ;
-
-            navigator.serviceWorker
-                .register( path , options )
-                .then( registration =>
-                {
-                    console.log( 'Service Worker registered, scope:' , registration.scope ) ;
-                })
-                .catch( error =>
-                {
-                    console.error( 'Service Worker registration failed:' , error ) ;
-                }) ;
+            return ;
         }
-        , [ path , options ] ) ;
+
+        navigator.serviceWorker
+        .register( path , options )
+        .then( registration =>
+        {
+            console.log( 'Service Worker registered, scope:' , registration.scope ) ;
+        })
+        .catch( error =>
+        {
+            console.error( 'Service Worker registration failed:' , error ) ;
+        }) ;
+    }
+    , [ path , options ] ) ;
 
     return null ;
 } ;

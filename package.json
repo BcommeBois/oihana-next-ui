@@ -136,6 +136,7 @@
     "stage": "git add -A && git diff-index --quiet HEAD || git commit -m 'chore: prepare release'"
   },
   "pwa": {
-    "offline": true
+    "offline": true,
+    "cachePrefix": "oihana-ui"
   }
 }
