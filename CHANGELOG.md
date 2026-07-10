@@ -16,7 +16,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - **a11y — page changes are now always announced.** A single visually-hidden `aria-live="polite"` region announces « Page X of Y » on every change, in **every** layout — including the default (no visible `label`) and compact modes, where screen-reader users previously got **no feedback**. The visible `label` is now purely visual (its own `aria-live` is dropped) so nothing is double-spoken.
 - **a11y — the « … » range indicator is now decorative** (`aria-hidden`) instead of a labelled `role="separator"`, so assistive tech skips the noise (the first / last boundary buttons already expose the jump).
 - **a11y — the jump dialog focuses the page field on open** (via effect, not `autoFocus`).
-- **Lab** — new **« Compact (mobile-safe) »** section on `/lab/pagination` : `compactBelow="md"`, plus forced `compact` with both `jumpMode="input"` and `jumpMode="modal"`.
+- **Added — range summary (`showRange`).** Shows the item range (« 1–48 of 10269 ») as the label instead of « Page X of Y » — the layout / positioning is shared with the existing `label` (a custom `labelFormat` still wins).
+- **Added — items-per-page selector (`pageSizes` + `onLimitChange`).** When `pageSizes` (e.g. `[24, 48, 96, 200]`) is passed, a compact `<select>` is rendered ; changing it fires `onLimitChange( limit, paginationData )`. New i18n key `perPage` (fr / en). In compact mode the summary + selector stack on their own row above the controls.
+- **Lab** — new **« Compact (mobile-safe) »** and **« Range Summary & Page Size »** sections on `/lab/pagination`.
 
 ## [0.7.1] — 2026-07-09
 

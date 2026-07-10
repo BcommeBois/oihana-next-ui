@@ -17,6 +17,7 @@ const pagination =
         of               : 'sur' ,
         page             : 'Page' ,
         pageNumber       : 'Numéro de page' ,
+        perPage          : 'Par page' ,
         previous         : 'Précédente' ,
     } ,
     en :
@@ -36,6 +37,7 @@ const pagination =
         of               : 'of' ,
         page             : 'Page' ,
         pageNumber       : 'Page number' ,
+        perPage          : 'Per page' ,
         previous         : 'Previous' ,
     } ,
 } ;

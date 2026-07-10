@@ -129,6 +129,18 @@ const PaginationDemo = () =>
     const compactLimit = 48 ;
     const compactTotal = 10269 ; // 215 pages — mirrors a large product listing
 
+    // --------- Range summary + page size
+
+    const [ p3Offset , setP3Offset ] = useState( 0 ) ;
+    const [ p3Limit  , setP3Limit  ] = useState( 48 ) ;
+    const p3Total = 10269 ;
+
+    const handleP3LimitChange = ( limit ) =>
+    {
+        setP3Limit( limit ) ;
+        setP3Offset( 0 ) ; // back to page 1 when the page size changes
+    } ;
+
     return (
         <Container className="flex flex-col gap-6 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-7xl">
 
@@ -695,6 +707,74 @@ const PaginationDemo = () =>
                     <pre data-prefix=" "><code></code></pre>
                     <pre data-prefix="$"><code className="text-warning">// Always compact, with a jump-to-page modal</code></pre>
                     <pre data-prefix="2"><code>&lt;Pagination compact jumpMode="modal" /&gt;</code></pre>
+                </div>
+            </div>
+
+            <Divider />
+
+            {/* Range Summary & Page Size */}
+            <div className="flex flex-col gap-6">
+                <h3 className="text-xl font-semibold border-b-2 border-secondary pb-2">
+                    Range Summary & Page Size
+                </h3>
+
+                <p className="text-sm text-base-content/70">
+                    <code>showRange</code> shows the item range (« 1–48 of 10269 ») instead of the page
+                    number, and <code>pageSizes</code> renders an items-per-page selector
+                    (<code>onLimitChange</code> fires on change). Both are opt-in and independent.
+                </p>
+
+                {/* showRange + pageSizes */}
+                <div className="flex flex-col gap-2 p-4 bg-base-100 rounded-box">
+                    <code className="badge badge-sm">showRange + pageSizes</code>
+                    <Pagination
+                        limit         = { p3Limit }
+                        offset        = { p3Offset }
+                        total         = { p3Total }
+                        onChange      = { ( offset ) => setP3Offset( offset ) }
+                        showRange
+                        pageSizes     = { [ 24 , 48 , 96 , 200 ] }
+                        onLimitChange = { handleP3LimitChange }
+                    />
+                </div>
+
+                {/* showRange only */}
+                <div className="flex flex-col gap-2 p-4 bg-base-100 rounded-box">
+                    <code className="badge badge-sm">showRange only</code>
+                    <Pagination
+                        limit    = { p3Limit }
+                        offset   = { p3Offset }
+                        total    = { p3Total }
+                        onChange = { ( offset ) => setP3Offset( offset ) }
+                        showRange
+                    />
+                </div>
+
+                {/* compact + range + page size */}
+                <div className="flex flex-col gap-2 p-4 bg-base-100 rounded-box">
+                    <code className="badge badge-sm">compact + showRange + pageSizes</code>
+                    <Pagination
+                        limit         = { p3Limit }
+                        offset        = { p3Offset }
+                        total         = { p3Total }
+                        onChange      = { ( offset ) => setP3Offset( offset ) }
+                        compact
+                        showRange
+                        pageSizes     = { [ 24 , 48 , 96 , 200 ] }
+                        onLimitChange = { handleP3LimitChange }
+                    />
+                </div>
+
+                <div className="mockup-code text-xs">
+                    <pre data-prefix="1"><code>&lt;Pagination</code></pre>
+                    <pre data-prefix="2"><code>    limit         = {'{ limit }'}</code></pre>
+                    <pre data-prefix="3"><code>    offset        = {'{ offset }'}</code></pre>
+                    <pre data-prefix="4"><code>    total         = {'{ 10269 }'}</code></pre>
+                    <pre data-prefix="5"><code>    onChange      = {'{ ( offset ) => setOffset( offset ) }'}</code></pre>
+                    <pre data-prefix="6"><code>    showRange</code></pre>
+                    <pre data-prefix="7"><code>    pageSizes     = {'{ [ 24, 48, 96, 200 ] }'}</code></pre>
+                    <pre data-prefix="8"><code>    onLimitChange = {'{ ( limit ) => { setLimit( limit ) ; setOffset( 0 ) } }'}</code></pre>
+                    <pre data-prefix="9"><code>/&gt;</code></pre>
                 </div>
             </div>
 

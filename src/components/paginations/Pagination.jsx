@@ -92,6 +92,10 @@ from "react-icons/md" ;
  * @prop {'sm'|'md'|'lg'|'xl'|'2xl'|false} [compactBelow=false] - Auto-switch to compact below this breakpoint (false disables the responsive switch)
  * @prop {'input'|'modal'} [jumpMode='input'] - Page jump control in compact mode: inline number input, or a Popover (dropdown on desktop, bottom-sheet on mobile)
  *
+ * @prop {boolean} [showRange=false] - Show an item-range summary (« 1–48 of 10269 ») as the label instead of « Page X of Y »
+ * @prop {number[]} [pageSizes] - When provided, render an items-per-page `<select>`
+ * @prop {Function} [onLimitChange] - Callback when the page size changes: (limit, paginationData) => void
+ *
  * @prop {boolean|string} [label=false] - Show label (true for default, string for custom)
  * @prop {'start'|'center'|'end'} [labelAlign='center'] - Label alignment when position is top/bottom
  * @prop {string} [labelClassName] - Label classes
@@ -135,6 +139,10 @@ const Pagination =
     compactBelow = false ,
     jumpMode = 'input' ,
 
+    onLimitChange ,
+    pageSizes ,
+    showRange = false ,
+
     label = false ,
     labelAlign = 'center' ,
     labelClassName ,
@@ -174,6 +182,7 @@ const Pagination =
         of               : ofLabel              = 'of' ,
         page             : pageLabel            = 'Page' ,
         pageNumber       : pageNumberLabel      = 'Page number' ,
+        perPage          : perPageLabel         = 'Per page' ,
         previous         : prevLabel            = 'Previous' ,
     }
     = useI18n( path ) ;
@@ -406,15 +415,24 @@ const Pagination =
         </Button>
     ) ;
 
-    // --------- Label
+    // --------- Label / range summary
+
+    const rangeStart = offset + 1 ;
+    const rangeEnd   = Math.min( offset + limit , total ) ;
+    const rangeText  = `${ rangeStart }–${ rangeEnd } ${ ofLabel } ${ total }` ;
 
     const defaultLabelText = `${ pageLabel } ${ currentPage } ${ ofLabel } ${ pageCount }` ;
 
     const labelText = labelFormat
         ? labelFormat( currentPage , pageCount , offset , total )
-        : typeof label === 'string'
-            ? label
-            : defaultLabelText ;
+        : showRange
+            ? rangeText
+            : typeof label === 'string'
+                ? label
+                : defaultLabelText ;
+
+    // `showRange` shows the label even when `label` was not explicitly passed.
+    const showLabelElement = !!label || showRange ;
 
     // Label alignment classes for top/bottom positions
     const labelAlignClasses =
@@ -427,7 +445,7 @@ const Pagination =
     // The visible label is purely visual : announcements go through the single
     // sr-only live region below (so page changes are announced consistently in
     // every mode — compact / no-label included — without double-speaking).
-    const labelElement = label && (
+    const labelElement = showLabelElement && (
         <Typography
             as        = "div"
             className = { cn(
@@ -446,6 +464,36 @@ const Pagination =
         <span aria-atomic="true" aria-live="polite" className="sr-only">
             { `${ pageLabel } ${ currentPage } ${ ofLabel } ${ pageCount }` }
         </span>
+    ) ;
+
+    // --------- Items-per-page selector (opt-in)
+
+    const hasPageSizes = Array.isArray( pageSizes ) && pageSizes.length > 0 ;
+
+    const handleLimitChange = ( event ) =>
+    {
+        const nextLimit = parseInt( event.target.value , 10 ) ;
+
+        if ( ! disabled && ! Number.isNaN( nextLimit ) )
+        {
+            onLimitChange?.( nextLimit , paginationData ) ;
+        }
+    } ;
+
+    const pageSizeControl = hasPageSizes && (
+        <label className="flex items-center gap-2 whitespace-nowrap text-sm text-base-content/70">
+            { perPageLabel }
+            <select
+                className = { cn( 'select w-auto' , `select-${ size }` ) }
+                disabled  = { disabled }
+                onChange  = { handleLimitChange }
+                value     = { limit }
+            >
+                { pageSizes.map( ( n ) => (
+                    <option key={ n } value={ n }>{ n }</option>
+                ) ) }
+            </select>
+        </label>
     ) ;
 
     // --------- Compact layout (prev / page control / next)
@@ -553,15 +601,43 @@ const Pagination =
             </>
         ) ;
 
+        const controlsRow = (
+            <div className="flex items-center justify-center gap-2">
+                { compactPrev }
+                { jumpMode === 'modal' ? modalJump : inlineJump }
+                { compactNext }
+            </div>
+        ) ;
+
+        // When a range summary and / or a page-size selector are enabled, stack a
+        // top row (summary — selector) above the controls, so nothing fights the
+        // controls for horizontal space on a narrow screen.
+        if ( showRange || hasPageSizes )
+        {
+            return (
+                <nav
+                    aria-label = { ariaLabelFromI18n }
+                    className  = { cn( 'flex w-full min-w-0 max-w-full flex-col gap-2' , className ) }
+                >
+                    { liveRegion }
+                    <div className="flex items-center justify-between gap-3">
+                        { showRange
+                            ? <span className="text-sm text-base-content/70">{ rangeText }</span>
+                            : <span /> }
+                        { pageSizeControl }
+                    </div>
+                    { controlsRow }
+                </nav>
+            ) ;
+        }
+
         return (
             <nav
                 aria-label = { ariaLabelFromI18n }
                 className  = { cn( 'flex w-full min-w-0 max-w-full items-center justify-center gap-2' , className ) }
             >
                 { liveRegion }
-                { compactPrev }
-                { jumpMode === 'modal' ? modalJump : inlineJump }
-                { compactNext }
+                { controlsRow }
             </nav>
         ) ;
     }
@@ -570,7 +646,7 @@ const Pagination =
 
     const paginationGroup = (
         <div
-            aria-describedby = { label ? labelId : undefined }
+            aria-describedby = { showLabelElement ? labelId : undefined }
             className        = "join"
             role             = "group"
         >
@@ -612,6 +688,7 @@ const Pagination =
             { labelPosition === 'top' && labelElement }
             { paginationGroup }
             { labelPosition !== 'top' && labelElement }
+            { pageSizeControl }
         </nav>
     ) ;
 } ;
