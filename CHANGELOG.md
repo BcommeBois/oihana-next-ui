@@ -8,6 +8,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.7.4] — 2026-07-16
+
+**Hooks — `useResetScroll` (instant scroll reset on route change)**
+- **Fixed — white band on navigation.** The default `behavior` changed from `'smooth'` to `'auto'`. On a route change the outgoing (longer) page stays mounted while the incoming (shorter) RSC arrives ; a smooth animation therefore ran *during* the page swap and, mid-animation, exposed an unpainted band below the new, shorter content until the scroll landed at the top. An instant reset jumps to the top before the swap, so the content is already aligned — no band. `Drawer` (the only consumer) benefits with no code change. Callers that genuinely want a smooth *intra-page* reset (same content height, no page substitution) can still pass `behavior='smooth'` explicitly.
+
 ## [0.7.3] — 2026-07-10
 
 **Hooks — `useServiceWorkerUpdate` (PWA « update available » detection)**
