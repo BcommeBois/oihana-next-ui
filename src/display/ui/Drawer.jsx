@@ -1,6 +1,17 @@
 /**
  * Drawer layout component for DaisyUI.
  *
+ * Note — `drawer-content` MUST keep its `relative` class. daisyUI's `.drawer` grid is
+ * `position:relative` while `.drawer-content` is unpositioned by default. An absolutely
+ * positioned descendant (e.g. `Pagination`'s `sr-only` live region, a JS-less tooltip…)
+ * would then take `.drawer` as its containing block — which sits *above* the scroll
+ * container. `overflow` only clips descendants whose containing block is the scroll
+ * container or below it, so such an element escapes `drawer-content`'s `overflow-y-auto`
+ * clip, settles at its static position (bottom of a long list) and inflates the drawer's
+ * scrollable height — leaving any outer scroll wrapper adrift in empty space. Making
+ * `drawer-content` `relative` re-anchors those descendants on it, restoring the clip.
+ * Do not remove `relative` in a refactor.
+ *
  * @module display/Drawer
  * @see https://daisyui.com/components/drawer
  */
@@ -126,7 +137,7 @@ const Drawer =
 
     const contentClassNames = cn
     (
-        'drawer-content flex flex-col h-dvh min-w-0 overflow-y-auto' ,
+        'drawer-content relative flex flex-col h-dvh min-w-0 overflow-y-auto' ,
         contentClassName ,
     ) ;
 

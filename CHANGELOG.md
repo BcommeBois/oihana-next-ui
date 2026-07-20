@@ -8,6 +8,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.7.5] — 2026-07-20
+
+**Components — Drawer (phantom scroll fix)**
+- **Fixed — stray scrollable overflow inside a Drawer.** `drawer-content` now carries `relative`, making it the containing block of its absolutely-positioned descendants (e.g. `Pagination`'s `sr-only` live region). Without it, such a descendant anchored on the daisyUI `.drawer` grid instead — which sits *above* the scroll container, so `overflow-y-auto` could not clip it. It settled at its static position (bottom of a long list) and inflated the drawer's scrollable height, letting any outer scroll wrapper drift through empty space. Anchoring on `drawer-content` restores the clip. No API change.
+
 ## [0.7.4] — 2026-07-16
 
 **Hooks — `useResetScroll` (instant scroll reset on route change)**
