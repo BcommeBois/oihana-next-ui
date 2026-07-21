@@ -8,6 +8,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Navigation — `menu-title` sections (new item type)**
+- **New `title` navigation item type.** The data-driven navigation model now accepts `{ type: 'title', label, Icon?, className? }`, rendered as a non-interactive **`<li class="menu-title">`** section heading, so a menu can group its items under labelled sections alongside `link` / `collapse` / `divider`. New `TITLE` constant in `contexts/navigation/types.js`, new `display/ui/navigation/Title.jsx`, wired into the item registry. Labels are localized automatically through `mapI18nItem` (via the item `id`), like every other item. `menu-title` is a native DaisyUI class — no safelist entry needed.
+- **Lab** — new **« Menu sections (menu-title) »** section on `/lab/menus` (a sidebar-style structured menu combining titles, links, a divider and a collapse).
+
+**Dependencies**
+- Bumped **DaisyUI 5.6.2 → 5.7.0** (adds the `menu-paged` modifier), Tailwind CSS 4.3.1 → 4.3.3, React / React-DOM 19.2.3 → 19.2.7, motion 12.42.0 → 12.42.2, react-icons 5.6.0 → 5.7.0, sanitize-html 2.17.5 → 2.17.6.
+
 **Components — MenuNavigation (native DaisyUI active state)**
 - **Fixed — the active menu item now uses `menu-active`.** `MenuLink` applied the bare `active` class, a DaisyUI 4 leftover that DaisyUI 5's menu no longer styles, so the active item rendered with no highlight. It now emits **`menu-active`**, the correct DaisyUI 5 modifier. No API change.
 - **Lab** — new **« État actif (menu-active) »** card on `/lab/menus` (the middle item points to the current route, so the native active style is always visible). The main sidebar (`display/ui/navigation`) is untouched — it keeps its subtle custom active style by design and can still opt into the native look via `activeClassName="menu-active"`.
