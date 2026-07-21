@@ -53,7 +53,7 @@ const MenuLink =
 {
     const linkClasses = cn(
         className ,
-        active && 'active' ,
+        active && 'menu-active' ,
         disabled && 'pointer-events-none opacity-40' ,
     ) ;
 

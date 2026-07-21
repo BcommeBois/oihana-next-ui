@@ -1,8 +1,12 @@
+'use client' ;
+
 /**
  * MenuNavigation demo component.
  *
  * @module demo/MenuNavigationDemo
  */
+
+import { usePathname } from 'next/navigation' ;
 
 import MenuNavigation from '@/components/menus/MenuNavigation' ;
 
@@ -31,8 +35,33 @@ const menuItemsWithSettings =
 
 export default function MenuNavigationDemo()
 {
+    const pathname = usePathname() ;
+
+    // The middle item points to the current route so it renders with the
+    // native DaisyUI `menu-active` class, whatever the lab path is.
+    const activeItems =
+    [
+        { id: 'dashboard' , label: 'Dashboard' , icon: <HomeIcon /> , path: '/dashboard' } ,
+        { id: 'current' , label: 'Page courante (active)' , icon: <ServicesIcon /> , path: pathname } ,
+        { id: 'contact' , label: 'Contact' , icon: <ContactIcon /> , path: '/contact' } ,
+    ] ;
+
     return (
         <>
+
+            {/* Active item (menu-active) */}
+            <div className="card bg-base-200 shadow-xl">
+                <div className="card-body">
+                    <h2 className="card-title text-sm">MenuNavigation - État actif (menu-active)</h2>
+                    <MenuNavigation
+                        items={ activeItems }
+                        orientation="vertical"
+                        size="md"
+                        showIcon
+                        showLabel
+                    />
+                </div>
+            </div>
 
             {/* Horizontal */}
             <div className="card bg-base-200 shadow-xl">

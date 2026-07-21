@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Components — MenuNavigation (native DaisyUI active state)**
+- **Fixed — the active menu item now uses `menu-active`.** `MenuLink` applied the bare `active` class, a DaisyUI 4 leftover that DaisyUI 5's menu no longer styles, so the active item rendered with no highlight. It now emits **`menu-active`**, the correct DaisyUI 5 modifier. No API change.
+- **Lab** — new **« État actif (menu-active) »** card on `/lab/menus` (the middle item points to the current route, so the native active style is always visible). The main sidebar (`display/ui/navigation`) is untouched — it keeps its subtle custom active style by design and can still opt into the native look via `activeClassName="menu-active"`.
+
 ## [0.7.5] — 2026-07-20
 
 **Components — Drawer (phantom scroll fix)**
