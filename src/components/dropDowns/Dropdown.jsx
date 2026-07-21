@@ -300,21 +300,21 @@ const Dropdown =
         ? trigger( { open , toggle , close } )
         : trigger
             ? (
-                <div
-                    role      = "button"
-                    tabIndex  = { 0 }
-                    onClick   = { toggle }
-                    onKeyDown = { e =>
-                    {
-                        if ( e.key === 'Enter' || e.key === ' ' )
-                        {
-                            e.preventDefault() ;
-                            toggle() ;
-                        }
-                    } }
+                // A real <button> (not a role="button" div): clicking it
+                // takes focus, which is what drives DaisyUI's
+                // `dropdown-content` reveal (its `@starting-style` opacity
+                // transition only fires reliably via `:focus`/`:focus-within`).
+                // Kept as a bare inline-flex reset so the caller's own
+                // trigger markup provides the visual.
+                <button
+                    type          = "button"
+                    className     = "inline-flex cursor-pointer appearance-none border-0 bg-transparent p-0"
+                    onClick       = { toggle }
+                    aria-haspopup = "menu"
+                    aria-expanded = { open }
                 >
                     { trigger }
-                </div>
+                </button>
             )
             : (
                 <button
