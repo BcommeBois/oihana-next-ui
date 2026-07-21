@@ -4,6 +4,7 @@ import CollapsePersistenceDemo from '@/demo/menus/CollapsePersistenceDemo';
 import FlagMenuDemo            from '@/demo/menus/FlagMenuDemo';
 import MenuNavigationDemo      from '@/demo/menus/MenuNavigationDemo';
 import MenuTitleDemo           from '@/demo/menus/MenuTitleDemo';
+import PagedMenuDemo           from '@/demo/menus/PagedMenuDemo';
 import Container               from '@/display/Container' ;
 import Page                    from '@/display/Page' ;
 
@@ -46,6 +47,14 @@ const ToastsShowcase = ({ path = 'app.test' }) =>
                 <h2 className="text-2xl font-bold">Menu sections (menu-title)</h2>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     <MenuTitleDemo />
+                </div>
+            </Container>
+
+            {/* Paged menu (drill-down) Demo */}
+            <Container className="flex flex-col gap-4">
+                <h2 className="text-2xl font-bold">Paged menu (menu-paged)</h2>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <PagedMenuDemo />
                 </div>
             </Container>
 

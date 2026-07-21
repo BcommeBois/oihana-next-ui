@@ -14,6 +14,7 @@ import NavigationContext from '../../../contexts/navigation/context' ;
 import containsActivePath from '../../../contexts/navigation/helpers/containsActivePath' ;
 
 import Menu from './Menu' ;
+import PagedContext from './PagedContext' ;
 
 /**
  * Default style applied to the `<summary>` of a collapse whose subtree
@@ -77,6 +78,7 @@ const Collapse =
     // NavigationProvider (legacy / standalone usage). In that case the
     // context is null and we silently fall back to the legacy behaviour.
     const navigation = use( NavigationContext ) ;
+    const paged      = use( PagedContext ) ;
 
     const isControlled       = typeof openProp === 'boolean' ;
     const isProviderManaged  = !isControlled && navigation !== null && typeof id === 'string' && id.length > 0 ;
@@ -92,6 +94,14 @@ const Collapse =
     else if ( isProviderManaged )
     {
         open = navigation.getCollapseOpen( id , item ) ;
+    }
+    else if ( paged )
+    {
+        // Paged (menu-paged) drill-down: leave the <details> native and
+        // uncontrolled (undefined → starts closed, toggled by the browser
+        // on summary click). The CSS `:has(details[open])` handles the
+        // one-level-at-a-time reveal and the Back button.
+        open = undefined ;
     }
     else
     {

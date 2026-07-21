@@ -8,6 +8,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Components — `PagedMenu` (drill-down navigation, new — DaisyUI `menu-paged`)**
+- New **`PagedMenu`** (`components/menus/PagedMenu.jsx`) — a **vertical drill-down menu** built on DaisyUI 5.7's **`menu-paged`** modifier: only one level shows at a time, and an open group's `<summary>` turns into a **Back** button. Pure CSS (`:has(details[open])`) — **no JavaScript state**. It reuses the data-driven navigation model (`link` / `collapse` / `divider` / `title` items) and the recursive `Menu` renderer. Usable standalone (`import PagedMenu from 'oihana-next-ui/components/menus/PagedMenu'`).
+- **Vertical only** — `menu-paged` is a vertical pattern (horizontal breaks the reveal), so orientation is intentionally not exposed.
+- **`getMenuClasses` gains a `paged` flag** (`themes/navigation/menu.js`) → emits `menu-paged`.
+- **`Collapse` gains a paged branch.** A new `PagedContext` (`display/ui/navigation/PagedContext.js`, default `false`) tells `Collapse` to render its `<details>` **native and uncontrolled** (starts closed, toggled by the browser) instead of forcing it open or reading the `NavigationProvider`. Additive and opt-in: every existing menu (sidebar, persistence demo) is unaffected.
+- **Lab** — new **« Paged menu (menu-paged) »** section on `/lab/menus` (a 3-level drill-down: Produits → Électronique → Téléphones/Ordinateurs).
+
 **Navigation — `menu-title` sections (new item type)**
 - **New `title` navigation item type.** The data-driven navigation model now accepts `{ type: 'title', label, Icon?, className? }`, rendered as a non-interactive **`<li class="menu-title">`** section heading, so a menu can group its items under labelled sections alongside `link` / `collapse` / `divider`. New `TITLE` constant in `contexts/navigation/types.js`, new `display/ui/navigation/Title.jsx`, wired into the item registry. Labels are localized automatically through `mapI18nItem` (via the item `id`), like every other item. `menu-title` is a native DaisyUI class — no safelist entry needed.
 - **Lab** — new **« Menu sections (menu-title) »** section on `/lab/menus` (a sidebar-style structured menu combining titles, links, a divider and a collapse).

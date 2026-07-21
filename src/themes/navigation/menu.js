@@ -17,6 +17,9 @@
  * - lg:menu-xs | lg:menu-sm | lg:menu-md | lg:menu-lg
  * - xl:menu-xs | xl:menu-sm | xl:menu-md | xl:menu-lg
  * - 2xl:menu-xs | 2xl:menu-sm | 2xl:menu-md | 2xl:menu-lg
+ *
+ * ## Modifiers
+ * - menu-paged
  */
 
 import cn from '../helpers/cn' ;
@@ -66,6 +69,7 @@ export const getMenuSize = getResponsiveDefinition(
  * @param {string} [props.beforeClassName] - ClassName to prepend.
  * @param {string} [props.className] - ClassName to append.
  * @param {MenuOrientation | Object.<string, MenuOrientation>} [props.orientation] - Menu orientation (horizontal, vertical).
+ * @param {boolean} [props.paged] - Adds `menu-paged` (drill-down: one level at a time, open summary becomes a Back button). Vertical menus only.
  * @param {MenuSize | Object.<string, MenuSize>} [props.size] - Menu size (xs, sm, md, lg).
  *
  * @returns {string} The composed menu class name string.
@@ -80,6 +84,9 @@ export const getMenuSize = getResponsiveDefinition(
  *
  * getMenuClasses({ size: { xs: 'sm' , lg: 'lg' } , className: 'bg-base-200' }) ;
  * // → 'menu menu-sm lg:menu-lg bg-base-200'
+ *
+ * getMenuClasses({ paged: true , size: 'md' }) ;
+ * // → 'menu menu-paged menu-md'
  * ```
  */
 export const getMenuClasses =
@@ -87,12 +94,14 @@ export const getMenuClasses =
     beforeClassName ,
     className ,
     orientation ,
+    paged ,
     size ,
 }
 = {} ) => cn
 (
     'menu' ,
     beforeClassName ,
+    paged && 'menu-paged' ,
     orientation && getMenuOrientation( orientation ) ,
     size && getMenuSize( size ) ,
     className ,
