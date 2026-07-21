@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.7.6] — 2026-07-21
+
 **Components — `Dropdown` (generic menu-in-a-dropdown, new)**
 - New reusable **`Dropdown`** (`components/dropDowns/Dropdown.jsx`) — composes the DaisyUI `dropdown` shell with a **`<ul class="dropdown-content menu">`** panel, unlike the bespoke `LangDropDown` / `DisplayDropDown` (which render a `card` of buttons). Data-driven items reuse the native menu modifiers: **`menu-active`** for the active row, **`menu-disabled`** for a disabled one, **`menu-title`** for a section heading; a `divider` type draws a separator. An item with `href` renders a `next/link`, otherwise a `<button>`.
 - Controlled open state with the proven pattern from `DisplayDropDown` (toggle on trigger, close on outside click / Escape / item select), optional viewport-aware **`autoPosition`** (`useDropdownPosition`), and `placement` / `direction` via `getDropdownClassNames`. Trigger is either the default `btn` (from `label` / `triggerIcon`) or a custom node / render function.
