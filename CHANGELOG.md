@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Components — `Dropdown` (generic menu-in-a-dropdown, new)**
+- New reusable **`Dropdown`** (`components/dropDowns/Dropdown.jsx`) — composes the DaisyUI `dropdown` shell with a **`<ul class="dropdown-content menu">`** panel, unlike the bespoke `LangDropDown` / `DisplayDropDown` (which render a `card` of buttons). Data-driven items reuse the native menu modifiers: **`menu-active`** for the active row, **`menu-disabled`** for a disabled one, **`menu-title`** for a section heading; a `divider` type draws a separator. An item with `href` renders a `next/link`, otherwise a `<button>`.
+- Controlled open state with the proven pattern from `DisplayDropDown` (toggle on trigger, close on outside click / Escape / item select), optional viewport-aware **`autoPosition`** (`useDropdownPosition`), and `placement` / `direction` via `getDropdownClassNames`. Trigger is either the default `btn` (from `label` / `triggerIcon`) or a custom node / render function.
+- The root is sized to its trigger (`w-fit`) so the panel anchors on the trigger even inside a stretching flex parent.
+- **Lab** — new **« Dropdown (menu-in-a-dropdown) »** section on `/lab/menus`.
+
 **Components — `PagedMenu` (drill-down navigation, new — DaisyUI `menu-paged`)**
 - New **`PagedMenu`** (`components/menus/PagedMenu.jsx`) — a **vertical drill-down menu** built on DaisyUI 5.7's **`menu-paged`** modifier: only one level shows at a time, and an open group's `<summary>` turns into a **Back** button. Pure CSS (`:has(details[open])`) — **no JavaScript state**. It reuses the data-driven navigation model (`link` / `collapse` / `divider` / `title` items) and the recursive `Menu` renderer. Usable standalone (`import PagedMenu from 'oihana-next-ui/components/menus/PagedMenu'`).
 - **Vertical only** — `menu-paged` is a vertical pattern (horizontal breaks the reveal), so orientation is intentionally not exposed.

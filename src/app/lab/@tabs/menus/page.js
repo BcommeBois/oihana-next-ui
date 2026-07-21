@@ -1,6 +1,7 @@
 'use client' ;
 
 import CollapsePersistenceDemo from '@/demo/menus/CollapsePersistenceDemo';
+import DropdownDemo            from '@/demo/menus/DropdownDemo';
 import FlagMenuDemo            from '@/demo/menus/FlagMenuDemo';
 import MenuNavigationDemo      from '@/demo/menus/MenuNavigationDemo';
 import MenuTitleDemo           from '@/demo/menus/MenuTitleDemo';
@@ -47,6 +48,14 @@ const ToastsShowcase = ({ path = 'app.test' }) =>
                 <h2 className="text-2xl font-bold">Menu sections (menu-title)</h2>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     <MenuTitleDemo />
+                </div>
+            </Container>
+
+            {/* Generic Dropdown Demo */}
+            <Container className="flex flex-col gap-4">
+                <h2 className="text-2xl font-bold">Dropdown (menu-in-a-dropdown)</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <DropdownDemo />
                 </div>
             </Container>
 
