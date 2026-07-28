@@ -47,6 +47,7 @@ import { MdAnimation            as MotionIcon         } from "react-icons/md";
 import { BiFoodMenu             as NavigationIcon     } from "react-icons/bi";
 import { MdOutlineNetworkWifi   as NetworkIcon        } from "react-icons/md";
 import { TfiLayoutMenu          as PaginationIcon     } from "react-icons/tfi";
+import { TbLayoutSidebarRightExpand as PanelIcon      } from "react-icons/tb";
 import { FaBarsProgress         as ProgressIcon       } from "react-icons/fa6";
 import { RiProgress5Line        as RadialProgressIcon } from "react-icons/ri";
 import { IoMdRadioButtonOn      as RadioIcon          } from "react-icons/io";
@@ -81,6 +82,7 @@ const navigation =
                     { id : 'buttons' , type : LINK  , Icon : ButtonIcon , path  : '/lab/buttons' } ,
                     { id : 'fab'     , type : LINK  , Icon : FabIcon    , path  : '/lab/fab'     } ,
                     { id : 'modals'  , type : LINK  , Icon : ModalIcon  , path  : '/lab/modals'  } ,
+                    { id : 'panels'  , type : LINK  , Icon : PanelIcon  , path  : '/lab/panels'  } ,
                 ]
             } ,
             {

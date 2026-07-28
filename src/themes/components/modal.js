@@ -58,11 +58,12 @@ export const getModalClasses =
  * Generates modal-box class names.
  *
  * @param {Object} [props]
- * @param {string} [props.maxWidth] - Max width class (e.g., 'max-w-5xl')
+ * @param {string} [props.maxWidth] - Max width class (e.g., 'max-w-5xl'). Ignored by the `start` / `end` side placements — size those with `width`.
  * @param {boolean} [props.fullScreen] - Full screen mode
  * @param {boolean} [props.fullWidth] - Full width mode
  * @param {string} [props.placement] - Modal placement (for centering logic)
  * @param {boolean} [props.flexLayout] - Switch the modal-box to a vertical flex column so a sticky custom footer + scrollable content area can be composed cleanly. Used by `<Modal footerNode>`.
+ * @param {string} [props.width] - Explicit width class for the `start` / `end` side placements (e.g. `'w-full sm:w-[28rem]'`). Ignored by every other placement.
  * @param {string} [props.className] - Additional classes
  *
  * @returns {string} Combined class names
@@ -75,20 +76,35 @@ export const getModalBoxClasses =
     fullWidth ,
     maxWidth,
     placement ,
+    width ,
 }
-= {} ) => cn
-(
-    MODAL_BOX ,
-    'px-4 pt-1 pb-3',
-    {
-        'max-w-none w-full max-h-none h-full rounded-none' : fullScreen ,
-        'w-full max-w-none'                                : !fullScreen && fullWidth ,
-        'mx-auto'                                          : !fullScreen && !fullWidth && ( placement === 'top' || placement === 'bottom' ) ,
-        [ maxWidth ]                                       : !fullScreen && !fullWidth && maxWidth ,
-        'flex flex-col overflow-hidden'                    : flexLayout ,
-    },
-    className,
-) ;
+= {} ) =>
+{
+    // `modal-start` / `modal-end` are full-height side panels, not centered boxes, and
+    // daisyUI sizes them `width:auto; height:100vh`. We take over both axes :
+    //
+    // - `width` — without it the panel is shrink-to-fit, so it would jump in width as
+    //   its content changes (an emptying cart, a loading list…).
+    // - `h-dvh` — `100vh` ignores the mobile URL bar, which pushes the bottom of the
+    //   panel (a `footerNode` CTA, typically) under the fold on iOS.
+    const isSide = placement === 'start' || placement === 'end' ;
+
+    return cn
+    (
+        MODAL_BOX ,
+        'px-4 pt-1 pb-3',
+        {
+            'max-w-none w-full max-h-none h-full rounded-none' : fullScreen ,
+            'w-full max-w-none'                                : !fullScreen && fullWidth ,
+            'h-dvh max-h-none'                                 : !fullScreen && isSide ,
+            [ width ]                                          : !fullScreen && !fullWidth && isSide && width ,
+            'mx-auto'                                          : !fullScreen && !fullWidth && ( placement === 'top' || placement === 'bottom' ) ,
+            [ maxWidth ]                                       : !fullScreen && !fullWidth && !isSide && maxWidth ,
+            'flex flex-col overflow-hidden'                    : flexLayout ,
+        },
+        className,
+    ) ;
+} ;
 
 /**
  * Generates modal-action class names.

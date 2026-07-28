@@ -8,6 +8,21 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Components — `SidePanel` (off-canvas side panel, new)**
+- New **`SidePanel`** (`components/panels/SidePanel.jsx`) — a **full-height panel sliding in from the start or end edge** of the viewport, for product carts, invoice details or filter panels. It is a thin preset over **`Modal`** (same shape as `ConfirmModal` / `AlertModal`), because DaisyUI's **`modal-start` / `modal-end`** placements already style a full-height panel with its slide transition — `SidePanel` only fixes their sizing defaults and picks sensible values. Defaults: `placement="end"`, `width="w-full sm:w-[28rem]"`, `fullScreenBreakpoint="sm"` (full-screen sheet on phones). Every other `Modal` prop is forwarded.
+- **Built on `<dialog>`, not on the DaisyUI `drawer`.** The panel opens in the browser's **top layer**, so it sits above any page `z-index` — an app-shell `drawer-side` included — and is immune to the `position:fixed` containing block a transformed ancestor would otherwise create. `.drawer-side` is a plain `position:fixed` element with `z-index:10`, so a drawer-based panel would have to arbitrate stacking by hand, and would break inside any animated wrapper.
+- **Stacks natively.** A confirmation modal can be opened above the panel by giving the inner one **`portal`** — the existing escape hatch for DOM-nested dialogs, which the browser's native nested-dialog handling would otherwise close together with its ancestor.
+- **New `modeless` option (opt-in, default off).** By default the panel is modal: the page behind is inert and scroll-locked, which is what a cart wants. With `modeless` it opens through the **Popover API** instead — still in the top layer, but the page stays interactive, for a detail panel the user keeps open while browsing the list it belongs to.
+- **Lab** — new **`/lab/panels`** page (under *Actions*): placement + switchable widths, a cart with a pinned total and a stacked removal confirmation, and a modeless panel next to a live counter.
+
+**Themes — `getModalBoxClasses` (sizing for the `start` / `end` placements)**
+- **New `width` option.** DaisyUI sizes side panels `width:auto`, i.e. shrink-to-fit, so a panel would jump in width as its content changed (an emptying cart, a list still loading). `width` pins it. It applies to the `start` / `end` placements only.
+- **`h-dvh` replaces DaisyUI's `100vh`** on side placements: `100vh` ignores the mobile URL bar, which pushed the bottom of the panel — a `footerNode` call to action, typically — under the fold on iOS.
+- **`maxWidth` is now ignored for side placements**, where it has no meaning, and `width` takes over. Strictly additive otherwise: `getModalBoxClasses` has a single caller (`Modal`) and no existing modal uses `placement="start"` or `"end"`, so every other placement emits exactly the same classes as before.
+
+**Components — `Modal` (new `width` prop)**
+- **New `width` prop**, forwarded to `getModalBoxClasses` and honored by the `start` / `end` placements only. Elsewhere `maxWidth` still governs. No behavior change for existing modals.
+
 ## [0.7.6] — 2026-07-21
 
 **Components — `Dropdown` (generic menu-in-a-dropdown, new)**

@@ -102,7 +102,8 @@ const FOOTER_NODE_OVERRIDE_PROPS =
  * @param {(event: MouseEvent) => void} [props.onCancel] - Called with the click event when the disagree button or the header close button is pressed (standard mode ; ignored when `footerNode` is set).
  * @param {React.ReactNode} [props.footerNode] - **Custom footer** that fully replaces the standard footer. Activates the flex-column layout (sticky footer + internal content scroll). When set, all `agree*`/`disagree*`/`footer*`/`onAgree`/`onCancel`/`showFooter` props are ignored.
  * @param {React.ReactNode} [props.children] - Modal body content.
- * @param {string} [props.maxWidth='max-w-2xl'] - Tailwind max-width class for the modal-box.
+ * @param {string} [props.maxWidth='max-w-2xl'] - Tailwind max-width class for the modal-box. Ignored when `placement` is `'start'` or `'end'` — size those with `width`.
+ * @param {string} [props.width] - Tailwind width class for the `'start'` / `'end'` side placements (e.g. `'w-full sm:w-[28rem]'`). daisyUI sizes those panels shrink-to-fit, so without it the panel width follows its content. Ignored by every other placement. See `<SidePanel>` for a ready-made preset.
  * @param {boolean} [props.fullScreen] - Force full-screen modal.
  * @param {string}  [props.fullScreenBreakpoint] - Tailwind breakpoint below which the modal becomes full-screen (e.g. `'md'`).
  * @param {string}  [props.placement='middle'] - `'top'` | `'middle'` | `'bottom'` | `'start'` | `'end'`.
@@ -158,6 +159,7 @@ const Modal = ( props ) =>
         placement = 'middle',
         responsivePlacement,
         maxWidth = 'max-w-2xl',
+        width,
         fullScreen,
         fullScreenBreakpoint,
         fullWidth,
@@ -344,6 +346,7 @@ const Modal = ( props ) =>
 
     const modalBoxClasses = getModalBoxClasses({
         maxWidth,
+        width,
         fullScreen : isFullScreen,
         fullWidth,
         placement  : responsivePlacement || placement,
