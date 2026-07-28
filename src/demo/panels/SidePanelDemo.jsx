@@ -5,7 +5,6 @@ import { useState } from 'react' ;
 import Badge        from '@/components/Badge' ;
 import Button       from '@/components/Button' ;
 import ConfirmModal from '@/components/modals/ConfirmModal' ;
-import Modal        from '@/components/modals/Modal' ;
 import SidePanel    from '@/components/panels/SidePanel' ;
 import useModal     from '@/components/modals/hooks/useModal' ;
 
@@ -268,84 +267,6 @@ const CartSection = () =>
 CartSection.displayName = 'CartSection' ;
 
 /**
- * `modeless` : the panel stays in the top layer but the page behind keeps working.
- * The counter proves interactivity ; the nested modal probes whether the popover's
- * light dismiss survives a `<dialog>` opening above it.
- */
-const ModelessSection = () =>
-{
-    const [ count , setCount ] = useState( 0 ) ;
-
-    const { modalRef : panelRef , open : openPanel } = useModal() ;
-    const { modalRef : aboveRef , open : openAbove } = useModal() ;
-
-    return (
-        <Container className="flex flex-col gap-6 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-7xl">
-
-            <h2 className="text-3xl font-bold">Mode non-modal</h2>
-
-            <p className="text-sm text-base-content/70">
-                Par défaut le panneau rend la page inerte — ce que veut un panier. Avec
-                <code className="badge badge-sm">modeless</code> il s'ouvre via l'API Popover : toujours
-                dans le top layer, mais la page reste utilisable. Ouvre le panneau puis clique le
-                compteur ci-dessous : il doit continuer à s'incrémenter.
-            </p>
-
-            <div className="flex flex-wrap items-center gap-2">
-                <Button color="primary" onClick={ openPanel }>
-                    Ouvrir le panneau non-modal
-                </Button>
-
-                <Button color="neutral" style="outline" onClick={ () => setCount( n => n + 1 ) }>
-                    Compteur
-                </Button>
-
-                <Badge color="accent">{ count }</Badge>
-            </div>
-
-            <SidePanel
-                ref      = { panelRef }
-                modeless
-                title    = "Détail de la facture"
-                icon     = { <InvoiceIcon size={ 22 } /> }
-            >
-                <div className="flex flex-col gap-3 py-4">
-                    <p>
-                        La page derrière reste interactive et défilable. Utile pour un panneau
-                        de détail qu'on garde ouvert en parcourant une liste.
-                    </p>
-
-                    <p className="text-sm text-base-content/70">
-                        Cas limite à surveiller : ouvrir une modale par-dessus un popover peut
-                        déclencher le <em>light dismiss</em> et refermer le panneau.
-                    </p>
-
-                    <Button color="secondary" onClick={ openAbove }>
-                        Ouvrir une modale par-dessus
-                    </Button>
-                </div>
-            </SidePanel>
-
-            <Modal
-                ref          = { aboveRef }
-                portal
-                title        = "Modale au-dessus du panneau"
-                agree        = "Fermer"
-                showDisagree = { false }
-            >
-                <p className="py-4">
-                    Si le panneau non-modal est toujours ouvert derrière cette modale, le
-                    light dismiss n'a pas frappé.
-                </p>
-            </Modal>
-
-        </Container>
-    ) ;
-} ;
-
-ModelessSection.displayName = 'ModelessSection' ;
-
-/**
  * Demo: `SidePanel` — full-height off-canvas panel built on `Modal`.
  *
  * @returns {React.JSX.Element}
@@ -356,7 +277,6 @@ const SidePanelDemo = () =>
         <>
             <PlacementSection />
             <CartSection />
-            <ModelessSection />
         </>
     ) ;
 } ;

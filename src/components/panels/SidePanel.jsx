@@ -22,12 +22,14 @@ export const END   = 'end' ;
  * included) and is immune to the `position:fixed` containing block a transformed
  * ancestor would otherwise create. It also stacks natively — see `portal` below.
  *
- * ### Modal vs modeless
+ * ### Modal by design
  *
- * By default the panel is modal : the page behind it is inert and scroll-locked. That is
- * what a cart wants. Set `modeless` for a panel the user keeps working alongside (an
- * invoice preview next to the list it belongs to) — it then opens through the Popover
- * API, still in the top layer, but without making the page inert.
+ * The panel is always modal : the page behind it is inert and scroll-locked. That is what
+ * a cart or a confirmation flow wants. A *modeless* panel — one the user keeps open while
+ * still working in the page — cannot be obtained by relaxing this one : daisyUI's `modal`
+ * class is a full-viewport overlay that dims the page, catches every click and locks
+ * `:root` scrolling through `:root:has()`, which no class on the element can undo. It
+ * needs its own shell, and will land as its own component.
  *
  * ### Stacking a modal above the panel
  *
@@ -46,7 +48,6 @@ export const END   = 'end' ;
  * @param {SidePanelPlacement} [props.placement='end'] - Edge the panel is anchored to.
  * @param {string} [props.width='w-full sm:w-[28rem]'] - Tailwind width class of the panel. daisyUI sizes side panels shrink-to-fit, so an explicit width keeps the panel steady as its content changes.
  * @param {string} [props.fullScreenBreakpoint='sm'] - Below this breakpoint the panel covers the whole screen. Pass `null` to keep it a panel at every size.
- * @param {boolean} [props.modeless=false] - Open through the Popover API instead of a modal `<dialog>` : the panel stays in the top layer, but the page behind remains interactive and unlocked.
  * @param {React.ReactNode} [props.footerNode] - Pinned footer (order total, primary action…). Switches the panel to header / scrollable content / sticky footer.
  * @param {React.Ref} [props.ref] - Forwarded to the underlying dialog — pass `modalRef` from `useModal`.
  *
@@ -69,9 +70,9 @@ export const END   = 'end' ;
  * </SidePanel>
  * ```
  *
- * @example Modeless panel opening from the left
+ * @example Panel opening from the left, on a wider panel
  * ```jsx
- * <SidePanel ref={ modalRef } placement="start" modeless title="Filters">
+ * <SidePanel ref={ modalRef } placement="start" width="w-full sm:w-[36rem]" title="Filters">
  *     <FilterForm />
  * </SidePanel>
  * ```
@@ -79,7 +80,6 @@ export const END   = 'end' ;
 const SidePanel =
 ({
     fullScreenBreakpoint = 'sm' ,
-    modeless = false ,
     placement = END ,
     ref ,
     width = 'w-full sm:w-[28rem]' ,
@@ -91,7 +91,6 @@ const SidePanel =
             ref                  = { ref }
             fullScreenBreakpoint = { fullScreenBreakpoint }
             placement            = { placement }
-            usePopover           = { modeless }
             width                = { width }
             { ...props }
         />
