@@ -79,13 +79,13 @@ const Section = ( { children , description , title } ) => (
 /**
  * Charts showcase — lot C1 (Line, Bar, StackBar).
  *
- * The palette selector is here on purpose : `brand` is the default but was
- * agreed as provisional, and comparing it against `theme` and `nivo` on real
- * data — in both light and dark — is the only way to settle it.
+ * The demo opens on `nivo`. The palette choice is still provisional, so the
+ * selector is here to compare the three on real data, in both light and
+ * dark, before settling it.
  */
 const ChartsDemo = () =>
 {
-    const [ palette , setPalette ] = useState( 'brand' ) ;
+    const [ palette , setPalette ] = useState( 'nivo' ) ;
 
     return (
         <div className="flex flex-col gap-8">
@@ -99,7 +99,7 @@ const ChartsDemo = () =>
                 >
                     <option value="brand">brand — dérivée du thème</option>
                     <option value="theme">theme — sémantiques DaisyUI</option>
-                    <option value="nivo">nivo — le rendu du proto</option>
+                    <option value="nivo">nivo — palette par défaut</option>
                 </Select>
 
                 <p className="text-sm text-base-content/60">
