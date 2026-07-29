@@ -3,6 +3,7 @@
 import { useState } from 'react' ;
 
 import CalendarChart  from '@/components/charts/CalendarChart' ;
+import HeatMapChart   from '@/components/charts/HeatMapChart' ;
 import TimeRangeChart from '@/components/charts/TimeRangeChart' ;
 import WaffleChart    from '@/components/charts/WaffleChart' ;
 
@@ -62,8 +63,22 @@ const TARGET_DATA =
     { id : 'reached' , label : 'objectif atteint' , value : 42 } ,
 ] ;
 
+const COUNTRIES = [ 'Japan' , 'France' , 'Norway' , 'Germany' , 'Brazil' , 'Canada' ] ;
+const TRANSPORTS = [ 'Train' , 'Subway' , 'Bus' , 'Car' , 'Bike' , 'Boat' , 'Plane' ] ;
+
+const HEATMAP_DATA = COUNTRIES.map( ( id , row ) =>
+({
+    id ,
+    data : TRANSPORTS.map( ( x , index ) =>
+    ({
+        x ,
+        // Deterministic pseudo-random, so the demo does not jitter on every render.
+        y : Math.round( ( Math.sin( row * 1.9 + index * 2.6 ) + 1 ) * 48 ) ,
+    }) ) ,
+}) ) ;
+
 /**
- * Grid charts showcase — Waffle, Calendar, TimeRange.
+ * Grid charts showcase — Waffle, Calendar, TimeRange, HeatMap.
  */
 const GridChartsDemo = () =>
 {
@@ -135,6 +150,36 @@ const GridChartsDemo = () =>
                     to      = "2026-07-29"
                     palette = { palette }
                     height  = { 240 }
+                />
+            </Section>
+
+            <Divider />
+
+            <Section
+                title       = "HeatMap"
+                description = "Une matrice ligne × colonne. La légende est une barre dégradée et non une liste de pastilles : une échelle quantitative n'a pas d'entrées discrètes à lister."
+            >
+                <HeatMapChart
+                    data    = { HEATMAP_DATA }
+                    palette = { palette }
+                    height  = { 460 }
+                    xAxis   = {{ legend : 'transport' }}
+                    yAxis   = {{ legend : 'pays' }}
+                />
+            </Section>
+
+            <Divider />
+
+            <Section
+                title       = "HeatMap — sans valeurs, légende à droite"
+                description = "labels=false quand la grille devient dense : la couleur suffit et les chiffres deviennent du bruit."
+            >
+                <HeatMapChart
+                    data    = { HEATMAP_DATA }
+                    palette = { palette }
+                    height  = { 420 }
+                    labels  = { false }
+                    legend  = "right"
                 />
             </Section>
 

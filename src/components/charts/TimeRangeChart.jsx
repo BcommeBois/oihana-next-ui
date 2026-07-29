@@ -18,7 +18,7 @@ import useThemeColors  from '../../themes/hooks/useThemeColors' ;
 
 import { CALENDAR_COLOR_KEYS } from '../../themes/charts/calendar' ;
 import { getChartLegends }     from '../../themes/charts/legends' ;
-import { getDayGridMargin }    from '../../themes/charts/margins' ;
+import { getGridMargin }       from '../../themes/charts/margins' ;
 import { NIVO }                from '../../themes/charts/palettes' ;
 
 import ChartFrame   from './ChartFrame' ;
@@ -102,7 +102,7 @@ const TimeRangeChart =
     // Weekday names are spelled out down the left side, so they need real room.
     const resolvedMargin = useMemo
     (
-        () => getDayGridMargin( { weekdayLabels : true , legend , margin } ) ,
+        () => getGridMargin( { weekdayLabels : true , legend , margin } ) ,
         [ legend , margin ] ,
     ) ;
 

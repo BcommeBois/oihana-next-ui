@@ -18,7 +18,7 @@ import useThemeColors  from '../../themes/hooks/useThemeColors' ;
 
 import { CALENDAR_COLOR_KEYS } from '../../themes/charts/calendar' ;
 import { getChartLegends }     from '../../themes/charts/legends' ;
-import { getDayGridMargin }    from '../../themes/charts/margins' ;
+import { getGridMargin }       from '../../themes/charts/margins' ;
 import { NIVO }                from '../../themes/charts/palettes' ;
 
 import ChartFrame   from './ChartFrame' ;
@@ -48,12 +48,12 @@ import ChartTooltip from './ChartTooltip' ;
  * @param {string} [props.direction='horizontal'] - `'horizontal'` or `'vertical'`.
  * @param {string} [props.emptyColor] - Color of days with no data ; defaults to a DaisyUI theme color.
  * @param {string|number|Date} props.from - First day shown.
- * @param {string} [props.monthBorderColor] - Month outline color ; defaults to a light DaisyUI theme color.
  * @param {number|string} [props.height=260] - Frame height.
  * @param {boolean|string|Object} [props.legend=false] - `false`, a position, or a nivo legend override.
  * @param {Object} [props.margin] - Explicit margin overrides, merged over the computed one.
  * @param {number|string} [props.maxValue='auto'] - Upper bound of the color scale.
  * @param {number|string} [props.minValue='auto'] - Lower bound of the color scale.
+ * @param {string} [props.monthBorderColor] - Month outline color ; defaults to a light DaisyUI theme color.
  * @param {Object} [props.nivoProps] - Escape hatch — spread last onto the nivo component.
  * @param {string|string[]} [props.palette='nivo'] - Sequential palette, or explicit ramp colors.
  * @param {string} [props.renderer='svg'] - `'svg'` or `'canvas'` — worth it past two or three years of days.
@@ -80,12 +80,12 @@ const CalendarChart =
     direction = 'horizontal' ,
     emptyColor ,
     from ,
-    monthBorderColor ,
     height = 260 ,
     legend = false ,
     margin ,
     maxValue = 'auto' ,
     minValue = 'auto' ,
+    monthBorderColor ,
     nivoProps ,
     palette = NIVO ,
     renderer = 'svg' ,
@@ -105,7 +105,7 @@ const CalendarChart =
 
     const resolvedMargin = useMemo
     (
-        () => getDayGridMargin( { legend , margin } ) ,
+        () => getGridMargin( { legend , margin } ) ,
         [ legend , margin ] ,
     ) ;
 

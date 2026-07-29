@@ -49,7 +49,7 @@ export const formatTimeTick = ( value ) =>
  * @param {Object} [props]
  * @param {Object|boolean} [props.axis] - The axis prop — `{ legend , format , tickRotation , tickValues , hide }`.
  * @param {Object} [props.margin] - The resolved chart margin, used for the title offset.
- * @param {string} [props.position='bottom'] - `'bottom'` or `'left'`.
+ * @param {string} [props.position='bottom'] - `'bottom'`, `'top'` or `'left'`.
  * @param {string} [props.scale] - The scale type ; `'time'` selects the default time formatter.
  *
  * @returns {Object|null} A nivo axis config, or `null`.
@@ -76,9 +76,29 @@ export const getChartAxis = ( { axis , margin , position = 'bottom' , scale } = 
     // `hide` is consumed above — pulled out so it does not leak into the nivo config.
     const { format , hide : _hide , legend , legendOffset , tickRotation , ...rest } = config ;
 
-    const offset = legendOffset ?? ( position === 'bottom'
-        ? ( tickRotation ? 52 : 34 )
-        : -Math.max( ( margin?.left ?? 48 ) - 14 , 30 ) ) ;
+    // The title always sits further out than the ticks, so the offset points
+    // away from the plot area — which means it flips sign on the top and
+    // left sides.
+    const away = tickRotation ? 52 : 34 ;
+
+    let offset ;
+
+    if ( legendOffset !== undefined )
+    {
+        offset = legendOffset ;
+    }
+    else if ( position === 'bottom' )
+    {
+        offset = away ;
+    }
+    else if ( position === 'top' )
+    {
+        offset = -away ;
+    }
+    else
+    {
+        offset = -Math.max( ( margin?.left ?? 48 ) - 14 , 30 ) ;
+    }
 
     return {
         legend ,

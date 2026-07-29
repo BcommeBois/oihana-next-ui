@@ -166,10 +166,10 @@ export const getRadialMargin = ( { outsideLabels = false , legend , margin } = {
 } ;
 
 /**
- * Margin for a day-grid chart, before the legend.
+ * Margin for a grid chart, before axes and legend.
  * @type {Object.<string,number>}
  */
-export const DAY_GRID_MARGIN = { top : 34 , right : 16 , bottom : 16 , left : 42 } ;
+export const GRID_MARGIN = { top : 34 , right : 16 , bottom : 16 , left : 42 } ;
 
 /**
  * Room the spelled-out weekday labels need on the left.
@@ -178,15 +178,21 @@ export const DAY_GRID_MARGIN = { top : 34 , right : 16 , bottom : 16 , left : 42
 export const WEEKDAY_LABELS_SPACE = 86 ;
 
 /**
- * Computes the margin of a day-grid chart — calendar, time range.
+ * Computes the margin of a grid chart — calendar, time range, heatmap.
  *
- * These draw their month labels *above* the grid and their year or weekday
- * labels to its *left*, outside the plotted area, so the uniform inset
- * {@link getRadialMargin} gives is not enough : the labels get clipped by
- * the frame rather than shrinking the grid.
+ * These label their columns *above* the grid and their rows to its *left*,
+ * outside the plotted area — the mirror of `getChartMargin`, which puts them
+ * bottom and left. The uniform inset {@link getRadialMargin} gives is not
+ * enough either : the labels get clipped by the frame rather than shrinking
+ * the grid, which is easy to miss until a label is cut in half.
+ *
+ * Row labels are data-driven and can be long — country names on a heatmap.
+ * When they collide, widen the one side with `margin={{ left : 120 }}`.
  *
  * @param {Object} [props]
  * @param {boolean} [props.weekdayLabels=false] - Whether spelled-out weekday names are drawn on the left.
+ * @param {Object} [props.xAxis] - Top axis config — `{ legend , tickRotation }`.
+ * @param {Object} [props.yAxis] - Left axis config — `{ legend }`.
  * @param {boolean|string|Object} [props.legend] - The `legend` prop.
  * @param {Object} [props.margin] - Explicit overrides, merged last.
  *
@@ -194,17 +200,33 @@ export const WEEKDAY_LABELS_SPACE = 86 ;
  *
  * @example
  * ```js
- * getDayGridMargin( { weekdayLabels : true } ) ;
+ * getGridMargin( { weekdayLabels : true } ) ;
  * // → { top : 34 , right : 16 , bottom : 16 , left : 86 }
  * ```
  */
-export const getDayGridMargin = ( { weekdayLabels = false , legend , margin } = {} ) =>
+export const getGridMargin = ( { weekdayLabels = false , xAxis , yAxis , legend , margin } = {} ) =>
 {
-    const result = { ...DAY_GRID_MARGIN } ;
+    const result = { ...GRID_MARGIN } ;
 
     if ( weekdayLabels )
     {
         result.left = WEEKDAY_LABELS_SPACE ;
+    }
+
+    // The column labels sit on top here, so an axis title grows the top side.
+    if ( xAxis?.legend )
+    {
+        result.top += AXIS_LEGEND_SPACE ;
+    }
+
+    if ( xAxis?.tickRotation )
+    {
+        result.top += TICK_ROTATION_SPACE ;
+    }
+
+    if ( yAxis?.legend )
+    {
+        result.left += AXIS_LEGEND_SPACE ;
     }
 
     const resolvedLegend = resolveLegend( legend ) ;

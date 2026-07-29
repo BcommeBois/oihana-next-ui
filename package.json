@@ -54,6 +54,7 @@
     "@nivo/bar": "^0.99.0",
     "@nivo/calendar": "^0.99.0",
     "@nivo/chord": "^0.99.0",
+    "@nivo/heatmap": "^0.99.0",
     "@nivo/line": "^0.99.0",
     "@nivo/pie": "^0.99.0",
     "@nivo/radar": "^0.99.0",
@@ -73,6 +74,9 @@
       "optional": true
     },
     "@nivo/chord": {
+      "optional": true
+    },
+    "@nivo/heatmap": {
       "optional": true
     },
     "@nivo/line": {
@@ -127,6 +131,7 @@
     "@nivo/bar": "^0.99.0",
     "@nivo/calendar": "^0.99.0",
     "@nivo/chord": "^0.99.0",
+    "@nivo/heatmap": "^0.99.0",
     "@nivo/line": "^0.99.0",
     "@nivo/pie": "^0.99.0",
     "@nivo/radar": "^0.99.0",

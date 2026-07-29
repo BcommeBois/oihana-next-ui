@@ -145,4 +145,80 @@ export const getChartLegends = ( { legend , margin } = {} ) =>
     ] ;
 } ;
 
+/**
+ * Builds the nivo `legends` array for a **continuous** color scale.
+ *
+ * A quantitative chart needs a gradient bar with ticks, not a list of
+ * swatches, and nivo models that as a different shape entirely — `length`,
+ * `thickness` and `ticks` instead of `itemWidth` and `symbolShape`. So the
+ * two cannot share a builder, even though the `legend` prop looks the same
+ * from the outside.
+ *
+ * @param {Object} [props]
+ * @param {boolean|string|Object} [props.legend] - The `legend` prop.
+ * @param {Object} [props.margin] - The resolved chart margin.
+ *
+ * @returns {Object[]|undefined} A nivo continuous `legends` array, or `undefined` when disabled.
+ *
+ * @example
+ * ```js
+ * getContinuousLegends( { legend : 'bottom' , margin } ) ;
+ * ```
+ */
+export const getContinuousLegends = ( { legend , margin } = {} ) =>
+{
+    const resolved = resolveLegend( legend ) ;
+
+    if ( !resolved )
+    {
+        return undefined ;
+    }
+
+    const { position = 'bottom' , ...overrides } = resolved ;
+
+    const { anchor , direction } = ANCHORS[ position ] ?? ANCHORS.bottom ;
+
+    const inset = 12 ;
+
+    let translateX = 0 ;
+    let translateY = 0 ;
+
+    switch ( position )
+    {
+        case 'right' :
+            translateX = ( margin?.right ?? LEGEND_SPACE.right ) - inset ;
+            break ;
+
+        case 'left' :
+            translateX = -( ( margin?.left ?? LEGEND_SPACE.left ) - inset ) ;
+            break ;
+
+        case 'top' :
+            translateY = -( ( margin?.top ?? LEGEND_SPACE.top ) - inset ) ;
+            break ;
+
+        default :
+            translateY = ( margin?.bottom ?? LEGEND_SPACE.bottom ) - inset ;
+            break ;
+    }
+
+    return [
+        {
+            anchor ,
+            direction ,
+            translateX ,
+            translateY ,
+            length      : direction === 'column' ? 160 : 220 ,
+            thickness   : 10 ,
+            ticks       : 5 ,
+            tickSize    : 4 ,
+            tickSpacing : 4 ,
+            tickOverlap : false ,
+            titleAlign  : 'start' ,
+            titleOffset : 6 ,
+            ...overrides ,
+        } ,
+    ] ;
+} ;
+
 export default getChartLegends ;
