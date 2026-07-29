@@ -83,6 +83,12 @@ export const NIVO_COLORS =
 ] ;
 
 /**
+ * The nivo calendar scheme, kept as the `nivo` sequential palette.
+ * @type {string[]}
+ */
+export const NIVO_SEQUENTIAL_COLORS = [ '#61CDBB' , '#97E3D5' , '#E8C1A0' , '#F47560' ] ;
+
+/**
  * The DaisyUI semantic color keys, in series order.
  * @type {string[]}
  */
@@ -205,6 +211,73 @@ export const getThemeColors = ( { colors , count = 1 } = {} ) =>
  * getChartColors( { palette : [ '#f00' , '#0f0' ] , count : 4 } ) ; // cycles
  * ```
  */
+/**
+ * Builds a **sequential** ramp — for charts that map a *quantity* to a color
+ * rather than a category : calendar, time range, heatmap.
+ *
+ * This is the one case where interpolating is the right answer, and where
+ * {@link getChartColors} is actively wrong : a categorical palette maximizes
+ * the distance between adjacent entries, which on a quantitative scale
+ * destroys the ordering the reader needs to see.
+ *
+ * The ramp runs from a near-background tint to a saturated one, and flips
+ * direction with the theme — pale to deep on a light background, deep to
+ * bright on a dark one — so the low end never disappears into the canvas.
+ *
+ * @param {Object} [props]
+ * @param {string|string[]} [props.palette='nivo'] - A palette name or explicit colors.
+ * @param {Object} [props.colors] - Resolved theme colors, keyed by DaisyUI name.
+ * @param {number} [props.count=5] - Number of buckets in the ramp.
+ * @param {boolean} [props.isDark=false] - Whether the dark theme is active.
+ *
+ * @returns {string[]} `count` hex colors, ordered from low to high.
+ *
+ * @example
+ * ```js
+ * getSequentialColors( { palette : 'brand' , colors , count : 5 , isDark } ) ;
+ * ```
+ */
+export const getSequentialColors = ( { palette = NIVO , colors , count = 5 , isDark = false } = {} ) =>
+{
+    const total = Math.max( count , 0 ) ;
+
+    if ( Array.isArray( palette ) )
+    {
+        return palette.length ? palette : NIVO_SEQUENTIAL_COLORS ;
+    }
+
+    if ( palette === NIVO )
+    {
+        return NIVO_SEQUENTIAL_COLORS ;
+    }
+
+    const seed = colors?.primary ;
+
+    if ( !seed || total < 2 )
+    {
+        return NIVO_SEQUENTIAL_COLORS ;
+    }
+
+    try
+    {
+        const [ , chromaValue , hue ] = chroma( seed ).lch() ;
+
+        const from = isDark
+            ? chroma.lch( 28 , chromaValue * 0.45 , hue )
+            : chroma.lch( 92 , chromaValue * 0.30 , hue ) ;
+
+        const to = isDark
+            ? chroma.lch( 82 , chromaValue , hue )
+            : chroma.lch( 46 , chromaValue , hue ) ;
+
+        return chroma.scale( [ from , to ] ).mode( 'lch' ).colors( total ) ;
+    }
+    catch
+    {
+        return NIVO_SEQUENTIAL_COLORS ;
+    }
+} ;
+
 export const getChartColors = ( { palette = NIVO , colors , count = 1 , isDark = false } = {} ) =>
 {
     const total = Math.max( count , 0 ) ;

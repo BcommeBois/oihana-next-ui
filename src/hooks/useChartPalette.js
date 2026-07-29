@@ -10,7 +10,7 @@ import { useMemo } from 'react' ;
 
 import useThemes from '../contexts/themes/useThemes' ;
 
-import { NIVO , getChartColors } from '../themes/charts/palettes' ;
+import { NIVO , getChartColors , getSequentialColors } from '../themes/charts/palettes' ;
 
 /**
  * React hook returning `count` series colors for the active theme.
@@ -21,6 +21,7 @@ import { NIVO , getChartColors } from '../themes/charts/palettes' ;
  * @param {Object} [props]
  * @param {string|string[]} [props.palette='nivo'] - `'nivo'`, `'brand'`, `'theme'`, or explicit colors.
  * @param {number} [props.count=1] - Number of series to color.
+ * @param {boolean} [props.sequential=false] - Build a quantitative ramp instead of categorical colors — calendar, time range, heatmap.
  *
  * @returns {string[]} `count` hex colors.
  *
@@ -31,7 +32,7 @@ import { NIVO , getChartColors } from '../themes/charts/palettes' ;
  * <ResponsiveBar colors={ colors } ... />
  * ```
  */
-const useChartPalette = ( { palette = NIVO , count = 1 } = {} ) =>
+const useChartPalette = ( { palette = NIVO , count = 1 , sequential = false } = {} ) =>
 {
     const { colors , isDark } = useThemes() ?? {} ;
 
@@ -40,8 +41,8 @@ const useChartPalette = ( { palette = NIVO , count = 1 } = {} ) =>
     // the common case, a stable palette name.
     return useMemo
     (
-        () => getChartColors( { palette , colors , count , isDark } ) ,
-        [ palette , colors , count , isDark ] ,
+        () => ( sequential ? getSequentialColors : getChartColors )( { palette , colors , count , isDark } ) ,
+        [ palette , colors , count , isDark , sequential ] ,
     ) ;
 } ;
 

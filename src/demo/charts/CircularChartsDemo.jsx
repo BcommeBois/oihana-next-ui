@@ -2,6 +2,7 @@
 
 import { useState } from 'react' ;
 
+import ChordChart     from '@/components/charts/ChordChart' ;
 import PieChart       from '@/components/charts/PieChart' ;
 import RadarChart     from '@/components/charts/RadarChart' ;
 import RadialBarChart from '@/components/charts/RadialBarChart' ;
@@ -46,8 +47,17 @@ const RADAR_DATA = [ 'fruity' , 'bitter' , 'heavy' , 'strong' , 'sunny' ].map( (
     return entry ;
 } ) ;
 
+const CHORD_KEYS = [ 'John' , 'Raoul' , 'Jane' , 'Marcel' , 'Ibrahim' ] ;
+
+// Square and symmetric — data[i][j] is the flow from keys[i] to keys[j].
+const CHORD_DATA = CHORD_KEYS.map( ( _ , row ) =>
+    CHORD_KEYS.map( ( __ , column ) =>
+        row === column ? 0 : Math.round( 10 + ( Math.sin( ( row + 1 ) * ( column + 1 ) * 1.7 ) + 1 ) * 60 ) ,
+    ) ,
+) ;
+
 /**
- * Circular charts showcase — Pie, RadialBar, Radar.
+ * Circular charts showcase — Pie, RadialBar, Radar, Chord.
  */
 const CircularChartsDemo = () =>
 {
@@ -129,6 +139,20 @@ const CircularChartsDemo = () =>
                     height    = { 420 }
                     gridShape = "linear"
                     legend    = "right"
+                />
+            </Section>
+
+            <Divider />
+
+            <Section
+                title       = "Chord"
+                description = "Des flux entre entités, pas des valeurs par entité. data est une matrice carrée : data[i][j] est le flux de keys[i] vers keys[j]. Survolez un arc pour un total, un ruban pour un flux dans les deux sens."
+            >
+                <ChordChart
+                    data    = { CHORD_DATA }
+                    keys    = { CHORD_KEYS }
+                    palette = { palette }
+                    height  = { 520 }
                 />
             </Section>
 

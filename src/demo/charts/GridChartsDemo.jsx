@@ -2,12 +2,53 @@
 
 import { useState } from 'react' ;
 
-import WaffleChart from '@/components/charts/WaffleChart' ;
+import CalendarChart  from '@/components/charts/CalendarChart' ;
+import TimeRangeChart from '@/components/charts/TimeRangeChart' ;
+import WaffleChart    from '@/components/charts/WaffleChart' ;
 
 import Divider from '@/components/Divider' ;
 
 import PalettePicker from './PalettePicker' ;
 import Section       from './Section' ;
+
+/**
+ * Builds one datum per day over a span, with a deterministic value so the
+ * demo does not reshuffle on every render.
+ *
+ * @param {string} from - First day, `YYYY-MM-DD`.
+ * @param {number} days - How many days to generate.
+ * @param {number} [density=0.75] - Share of days that carry a value.
+ * @returns {Array<{day:string,value:number}>} The days.
+ */
+const makeDays = ( from , days , density = 0.75 ) =>
+{
+    const start = new Date( `${ from }T00:00:00` ) ;
+    const out   = [] ;
+
+    for ( let index = 0 ; index < days ; index++ )
+    {
+        const date = new Date( start ) ;
+        date.setDate( start.getDate() + index ) ;
+
+        // Deterministic gaps and values — no Math.random in a demo.
+        if ( ( Math.sin( index * 2.7 ) + 1 ) / 2 > density )
+        {
+            continue ;
+        }
+
+        out.push
+        ({
+            day   : date.toISOString().slice( 0 , 10 ) ,
+            value : Math.round( 20 + ( Math.sin( index / 3.1 ) + 1 ) * 140 ) ,
+        }) ;
+    }
+
+    return out ;
+} ;
+
+const CALENDAR_DATA = makeDays( '2026-01-01' , 365 ) ;
+
+const TIME_RANGE_DATA = makeDays( '2026-04-01' , 120 , 0.85 ) ;
 
 const WAFFLE_DATA =
 [
@@ -22,7 +63,7 @@ const TARGET_DATA =
 ] ;
 
 /**
- * Grid charts showcase — Waffle. Calendar joins in lot C4.
+ * Grid charts showcase — Waffle, Calendar, TimeRange.
  */
 const GridChartsDemo = () =>
 {
@@ -64,6 +105,36 @@ const GridChartsDemo = () =>
                     padding       = { 2 }
                     legend        = { false }
                     fillDirection = "bottom"
+                />
+            </Section>
+
+            <Divider />
+
+            <Section
+                title       = "Calendar"
+                description = "Une année de jours. La palette est séquentielle et non catégorielle : les cellules codent une quantité, les couleurs doivent donc être ordonnées."
+            >
+                <CalendarChart
+                    data    = { CALENDAR_DATA }
+                    from    = "2026-01-01"
+                    to      = "2026-12-31"
+                    palette = { palette }
+                    height  = { 240 }
+                />
+            </Section>
+
+            <Divider />
+
+            <Section
+                title       = "TimeRange"
+                description = "Même grille, mais sur une période arbitraire plutôt qu'une année entière — ici quatre mois. SVG uniquement chez nivo."
+            >
+                <TimeRangeChart
+                    data    = { TIME_RANGE_DATA }
+                    from    = "2026-04-01"
+                    to      = "2026-07-29"
+                    palette = { palette }
+                    height  = { 240 }
                 />
             </Section>
 

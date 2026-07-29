@@ -165,4 +165,57 @@ export const getRadialMargin = ( { outsideLabels = false , legend , margin } = {
     return { ...result , ...margin } ;
 } ;
 
+/**
+ * Margin for a day-grid chart, before the legend.
+ * @type {Object.<string,number>}
+ */
+export const DAY_GRID_MARGIN = { top : 34 , right : 16 , bottom : 16 , left : 42 } ;
+
+/**
+ * Room the spelled-out weekday labels need on the left.
+ * @type {number}
+ */
+export const WEEKDAY_LABELS_SPACE = 86 ;
+
+/**
+ * Computes the margin of a day-grid chart — calendar, time range.
+ *
+ * These draw their month labels *above* the grid and their year or weekday
+ * labels to its *left*, outside the plotted area, so the uniform inset
+ * {@link getRadialMargin} gives is not enough : the labels get clipped by
+ * the frame rather than shrinking the grid.
+ *
+ * @param {Object} [props]
+ * @param {boolean} [props.weekdayLabels=false] - Whether spelled-out weekday names are drawn on the left.
+ * @param {boolean|string|Object} [props.legend] - The `legend` prop.
+ * @param {Object} [props.margin] - Explicit overrides, merged last.
+ *
+ * @returns {{top:number,right:number,bottom:number,left:number}} The resolved margin.
+ *
+ * @example
+ * ```js
+ * getDayGridMargin( { weekdayLabels : true } ) ;
+ * // → { top : 34 , right : 16 , bottom : 16 , left : 86 }
+ * ```
+ */
+export const getDayGridMargin = ( { weekdayLabels = false , legend , margin } = {} ) =>
+{
+    const result = { ...DAY_GRID_MARGIN } ;
+
+    if ( weekdayLabels )
+    {
+        result.left = WEEKDAY_LABELS_SPACE ;
+    }
+
+    const resolvedLegend = resolveLegend( legend ) ;
+
+    if ( resolvedLegend )
+    {
+        const side = resolvedLegend.position ?? 'bottom' ;
+        result[ side ] = ( result[ side ] ?? 0 ) + ( LEGEND_SPACE[ side ] ?? LEGEND_SPACE.bottom ) ;
+    }
+
+    return { ...result , ...margin } ;
+} ;
+
 export default getChartMargin ;
