@@ -18,7 +18,7 @@ import useChartTheme   from '../../hooks/useChartTheme' ;
 import { formatTimeTick , getChartAxis } from '../../themes/charts/axes' ;
 import { getChartLegends }               from '../../themes/charts/legends' ;
 import { getChartMargin }                from '../../themes/charts/margins' ;
-import { BRAND }                         from '../../themes/charts/palettes' ;
+import { NIVO }                          from '../../themes/charts/palettes' ;
 
 import ChartFrame   from './ChartFrame' ;
 import ChartTooltip from './ChartTooltip' ;
@@ -117,7 +117,7 @@ const formatTooltipX = ( value ) => ( value instanceof Date ? formatTimeTick( va
  * @param {boolean|string|Object} [props.legend='bottom'] - `false`, a position, or a nivo legend override.
  * @param {Object} [props.margin] - Explicit margin overrides, merged over the computed one.
  * @param {Object} [props.nivoProps] - Escape hatch — spread last onto the nivo component.
- * @param {string|string[]} [props.palette='brand'] - Series palette.
+ * @param {string|string[]} [props.palette='nivo'] - Series palette.
  * @param {string} [props.renderer='svg'] - `'svg'` or `'canvas'` (past ~2k points).
  * @param {boolean} [props.stacked=false] - Stack the series on the y axis.
  * @param {Object} [props.theme] - Partial nivo theme, deeply merged over the DaisyUI one.
@@ -154,7 +154,7 @@ const LineChart =
     legend = 'bottom' ,
     margin ,
     nivoProps ,
-    palette = BRAND ,
+    palette = NIVO ,
     renderer = 'svg' ,
     stacked = false ,
     theme : themeOverrides ,

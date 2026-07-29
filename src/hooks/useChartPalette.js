@@ -10,7 +10,7 @@ import { useMemo } from 'react' ;
 
 import useThemes from '../contexts/themes/useThemes' ;
 
-import { BRAND , getChartColors } from '../themes/charts/palettes' ;
+import { NIVO , getChartColors } from '../themes/charts/palettes' ;
 
 /**
  * React hook returning `count` series colors for the active theme.
@@ -19,7 +19,7 @@ import { BRAND , getChartColors } from '../themes/charts/palettes' ;
  * background and darker on a light one, so no series sinks into the canvas.
  *
  * @param {Object} [props]
- * @param {string|string[]} [props.palette='brand'] - `'brand'`, `'theme'`, `'nivo'`, or explicit colors.
+ * @param {string|string[]} [props.palette='nivo'] - `'nivo'`, `'brand'`, `'theme'`, or explicit colors.
  * @param {number} [props.count=1] - Number of series to color.
  *
  * @returns {string[]} `count` hex colors.
@@ -31,7 +31,7 @@ import { BRAND , getChartColors } from '../themes/charts/palettes' ;
  * <ResponsiveBar colors={ colors } ... />
  * ```
  */
-const useChartPalette = ( { palette = BRAND , count = 1 } = {} ) =>
+const useChartPalette = ( { palette = NIVO , count = 1 } = {} ) =>
 {
     const { colors , isDark } = useThemes() ?? {} ;
 

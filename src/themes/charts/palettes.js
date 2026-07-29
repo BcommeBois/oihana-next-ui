@@ -192,7 +192,7 @@ export const getThemeColors = ( { colors , count = 1 } = {} ) =>
  * match colors imposed elsewhere.
  *
  * @param {Object} [props]
- * @param {string|string[]} [props.palette='brand'] - A palette name or explicit colors.
+ * @param {string|string[]} [props.palette='nivo'] - A palette name or explicit colors.
  * @param {Object} [props.colors] - Resolved theme colors, keyed by DaisyUI name.
  * @param {number} [props.count=1] - Number of series to color.
  * @param {boolean} [props.isDark=false] - Whether the dark theme is active.
@@ -205,7 +205,7 @@ export const getThemeColors = ( { colors , count = 1 } = {} ) =>
  * getChartColors( { palette : [ '#f00' , '#0f0' ] , count : 4 } ) ; // cycles
  * ```
  */
-export const getChartColors = ( { palette = BRAND , colors , count = 1 , isDark = false } = {} ) =>
+export const getChartColors = ( { palette = NIVO , colors , count = 1 , isDark = false } = {} ) =>
 {
     const total = Math.max( count , 0 ) ;
 
