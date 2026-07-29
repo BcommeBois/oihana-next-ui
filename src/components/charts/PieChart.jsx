@@ -50,10 +50,12 @@ const defaultArcLinkLabel = ( datum ) => `${ datum.id } (${ datum.formattedValue
  * @param {number} [props.borderWidth=1] - Arc border width — what separates arcs from the background.
  * @param {string} [props.className] - Additional classes for the frame.
  * @param {number} [props.cornerRadius=3] - Rounding of the arc corners.
- * @param {Array<{id:*,label?:*,value:number}>} props.data - The slices.
+ * @param {string} [props.emptyLabel='No data'] - Text shown when there is nothing to plot.
+ * @param {React.ReactNode} [props.emptyState] - Replaces the default empty state entirely.
  * @param {number|string} [props.height=400] - Frame height.
  * @param {number} [props.innerRadius=0.5] - Hole size, `0` to `1`. `0` gives a full pie.
  * @param {boolean|string|Object} [props.legend='bottom'] - `false`, a position, or a nivo legend override.
+ * @param {boolean} [props.loading=false] - Show a skeleton instead of the chart.
  * @param {Object} [props.margin] - Explicit margin overrides, merged over the computed one.
  * @param {Object} [props.nivoProps] - Escape hatch — spread last onto the nivo component.
  * @param {number} [props.padAngle=0.7] - Gap between arcs, in degrees.
@@ -86,9 +88,12 @@ const PieChart =
     className ,
     cornerRadius = 3 ,
     data ,
+    emptyLabel ,
+    emptyState ,
     height = 400 ,
     innerRadius = 0.5 ,
     legend = 'bottom' ,
+    loading ,
     margin ,
     nivoProps ,
     padAngle = 0.7 ,
@@ -132,7 +137,15 @@ const PieChart =
     const Component = renderer === 'canvas' ? ResponsivePieCanvas : ResponsivePie ;
 
     return (
-        <ChartFrame aspect={ aspect } className={ className } height={ height }>
+        <ChartFrame
+            aspect     = { aspect }
+            className  = { className }
+            data       = { data }
+            emptyLabel = { emptyLabel }
+            emptyState = { emptyState }
+            height     = { height }
+            loading    = { loading }
+        >
             <Component
                 activeOuterRadiusOffset = { 8 }
                 animate                 = { animate && !reduceMotion }

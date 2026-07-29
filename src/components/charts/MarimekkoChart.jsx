@@ -12,6 +12,8 @@ import { ResponsiveMarimekko } from '@nivo/marimekko' ;
 
 import { useMedia } from 'react-use' ;
 
+import isMarimekkoDataValid from '../../helpers/charts/isMarimekkoDataValid' ;
+
 import useChartPalette from '../../hooks/useChartPalette' ;
 import useChartTheme   from '../../hooks/useChartTheme' ;
 
@@ -47,12 +49,14 @@ import ChartTooltip from './ChartTooltip' ;
  * @param {number} [props.borderWidth=1] - Slice border width.
  * @param {string} [props.className] - Additional classes for the frame.
  * @param {Object[]} props.data - The raw bars.
- * @param {Array<{id:string,value:string|Function}>} props.dimensions - The stacked slices and how to read them.
+ * @param {string} [props.emptyLabel='No data'] - Text shown when there is nothing to plot.
+ * @param {React.ReactNode} [props.emptyState] - Replaces the default empty state entirely.
  * @param {number|string} [props.height=420] - Frame height.
  * @param {string|Function} props.id - Accessor naming each bar.
  * @param {number} [props.innerPadding=0] - Gap between slices of a bar.
  * @param {string} [props.layout='vertical'] - `'vertical'` or `'horizontal'`.
  * @param {boolean|string|Object} [props.legend='bottom'] - `false`, a position, or a nivo legend override.
+ * @param {boolean} [props.loading=false] - Show a skeleton instead of the chart.
  * @param {Object} [props.margin] - Explicit margin overrides, merged over the computed one.
  * @param {Object} [props.nivoProps] - Escape hatch — spread last onto the nivo component.
  * @param {string} [props.offset='none'] - Stack offset — `'none'`, `'expand'`, `'diverging'`, `'silouhette'`, `'wiggle'`.
@@ -85,11 +89,14 @@ const MarimekkoChart =
     className ,
     data ,
     dimensions ,
+    emptyLabel ,
+    emptyState ,
     height = 420 ,
     id ,
     innerPadding = 0 ,
     layout = 'vertical' ,
     legend = 'bottom' ,
+    loading ,
     margin ,
     nivoProps ,
     offset = 'none' ,
@@ -108,6 +115,18 @@ const MarimekkoChart =
     const colors = useChartPalette( { palette , count : dimensions?.length ?? 0 } ) ;
 
     const reduceMotion = useMedia( '(prefers-reduced-motion: reduce)' , false ) ;
+
+    // nivo dereferences the three accessors without checking they exist, so a
+    // missing one throws mid-render — caught here and shown as the empty state.
+    const invalid = !isMarimekkoDataValid( data , id , value , dimensions ) ;
+
+    if ( invalid && process.env.NODE_ENV === 'development' )
+    {
+        console.warn(
+            '[MarimekkoChart] `data`, `id`, `value` and `dimensions` are all required — ' +
+            'showing the empty state instead.' ,
+        ) ;
+    }
 
     const resolvedMargin = useMemo
     (
@@ -148,7 +167,16 @@ const MarimekkoChart =
     ) ;
 
     return (
-        <ChartFrame aspect={ aspect } className={ className } height={ height }>
+        <ChartFrame
+            aspect     = { aspect }
+            className  = { className }
+            data       = { data }
+            empty      = { invalid }
+            emptyLabel = { emptyLabel }
+            emptyState = { emptyState }
+            height     = { height }
+            loading    = { loading }
+        >
             <ResponsiveMarimekko
                 animate      = { animate && !reduceMotion }
                 axisBottom   = { axisBottom }

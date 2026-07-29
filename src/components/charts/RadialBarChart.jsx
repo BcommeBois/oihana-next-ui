@@ -63,10 +63,12 @@ const countCategories = ( data ) =>
  * @param {boolean|Object} [props.circularAxis=true] - Outer circular axis ; an object is passed through to nivo.
  * @param {string} [props.className] - Additional classes for the frame.
  * @param {number} [props.cornerRadius=2] - Rounding of the bar ends.
- * @param {Array<{id:string,data:Array<{x:*,y:number}>}>} props.data - The series, one ring each.
+ * @param {string} [props.emptyLabel='No data'] - Text shown when there is nothing to plot.
+ * @param {React.ReactNode} [props.emptyState] - Replaces the default empty state entirely.
  * @param {number|string} [props.height=400] - Frame height.
  * @param {number} [props.innerRadius=0.3] - Size of the hole, `0` to `1`.
  * @param {boolean|string|Object} [props.legend='bottom'] - `false`, a position, or a nivo legend override.
+ * @param {boolean} [props.loading=false] - Show a skeleton instead of the chart.
  * @param {Object} [props.margin] - Explicit margin overrides, merged over the computed one.
  * @param {number|string} [props.maxValue='auto'] - Upper bound of the value scale.
  * @param {Object} [props.nivoProps] - Escape hatch — spread last onto the nivo component.
@@ -94,9 +96,12 @@ const RadialBarChart =
     className ,
     cornerRadius = 2 ,
     data ,
+    emptyLabel ,
+    emptyState ,
     height = 400 ,
     innerRadius = 0.3 ,
     legend = 'bottom' ,
+    loading ,
     margin ,
     maxValue = 'auto' ,
     nivoProps ,
@@ -143,7 +148,15 @@ const RadialBarChart =
     ) ;
 
     return (
-        <ChartFrame aspect={ aspect } className={ className } height={ height }>
+        <ChartFrame
+            aspect     = { aspect }
+            className  = { className }
+            data       = { data }
+            emptyLabel = { emptyLabel }
+            emptyState = { emptyState }
+            height     = { height }
+            loading    = { loading }
+        >
             <ResponsiveRadialBar
                 animate           = { animate && !reduceMotion }
                 circularAxisOuter = { circularAxis === true ? {} : ( circularAxis || null ) }

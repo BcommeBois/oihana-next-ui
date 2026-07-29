@@ -110,11 +110,13 @@ const formatTooltipX = ( value ) => ( value instanceof Date ? formatTimeTick( va
  * @param {string|number} [props.aspect] - CSS aspect ratio ; takes precedence over `height`.
  * @param {string} [props.className] - Additional classes for the frame.
  * @param {string} [props.curve='linear'] - Interpolation — `'linear'`, `'monotoneX'`, `'step'`…
- * @param {Array<{id:string,data:Array<{x:*,y:*}>}>} props.data - The series.
+ * @param {string} [props.emptyLabel='No data'] - Text shown when there is nothing to plot.
+ * @param {React.ReactNode} [props.emptyState] - Replaces the default empty state entirely.
  * @param {boolean} [props.enableArea=false] - Fill the area below each line.
  * @param {boolean} [props.enablePoints=true] - Draw the data points.
  * @param {number|string} [props.height=400] - Frame height.
  * @param {boolean|string|Object} [props.legend='bottom'] - `false`, a position, or a nivo legend override.
+ * @param {boolean} [props.loading=false] - Show a skeleton instead of the chart.
  * @param {Object} [props.margin] - Explicit margin overrides, merged over the computed one.
  * @param {Object} [props.nivoProps] - Escape hatch — spread last onto the nivo component.
  * @param {string|string[]} [props.palette='nivo'] - Series palette.
@@ -148,10 +150,13 @@ const LineChart =
     className ,
     curve = 'linear' ,
     data ,
+    emptyLabel ,
+    emptyState ,
     enableArea = false ,
     enablePoints = true ,
     height = 400 ,
     legend = 'bottom' ,
+    loading ,
     margin ,
     nivoProps ,
     palette = NIVO ,
@@ -220,7 +225,15 @@ const LineChart =
     const Component = renderer === 'canvas' ? ResponsiveLineCanvas : ResponsiveLine ;
 
     return (
-        <ChartFrame aspect={ aspect } className={ className } height={ height }>
+        <ChartFrame
+            aspect     = { aspect }
+            className  = { className }
+            data       = { data }
+            emptyLabel = { emptyLabel }
+            emptyState = { emptyState }
+            height     = { height }
+            loading    = { loading }
+        >
             <Component
                 animate           = { animate && !reduceMotion }
                 axisBottom        = { axisBottom }

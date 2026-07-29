@@ -64,6 +64,8 @@ const inferKeys = ( data , indexBy ) =>
  * @param {string} [props.curve='linearClosed'] - Interpolation between spokes.
  * @param {Object[]} props.data - One object per dimension.
  * @param {number} [props.dotSize=8] - Size of the dots on each spoke.
+ * @param {string} [props.emptyLabel='No data'] - Text shown when there is nothing to plot.
+ * @param {React.ReactNode} [props.emptyState] - Replaces the default empty state entirely.
  * @param {boolean} [props.enableDots=true] - Draw the dots.
  * @param {number} [props.fillOpacity=0.25] - Opacity of the filled polygons.
  * @param {number} [props.gridLevels=5] - Number of concentric grid rings.
@@ -72,6 +74,7 @@ const inferKeys = ( data , indexBy ) =>
  * @param {string} [props.indexBy='id'] - Field holding the dimension name.
  * @param {string[]} [props.keys] - Series keys ; inferred from the first datum when omitted.
  * @param {boolean|string|Object} [props.legend='bottom'] - `false`, a position, or a nivo legend override.
+ * @param {boolean} [props.loading=false] - Show a skeleton instead of the chart.
  * @param {Object} [props.margin] - Explicit margin overrides, merged over the computed one.
  * @param {Object} [props.nivoProps] - Escape hatch — spread last onto the nivo component.
  * @param {string|string[]} [props.palette='nivo'] - Series palette.
@@ -95,6 +98,8 @@ const RadarChart =
     curve = 'linearClosed' ,
     data ,
     dotSize = 8 ,
+    emptyLabel ,
+    emptyState ,
     enableDots = true ,
     fillOpacity = 0.25 ,
     gridLevels = 5 ,
@@ -103,6 +108,7 @@ const RadarChart =
     indexBy = 'id' ,
     keys ,
     legend = 'bottom' ,
+    loading ,
     margin ,
     nivoProps ,
     palette = NIVO ,
@@ -154,7 +160,15 @@ const RadarChart =
     ) ;
 
     return (
-        <ChartFrame aspect={ aspect } className={ className } height={ height }>
+        <ChartFrame
+            aspect     = { aspect }
+            className  = { className }
+            data       = { data }
+            emptyLabel = { emptyLabel }
+            emptyState = { emptyState }
+            height     = { height }
+            loading    = { loading }
+        >
             <ResponsiveRadar
                 animate        = { animate && !reduceMotion }
                 borderColor    = {{ from : 'color' }}

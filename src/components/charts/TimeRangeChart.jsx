@@ -41,14 +41,16 @@ import ChartTooltip from './ChartTooltip' ;
  * @param {boolean} [props.animate=true] - Animate transitions ; forced off under `prefers-reduced-motion`.
  * @param {string|number} [props.aspect] - CSS aspect ratio ; takes precedence over `height`.
  * @param {string} [props.className] - Additional classes for the frame.
- * @param {Array<{day:string,value:number}>} props.data - Days as `YYYY-MM-DD` with their value.
  * @param {string} [props.dayBorderColor] - Gap color between days ; defaults to the surface color.
  * @param {number} [props.dayRadius=2] - Corner rounding of each day cell.
  * @param {string} [props.emptyColor] - Color of days with no data ; defaults to a DaisyUI theme color.
+ * @param {string} [props.emptyLabel='No data'] - Text shown when there is nothing to plot.
+ * @param {React.ReactNode} [props.emptyState] - Replaces the default empty state entirely.
  * @param {number} [props.firstWeekday] - Index of the first weekday shown.
  * @param {string|number|Date} [props.from] - First day shown ; inferred from the data when omitted.
  * @param {number|string} [props.height=240] - Frame height.
  * @param {boolean|string|Object} [props.legend=false] - `false`, a position, or a nivo legend override.
+ * @param {boolean} [props.loading=false] - Show a skeleton instead of the chart.
  * @param {Object} [props.margin] - Explicit margin overrides, merged over the computed one.
  * @param {Object} [props.nivoProps] - Escape hatch — spread last onto the nivo component.
  * @param {string|string[]} [props.palette='nivo'] - Sequential palette, or explicit ramp colors.
@@ -76,10 +78,13 @@ const TimeRangeChart =
     dayBorderColor ,
     dayRadius = 2 ,
     emptyColor ,
+    emptyLabel ,
+    emptyState ,
     firstWeekday ,
     from ,
     height = 240 ,
     legend = false ,
+    loading ,
     margin ,
     nivoProps ,
     palette = NIVO ,
@@ -95,7 +100,7 @@ const TimeRangeChart =
 
     const colors = useChartPalette( { palette , count : steps , sequential : true } ) ;
 
-    const { empty , dayBorder } = useThemeColors( CALENDAR_COLOR_KEYS ) ?? {} ;
+    const { empty : emptyCell , dayBorder } = useThemeColors( CALENDAR_COLOR_KEYS ) ?? {} ;
 
     const reduceMotion = useMedia( '(prefers-reduced-motion: reduce)' , false ) ;
 
@@ -121,7 +126,15 @@ const TimeRangeChart =
     ) ;
 
     return (
-        <ChartFrame aspect={ aspect } className={ className } height={ height }>
+        <ChartFrame
+            aspect     = { aspect }
+            className  = { className }
+            data       = { data }
+            emptyLabel = { emptyLabel }
+            emptyState = { emptyState }
+            height     = { height }
+            loading    = { loading }
+        >
             <ResponsiveTimeRange
                 animate        = { animate && !reduceMotion }
                 colors         = { colors }
@@ -129,7 +142,7 @@ const TimeRangeChart =
                 dayBorderColor = { dayBorderColor ?? dayBorder ?? 'transparent' }
                 dayBorderWidth = { 2 }
                 dayRadius      = { dayRadius }
-                emptyColor     = { emptyColor ?? empty ?? 'transparent' }
+                emptyColor     = { emptyColor ?? emptyCell ?? 'transparent' }
                 firstWeekday   = { firstWeekday }
                 from           = { from }
                 legends        = { legends }

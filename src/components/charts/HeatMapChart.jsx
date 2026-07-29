@@ -51,11 +51,13 @@ import ChartTooltip from './ChartTooltip' ;
  * @param {number} [props.borderRadius=2] - Cell corner rounding.
  * @param {number} [props.borderWidth=1] - Cell border width.
  * @param {string} [props.className] - Additional classes for the frame.
- * @param {Array<{id:string,data:Array<{x:*,y:number|null}>}>} props.data - One entry per row.
  * @param {string} [props.emptyColor] - Color of cells with a `null` value ; defaults to a DaisyUI theme color.
+ * @param {string} [props.emptyLabel='No data'] - Text shown when there is nothing to plot.
+ * @param {React.ReactNode} [props.emptyState] - Replaces the default empty state entirely.
  * @param {number|string} [props.height=460] - Frame height.
  * @param {boolean} [props.labels=true] - Draw the value inside each cell.
  * @param {boolean|string|Object} [props.legend='bottom'] - `false`, a position, or a nivo legend override.
+ * @param {boolean} [props.loading=false] - Show a skeleton instead of the chart.
  * @param {Object} [props.margin] - Explicit margin overrides, merged over the computed one.
  * @param {number} [props.maxValue='auto'] - Upper bound of the color scale.
  * @param {number} [props.minValue='auto'] - Lower bound of the color scale.
@@ -87,9 +89,12 @@ const HeatMapChart =
     className ,
     data ,
     emptyColor ,
+    emptyLabel ,
+    emptyState ,
     height = 460 ,
     labels = true ,
     legend = 'bottom' ,
+    loading ,
     margin ,
     maxValue = 'auto' ,
     minValue = 'auto' ,
@@ -108,7 +113,7 @@ const HeatMapChart =
 
     const ramp = useChartPalette( { palette , count : steps , sequential : true } ) ;
 
-    const { empty } = useThemeColors( CALENDAR_COLOR_KEYS ) ?? {} ;
+    const { empty : emptyCell } = useThemeColors( CALENDAR_COLOR_KEYS ) ?? {} ;
 
     const reduceMotion = useMedia( '(prefers-reduced-motion: reduce)' , false ) ;
 
@@ -165,7 +170,15 @@ const HeatMapChart =
     const Component = renderer === 'canvas' ? ResponsiveHeatMapCanvas : ResponsiveHeatMap ;
 
     return (
-        <ChartFrame aspect={ aspect } className={ className } height={ height }>
+        <ChartFrame
+            aspect     = { aspect }
+            className  = { className }
+            data       = { data }
+            emptyLabel = { emptyLabel }
+            emptyState = { emptyState }
+            height     = { height }
+            loading    = { loading }
+        >
             <Component
                 animate        = { animate && !reduceMotion }
                 axisBottom     = { null }
@@ -177,7 +190,7 @@ const HeatMapChart =
                 borderWidth    = { borderWidth }
                 colors         = { colors }
                 data           = { data }
-                emptyColor     = { emptyColor ?? empty ?? 'transparent' }
+                emptyColor     = { emptyColor ?? emptyCell ?? 'transparent' }
                 enableLabels   = { labels }
                 labelTextColor = {{ from : 'color' , modifiers : [ [ 'darker' , 2 ] ] }}
                 legends        = { legends }

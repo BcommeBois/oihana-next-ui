@@ -66,12 +66,15 @@ const inferKeys = ( data , indexBy ) =>
  * @param {string} [props.className] - Additional classes for the frame.
  * @param {number} [props.cornerRadius=2] - Rounding of the bar ends.
  * @param {Object[]} props.data - One object per index.
+ * @param {string} [props.emptyLabel='No data'] - Text shown when there is nothing to plot.
+ * @param {React.ReactNode} [props.emptyState] - Replaces the default empty state entirely.
  * @param {number} [props.endAngle=360] - Where the circle ends, in degrees.
  * @param {number|string} [props.height=460] - Frame height.
  * @param {string} [props.indexBy='id'] - Field holding the index value.
  * @param {number} [props.innerRadius=0.2] - Size of the hole, `0` to `1`.
  * @param {string[]} [props.keys] - Series keys ; inferred from the first datum when omitted.
  * @param {boolean|string|Object} [props.legend='bottom'] - `false`, a position, or a nivo legend override.
+ * @param {boolean} [props.loading=false] - Show a skeleton instead of the chart.
  * @param {Object} [props.margin] - Explicit margin overrides, merged over the computed one.
  * @param {Object} [props.nivoProps] - Escape hatch — spread last onto the nivo component.
  * @param {string|string[]} [props.palette='nivo'] - Series palette.
@@ -99,12 +102,15 @@ const PolarBarChart =
     className ,
     cornerRadius = 2 ,
     data ,
+    emptyLabel ,
+    emptyState ,
     endAngle = 360 ,
     height = 460 ,
     indexBy = 'id' ,
     innerRadius = 0.2 ,
     keys ,
     legend = 'bottom' ,
+    loading ,
     margin ,
     nivoProps ,
     palette = NIVO ,
@@ -154,7 +160,15 @@ const PolarBarChart =
     ) ;
 
     return (
-        <ChartFrame aspect={ aspect } className={ className } height={ height }>
+        <ChartFrame
+            aspect     = { aspect }
+            className  = { className }
+            data       = { data }
+            emptyLabel = { emptyLabel }
+            emptyState = { emptyState }
+            height     = { height }
+            loading    = { loading }
+        >
             <ResponsivePolarBar
                 adjustValueRange  = { adjustValueRange }
                 animate           = { animate && !reduceMotion }

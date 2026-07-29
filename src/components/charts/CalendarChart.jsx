@@ -43,13 +43,15 @@ import ChartTooltip from './ChartTooltip' ;
  * @param {boolean} [props.animate=true] - Animate transitions ; forced off under `prefers-reduced-motion`.
  * @param {string|number} [props.aspect] - CSS aspect ratio ; takes precedence over `height`.
  * @param {string} [props.className] - Additional classes for the frame.
- * @param {Array<{day:string,value:number}>} props.data - Days as `YYYY-MM-DD` with their value.
  * @param {string} [props.dayBorderColor] - Gap color between days ; defaults to the surface color.
  * @param {string} [props.direction='horizontal'] - `'horizontal'` or `'vertical'`.
  * @param {string} [props.emptyColor] - Color of days with no data ; defaults to a DaisyUI theme color.
+ * @param {string} [props.emptyLabel='No data'] - Text shown when there is nothing to plot.
+ * @param {React.ReactNode} [props.emptyState] - Replaces the default empty state entirely.
  * @param {string|number|Date} props.from - First day shown.
  * @param {number|string} [props.height=260] - Frame height.
  * @param {boolean|string|Object} [props.legend=false] - `false`, a position, or a nivo legend override.
+ * @param {boolean} [props.loading=false] - Show a skeleton instead of the chart.
  * @param {Object} [props.margin] - Explicit margin overrides, merged over the computed one.
  * @param {number|string} [props.maxValue='auto'] - Upper bound of the color scale.
  * @param {number|string} [props.minValue='auto'] - Lower bound of the color scale.
@@ -79,9 +81,12 @@ const CalendarChart =
     dayBorderColor ,
     direction = 'horizontal' ,
     emptyColor ,
+    emptyLabel ,
+    emptyState ,
     from ,
     height = 260 ,
     legend = false ,
+    loading ,
     margin ,
     maxValue = 'auto' ,
     minValue = 'auto' ,
@@ -99,7 +104,7 @@ const CalendarChart =
 
     const colors = useChartPalette( { palette , count : steps , sequential : true } ) ;
 
-    const { empty , dayBorder , monthBorder } = useThemeColors( CALENDAR_COLOR_KEYS ) ?? {} ;
+    const { empty : emptyCell , dayBorder , monthBorder } = useThemeColors( CALENDAR_COLOR_KEYS ) ?? {} ;
 
     const reduceMotion = useMedia( '(prefers-reduced-motion: reduce)' , false ) ;
 
@@ -126,7 +131,15 @@ const CalendarChart =
     const Component = renderer === 'canvas' ? ResponsiveCalendarCanvas : ResponsiveCalendar ;
 
     return (
-        <ChartFrame aspect={ aspect } className={ className } height={ height }>
+        <ChartFrame
+            aspect     = { aspect }
+            className  = { className }
+            data       = { data }
+            emptyLabel = { emptyLabel }
+            emptyState = { emptyState }
+            height     = { height }
+            loading    = { loading }
+        >
             <Component
                 animate          = { animate && !reduceMotion }
                 colors           = { colors }
@@ -134,7 +147,7 @@ const CalendarChart =
                 dayBorderColor   = { dayBorderColor ?? dayBorder ?? 'transparent' }
                 dayBorderWidth   = { 2 }
                 direction        = { direction }
-                emptyColor       = { emptyColor ?? empty ?? 'transparent' }
+                emptyColor       = { emptyColor ?? emptyCell ?? 'transparent' }
                 from             = { from }
                 legends          = { legends }
                 margin           = { resolvedMargin }

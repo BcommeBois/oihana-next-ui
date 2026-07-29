@@ -12,6 +12,8 @@ import { ResponsiveChord , ResponsiveChordCanvas } from '@nivo/chord' ;
 
 import { useMedia } from 'react-use' ;
 
+import isChordDataValid from '../../helpers/charts/isChordDataValid' ;
+
 import useChartPalette from '../../hooks/useChartPalette' ;
 import useChartTheme   from '../../hooks/useChartTheme' ;
 
@@ -43,12 +45,15 @@ import ChartTooltip from './ChartTooltip' ;
  * @param {string|number} [props.aspect] - CSS aspect ratio ; takes precedence over `height`.
  * @param {string} [props.className] - Additional classes for the frame.
  * @param {number[][]} props.data - Square matrix of flows, `keys.length` on each side.
+ * @param {string} [props.emptyLabel='No data'] - Text shown when there is nothing to plot.
+ * @param {React.ReactNode} [props.emptyState] - Replaces the default empty state entirely.
  * @param {number|string} [props.height=460] - Frame height.
  * @param {number} [props.innerRadiusRatio=0.9] - Where the arcs start, as a share of the radius.
  * @param {string[]} props.keys - Entity names, in matrix order.
  * @param {number} [props.labelOffset=12] - Distance of the labels from the arcs.
  * @param {number} [props.labelRotation=-90] - Label rotation, in degrees.
  * @param {boolean|string|Object} [props.legend='bottom'] - `false`, a position, or a nivo legend override.
+ * @param {boolean} [props.loading=false] - Show a skeleton instead of the chart.
  * @param {Object} [props.margin] - Explicit margin overrides, merged over the computed one.
  * @param {Object} [props.nivoProps] - Escape hatch — spread last onto the nivo component.
  * @param {number} [props.padAngle=0.02] - Gap between arcs, in radians.
@@ -78,12 +83,15 @@ const ChordChart =
     aspect ,
     className ,
     data ,
+    emptyLabel ,
+    emptyState ,
     height = 460 ,
     innerRadiusRatio = 0.9 ,
     keys ,
     labelOffset = 12 ,
     labelRotation = -90 ,
     legend = 'bottom' ,
+    loading ,
     margin ,
     nivoProps ,
     padAngle = 0.02 ,
@@ -100,6 +108,18 @@ const ChordChart =
     const colors = useChartPalette( { palette , count : keys?.length ?? 0 } ) ;
 
     const reduceMotion = useMedia( '(prefers-reduced-motion: reduce)' , false ) ;
+
+    // A matrix that does not match `keys` throws while rendering rather than
+    // drawing nothing, so it is caught here and shown as the empty state.
+    const invalid = !isChordDataValid( data , keys ) ;
+
+    if ( invalid && process.env.NODE_ENV === 'development' )
+    {
+        console.warn(
+            '[ChordChart] `data` must be a square matrix of exactly `keys.length` rows and columns — ' +
+            'showing the empty state instead.' ,
+        ) ;
+    }
 
     // Labels sit outside the circle, like a pie's link labels.
     const resolvedMargin = useMemo
@@ -152,7 +172,16 @@ const ChordChart =
     const Component = renderer === 'canvas' ? ResponsiveChordCanvas : ResponsiveChord ;
 
     return (
-        <ChartFrame aspect={ aspect } className={ className } height={ height }>
+        <ChartFrame
+            aspect     = { aspect }
+            className  = { className }
+            data       = { data }
+            empty      = { invalid }
+            emptyLabel = { emptyLabel }
+            emptyState = { emptyState }
+            height     = { height }
+            loading    = { loading }
+        >
             <Component
                 animate           = { animate && !reduceMotion }
                 arcBorderColor    = {{ from : 'color' , modifiers : [ [ 'darker' , 0.8 ] ] }}

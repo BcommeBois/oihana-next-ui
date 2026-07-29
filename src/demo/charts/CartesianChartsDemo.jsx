@@ -6,6 +6,7 @@ import BarChart       from '@/components/charts/BarChart' ;
 import LineChart      from '@/components/charts/LineChart' ;
 import MarimekkoChart from '@/components/charts/MarimekkoChart' ;
 
+import Button  from '@/components/Button' ;
 import Divider from '@/components/Divider' ;
 
 import PalettePicker from './PalettePicker' ;
@@ -90,6 +91,7 @@ const SURVEY_DIMENSIONS =
 const CartesianChartsDemo = () =>
 {
     const [ palette , setPalette ] = useState( 'nivo' ) ;
+    const [ loading , setLoading ] = useState( false ) ;
 
     return (
         <div className="flex flex-col gap-8">
@@ -219,6 +221,40 @@ const CartesianChartsDemo = () =>
                     legend     = "right"
                     xAxis      = {{ legend : 'répondants' }}
                 />
+            </Section>
+
+            <Divider />
+
+            <Section
+                title       = "États — vide et chargement"
+                description = "Gérés une fois dans ChartFrame, donc identiques sur les 14 composants. La boîte garde sa taille dans les trois états : la page ne saute pas quand les données arrivent."
+            >
+                <div className="flex flex-col gap-4">
+                    <Button size="sm" onClick={ () => setLoading( ( value ) => !value ) }>
+                        { loading ? 'Arrêter le chargement' : 'Simuler un chargement' }
+                    </Button>
+
+                    <div className="grid gap-4 md:grid-cols-2">
+                        <BarChart
+                            data    = { BAR_DATA }
+                            indexBy = "country"
+                            palette = { palette }
+                            height  = { 260 }
+                            legend  = { false }
+                            loading = { loading }
+                        />
+
+                        <BarChart
+                            data    = { [] }
+                            indexBy = "country"
+                            palette = { palette }
+                            height  = { 260 }
+                            legend  = { false }
+                            loading = { loading }
+                            emptyLabel = "Aucune donnée sur la période"
+                        />
+                    </div>
+                </div>
             </Section>
 
         </div>
