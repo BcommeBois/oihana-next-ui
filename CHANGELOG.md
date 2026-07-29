@@ -8,7 +8,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
-## [0.7.7] — 2026-07-29
+**Components — `SplitPanel` (the overlay could not be dismissed)**
+- **Fixed — on a phone the panel opened and never closed.** The only way out was DaisyUI's `drawer-overlay` strip, but the default `width` was `w-full` below `sm` : the panel covered that strip entirely, leaving nothing to tap. The default now stops at **`w-[85%]`** on the smallest screens so the strip stays reachable, and the JSDoc spells out that a full-width value traps the panel open — it is not something a caller can guess.
+- **New `showCloseButton` (default on).** A dismiss button in the panel corner while it overlays, dropped once the panel is pinned and there is nothing left to close. It is a `<label>` pointing at the same checkbox as the overlay, so the component keeps a single dismiss mechanism rather than two to hold in sync.
+- **`Escape` now closes the overlay.** The real defect behind the report : the overlay strip and the close button are both pointer affordances, so a keyboard user who opened the panel had no way out at all. The handler stands down when a `<dialog>` or an open popover sits in the top layer above the panel — that surface owns `Escape`, and firing underneath it would dismiss two at once.
+- **Lab** — the second `/lab/panels` section no longer passes a full-width panel.
 
 **Components — `charts` (new family, lots C0 + C1)**
 - New **`BarChart`** and **`LineChart`** (`components/charts/`), the first two of a nine-chart family (Line, Bar, StackBar, Pie, RadialBar, Radar, Waffle, Calendar, Chord). **StackBar is not a separate component** — it is `<BarChart stacked />`, which maps to nivo's `groupMode="stacked"`.

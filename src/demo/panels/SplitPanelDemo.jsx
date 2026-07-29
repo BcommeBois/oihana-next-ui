@@ -222,7 +222,7 @@ const BreakpointSection = () =>
                 onOpenChange     = { setOpen }
                 open             = { open }
                 sideClassName    = "md:h-56"
-                width            = "w-full sm:w-64"
+                width            = "w-[85%] sm:w-64"
                 panel            = {
                     <div className="p-5 text-sm">
                         <p className="font-semibold">Panneau à 768px</p>

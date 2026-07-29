@@ -2,6 +2,8 @@
 
 import { useEffect , useId , useRef } from 'react' ;
 
+import { MdOutlineClose as CloseIcon } from 'react-icons/md' ;
+
 import cn from '../../themes/helpers/cn' ;
 
 import useValue      from '../../hooks/useValue' ;
@@ -99,8 +101,9 @@ const FREEZE_CLASS = 'transition-none' ;
  * @param {React.ReactNode} props.panel - Panel content.
  * @param {string} [props.panelClassName] - Extra classes on the panel itself.
  * @param {React.Ref} [props.ref] - Forwarded to the root.
+ * @param {boolean} [props.showCloseButton=true] - Render a dismiss button in the panel corner while it overlays. Dropped once pinned, where there is nothing to close.
  * @param {string} [props.sideClassName] - Extra classes on the panel wrapper (`drawer-side`) — where to override height or z-index.
- * @param {string} [props.width='w-full sm:w-80'] - Panel width.
+ * @param {string} [props.width='w-[85%] sm:w-80'] - Panel width. While overlaying it has to leave a strip of `drawer-overlay` uncovered : that strip *is* the tap-to-dismiss surface, so a full-width value would trap the panel open. Hence the 85% on the smallest screens — and keep `showCloseButton` on if you override it with something full-width.
  *
  * @see https://daisyui.com/components/drawer
  *
@@ -131,8 +134,9 @@ const SplitPanel =
     panel ,
     panelClassName ,
     ref ,
+    showCloseButton = true ,
     sideClassName ,
-    width = 'w-full sm:w-80' ,
+    width = 'w-[85%] sm:w-80' ,
 }) =>
 {
     const panelId = useId() ;
@@ -148,6 +152,62 @@ const SplitPanel =
 
     const sideRef  = useRef( null ) ;
     const asideRef = useRef( null ) ;
+
+    // `useValue` rebuilds its setter on every render ; keeping it behind a ref lets the
+    // Escape listener below subscribe once per open instead of once per render.
+    const setOpenRef = useRef( setOpen ) ;
+
+    useEffect( () =>
+    {
+        setOpenRef.current = setOpen ;
+    } ) ;
+
+    // Escape closes the panel while it overlays. Pinned, there is nothing to close.
+    //
+    // The overlay strip and the close button are pointer affordances only — without this
+    // a keyboard user who opened the panel has no way out at all.
+    useEffect( () =>
+    {
+        if ( isPinned || !isOpen || typeof document === 'undefined' )
+        {
+            return ;
+        }
+
+        const handleKeyDown = ( event ) =>
+        {
+            if ( event.key !== 'Escape' )
+            {
+                return ;
+            }
+
+            // A dialog or popover sits in the top layer, i.e. above this panel, so it
+            // owns Escape : closing underneath it would dismiss two surfaces at once.
+            // `:popover-open` can be unsupported — fall back to the dialog-only lookup
+            // rather than throwing, same as `Popover`.
+            let topLayer = null ;
+
+            try
+            {
+                topLayer = document.querySelector( 'dialog[open], [popover]:popover-open' ) ;
+            }
+            catch
+            {
+                topLayer = document.querySelector( 'dialog[open]' ) ;
+            }
+
+            if ( topLayer )
+            {
+                return ;
+            }
+
+            setOpenRef.current?.( false ) ;
+        } ;
+
+        document.addEventListener( 'keydown' , handleKeyDown ) ;
+
+        return () => document.removeEventListener( 'keydown' , handleKeyDown ) ;
+    }
+    , [ isOpen , isPinned ] ) ;
 
     // Crossing the breakpoint swaps `.drawer-side` between its overlay and its pinned
     // geometry — `translate` 100% ↔ 0, plus `opacity` and `width` — and DaisyUI puts a
@@ -224,9 +284,10 @@ const SplitPanel =
         sideClassName ,
     ) ;
 
+    // `relative` — containing block for the close button below.
     const panelClassNames = cn
     (
-        'min-h-full bg-base-200' ,
+        'relative min-h-full bg-base-200' ,
         width ,
         panelClassName ,
     ) ;
@@ -255,7 +316,21 @@ const SplitPanel =
                 />
 
                 <aside className={ panelClassNames } ref={ asideRef }>
+
+                    {/* A label rather than a button : it drives the very same toggle as the
+                        overlay, so there is one dismiss mechanism, not two. */}
+                    { showCloseButton && !isPinned && (
+                        <label
+                            htmlFor    = { panelId }
+                            className  = "btn btn-sm btn-circle btn-ghost absolute top-2 end-2 z-1"
+                            aria-label = { closeAriaLabel }
+                        >
+                            <CloseIcon size={ 18 } />
+                        </label>
+                    ) }
+
                     { panel }
+
                 </aside>
 
             </div>
