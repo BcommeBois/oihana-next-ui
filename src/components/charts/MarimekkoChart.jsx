@@ -6,7 +6,7 @@
  * @module components/charts/MarimekkoChart
  */
 
-import { useCallback , useMemo } from 'react' ;
+import { useCallback } from 'react' ;
 
 import { ResponsiveMarimekko } from '@nivo/marimekko' ;
 
@@ -14,13 +14,12 @@ import { useMedia } from 'react-use' ;
 
 import isMarimekkoDataValid from '../../helpers/charts/isMarimekkoDataValid' ;
 
+import useChartLayout  from '../../hooks/useChartLayout' ;
 import useChartPalette from '../../hooks/useChartPalette' ;
 import useChartTheme   from '../../hooks/useChartTheme' ;
 
-import { getChartAxis }    from '../../themes/charts/axes' ;
-import { getChartLegends } from '../../themes/charts/legends' ;
-import { getChartMargin }  from '../../themes/charts/margins' ;
-import { NIVO }            from '../../themes/charts/palettes' ;
+import { CARTESIAN } from '../../themes/charts/layout' ;
+import { NIVO }      from '../../themes/charts/palettes' ;
 
 import ChartFrame   from './ChartFrame' ;
 import ChartTooltip from './ChartTooltip' ;
@@ -134,29 +133,14 @@ const MarimekkoChart =
         ) ;
     }
 
-    const resolvedMargin = useMemo
-    (
-        () => getChartMargin( { xAxis , yAxis , legend , margin } ) ,
-        [ xAxis , yAxis , legend , margin ] ,
-    ) ;
-
-    const legends = useMemo
-    (
-        () => getChartLegends( { legend , margin : resolvedMargin } ) ,
-        [ legend , resolvedMargin ] ,
-    ) ;
-
-    const axisBottom = useMemo
-    (
-        () => getChartAxis( { axis : xAxis , margin : resolvedMargin , position : 'bottom' } ) ,
-        [ xAxis , resolvedMargin ] ,
-    ) ;
-
-    const axisLeft = useMemo
-    (
-        () => getChartAxis( { axis : yAxis , margin : resolvedMargin , position : 'left' } ) ,
-        [ yAxis , resolvedMargin ] ,
-    ) ;
+    const { margin : resolvedMargin , legends , axisBottom , axisLeft } = useChartLayout
+    ({
+        kind    : CARTESIAN ,
+        legend ,
+        margin ,
+        xAxis ,
+        yAxis ,
+    }) ;
 
     // The bar carries both its own slice and the datum it belongs to.
     const tooltip = useCallback

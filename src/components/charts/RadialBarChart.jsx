@@ -12,12 +12,12 @@ import { ResponsiveRadialBar } from '@nivo/radial-bar' ;
 
 import { useMedia } from 'react-use' ;
 
+import useChartLayout  from '../../hooks/useChartLayout' ;
 import useChartPalette from '../../hooks/useChartPalette' ;
 import useChartTheme   from '../../hooks/useChartTheme' ;
 
-import { getChartLegends } from '../../themes/charts/legends' ;
-import { getRadialMargin } from '../../themes/charts/margins' ;
-import { NIVO }            from '../../themes/charts/palettes' ;
+import { RADIAL } from '../../themes/charts/layout' ;
+import { NIVO }   from '../../themes/charts/palettes' ;
 
 import ChartFrame   from './ChartFrame' ;
 import ChartTooltip from './ChartTooltip' ;
@@ -127,18 +127,12 @@ const RadialBarChart =
 
     const reduceMotion = useMedia( '(prefers-reduced-motion: reduce)' , false ) ;
 
-    // No arc link labels on this chart, so only the legend eats into the box.
-    const resolvedMargin = useMemo
-    (
-        () => getRadialMargin( { legend , margin } ) ,
-        [ legend , margin ] ,
-    ) ;
-
-    const legends = useMemo
-    (
-        () => getChartLegends( { legend , margin : resolvedMargin } ) ,
-        [ legend , resolvedMargin ] ,
-    ) ;
+    const { margin : resolvedMargin , legends } = useChartLayout
+    ({
+        kind   : RADIAL ,
+        legend ,
+        margin ,
+    }) ;
 
     const tooltip = useCallback
     (

@@ -6,7 +6,7 @@
  * @module components/charts/ChordChart
  */
 
-import { useCallback , useMemo } from 'react' ;
+import { useCallback } from 'react' ;
 
 import { ResponsiveChord , ResponsiveChordCanvas } from '@nivo/chord' ;
 
@@ -14,12 +14,12 @@ import { useMedia } from 'react-use' ;
 
 import isChordDataValid from '../../helpers/charts/isChordDataValid' ;
 
+import useChartLayout  from '../../hooks/useChartLayout' ;
 import useChartPalette from '../../hooks/useChartPalette' ;
 import useChartTheme   from '../../hooks/useChartTheme' ;
 
-import { getChartLegends } from '../../themes/charts/legends' ;
-import { getRadialMargin } from '../../themes/charts/margins' ;
-import { NIVO }            from '../../themes/charts/palettes' ;
+import { RADIAL } from '../../themes/charts/layout' ;
+import { NIVO }   from '../../themes/charts/palettes' ;
 
 import ChartFrame   from './ChartFrame' ;
 import ChartTooltip from './ChartTooltip' ;
@@ -127,18 +127,13 @@ const ChordChart =
         ) ;
     }
 
-    // Labels sit outside the circle, like a pie's link labels.
-    const resolvedMargin = useMemo
-    (
-        () => getRadialMargin( { outsideLabels : true , legend , margin } ) ,
-        [ legend , margin ] ,
-    ) ;
-
-    const legends = useMemo
-    (
-        () => getChartLegends( { legend , margin : resolvedMargin } ) ,
-        [ legend , resolvedMargin ] ,
-    ) ;
+    const { margin : resolvedMargin , legends } = useChartLayout
+    ({
+        kind          : RADIAL ,
+        legend ,
+        margin ,
+        outsideLabels : true ,
+    }) ;
 
     const arcTooltip = useCallback
     (

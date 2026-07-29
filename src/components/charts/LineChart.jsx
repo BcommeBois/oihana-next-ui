@@ -12,13 +12,13 @@ import { ResponsiveLine , ResponsiveLineCanvas } from '@nivo/line' ;
 
 import { useMedia } from 'react-use' ;
 
+import useChartLayout  from '../../hooks/useChartLayout' ;
 import useChartPalette from '../../hooks/useChartPalette' ;
 import useChartTheme   from '../../hooks/useChartTheme' ;
 
-import { formatTimeTick , getChartAxis } from '../../themes/charts/axes' ;
-import { getChartLegends }               from '../../themes/charts/legends' ;
-import { getChartMargin }                from '../../themes/charts/margins' ;
-import { NIVO }                          from '../../themes/charts/palettes' ;
+import { formatTimeTick } from '../../themes/charts/axes' ;
+import { CARTESIAN }      from '../../themes/charts/layout' ;
+import { NIVO }           from '../../themes/charts/palettes' ;
 
 import ChartFrame   from './ChartFrame' ;
 import ChartTooltip from './ChartTooltip' ;
@@ -189,35 +189,15 @@ const LineChart =
     const resolvedXScale = useMemo( () => resolveXScale( xScale , data ) , [ xScale , data ] ) ;
     const resolvedYScale = useMemo( () => resolveYScale( yScale , stacked ) , [ yScale , stacked ] ) ;
 
-    const resolvedMargin = useMemo
-    (
-        () => getChartMargin( { xAxis , yAxis , legend , margin } ) ,
-        [ xAxis , yAxis , legend , margin ] ,
-    ) ;
-
-    const legends = useMemo
-    (
-        () => getChartLegends( { legend , margin : resolvedMargin } ) ,
-        [ legend , resolvedMargin ] ,
-    ) ;
-
-    const axisBottom = useMemo
-    (
-        () => getChartAxis
-        ({
-            axis     : xAxis ,
-            margin   : resolvedMargin ,
-            position : 'bottom' ,
-            scale    : resolvedXScale?.type ,
-        }) ,
-        [ xAxis , resolvedMargin , resolvedXScale ] ,
-    ) ;
-
-    const axisLeft = useMemo
-    (
-        () => getChartAxis( { axis : yAxis , margin : resolvedMargin , position : 'left' } ) ,
-        [ yAxis , resolvedMargin ] ,
-    ) ;
+    const { margin : resolvedMargin , legends , axisBottom , axisLeft } = useChartLayout
+    ({
+        kind       : CARTESIAN ,
+        legend ,
+        margin ,
+        xAxis ,
+        xScaleType : resolvedXScale?.type ,
+        yAxis ,
+    }) ;
 
     const tooltip = useCallback
     (

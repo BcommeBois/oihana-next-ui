@@ -12,12 +12,12 @@ import { ResponsiveRadar } from '@nivo/radar' ;
 
 import { useMedia } from 'react-use' ;
 
+import useChartLayout  from '../../hooks/useChartLayout' ;
 import useChartPalette from '../../hooks/useChartPalette' ;
 import useChartTheme   from '../../hooks/useChartTheme' ;
 
-import { getChartLegends } from '../../themes/charts/legends' ;
-import { getRadialMargin } from '../../themes/charts/margins' ;
-import { NIVO }            from '../../themes/charts/palettes' ;
+import { RADIAL } from '../../themes/charts/layout' ;
+import { NIVO }   from '../../themes/charts/palettes' ;
 
 import ChartFrame   from './ChartFrame' ;
 import ChartTooltip from './ChartTooltip' ;
@@ -135,17 +135,13 @@ const RadarChart =
 
     const reduceMotion = useMedia( '(prefers-reduced-motion: reduce)' , false ) ;
 
-    const resolvedMargin = useMemo
-    (
-        () => getRadialMargin( { outsideLabels : true , legend , margin } ) ,
-        [ legend , margin ] ,
-    ) ;
-
-    const legends = useMemo
-    (
-        () => getChartLegends( { legend , margin : resolvedMargin } ) ,
-        [ legend , resolvedMargin ] ,
-    ) ;
+    const { margin : resolvedMargin , legends } = useChartLayout
+    ({
+        kind          : RADIAL ,
+        legend ,
+        margin ,
+        outsideLabels : true ,
+    }) ;
 
     // Radar hovers a whole spoke rather than a single point, so every series
     // shows up at once — hence the multi-row tooltip.

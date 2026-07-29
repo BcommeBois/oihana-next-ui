@@ -12,13 +12,12 @@ import { ResponsiveBar , ResponsiveBarCanvas } from '@nivo/bar' ;
 
 import { useMedia } from 'react-use' ;
 
+import useChartLayout  from '../../hooks/useChartLayout' ;
 import useChartPalette from '../../hooks/useChartPalette' ;
 import useChartTheme   from '../../hooks/useChartTheme' ;
 
-import { getChartAxis }    from '../../themes/charts/axes' ;
-import { getChartLegends } from '../../themes/charts/legends' ;
-import { getChartMargin }  from '../../themes/charts/margins' ;
-import { NIVO }            from '../../themes/charts/palettes' ;
+import { CARTESIAN } from '../../themes/charts/layout' ;
+import { NIVO }      from '../../themes/charts/palettes' ;
 
 import ChartFrame   from './ChartFrame' ;
 import ChartTooltip from './ChartTooltip' ;
@@ -140,29 +139,14 @@ const BarChart =
 
     const reduceMotion = useMedia( '(prefers-reduced-motion: reduce)' , false ) ;
 
-    const resolvedMargin = useMemo
-    (
-        () => getChartMargin( { xAxis , yAxis , legend , margin } ) ,
-        [ xAxis , yAxis , legend , margin ] ,
-    ) ;
-
-    const legends = useMemo
-    (
-        () => getChartLegends( { legend , margin : resolvedMargin } ) ,
-        [ legend , resolvedMargin ] ,
-    ) ;
-
-    const axisBottom = useMemo
-    (
-        () => getChartAxis( { axis : xAxis , margin : resolvedMargin , position : 'bottom' } ) ,
-        [ xAxis , resolvedMargin ] ,
-    ) ;
-
-    const axisLeft = useMemo
-    (
-        () => getChartAxis( { axis : yAxis , margin : resolvedMargin , position : 'left' } ) ,
-        [ yAxis , resolvedMargin ] ,
-    ) ;
+    const { margin : resolvedMargin , legends , axisBottom , axisLeft } = useChartLayout
+    ({
+        kind    : CARTESIAN ,
+        legend ,
+        margin ,
+        xAxis ,
+        yAxis ,
+    }) ;
 
     const tooltip = useCallback
     (

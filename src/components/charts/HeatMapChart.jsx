@@ -12,15 +12,14 @@ import { ResponsiveHeatMap , ResponsiveHeatMapCanvas } from '@nivo/heatmap' ;
 
 import { useMedia } from 'react-use' ;
 
+import useChartLayout  from '../../hooks/useChartLayout' ;
 import useChartPalette from '../../hooks/useChartPalette' ;
 import useChartTheme   from '../../hooks/useChartTheme' ;
 import useThemeColors  from '../../themes/hooks/useThemeColors' ;
 
-import { getChartAxis }         from '../../themes/charts/axes' ;
-import { CALENDAR_COLOR_KEYS }  from '../../themes/charts/calendar' ;
-import { getContinuousLegends } from '../../themes/charts/legends' ;
-import { getGridMargin }        from '../../themes/charts/margins' ;
-import { NIVO }                 from '../../themes/charts/palettes' ;
+import { CALENDAR_COLOR_KEYS } from '../../themes/charts/calendar' ;
+import { GRID }                from '../../themes/charts/layout' ;
+import { NIVO }                from '../../themes/charts/palettes' ;
 
 import ChartFrame   from './ChartFrame' ;
 import ChartTooltip from './ChartTooltip' ;
@@ -135,29 +134,16 @@ const HeatMapChart =
         [ ramp , minValue , maxValue ] ,
     ) ;
 
-    const resolvedMargin = useMemo
-    (
-        () => getGridMargin( { xAxis , yAxis , legend , margin } ) ,
-        [ xAxis , yAxis , legend , margin ] ,
-    ) ;
-
-    const legends = useMemo
-    (
-        () => getContinuousLegends( { legend , margin : resolvedMargin } ) ,
-        [ legend , resolvedMargin ] ,
-    ) ;
-
-    const axisTop = useMemo
-    (
-        () => getChartAxis( { axis : xAxis ?? {} , margin : resolvedMargin , position : 'top' } ) ,
-        [ xAxis , resolvedMargin ] ,
-    ) ;
-
-    const axisLeft = useMemo
-    (
-        () => getChartAxis( { axis : yAxis ?? {} , margin : resolvedMargin , position : 'left' } ) ,
-        [ yAxis , resolvedMargin ] ,
-    ) ;
+    const { margin : resolvedMargin , legends , axisTop , axisLeft } = useChartLayout
+    ({
+        continuousLegend : true ,
+        kind             : GRID ,
+        legend ,
+        margin ,
+        xAxis ,
+        xAxisPosition    : 'top' ,
+        yAxis ,
+    }) ;
 
     // The cell datum uses `serieId` — singular, unlike the line chart's `seriesId`.
     const tooltip = useCallback

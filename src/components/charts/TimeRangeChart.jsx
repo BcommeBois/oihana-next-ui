@@ -6,19 +6,19 @@
  * @module components/charts/TimeRangeChart
  */
 
-import { useCallback , useMemo } from 'react' ;
+import { useCallback } from 'react' ;
 
 import { ResponsiveTimeRange } from '@nivo/calendar' ;
 
 import { useMedia } from 'react-use' ;
 
+import useChartLayout  from '../../hooks/useChartLayout' ;
 import useChartPalette from '../../hooks/useChartPalette' ;
 import useChartTheme   from '../../hooks/useChartTheme' ;
 import useThemeColors  from '../../themes/hooks/useThemeColors' ;
 
 import { CALENDAR_COLOR_KEYS } from '../../themes/charts/calendar' ;
-import { getChartLegends }     from '../../themes/charts/legends' ;
-import { getGridMargin }       from '../../themes/charts/margins' ;
+import { GRID }                from '../../themes/charts/layout' ;
 import { NIVO }                from '../../themes/charts/palettes' ;
 
 import ChartFrame   from './ChartFrame' ;
@@ -114,18 +114,13 @@ const TimeRangeChart =
 
     const reduceMotion = useMedia( '(prefers-reduced-motion: reduce)' , false ) ;
 
-    // Weekday names are spelled out down the left side, so they need real room.
-    const resolvedMargin = useMemo
-    (
-        () => getGridMargin( { weekdayLabels : true , legend , margin } ) ,
-        [ legend , margin ] ,
-    ) ;
-
-    const legends = useMemo
-    (
-        () => getChartLegends( { legend , margin : resolvedMargin } ) ,
-        [ legend , resolvedMargin ] ,
-    ) ;
+    const { margin : resolvedMargin , legends } = useChartLayout
+    ({
+        kind          : GRID ,
+        legend ,
+        margin ,
+        weekdayLabels : true ,
+    }) ;
 
     const tooltip = useCallback
     (
