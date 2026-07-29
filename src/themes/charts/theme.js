@@ -60,6 +60,7 @@ export const CHART_COLOR_KEYS =
  * @param {Object} [props.colors] - Resolved colors — `{ text , muted , grid , border }`.
  * @param {string} [props.fontFamily='inherit'] - Font family ; `inherit` picks up the app font instead of nivo's `sans-serif`.
  * @param {number} [props.fontSize=12] - Base font size in px.
+ * @param {number|string} [props.labelFontWeight=700] - Weight of the data labels only, not the axis or legend text.
  * @param {Object} [props.overrides] - Deeply merged on top of the result.
  *
  * @returns {Object} A nivo theme object.
@@ -69,7 +70,7 @@ export const CHART_COLOR_KEYS =
  * const theme = buildChartTheme( { colors : { text : '#2E3440' } } ) ;
  * ```
  */
-export const buildChartTheme = ( { colors , fontFamily = 'inherit' , fontSize = 12 , overrides } = {} ) =>
+export const buildChartTheme = ( { colors , fontFamily = 'inherit' , fontSize = 12 , labelFontWeight = 700 , overrides } = {} ) =>
 {
     const text   = colors?.text   ?? FALLBACK_TEXT ;
     const muted  = colors?.muted  ?? FALLBACK_TEXT ;
@@ -127,7 +128,12 @@ export const buildChartTheme = ( { colors , fontFamily = 'inherit' , fontSize = 
             hidden : { symbol : { fill : muted , opacity : 0.35 } , text : { fill : muted } } ,
         } ,
 
-        labels : { text : { fontFamily , fontSize , fill : text } } ,
+        // Data labels — arc labels, pie link labels, bar labels. Heavier than
+        // the rest of the chrome : they sit on top of colored marks rather
+        // than on the background, so they need more weight to stay legible.
+        // Note that the rendered weight depends on what the app font ships :
+        // a font without a 600 face snaps this to its nearest heavier one.
+        labels : { text : { fontFamily , fontSize , fill : text , fontWeight : labelFontWeight } } ,
 
         dots : { text : { fontFamily , fontSize , fill : text } } ,
 

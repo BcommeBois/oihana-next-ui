@@ -33,6 +33,7 @@ import { TbInfinity             as InfiniteScrollIcon } from "react-icons/tb";
 import { LuLayoutDashboard      as LayoutIcon         } from "react-icons/lu";
 import { TbLayoutKanban         as KanbanIcon         } from "react-icons/tb";
 import { TbChartHistogram       as ChartIcon          } from "react-icons/tb";
+import { TbChartDonut           as ChartCircularIcon  } from "react-icons/tb";
 import { CiBoxList              as ListIcon           } from "react-icons/ci";
 import { LuListTree             as TreeIcon           } from "react-icons/lu";
 import { RiProgress7Line        as LoadingIcon        } from "react-icons/ri";
@@ -119,7 +120,8 @@ const navigation =
                 Icon : ChartIcon ,
                 items :
                 [
-                    { id : 'chartsBasics' , type : LINK  , Icon : ChartIcon , path  : '/lab/charts' } ,
+                    { id : 'chartsCartesian' , type : LINK  , Icon : ChartIcon         , path  : '/lab/charts'    } ,
+                    { id : 'chartsCirculars' , type : LINK  , Icon : ChartCircularIcon , path  : '/lab/circulars' } ,
                 ]
             } ,
             {

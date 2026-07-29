@@ -6,9 +6,9 @@ import BarChart  from '@/components/charts/BarChart' ;
 import LineChart from '@/components/charts/LineChart' ;
 
 import Divider from '@/components/Divider' ;
-import Select  from '@/components/selects/Select' ;
 
-import Container from '@/display/Container' ;
+import PalettePicker from './PalettePicker' ;
+import Section       from './Section' ;
 
 const TRANSPORT = [ 'plane' , 'helicopter' , 'boat' , 'train' , 'subway' , 'bus' , 'car' , 'moto' , 'bicycle' ] ;
 
@@ -66,46 +66,17 @@ const STACK_DATA = [ 'FR' , 'EN' , 'IT' , 'ES' , 'DE' , 'ND' , 'BE' ].map( ( cou
     return entry ;
 } ) ;
 
-const Section = ( { children , description , title } ) => (
-    <div className="flex flex-col gap-2">
-        <div>
-            <h3 className="text-lg font-semibold">{ title }</h3>
-            { description && <p className="text-sm text-base-content/60">{ description }</p> }
-        </div>
-        { children }
-    </div>
-) ;
-
 /**
- * Charts showcase — lot C1 (Line, Bar, StackBar).
- *
- * The demo opens on `nivo`. The palette choice is still provisional, so the
- * selector is here to compare the three on real data, in both light and
- * dark, before settling it.
+ * Cartesian charts showcase — Line, Bar, StackBar.
  */
-const ChartsDemo = () =>
+const CartesianChartsDemo = () =>
 {
     const [ palette , setPalette ] = useState( 'nivo' ) ;
 
     return (
         <div className="flex flex-col gap-8">
 
-            <Container className="flex flex-wrap items-end gap-4" maxWidth="max-w-full">
-                <Select
-                    label    = "Palette"
-                    size     = "sm"
-                    value    = { palette }
-                    onChange = { ( event ) => setPalette( event.target.value ) }
-                >
-                    <option value="brand">brand — dérivée du thème</option>
-                    <option value="theme">theme — sémantiques DaisyUI</option>
-                    <option value="nivo">nivo — palette par défaut</option>
-                </Select>
-
-                <p className="text-sm text-base-content/60">
-                    Basculez aussi le thème clair/sombre : les textes, axes et grilles suivent DaisyUI.
-                </p>
-            </Container>
+            <PalettePicker value={ palette } onChange={ setPalette } />
 
             <Divider />
 
@@ -199,4 +170,4 @@ const ChartsDemo = () =>
     ) ;
 } ;
 
-export default ChartsDemo ;
+export default CartesianChartsDemo ;

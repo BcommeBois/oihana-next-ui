@@ -53,6 +53,8 @@
   "peerDependencies": {
     "@nivo/bar": "^0.99.0",
     "@nivo/line": "^0.99.0",
+    "@nivo/pie": "^0.99.0",
+    "@nivo/radial-bar": "^0.99.0",
     "daisyui": "^5.0.0",
     "next": "16.2.3",
     "react": "^19.0.0",
@@ -64,6 +66,12 @@
       "optional": true
     },
     "@nivo/line": {
+      "optional": true
+    },
+    "@nivo/pie": {
+      "optional": true
+    },
+    "@nivo/radial-bar": {
       "optional": true
     }
   },
@@ -102,6 +110,8 @@
     "@biomejs/biome": "2.2.0",
     "@nivo/bar": "^0.99.0",
     "@nivo/line": "^0.99.0",
+    "@nivo/pie": "^0.99.0",
+    "@nivo/radial-bar": "^0.99.0",
     "@tailwindcss/postcss": "^4.3.3",
     "@tailwindcss/typography": "^0.5.20",
     "@types/node": "^25.9.5",

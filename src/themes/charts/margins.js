@@ -104,4 +104,64 @@ export const getChartMargin = ( { xAxis , yAxis , legend , margin } = {} ) =>
     return { ...result , ...margin } ;
 } ;
 
+/**
+ * Margin for a radial chart, before labels and legend.
+ * @type {Object.<string,number>}
+ */
+export const RADIAL_BASE_MARGIN = { top : 16 , right : 16 , bottom : 16 , left : 16 } ;
+
+/**
+ * Room the arc link labels need on every side.
+ *
+ * They stick out of the circle in all directions — a long label on the left
+ * needs as much room as one on the right — so this is added uniformly
+ * rather than per side.
+ *
+ * @type {number}
+ */
+export const ARC_LINK_LABELS_SPACE = 56 ;
+
+/**
+ * Computes the margin of a chart drawn in a circle — pie, radial bar.
+ *
+ * These have no axes, so `getChartMargin` does not apply : what eats into
+ * the box is the arc link labels and the legend. Too small a margin here
+ * does not clip a label, it shrinks the circle, which is easy to miss.
+ *
+ * @param {Object} [props]
+ * @param {boolean} [props.arcLinkLabels=false] - Whether labels are drawn outside the arcs.
+ * @param {boolean|string|Object} [props.legend] - The `legend` prop.
+ * @param {Object} [props.margin] - Explicit overrides, merged last.
+ *
+ * @returns {{top:number,right:number,bottom:number,left:number}} The resolved margin.
+ *
+ * @example
+ * ```js
+ * getRadialMargin( { arcLinkLabels : true , legend : 'bottom' } ) ;
+ * // → { top : 72 , right : 72 , bottom : 124 , left : 72 }
+ * ```
+ */
+export const getRadialMargin = ( { arcLinkLabels = false , legend , margin } = {} ) =>
+{
+    const result = { ...RADIAL_BASE_MARGIN } ;
+
+    if ( arcLinkLabels )
+    {
+        result.top    += ARC_LINK_LABELS_SPACE ;
+        result.right  += ARC_LINK_LABELS_SPACE ;
+        result.bottom += ARC_LINK_LABELS_SPACE ;
+        result.left   += ARC_LINK_LABELS_SPACE ;
+    }
+
+    const resolvedLegend = resolveLegend( legend ) ;
+
+    if ( resolvedLegend )
+    {
+        const side = resolvedLegend.position ?? 'bottom' ;
+        result[ side ] = ( result[ side ] ?? 0 ) + ( LEGEND_SPACE[ side ] ?? LEGEND_SPACE.bottom ) ;
+    }
+
+    return { ...result , ...margin } ;
+} ;
+
 export default getChartMargin ;
