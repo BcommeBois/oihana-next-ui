@@ -107,7 +107,7 @@ const PieChart =
 
     const resolvedMargin = useMemo
     (
-        () => getRadialMargin( { arcLinkLabels , legend , margin } ) ,
+        () => getRadialMargin( { outsideLabels : arcLinkLabels , legend , margin } ) ,
         [ arcLinkLabels , legend , margin ] ,
     ) ;
 

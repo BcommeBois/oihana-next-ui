@@ -105,31 +105,32 @@ export const getChartMargin = ( { xAxis , yAxis , legend , margin } = {} ) =>
 } ;
 
 /**
- * Margin for a radial chart, before labels and legend.
+ * Margin for an axisless chart, before labels and legend.
  * @type {Object.<string,number>}
  */
 export const RADIAL_BASE_MARGIN = { top : 16 , right : 16 , bottom : 16 , left : 16 } ;
 
 /**
- * Room the arc link labels need on every side.
+ * Room the labels drawn outside the shape need on every side.
  *
- * They stick out of the circle in all directions — a long label on the left
- * needs as much room as one on the right — so this is added uniformly
- * rather than per side.
+ * They stick out in all directions — a long label on the left needs as much
+ * room as one on the right — so this is added uniformly rather than per side.
  *
  * @type {number}
  */
 export const ARC_LINK_LABELS_SPACE = 56 ;
 
 /**
- * Computes the margin of a chart drawn in a circle — pie, radial bar.
+ * Computes the margin of a chart drawn without cartesian axes — pie, radial
+ * bar, radar, waffle.
  *
- * These have no axes, so `getChartMargin` does not apply : what eats into
- * the box is the arc link labels and the legend. Too small a margin here
- * does not clip a label, it shrinks the circle, which is easy to miss.
+ * `getChartMargin` reasons about axis titles and ticks, which these do not
+ * have : what eats into the box here is the labels drawn outside the shape
+ * and the legend. Too small a margin does not clip a label, it shrinks the
+ * plotted shape, which is easy to miss.
  *
  * @param {Object} [props]
- * @param {boolean} [props.arcLinkLabels=false] - Whether labels are drawn outside the arcs.
+ * @param {boolean} [props.outsideLabels=false] - Whether labels are drawn outside the plotted shape.
  * @param {boolean|string|Object} [props.legend] - The `legend` prop.
  * @param {Object} [props.margin] - Explicit overrides, merged last.
  *
@@ -137,15 +138,15 @@ export const ARC_LINK_LABELS_SPACE = 56 ;
  *
  * @example
  * ```js
- * getRadialMargin( { arcLinkLabels : true , legend : 'bottom' } ) ;
+ * getRadialMargin( { outsideLabels : true , legend : 'bottom' } ) ;
  * // → { top : 72 , right : 72 , bottom : 124 , left : 72 }
  * ```
  */
-export const getRadialMargin = ( { arcLinkLabels = false , legend , margin } = {} ) =>
+export const getRadialMargin = ( { outsideLabels = false , legend , margin } = {} ) =>
 {
     const result = { ...RADIAL_BASE_MARGIN } ;
 
-    if ( arcLinkLabels )
+    if ( outsideLabels )
     {
         result.top    += ARC_LINK_LABELS_SPACE ;
         result.right  += ARC_LINK_LABELS_SPACE ;

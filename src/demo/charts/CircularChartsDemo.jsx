@@ -3,6 +3,7 @@
 import { useState } from 'react' ;
 
 import PieChart       from '@/components/charts/PieChart' ;
+import RadarChart     from '@/components/charts/RadarChart' ;
 import RadialBarChart from '@/components/charts/RadialBarChart' ;
 
 import Divider from '@/components/Divider' ;
@@ -30,8 +31,23 @@ const RADIAL_DATA = [ 'Supermarket' , 'Combini' , 'Online' ].map( ( id , row ) =
     }) ) ,
 }) ) ;
 
+const WINES = [ 'chardonay' , 'carmenere' , 'syrah' ] ;
+
+const RADAR_DATA = [ 'fruity' , 'bitter' , 'heavy' , 'strong' , 'sunny' ].map( ( taste , row ) =>
+{
+    const entry = { taste } ;
+
+    WINES.forEach( ( wine , index ) =>
+    {
+        // Deterministic pseudo-random, so the demo does not jitter on every render.
+        entry[ wine ] = Math.round( 30 + ( Math.sin( row * 1.7 + index * 2.4 ) + 1 ) * 35 ) ;
+    } ) ;
+
+    return entry ;
+} ) ;
+
 /**
- * Circular charts showcase — Pie, RadialBar.
+ * Circular charts showcase — Pie, RadialBar, Radar.
  */
 const CircularChartsDemo = () =>
 {
@@ -81,6 +97,38 @@ const CircularChartsDemo = () =>
                     data    = { RADIAL_DATA }
                     palette = { palette }
                     height  = { 440 }
+                />
+            </Section>
+
+            <Divider />
+
+            <Section
+                title       = "Radar"
+                description = "Compare des profils sur les mêmes dimensions. SVG uniquement chez nivo ; le survol montre toute la branche d'un coup."
+            >
+                <RadarChart
+                    data    = { RADAR_DATA }
+                    indexBy = "taste"
+                    keys    = { WINES }
+                    palette = { palette }
+                    height  = { 460 }
+                />
+            </Section>
+
+            <Divider />
+
+            <Section
+                title       = "Radar — grille anguleuse"
+                description = "gridShape='linear' : la grille suit le polygone au lieu d'être circulaire."
+            >
+                <RadarChart
+                    data      = { RADAR_DATA }
+                    indexBy   = "taste"
+                    keys      = { WINES }
+                    palette   = { palette }
+                    height    = { 420 }
+                    gridShape = "linear"
+                    legend    = "right"
                 />
             </Section>
 
