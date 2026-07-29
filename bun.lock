@@ -42,7 +42,9 @@
         "@nivo/chord": "^0.99.0",
         "@nivo/heatmap": "^0.99.0",
         "@nivo/line": "^0.99.0",
+        "@nivo/marimekko": "^0.99.0",
         "@nivo/pie": "^0.99.0",
+        "@nivo/polar-bar": "^0.99.0",
         "@nivo/radar": "^0.99.0",
         "@nivo/radial-bar": "^0.99.0",
         "@nivo/waffle": "^0.99.0",
@@ -66,7 +68,9 @@
         "@nivo/chord": "^0.99.0",
         "@nivo/heatmap": "^0.99.0",
         "@nivo/line": "^0.99.0",
+        "@nivo/marimekko": "^0.99.0",
         "@nivo/pie": "^0.99.0",
+        "@nivo/polar-bar": "^0.99.0",
         "@nivo/radar": "^0.99.0",
         "@nivo/radial-bar": "^0.99.0",
         "@nivo/waffle": "^0.99.0",
@@ -82,7 +86,9 @@
         "@nivo/chord",
         "@nivo/heatmap",
         "@nivo/line",
+        "@nivo/marimekko",
         "@nivo/pie",
+        "@nivo/polar-bar",
         "@nivo/radar",
         "@nivo/radial-bar",
         "@nivo/waffle",
@@ -252,9 +258,13 @@
 
     "@nivo/line": ["@nivo/line@0.99.0", "", { "dependencies": { "@nivo/annotations": "0.99.0", "@nivo/axes": "0.99.0", "@nivo/colors": "0.99.0", "@nivo/core": "0.99.0", "@nivo/legends": "0.99.0", "@nivo/scales": "0.99.0", "@nivo/theming": "0.99.0", "@nivo/tooltip": "0.99.0", "@nivo/voronoi": "0.99.0", "@react-spring/web": "9.4.5 || ^9.7.2 || ^10.0", "@types/d3-shape": "^3.1.6", "d3-shape": "^3.2.0" }, "peerDependencies": { "react": "^16.14 || ^17.0 || ^18.0 || ^19.0" } }, "sha512-bAqTXSjpnpcGMs341qWFUi7hJTqQiNoSeJHsYPuPS3icuXPcp3WETQH+zRZACeEF79ZigeOWCW+dzODgne1y9w=="],
 
+    "@nivo/marimekko": ["@nivo/marimekko@0.99.0", "", { "dependencies": { "@nivo/axes": "0.99.0", "@nivo/colors": "0.99.0", "@nivo/core": "0.99.0", "@nivo/legends": "0.99.0", "@nivo/scales": "0.99.0", "@nivo/theming": "0.99.0", "@nivo/tooltip": "0.99.0", "@react-spring/web": "9.4.5 || ^9.7.2 || ^10.0", "@types/d3-shape": "^3.1.6", "d3-shape": "^3.2.0", "lodash": "^4.17.21" }, "peerDependencies": { "react": "^16.14 || ^17.0 || ^18.0 || ^19.0" } }, "sha512-TWLg41yfTB3IC4iIxGL9gM8DC05W/DZIo2InFTzgohA9GHGx3r8jbeNgJzEINELqZSzC6QA+UAp3whdntV9npA=="],
+
     "@nivo/pie": ["@nivo/pie@0.99.0", "", { "dependencies": { "@nivo/arcs": "0.99.0", "@nivo/colors": "0.99.0", "@nivo/core": "0.99.0", "@nivo/legends": "0.99.0", "@nivo/theming": "0.99.0", "@nivo/tooltip": "0.99.0", "@types/d3-shape": "^3.1.6", "d3-shape": "^3.2.0" }, "peerDependencies": { "react": "^16.14 || ^17.0 || ^18.0 || ^19.0" } }, "sha512-zUbo8UdLndp2RMljrOqitAKKEnl7YypkJrOzjKLk8jQGU7qqUKtgFoJIPhiBsvNPs3xtX2KwgtS1+JKNTNns7A=="],
 
     "@nivo/polar-axes": ["@nivo/polar-axes@0.99.0", "", { "dependencies": { "@nivo/arcs": "0.99.0", "@nivo/core": "0.99.0", "@nivo/scales": "0.99.0", "@nivo/text": "0.99.0", "@nivo/theming": "0.99.0", "@react-spring/web": "9.4.5 || ^9.7.2 || ^10.0" }, "peerDependencies": { "react": "^16.14 || ^17.0 || ^18.0 || ^19.0" } }, "sha512-4+Aq8GXMDGBiRCIKNuNcmYA389sU0JV0yQopXqnIpj/kFJAZE0wYtqvHe3Qry8uP5ttwVmcwMv2FcfEEBR613g=="],
+
+    "@nivo/polar-bar": ["@nivo/polar-bar@0.99.0", "", { "dependencies": { "@nivo/arcs": "0.99.0", "@nivo/colors": "0.99.0", "@nivo/core": "0.99.0", "@nivo/legends": "0.99.0", "@nivo/polar-axes": "0.99.0", "@nivo/scales": "0.99.0", "@nivo/theming": "0.99.0", "@nivo/tooltip": "0.99.0", "@react-spring/web": "9.4.5 || ^9.7.2 || ^10.0", "@types/d3-scale": "^4.0.8", "@types/d3-shape": "^3.1.6", "d3-scale": "^4.0.2", "d3-shape": "^3.2.0" }, "peerDependencies": { "react": "^16.14 || ^17.0 || ^18.0 || ^19.0" } }, "sha512-ys1E/2L2xboc8kwObYLcNZoM6BuwCiZziOFa6RhmPVR+CybnODptiT7AQM1/S4O0mLnBzYc7h+ecJ3CCZ+x9zw=="],
 
     "@nivo/radar": ["@nivo/radar@0.99.0", "", { "dependencies": { "@nivo/colors": "0.99.0", "@nivo/core": "0.99.0", "@nivo/legends": "0.99.0", "@nivo/text": "0.99.0", "@nivo/theming": "0.99.0", "@nivo/tooltip": "0.99.0", "@react-spring/web": "9.4.5 || ^9.7.2 || ^10.0", "@types/d3-scale": "^4.0.8", "@types/d3-shape": "^3.1.6", "d3-scale": "^4.0.2", "d3-shape": "^3.2.0" }, "peerDependencies": { "react": "^16.14 || ^17.0 || ^18.0 || ^19.0" } }, "sha512-nLLUBs/TR8qEoXpvhawjg2Kt22Pma8MQRc35e/3HQGW2xuX9cZeIEx2gyx6jJAsaxTrBsb4ZcxRAflNXVWiZSQ=="],
 

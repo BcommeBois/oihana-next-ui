@@ -32,6 +32,15 @@ const makeCrudTree = () =>
     { id : 'crud-readme' , label : 'README.md' , type : 'file' } ,
 ] ;
 
+const makeFlatTree = () =>
+[
+    { id : 'flat-intro'    , label : 'Introduction' } ,
+    { id : 'flat-install'  , label : 'Installation' } ,
+    { id : 'flat-usage'    , label : 'Usage' } ,
+    { id : 'flat-api'      , label : 'API Reference' } ,
+    { id : 'flat-faq'      , label : 'FAQ' } ,
+] ;
+
 const makeTree = ( prefix ) =>
 [
     {
@@ -204,6 +213,14 @@ const SortableTreeDemo = () =>
         }) ;
     } ;
 
+    // --------- Flat list (root level only)
+
+    const renderFlatNode = ( node ) => (
+        <SortableTreeItem>
+            <span className="text-sm">{ node.label }</span>
+        </SortableTreeItem>
+    ) ;
+
     // --------- Node renderer shared by the examples
 
     const renderNode = ( node , { childCount } ) => (
@@ -345,6 +362,40 @@ const SortableTreeDemo = () =>
 
                 <div className="mockup-code text-xs">
                     <pre data-prefix="1"><code>&lt;SortableTree maxDepth={'{ 2 }'} defaultItems={'{ tree }'} renderNode={'{ ... }'} /&gt;</code></pre>
+                </div>
+            </div>
+
+            <Divider />
+
+            {/* Flat list : root level only */}
+            <div className="flex flex-col gap-4 w-full">
+                <h3 className="text-xl font-semibold border-b-2 border-primary pb-2">
+                    Flat List (maxDepth = 0 — a single root level, no nesting)
+                </h3>
+
+                <p className="text-sm opacity-70">
+                    With <code className="text-xs">maxDepth={'{ 0 }'}</code> every node stays at depth 0 : dragging a
+                    row sideways never indents it, so the tree behaves as a plain sortable list — only the vertical
+                    order changes. <code className="text-xs">collapsible={'{ false }'}</code> is paired with it since
+                    there is no subtree left to fold.
+                </p>
+
+                <div className="w-full max-w-lg">
+                    <SortableTree
+                        maxDepth={ 0 }
+                        collapsible={ false }
+                        defaultItems={ makeFlatTree() }
+                        renderNode={ renderFlatNode }
+                    />
+                </div>
+
+                <div className="mockup-code text-xs">
+                    <pre data-prefix="1"><code>&lt;SortableTree</code></pre>
+                    <pre data-prefix="2"><code>    maxDepth={'{ 0 }'}</code></pre>
+                    <pre data-prefix="3"><code>    collapsible={'{ false }'}</code></pre>
+                    <pre data-prefix="4"><code>    defaultItems={'{ [ { id , label } , ... ] }'}</code></pre>
+                    <pre data-prefix="5"><code>    renderNode={'{ node => <SortableTreeItem>{ node.label }</SortableTreeItem> }'}</code></pre>
+                    <pre data-prefix="6"><code>/&gt;</code></pre>
                 </div>
             </div>
 

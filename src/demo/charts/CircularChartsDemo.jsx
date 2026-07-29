@@ -4,6 +4,7 @@ import { useState } from 'react' ;
 
 import ChordChart     from '@/components/charts/ChordChart' ;
 import PieChart       from '@/components/charts/PieChart' ;
+import PolarBarChart  from '@/components/charts/PolarBarChart' ;
 import RadarChart     from '@/components/charts/RadarChart' ;
 import RadialBarChart from '@/components/charts/RadialBarChart' ;
 
@@ -56,8 +57,24 @@ const CHORD_DATA = CHORD_KEYS.map( ( _ , row ) =>
     ) ,
 ) ;
 
+const DIRECTIONS = [ 'N' , 'NE' , 'E' , 'SE' , 'S' , 'SO' , 'O' , 'NO' ] ;
+const SEASONS    = [ 'hiver' , 'été' ] ;
+
+const POLAR_DATA = DIRECTIONS.map( ( direction , row ) =>
+{
+    const entry = { direction } ;
+
+    SEASONS.forEach( ( season , index ) =>
+    {
+        // Deterministic pseudo-random, so the demo does not jitter on every render.
+        entry[ season ] = Math.round( 8 + ( Math.sin( row * 1.4 + index * 2.9 ) + 1 ) * 22 ) ;
+    } ) ;
+
+    return entry ;
+} ) ;
+
 /**
- * Circular charts showcase — Pie, RadialBar, Radar, Chord.
+ * Circular charts showcase — Pie, RadialBar, Radar, Chord, PolarBar.
  */
 const CircularChartsDemo = () =>
 {
@@ -153,6 +170,21 @@ const CircularChartsDemo = () =>
                     keys    = { CHORD_KEYS }
                     palette = { palette }
                     height  = { 520 }
+                />
+            </Section>
+
+            <Divider />
+
+            <Section
+                title       = "PolarBar"
+                description = "Mêmes données qu'un BarChart (keys + indexBy), mais enroulées autour d'un cercle — la rose des vents. À ne pas confondre avec RadialBar, qui dessine un anneau par série."
+            >
+                <PolarBarChart
+                    data    = { POLAR_DATA }
+                    indexBy = "direction"
+                    keys    = { SEASONS }
+                    palette = { palette }
+                    height  = { 480 }
                 />
             </Section>
 

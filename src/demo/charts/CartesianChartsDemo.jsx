@@ -2,8 +2,9 @@
 
 import { useState } from 'react' ;
 
-import BarChart  from '@/components/charts/BarChart' ;
-import LineChart from '@/components/charts/LineChart' ;
+import BarChart       from '@/components/charts/BarChart' ;
+import LineChart      from '@/components/charts/LineChart' ;
+import MarimekkoChart from '@/components/charts/MarimekkoChart' ;
 
 import Divider from '@/components/Divider' ;
 
@@ -66,8 +67,25 @@ const STACK_DATA = [ 'FR' , 'EN' , 'IT' , 'ES' , 'DE' , 'ND' , 'BE' ].map( ( cou
     return entry ;
 } ) ;
 
+// Cohorts of very different sizes on purpose : that difference is what the
+// bar thickness carries, and what a plain stacked bar would hide.
+const SURVEY_DATA =
+[
+    { statement : 'Le télétravail'   , participants : 480 , pour : 312 , contre :  98 , neutre :  70 } ,
+    { statement : 'La semaine de 4j' , participants : 260 , pour : 201 , contre :  34 , neutre :  25 } ,
+    { statement : 'Le flex office'   , participants : 120 , pour :  38 , contre :  61 , neutre :  21 } ,
+    { statement : 'Les open spaces'  , participants : 640 , pour : 190 , contre : 372 , neutre :  78 } ,
+] ;
+
+const SURVEY_DIMENSIONS =
+[
+    { id : 'pour'   , value : 'pour'   } ,
+    { id : 'neutre' , value : 'neutre' } ,
+    { id : 'contre' , value : 'contre' } ,
+] ;
+
 /**
- * Cartesian charts showcase — Line, Bar, StackBar.
+ * Cartesian charts showcase — Line, Bar, StackBar, Marimekko.
  */
 const CartesianChartsDemo = () =>
 {
@@ -163,6 +181,43 @@ const CartesianChartsDemo = () =>
                     height  = { 320 }
                     legend  = { false }
                     xAxis   = {{ legend : 'Population' }}
+                />
+            </Section>
+
+            <Divider />
+
+            <Section
+                title       = "Marimekko"
+                description = "L'épaisseur de chaque barre porte elle aussi une valeur — ici le nombre de répondants. Un empilement classique montrerait quatre barres identiques et masquerait que « Les open spaces » pèse cinq fois « Le flex office »."
+            >
+                <MarimekkoChart
+                    data       = { SURVEY_DATA }
+                    id         = "statement"
+                    value      = "participants"
+                    dimensions = { SURVEY_DIMENSIONS }
+                    palette    = { palette }
+                    height     = { 460 }
+                    xAxis      = {{ legend : 'répondants' }}
+                    yAxis      = {{ legend : 'réponses' }}
+                />
+            </Section>
+
+            <Divider />
+
+            <Section
+                title       = "Marimekko — offset='expand'"
+                description = "Toutes les barres ramenées à la même longueur : les empilements deviennent des pourcentages, l'épaisseur garde le poids absolu."
+            >
+                <MarimekkoChart
+                    data       = { SURVEY_DATA }
+                    id         = "statement"
+                    value      = "participants"
+                    dimensions = { SURVEY_DIMENSIONS }
+                    offset     = "expand"
+                    palette    = { palette }
+                    height     = { 420 }
+                    legend     = "right"
+                    xAxis      = {{ legend : 'répondants' }}
                 />
             </Section>
 
