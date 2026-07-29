@@ -32,8 +32,26 @@ import Skeleton from '../Skeleton' ;
  * The box keeps its size in all three states, so the page does not jump when
  * the data lands.
  *
+ * **Accessibility lives here, not on the nivo component.** nivo's aria
+ * support is uneven across its packages — `@nivo/pie`, `@nivo/calendar` and
+ * `@nivo/marimekko` accept only `role`, with no `ariaLabel` — so forwarding
+ * to it would leave four of the twelve charts with no text alternative. The
+ * attributes go on this wrapper instead, which makes them uniform and
+ * independent of what each package happens to implement.
+ *
+ * `role="img"` hides the SVG internals from assistive technology, which is
+ * what you want : hundreds of unlabelled paths are noise, and `ariaLabel`
+ * is the readable summary that replaces them. It suits these charts because
+ * they are hover-driven, not keyboard-interactive. It is written as a
+ * literal rather than a prop so static analysis can check the ARIA
+ * attributes against it ; a caller who genuinely needs another role can
+ * still pass `role` through, since the spread lands last.
+ *
  * @param {Object} props
  * @param {React.ReactNode} props.children - The chart.
+ * @param {string} [props.ariaDescribedBy] - Id of a longer description elsewhere on the page.
+ * @param {string} [props.ariaLabel] - Text alternative. Required in practice — a chart without one is invisible to a screen reader.
+ * @param {string} [props.ariaLabelledBy] - Id of an existing visible label, used instead of `ariaLabel`.
  * @param {string|number} [props.aspect] - CSS aspect ratio (e.g. `16/9`). Takes precedence over `height`.
  * @param {string} [props.className] - Additional classes.
  * @param {*} [props.data] - The chart data ; emptiness is derived from it unless `empty` says otherwise.
@@ -61,6 +79,9 @@ import Skeleton from '../Skeleton' ;
 const ChartFrame =
 ({
     children ,
+    ariaDescribedBy ,
+    ariaLabel ,
+    ariaLabelledBy ,
     aspect ,
     className ,
     data ,
@@ -72,6 +93,15 @@ const ChartFrame =
     ...rest
 }) =>
 {
+    if ( process.env.NODE_ENV === 'development' && !ariaLabel && !ariaLabelledBy )
+    {
+        console.warn(
+            '[charts] This chart has no text alternative and is invisible to a screen reader. ' +
+            'Pass `ariaLabel` with a one-sentence summary of what it shows, or `ariaLabelledBy` ' +
+            'pointing at a visible heading.' ,
+        ) ;
+    }
+
     const style = aspect
         ? { aspectRatio : aspect }
         : { height : typeof height === 'number' ? `${ height }px` : height } ;
@@ -97,8 +127,13 @@ const ChartFrame =
 
     return (
         <div
-            className = { cn( 'w-full' , className ) }
-            style     = { style }
+            aria-busy        = { loading || undefined }
+            aria-describedby = { ariaDescribedBy }
+            aria-label       = { ariaLabelledBy ? undefined : ariaLabel }
+            aria-labelledby  = { ariaLabelledBy }
+            className        = { cn( 'w-full' , className ) }
+            role             = "img"
+            style            = { style }
             { ...rest }
         >
             { content }

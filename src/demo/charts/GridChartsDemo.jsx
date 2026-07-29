@@ -96,11 +96,12 @@ const GridChartsDemo = () =>
                 description = "Trois séries sur un total de 100 : les cellules restantes montrent ce qui n'est pas couvert."
             >
                 <WaffleChart
-                    data    = { WAFFLE_DATA }
-                    total   = { 100 }
-                    palette = { palette }
-                    height  = { 460 }
-                    legend  = "right"
+                    ariaLabel = "Répartition d'une population de cent personnes en trois groupes"
+                    data      = { WAFFLE_DATA }
+                    total     = { 100 }
+                    palette   = { palette }
+                    height    = { 460 }
+                    legend    = "right"
                 />
             </Section>
 
@@ -111,6 +112,7 @@ const GridChartsDemo = () =>
                 description = "total=100 avec une seule série à 42 : c'est là que le waffle bat le camembert, il montre ce qui manque."
             >
                 <WaffleChart
+                    ariaLabel     = "Progression vers un objectif, atteint à quarante-deux pour cent"
                     data          = { TARGET_DATA }
                     total         = { 100 }
                     palette       = { palette }
@@ -130,11 +132,12 @@ const GridChartsDemo = () =>
                 description = "Une année de jours. La palette est séquentielle et non catégorielle : les cellules codent une quantité, les couleurs doivent donc être ordonnées."
             >
                 <CalendarChart
-                    data    = { CALENDAR_DATA }
-                    from    = "2026-01-01"
-                    to      = "2026-12-31"
-                    palette = { palette }
-                    height  = { 240 }
+                    ariaLabel = "Activité quotidienne sur l'année 2026"
+                    data      = { CALENDAR_DATA }
+                    from      = "2026-01-01"
+                    to        = "2026-12-31"
+                    palette   = { palette }
+                    height    = { 240 }
                 />
             </Section>
 
@@ -145,11 +148,12 @@ const GridChartsDemo = () =>
                 description = "Même grille, mais sur une période arbitraire plutôt qu'une année entière — ici quatre mois. SVG uniquement chez nivo."
             >
                 <TimeRangeChart
-                    data    = { TIME_RANGE_DATA }
-                    from    = "2026-04-01"
-                    to      = "2026-07-29"
-                    palette = { palette }
-                    height  = { 240 }
+                    ariaLabel = "Activité quotidienne d'avril à juillet 2026"
+                    data      = { TIME_RANGE_DATA }
+                    from      = "2026-04-01"
+                    to        = "2026-07-29"
+                    palette   = { palette }
+                    height    = { 240 }
                 />
             </Section>
 
@@ -160,11 +164,12 @@ const GridChartsDemo = () =>
                 description = "Une matrice ligne × colonne. La légende est une barre dégradée et non une liste de pastilles : une échelle quantitative n'a pas d'entrées discrètes à lister."
             >
                 <HeatMapChart
-                    data    = { HEATMAP_DATA }
-                    palette = { palette }
-                    height  = { 460 }
-                    xAxis   = {{ legend : 'transport' }}
-                    yAxis   = {{ legend : 'pays' }}
+                    ariaLabel = "Fréquentation par mode de transport et par pays"
+                    data      = { HEATMAP_DATA }
+                    palette   = { palette }
+                    height    = { 460 }
+                    xAxis     = {{ legend : 'transport' }}
+                    yAxis     = {{ legend : 'pays' }}
                 />
             </Section>
 
@@ -175,11 +180,12 @@ const GridChartsDemo = () =>
                 description = "labels=false quand la grille devient dense : la couleur suffit et les chiffres deviennent du bruit."
             >
                 <HeatMapChart
-                    data    = { HEATMAP_DATA }
-                    palette = { palette }
-                    height  = { 420 }
-                    labels  = { false }
-                    legend  = "right"
+                    ariaLabel = "Fréquentation par mode de transport et par pays, sans valeurs affichées"
+                    data      = { HEATMAP_DATA }
+                    palette   = { palette }
+                    height    = { 420 }
+                    labels    = { false }
+                    legend    = "right"
                 />
             </Section>
 

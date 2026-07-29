@@ -60,6 +60,9 @@ const inferKeys = ( data , indexBy ) =>
  * @param {boolean} [props.adjustValueRange=true] - Let the value scale start at the smallest value rather than zero.
  * @param {boolean} [props.animate=true] - Animate transitions ; forced off under `prefers-reduced-motion`.
  * @param {boolean} [props.arcLabels=false] - Draw the value inside each bar.
+ * @param {string} [props.ariaDescribedBy] - Id of a longer description elsewhere on the page.
+ * @param {string} [props.ariaLabel] - Text alternative. Without one the chart is invisible to a screen reader.
+ * @param {string} [props.ariaLabelledBy] - Id of an existing visible label, used instead of `ariaLabel`.
  * @param {string|number} [props.aspect] - CSS aspect ratio ; takes precedence over `height`.
  * @param {number} [props.borderWidth=1] - Bar border width.
  * @param {boolean|Object} [props.circularAxis=true] - Outer circular axis ; an object is passed through to nivo.
@@ -96,6 +99,9 @@ const PolarBarChart =
     adjustValueRange = true ,
     animate = true ,
     arcLabels = false ,
+    ariaDescribedBy ,
+    ariaLabel ,
+    ariaLabelledBy ,
     aspect ,
     borderWidth = 1 ,
     circularAxis = true ,
@@ -161,13 +167,16 @@ const PolarBarChart =
 
     return (
         <ChartFrame
-            aspect     = { aspect }
-            className  = { className }
-            data       = { data }
-            emptyLabel = { emptyLabel }
-            emptyState = { emptyState }
-            height     = { height }
-            loading    = { loading }
+            ariaDescribedBy = { ariaDescribedBy }
+            ariaLabel       = { ariaLabel }
+            ariaLabelledBy  = { ariaLabelledBy }
+            aspect          = { aspect }
+            className       = { className }
+            data            = { data }
+            emptyLabel      = { emptyLabel }
+            emptyState      = { emptyState }
+            height          = { height }
+            loading         = { loading }
         >
             <ResponsivePolarBar
                 adjustValueRange  = { adjustValueRange }

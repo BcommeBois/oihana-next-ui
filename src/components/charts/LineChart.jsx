@@ -107,6 +107,9 @@ const formatTooltipX = ( value ) => ( value instanceof Date ? formatTimeTick( va
  *
  * @param {Object} props
  * @param {boolean} [props.animate=true] - Animate transitions ; forced off under `prefers-reduced-motion`.
+ * @param {string} [props.ariaDescribedBy] - Id of a longer description elsewhere on the page.
+ * @param {string} [props.ariaLabel] - Text alternative. Without one the chart is invisible to a screen reader.
+ * @param {string} [props.ariaLabelledBy] - Id of an existing visible label, used instead of `ariaLabel`.
  * @param {string|number} [props.aspect] - CSS aspect ratio ; takes precedence over `height`.
  * @param {string} [props.className] - Additional classes for the frame.
  * @param {string} [props.curve='linear'] - Interpolation — `'linear'`, `'monotoneX'`, `'step'`…
@@ -124,8 +127,10 @@ const formatTooltipX = ( value ) => ( value instanceof Date ? formatTimeTick( va
  * @param {boolean} [props.stacked=false] - Stack the series on the y axis.
  * @param {Object} [props.theme] - Partial nivo theme, deeply merged over the DaisyUI one.
  * @param {Object|boolean} [props.xAxis] - Bottom axis — `{ legend , format , tickRotation , hide }`.
+ * @param {string} [props.xFormat] - d3-format string for x values ; this chart's equivalent of `valueFormat`.
  * @param {string|Object} [props.xScale='point'] - `'point'`, `'time'`, `'linear'`, or a nivo scale config.
  * @param {Object|boolean} [props.yAxis] - Left axis — `{ legend , format , hide }`.
+ * @param {string} [props.yFormat] - d3-format string for y values ; this chart's equivalent of `valueFormat`.
  * @param {string|Object} [props.yScale='linear'] - `'linear'`, `'log'`, or a nivo scale config.
  *
  * @example
@@ -146,6 +151,9 @@ const formatTooltipX = ( value ) => ( value instanceof Date ? formatTimeTick( va
 const LineChart =
 ({
     animate = true ,
+    ariaDescribedBy ,
+    ariaLabel ,
+    ariaLabelledBy ,
     aspect ,
     className ,
     curve = 'linear' ,
@@ -164,8 +172,10 @@ const LineChart =
     stacked = false ,
     theme : themeOverrides ,
     xAxis ,
+    xFormat ,
     xScale ,
     yAxis ,
+    yFormat ,
     yScale ,
     ...rest
 }) =>
@@ -226,13 +236,16 @@ const LineChart =
 
     return (
         <ChartFrame
-            aspect     = { aspect }
-            className  = { className }
-            data       = { data }
-            emptyLabel = { emptyLabel }
-            emptyState = { emptyState }
-            height     = { height }
-            loading    = { loading }
+            ariaDescribedBy = { ariaDescribedBy }
+            ariaLabel       = { ariaLabel }
+            ariaLabelledBy  = { ariaLabelledBy }
+            aspect          = { aspect }
+            className       = { className }
+            data            = { data }
+            emptyLabel      = { emptyLabel }
+            emptyState      = { emptyState }
+            height          = { height }
+            loading         = { loading }
         >
             <Component
                 animate           = { animate && !reduceMotion }
@@ -254,7 +267,9 @@ const LineChart =
                 theme             = { theme }
                 tooltip           = { tooltip }
                 useMesh           = { true }
+                xFormat           = { xFormat }
                 xScale            = { resolvedXScale }
+                yFormat           = { yFormat }
                 yScale            = { resolvedYScale }
                 { ...rest }
                 { ...nivoProps }

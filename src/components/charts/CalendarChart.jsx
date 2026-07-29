@@ -41,9 +41,13 @@ import ChartTooltip from './ChartTooltip' ;
  *
  * @param {Object} props
  * @param {boolean} [props.animate=true] - Animate transitions ; forced off under `prefers-reduced-motion`.
+ * @param {string} [props.ariaDescribedBy] - Id of a longer description elsewhere on the page.
+ * @param {string} [props.ariaLabel] - Text alternative. Without one the chart is invisible to a screen reader.
+ * @param {string} [props.ariaLabelledBy] - Id of an existing visible label, used instead of `ariaLabel`.
  * @param {string|number} [props.aspect] - CSS aspect ratio ; takes precedence over `height`.
  * @param {string} [props.className] - Additional classes for the frame.
  * @param {string} [props.dayBorderColor] - Gap color between days ; defaults to the surface color.
+ * @param {number} [props.dayBorderWidth=2] - Width of the gap between days.
  * @param {string} [props.direction='horizontal'] - `'horizontal'` or `'vertical'`.
  * @param {string} [props.emptyColor] - Color of days with no data ; defaults to a DaisyUI theme color.
  * @param {string} [props.emptyLabel='No data'] - Text shown when there is nothing to plot.
@@ -56,12 +60,14 @@ import ChartTooltip from './ChartTooltip' ;
  * @param {number|string} [props.maxValue='auto'] - Upper bound of the color scale.
  * @param {number|string} [props.minValue='auto'] - Lower bound of the color scale.
  * @param {string} [props.monthBorderColor] - Month outline color ; defaults to a light DaisyUI theme color.
+ * @param {number} [props.monthBorderWidth=2] - Width of the month outline.
  * @param {Object} [props.nivoProps] - Escape hatch — spread last onto the nivo component.
  * @param {string|string[]} [props.palette='nivo'] - Sequential palette, or explicit ramp colors.
  * @param {string} [props.renderer='svg'] - `'svg'` or `'canvas'` — worth it past two or three years of days.
  * @param {number} [props.steps=5] - Number of buckets in the generated ramp.
  * @param {Object} [props.theme] - Partial nivo theme, deeply merged over the DaisyUI one.
  * @param {string|number|Date} props.to - Last day shown.
+ * @param {string} [props.valueFormat] - d3-format string for values.
  *
  * @example
  * ```jsx
@@ -75,10 +81,14 @@ import ChartTooltip from './ChartTooltip' ;
 const CalendarChart =
 ({
     animate = true ,
+    ariaDescribedBy ,
+    ariaLabel ,
+    ariaLabelledBy ,
     aspect ,
     className ,
     data ,
     dayBorderColor ,
+    dayBorderWidth = 2 ,
     direction = 'horizontal' ,
     emptyColor ,
     emptyLabel ,
@@ -91,12 +101,14 @@ const CalendarChart =
     maxValue = 'auto' ,
     minValue = 'auto' ,
     monthBorderColor ,
+    monthBorderWidth = 2 ,
     nivoProps ,
     palette = NIVO ,
     renderer = 'svg' ,
     steps = 5 ,
     theme : themeOverrides ,
     to ,
+    valueFormat ,
     ...rest
 }) =>
 {
@@ -132,20 +144,23 @@ const CalendarChart =
 
     return (
         <ChartFrame
-            aspect     = { aspect }
-            className  = { className }
-            data       = { data }
-            emptyLabel = { emptyLabel }
-            emptyState = { emptyState }
-            height     = { height }
-            loading    = { loading }
+            ariaDescribedBy = { ariaDescribedBy }
+            ariaLabel       = { ariaLabel }
+            ariaLabelledBy  = { ariaLabelledBy }
+            aspect          = { aspect }
+            className       = { className }
+            data            = { data }
+            emptyLabel      = { emptyLabel }
+            emptyState      = { emptyState }
+            height          = { height }
+            loading         = { loading }
         >
             <Component
                 animate          = { animate && !reduceMotion }
                 colors           = { colors }
                 data             = { data }
                 dayBorderColor   = { dayBorderColor ?? dayBorder ?? 'transparent' }
-                dayBorderWidth   = { 2 }
+                dayBorderWidth   = { dayBorderWidth }
                 direction        = { direction }
                 emptyColor       = { emptyColor ?? emptyCell ?? 'transparent' }
                 from             = { from }
@@ -154,10 +169,11 @@ const CalendarChart =
                 maxValue         = { maxValue }
                 minValue         = { minValue }
                 monthBorderColor = { monthBorderColor ?? monthBorder ?? 'transparent' }
-                monthBorderWidth = { 2 }
+                monthBorderWidth = { monthBorderWidth }
                 theme            = { theme }
                 to               = { to }
                 tooltip          = { tooltip }
+                valueFormat      = { valueFormat }
                 { ...rest }
                 { ...nivoProps }
             />

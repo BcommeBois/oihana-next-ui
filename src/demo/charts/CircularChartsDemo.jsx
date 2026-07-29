@@ -92,9 +92,10 @@ const CircularChartsDemo = () =>
                 description = "Donut par défaut (innerRadius 0.5), avec les labels liés à l'extérieur."
             >
                 <PieChart
-                    data    = { PIE_DATA }
-                    palette = { palette }
-                    height  = { 480 }
+                    ariaLabel = "Répartition des lignes de code par langage"
+                    data      = { PIE_DATA }
+                    palette   = { palette }
+                    height    = { 480 }
                 />
             </Section>
 
@@ -105,6 +106,7 @@ const CircularChartsDemo = () =>
                 description = "innerRadius=0 et arcLinkLabels=false : la marge se libère et le cercle grandit."
             >
                 <PieChart
+                    ariaLabel     = "Répartition des lignes de code par langage, en camembert plein"
                     data          = { PIE_DATA }
                     palette       = { palette }
                     height        = { 380 }
@@ -121,9 +123,10 @@ const CircularChartsDemo = () =>
                 description = "Un anneau par série, coloré par catégorie. SVG uniquement chez nivo."
             >
                 <RadialBarChart
-                    data    = { RADIAL_DATA }
-                    palette = { palette }
-                    height  = { 440 }
+                    ariaLabel = "Ventes par catégorie de produit et par canal de distribution"
+                    data      = { RADIAL_DATA }
+                    palette   = { palette }
+                    height    = { 440 }
                 />
             </Section>
 
@@ -134,11 +137,12 @@ const CircularChartsDemo = () =>
                 description = "Compare des profils sur les mêmes dimensions. SVG uniquement chez nivo ; le survol montre toute la branche d'un coup."
             >
                 <RadarChart
-                    data    = { RADAR_DATA }
-                    indexBy = "taste"
-                    keys    = { WINES }
-                    palette = { palette }
-                    height  = { 460 }
+                    ariaLabel = "Profil gustatif de trois vins sur cinq dimensions"
+                    data      = { RADAR_DATA }
+                    indexBy   = "taste"
+                    keys      = { WINES }
+                    palette   = { palette }
+                    height    = { 460 }
                 />
             </Section>
 
@@ -149,6 +153,7 @@ const CircularChartsDemo = () =>
                 description = "gridShape='linear' : la grille suit le polygone au lieu d'être circulaire."
             >
                 <RadarChart
+                    ariaLabel = "Profil gustatif de trois vins, grille anguleuse"
                     data      = { RADAR_DATA }
                     indexBy   = "taste"
                     keys      = { WINES }
@@ -166,10 +171,11 @@ const CircularChartsDemo = () =>
                 description = "Des flux entre entités, pas des valeurs par entité. data est une matrice carrée : data[i][j] est le flux de keys[i] vers keys[j]. Survolez un arc pour un total, un ruban pour un flux dans les deux sens."
             >
                 <ChordChart
-                    data    = { CHORD_DATA }
-                    keys    = { CHORD_KEYS }
-                    palette = { palette }
-                    height  = { 520 }
+                    ariaLabel = "Flux d'échanges entre cinq personnes"
+                    data      = { CHORD_DATA }
+                    keys      = { CHORD_KEYS }
+                    palette   = { palette }
+                    height    = { 520 }
                 />
             </Section>
 
@@ -180,11 +186,12 @@ const CircularChartsDemo = () =>
                 description = "Mêmes données qu'un BarChart (keys + indexBy), mais enroulées autour d'un cercle — la rose des vents. À ne pas confondre avec RadialBar, qui dessine un anneau par série."
             >
                 <PolarBarChart
-                    data    = { POLAR_DATA }
-                    indexBy = "direction"
-                    keys    = { SEASONS }
-                    palette = { palette }
-                    height  = { 480 }
+                    ariaLabel = "Force du vent par direction, en hiver et en été"
+                    data      = { POLAR_DATA }
+                    indexBy   = "direction"
+                    keys      = { SEASONS }
+                    palette   = { palette }
+                    height    = { 480 }
                 />
             </Section>
 

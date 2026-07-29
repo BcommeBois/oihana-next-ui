@@ -47,6 +47,9 @@ import ChartTooltip from './ChartTooltip' ;
  *
  * @param {Object} props
  * @param {boolean} [props.animate=true] - Animate transitions ; forced off under `prefers-reduced-motion`.
+ * @param {string} [props.ariaDescribedBy] - Id of a longer description elsewhere on the page.
+ * @param {string} [props.ariaLabel] - Text alternative. Without one the chart is invisible to a screen reader.
+ * @param {string} [props.ariaLabelledBy] - Id of an existing visible label, used instead of `ariaLabel`.
  * @param {string|number} [props.aspect] - CSS aspect ratio ; takes precedence over `height`.
  * @param {number} [props.borderRadius=2] - Cell corner rounding.
  * @param {number} [props.borderWidth=1] - Cell border width.
@@ -83,6 +86,9 @@ import ChartTooltip from './ChartTooltip' ;
 const HeatMapChart =
 ({
     animate = true ,
+    ariaDescribedBy ,
+    ariaLabel ,
+    ariaLabelledBy ,
     aspect ,
     borderRadius = 2 ,
     borderWidth = 1 ,
@@ -171,13 +177,16 @@ const HeatMapChart =
 
     return (
         <ChartFrame
-            aspect     = { aspect }
-            className  = { className }
-            data       = { data }
-            emptyLabel = { emptyLabel }
-            emptyState = { emptyState }
-            height     = { height }
-            loading    = { loading }
+            ariaDescribedBy = { ariaDescribedBy }
+            ariaLabel       = { ariaLabel }
+            ariaLabelledBy  = { ariaLabelledBy }
+            aspect          = { aspect }
+            className       = { className }
+            data            = { data }
+            emptyLabel      = { emptyLabel }
+            emptyState      = { emptyState }
+            height          = { height }
+            loading         = { loading }
         >
             <Component
                 animate        = { animate && !reduceMotion }

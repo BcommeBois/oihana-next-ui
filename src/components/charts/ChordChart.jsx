@@ -42,6 +42,9 @@ import ChartTooltip from './ChartTooltip' ;
  * @param {boolean} [props.animate=true] - Animate transitions ; forced off under `prefers-reduced-motion`.
  * @param {number} [props.arcBorderWidth=1] - Arc border width.
  * @param {number} [props.arcOpacity=1] - Arc opacity.
+ * @param {string} [props.ariaDescribedBy] - Id of a longer description elsewhere on the page.
+ * @param {string} [props.ariaLabel] - Text alternative. Without one the chart is invisible to a screen reader.
+ * @param {string} [props.ariaLabelledBy] - Id of an existing visible label, used instead of `ariaLabel`.
  * @param {string|number} [props.aspect] - CSS aspect ratio ; takes precedence over `height`.
  * @param {string} [props.className] - Additional classes for the frame.
  * @param {number[][]} props.data - Square matrix of flows, `keys.length` on each side.
@@ -80,6 +83,9 @@ const ChordChart =
     animate = true ,
     arcBorderWidth = 1 ,
     arcOpacity = 1 ,
+    ariaDescribedBy ,
+    ariaLabel ,
+    ariaLabelledBy ,
     aspect ,
     className ,
     data ,
@@ -173,14 +179,17 @@ const ChordChart =
 
     return (
         <ChartFrame
-            aspect     = { aspect }
-            className  = { className }
-            data       = { data }
-            empty      = { invalid }
-            emptyLabel = { emptyLabel }
-            emptyState = { emptyState }
-            height     = { height }
-            loading    = { loading }
+            ariaDescribedBy = { ariaDescribedBy }
+            ariaLabel       = { ariaLabel }
+            ariaLabelledBy  = { ariaLabelledBy }
+            aspect          = { aspect }
+            className       = { className }
+            data            = { data }
+            empty           = { invalid }
+            emptyLabel      = { emptyLabel }
+            emptyState      = { emptyState }
+            height          = { height }
+            loading         = { loading }
         >
             <Component
                 animate           = { animate && !reduceMotion }

@@ -105,12 +105,13 @@ const CartesianChartsDemo = () =>
                 description = "5 séries, axe catégoriel, légende à droite."
             >
                 <LineChart
-                    data    = { LINE_DATA }
-                    palette = { palette }
-                    height  = { 420 }
-                    legend  = "right"
-                    xAxis   = {{ legend : 'transportation' }}
-                    yAxis   = {{ legend : 'count' }}
+                    ariaLabel = "Nombre de trajets par mode de transport, pour cinq pays"
+                    data      = { LINE_DATA }
+                    palette   = { palette }
+                    height    = { 420 }
+                    legend    = "right"
+                    xAxis     = {{ legend : 'transportation' }}
+                    yAxis     = {{ legend : 'count' }}
                 />
             </Section>
 
@@ -121,15 +122,16 @@ const CartesianChartsDemo = () =>
                 description = "xScale='time' : les ticks sont formatés dans la locale active (dayjs)."
             >
                 <LineChart
-                    data       = { TIME_DATA }
-                    palette    = { palette }
-                    height     = { 320 }
-                    curve      = "monotoneX"
+                    ariaLabel = "Sessions quotidiennes sur les sept premiers mois de 2026"
+                    data      = { TIME_DATA }
+                    palette   = { palette }
+                    height    = { 320 }
+                    curve     = "monotoneX"
                     enableArea
-                    legend     = { false }
-                    xScale     = "time"
-                    xAxis      = {{ legend : 'date' , tickRotation : -35 }}
-                    yAxis      = {{ legend : 'sessions' }}
+                    legend    = { false }
+                    xScale    = "time"
+                    xAxis     = {{ legend : 'date' , tickRotation : -35 }}
+                    yAxis     = {{ legend : 'sessions' }}
                 />
             </Section>
 
@@ -140,13 +142,14 @@ const CartesianChartsDemo = () =>
                 description = "Une seule série, sans légende — les marges se réduisent d'elles-mêmes."
             >
                 <BarChart
-                    data    = { BAR_DATA }
-                    indexBy = "country"
-                    palette = { palette }
-                    height  = { 340 }
-                    legend  = { false }
-                    xAxis   = {{ legend : 'Country' }}
-                    yAxis   = {{ legend : 'Population' }}
+                    ariaLabel = "Population par pays, en millions"
+                    data      = { BAR_DATA }
+                    indexBy   = "country"
+                    palette   = { palette }
+                    height    = { 340 }
+                    legend    = { false }
+                    xAxis     = {{ legend : 'Country' }}
+                    yAxis     = {{ legend : 'Population' }}
                 />
             </Section>
 
@@ -157,15 +160,16 @@ const CartesianChartsDemo = () =>
                 description = "6 séries empilées — la limite de lisibilité de la palette 'brand'."
             >
                 <BarChart
-                    data    = { STACK_DATA }
-                    indexBy = "country"
-                    keys    = { FOODS }
-                    palette = { palette }
+                    ariaLabel = "Répartition des ventes par type de plat et par pays"
+                    data      = { STACK_DATA }
+                    indexBy   = "country"
+                    keys      = { FOODS }
+                    palette   = { palette }
                     stacked
-                    height  = { 460 }
-                    legend  = "right"
-                    xAxis   = {{ legend : 'country' }}
-                    yAxis   = {{ legend : 'food' }}
+                    height    = { 460 }
+                    legend    = "right"
+                    xAxis     = {{ legend : 'country' }}
+                    yAxis     = {{ legend : 'food' }}
                 />
             </Section>
 
@@ -176,13 +180,14 @@ const CartesianChartsDemo = () =>
                 description = "layout='horizontal' — xAxis reste l'axe du bas, yAxis celui de gauche."
             >
                 <BarChart
-                    data    = { BAR_DATA }
-                    indexBy = "country"
-                    layout  = "horizontal"
-                    palette = { palette }
-                    height  = { 320 }
-                    legend  = { false }
-                    xAxis   = {{ legend : 'Population' }}
+                    ariaLabel = "Population par pays, en barres horizontales"
+                    data      = { BAR_DATA }
+                    indexBy   = "country"
+                    layout    = "horizontal"
+                    palette   = { palette }
+                    height    = { 320 }
+                    legend    = { false }
+                    xAxis     = {{ legend : 'Population' }}
                 />
             </Section>
 
@@ -193,6 +198,7 @@ const CartesianChartsDemo = () =>
                 description = "L'épaisseur de chaque barre porte elle aussi une valeur — ici le nombre de répondants. Un empilement classique montrerait quatre barres identiques et masquerait que « Les open spaces » pèse cinq fois « Le flex office »."
             >
                 <MarimekkoChart
+                    ariaLabel  = "Réponses à quatre affirmations, l'épaisseur donnant le nombre de répondants"
                     data       = { SURVEY_DATA }
                     id         = "statement"
                     value      = "participants"
@@ -211,6 +217,7 @@ const CartesianChartsDemo = () =>
                 description = "Toutes les barres ramenées à la même longueur : les empilements deviennent des pourcentages, l'épaisseur garde le poids absolu."
             >
                 <MarimekkoChart
+                    ariaLabel  = "Réponses à quatre affirmations en pourcentages, l'épaisseur donnant le nombre de répondants"
                     data       = { SURVEY_DATA }
                     id         = "statement"
                     value      = "participants"
@@ -236,21 +243,23 @@ const CartesianChartsDemo = () =>
 
                     <div className="grid gap-4 md:grid-cols-2">
                         <BarChart
-                            data    = { BAR_DATA }
-                            indexBy = "country"
-                            palette = { palette }
-                            height  = { 260 }
-                            legend  = { false }
-                            loading = { loading }
+                            ariaLabel = "Population par pays — exemple d'état de chargement"
+                            data      = { BAR_DATA }
+                            indexBy   = "country"
+                            palette   = { palette }
+                            height    = { 260 }
+                            legend    = { false }
+                            loading   = { loading }
                         />
 
                         <BarChart
-                            data    = { [] }
-                            indexBy = "country"
-                            palette = { palette }
-                            height  = { 260 }
-                            legend  = { false }
-                            loading = { loading }
+                            ariaLabel  = "Exemple d'état vide, sans aucune donnée"
+                            data       = { [] }
+                            indexBy    = "country"
+                            palette    = { palette }
+                            height     = { 260 }
+                            legend     = { false }
+                            loading    = { loading }
                             emptyLabel = "Aucune donnée sur la période"
                         />
                     </div>

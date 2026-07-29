@@ -46,6 +46,9 @@ const defaultArcLinkLabel = ( datum ) => `${ datum.id } (${ datum.formattedValue
  * @param {boolean} [props.arcLabels=true] - Draw the value inside each arc.
  * @param {Function|string} [props.arcLinkLabel] - Label accessor for the leader lines ; defaults to `id (value)`.
  * @param {boolean} [props.arcLinkLabels=true] - Draw the leader lines outside the circle.
+ * @param {string} [props.ariaDescribedBy] - Id of a longer description elsewhere on the page.
+ * @param {string} [props.ariaLabel] - Text alternative. Without one the chart is invisible to a screen reader.
+ * @param {string} [props.ariaLabelledBy] - Id of an existing visible label, used instead of `ariaLabel`.
  * @param {string|number} [props.aspect] - CSS aspect ratio ; takes precedence over `height`.
  * @param {number} [props.borderWidth=1] - Arc border width — what separates arcs from the background.
  * @param {string} [props.className] - Additional classes for the frame.
@@ -83,6 +86,9 @@ const PieChart =
     arcLabels = true ,
     arcLinkLabel = defaultArcLinkLabel ,
     arcLinkLabels = true ,
+    ariaDescribedBy ,
+    ariaLabel ,
+    ariaLabelledBy ,
     aspect ,
     borderWidth = 1 ,
     className ,
@@ -138,13 +144,16 @@ const PieChart =
 
     return (
         <ChartFrame
-            aspect     = { aspect }
-            className  = { className }
-            data       = { data }
-            emptyLabel = { emptyLabel }
-            emptyState = { emptyState }
-            height     = { height }
-            loading    = { loading }
+            ariaDescribedBy = { ariaDescribedBy }
+            ariaLabel       = { ariaLabel }
+            ariaLabelledBy  = { ariaLabelledBy }
+            aspect          = { aspect }
+            className       = { className }
+            data            = { data }
+            emptyLabel      = { emptyLabel }
+            emptyState      = { emptyState }
+            height          = { height }
+            loading         = { loading }
         >
             <Component
                 activeOuterRadiusOffset = { 8 }
