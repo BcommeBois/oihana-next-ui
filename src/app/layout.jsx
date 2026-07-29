@@ -4,7 +4,7 @@ import "./global.css" ;
 
 import courierPrime  from '@/themes/fonts/courrierPrime' ;
 import bitter        from '@/themes/fonts/bitter' ;
-import inter         from '@/themes/fonts/inter' ;
+import nunito        from '@/themes/fonts/nunito' ;
 import merriweather  from '@/themes/fonts/merriweather' ;
 import redHatMono    from '@/themes/fonts/redHatMono' ;
 
@@ -71,8 +71,8 @@ export default async function RootLayout ( { children } )
     const classNames  = getFontClassNames([
         bitter ,
         courierPrime ,
-        inter ,
         merriweather ,
+        nunito ,
         redHatMono ,
     ]
     , 'h-full' );

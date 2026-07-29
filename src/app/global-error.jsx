@@ -3,7 +3,7 @@
 import { useEffect } from 'react' ;
 
 import courierPrime from '@/themes/fonts/courrierPrime';
-import inter from '@/themes/fonts/inter';
+import nunito from '@/themes/fonts/nunito';
 import redHatMono from '@/themes/fonts/redHatMono';
 
 import Image from 'next/image' ;
@@ -30,7 +30,7 @@ const GlobalError = ( { error , reset } ) =>
 
     return (
         <html
-            className                = { `${inter.variable} ${redHatMono.variable} ${courierPrime.variable}` }
+            className                = { `${nunito.variable} ${redHatMono.variable} ${courierPrime.variable}` }
             lang                     = "en"
             suppressHydrationWarning = { true }
         >
