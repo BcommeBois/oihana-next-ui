@@ -60,7 +60,7 @@ export const CHART_COLOR_KEYS =
  * @param {Object} [props.colors] - Resolved colors — `{ text , muted , grid , border }`.
  * @param {string} [props.fontFamily='inherit'] - Font family ; `inherit` picks up the app font instead of nivo's `sans-serif`.
  * @param {number} [props.fontSize=12] - Base font size in px.
- * @param {number|string} [props.labelFontWeight=700] - Weight of the data labels only, not the axis or legend text.
+ * @param {number|string} [props.labelFontWeight=500] - Weight of the data labels only, not the axis or legend text.
  * @param {Object} [props.overrides] - Deeply merged on top of the result.
  *
  * @returns {Object} A nivo theme object.
@@ -70,7 +70,7 @@ export const CHART_COLOR_KEYS =
  * const theme = buildChartTheme( { colors : { text : '#2E3440' } } ) ;
  * ```
  */
-export const buildChartTheme = ( { colors , fontFamily = 'inherit' , fontSize = 12 , labelFontWeight = 700 , overrides } = {} ) =>
+export const buildChartTheme = ( { colors , fontFamily = 'inherit' , fontSize = 12 , labelFontWeight = 500 , overrides } = {} ) =>
 {
     const text   = colors?.text   ?? FALLBACK_TEXT ;
     const muted  = colors?.muted  ?? FALLBACK_TEXT ;

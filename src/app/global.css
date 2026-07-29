@@ -6,7 +6,7 @@
 
 /* noinspection CssUnresolvedCustomProperty */
 @theme {
-    --font-sans    : var(--font-lato);
+    --font-sans    : var(--font-inter);
     --font-serif   : var(--font-courier-prime);
     --font-mono    : var(--font-red-hat-mono);
     --font-display : var(--font-merriweather);

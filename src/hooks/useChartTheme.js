@@ -22,7 +22,7 @@ import { buildChartTheme , CHART_COLOR_KEYS } from '../themes/charts/theme' ;
  * @param {Object} [props]
  * @param {string} [props.fontFamily='inherit'] - Font family for every chart text.
  * @param {number} [props.fontSize=12] - Base font size in px.
- * @param {number|string} [props.labelFontWeight=700] - Weight of the data labels only, not the axis or legend text.
+ * @param {number|string} [props.labelFontWeight=500] - Weight of the data labels only, not the axis or legend text.
  * @param {Object} [props.overrides] - Partial nivo theme, deeply merged on top.
  *
  * @returns {Object} A nivo theme object.
@@ -42,7 +42,7 @@ import { buildChartTheme , CHART_COLOR_KEYS } from '../themes/charts/theme' ;
  * } ) ;
  * ```
  */
-const useChartTheme = ( { fontFamily = 'inherit' , fontSize = 12 , labelFontWeight = 700 , overrides } = {} ) =>
+const useChartTheme = ( { fontFamily = 'inherit' , fontSize = 12 , labelFontWeight = 500 , overrides } = {} ) =>
 {
     const colors = useThemeColors( CHART_COLOR_KEYS ) ;
 
