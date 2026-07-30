@@ -54,6 +54,7 @@ import { TbLayoutSidebarRightExpand as PanelIcon      } from "react-icons/tb";
 import { TbLayoutNavbar             as TabsIcon       } from "react-icons/tb";
 import { TbBadgeFilled              as IndicatorIcon  } from "react-icons/tb";
 import { TbCards                    as CardIcon       } from "react-icons/tb";
+import { TbPackageOff               as EmptyStateIcon } from "react-icons/tb";
 import { FaBarsProgress         as ProgressIcon       } from "react-icons/fa6";
 import { RiProgress5Line        as RadialProgressIcon } from "react-icons/ri";
 import { IoMdRadioButtonOn      as RadioIcon          } from "react-icons/io";
@@ -139,6 +140,7 @@ const navigation =
                     { id : 'badges'     , type : LINK  , Icon : BadgeIcon      , path  : '/lab/badges'     } ,
                     { id : 'card'       , type : LINK  , Icon : CardIcon       , path  : '/lab/card'       } ,
                     { id : 'effects'    , type : LINK  , Icon : EffectIcon     , path  : '/lab/effects'    } ,
+                    { id : 'emptyState' , type : LINK  , Icon : EmptyStateIcon , path  : '/lab/emptyState' } ,
                     { id : 'images'     , type : LINK  , Icon : ImageIcon      , path  : '/lab/images'     } ,
                     { id : 'indicator'  , type : LINK  , Icon : IndicatorIcon  , path  : '/lab/indicator'  } ,
                     { id : 'lists'      , type : LINK  , Icon : ListIcon       , path  : '/lab/lists'      } ,

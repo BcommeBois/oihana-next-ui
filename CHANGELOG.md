@@ -8,6 +8,20 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Components — `EmptyState` (new)**
+- New **`EmptyState`** (`components/EmptyState.jsx`) — the placeholder shown where content would be: an empty list, a search with no result, a panel before its first item. Four optional slots (`icon`, `title`, `description`, `actions`), each dropped entirely when its prop is falsy.
+- **A house component, but not a new vocabulary.** DaisyUI has no empty-state primitive, so the classes are plain Tailwind on theme tokens. The naming follows what the chart family already established through `ChartFrame` (`emptyLabel`, `emptyState`), so the words stay the same across the library.
+- **New `announce` (opt-in, default off).** An empty state that appears *in response to an action* — a search returning nothing, a filter narrowed too far — is a status message: without `role="status"` a screen reader says nothing at all and the user types into silence. But on the first render of a list that simply has no items yet, announcing it is noise. The distinction is the caller's, so the prop is explicit rather than inferred.
+- **The title renders as a `<p>`, not a heading** — the opposite call from `Card`, deliberately. A card is a block of content that earns a place in the document outline; an empty state is a status message, and defaulting it to `h2` would pollute the outline of every page holding a list. `titleAs` covers the case where the empty state genuinely owns a region.
+- **The size scale is about breathing room, not type.** `sm` / `md` / `lg` drive vertical spacing and icon scale while the description keeps its size — an empty state inside a `SidePanel` or a table cell cannot take the space a full-page one does. The icon is sized through the container's font size, which works because `react-icons` renders at `1em` and keeps working for any other node.
+- The icon is marked `aria-hidden`: it restates the title, so announcing it would only repeat.
+
+**Themes — `themes/components/emptyState.js` (new)**
+- `getEmptyStateClasses` plus the four part generators (icon, title, description, actions), on the same shape as the rest of the family. The description carries `max-w-prose` so a long explanation does not stretch across a wide container into an unreadable single line.
+
+**Lab**
+- New **`/lab/emptyState`** page under *Display*: the anatomy next to its bare minimum, the three sizes including one nested in a `Card`, and a live filter whose no-result state is the announced one.
+
 **Components — `Card` (new)**
 - New **`Card`** (`components/Card.jsx`) — the DaisyUI card shell driven by slots (`image`, `title`, children, `actions`), like the rest of the library. Every slot whose prop is falsy is dropped entirely, so an image-less card emits no empty `<figure>` and no phantom actions row.
 - **`image` takes a node, not a source.** A `next/image`, a plain `<img>`, an SVG — or our own `Picture`, whose corner and center slots then lay a badge or a play button over the photo without `Card` needing an overlay API of its own.
