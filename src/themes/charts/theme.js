@@ -42,10 +42,12 @@ export const FALLBACK_LINE = 'transparent' ;
  */
 export const CHART_COLOR_KEYS =
 {
-    text   : 'base-content' ,
-    muted  : 'base-content/60' ,
-    grid   : 'base-content/15' ,
-    border : 'base-content/25' ,
+    text    : 'base-content' ,
+    muted   : 'base-content/60' ,
+    grid    : 'base-content/15' ,
+    border  : 'base-content/25' ,
+    // The surface behind the chart, used as the halo around tick labels.
+    surface : 'base-100' ,
 } ;
 
 /**
@@ -62,6 +64,8 @@ export const CHART_COLOR_KEYS =
  * @param {number} [props.fontSize=12] - Base font size in px.
  * @param {number|string} [props.labelFontWeight=500] - Weight of the data labels only, not the axis or legend text.
  * @param {Object} [props.overrides] - Deeply merged on top of the result.
+ * @param {number|string} [props.tickFontWeight=500] - Weight of the axis tick labels.
+ * @param {number} [props.tickOutlineWidth=2] - Halo drawn around the tick labels, in the surface color. `0` removes it.
  *
  * @returns {Object} A nivo theme object.
  *
@@ -70,12 +74,25 @@ export const CHART_COLOR_KEYS =
  * const theme = buildChartTheme( { colors : { text : '#2E3440' } } ) ;
  * ```
  */
-export const buildChartTheme = ( { colors , fontFamily = 'inherit' , fontSize = 12 , labelFontWeight = 500 , overrides } = {} ) =>
+export const buildChartTheme = ( {
+    colors ,
+    fontFamily = 'inherit' ,
+    fontSize = 12 ,
+    labelFontWeight = 500 ,
+    overrides ,
+    tickFontWeight = 500 ,
+    tickOutlineWidth = 2 ,
+} = {} ) =>
 {
     const text   = colors?.text   ?? FALLBACK_TEXT ;
     const muted  = colors?.muted  ?? FALLBACK_TEXT ;
     const grid   = colors?.grid   ?? FALLBACK_LINE ;
     const border = colors?.border ?? FALLBACK_LINE ;
+
+    // No resolved surface means no halo yet — a stroke in an unknown color
+    // would outline the glyphs in whatever `currentColor` happens to be.
+    const surface = colors?.surface ;
+    const halo    = surface ? tickOutlineWidth : 0 ;
 
     const theme =
     {
@@ -107,13 +124,20 @@ export const buildChartTheme = ( { colors , fontFamily = 'inherit' , fontSize = 
             ticks :
             {
                 line : { stroke : border , strokeWidth : 1 } ,
+                // Tick labels are the one piece of chrome that sits *over* the
+                // data : a polar chart's value axis crosses its own bars, and a
+                // cartesian one runs along the plot edge. nivo renders
+                // `outline*` as a stroked copy of the glyphs underneath
+                // (`@nivo/text`), which reads as a halo in the surface color and
+                // is what keeps them legible without a solid backing plate.
                 text :
                 {
                     fontFamily ,
                     fontSize     : fontSize - 1 ,
-                    fill         : muted ,
-                    outlineWidth : 0 ,
-                    outlineColor : 'transparent' ,
+                    fontWeight   : tickFontWeight ,
+                    fill         : text ,
+                    outlineWidth : halo ,
+                    outlineColor : surface ?? 'transparent' ,
                 } ,
             } ,
         } ,

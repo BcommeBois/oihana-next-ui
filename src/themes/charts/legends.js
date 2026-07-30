@@ -101,7 +101,14 @@ export const getChartLegends = ( { legend , margin } = {} ) =>
 
     const { anchor , direction } = ANCHORS[ position ] ?? ANCHORS.bottom ;
 
+    // The legend sits at the *start* of the band reserved for it, not at the
+    // far edge of the whole margin : that margin also holds the axis, its
+    // title or the labels drawn outside the shape, and placing the legend
+    // past all of them left a visible gap between it and the chart.
     const inset = 12 ;
+
+    const offset = ( side ) =>
+        Math.max( ( margin?.[ side ] ?? LEGEND_SPACE[ side ] ) - LEGEND_SPACE[ side ] , 0 ) + inset ;
 
     let translateX = 0 ;
     let translateY = 0 ;
@@ -109,19 +116,19 @@ export const getChartLegends = ( { legend , margin } = {} ) =>
     switch ( position )
     {
         case 'right' :
-            translateX = ( margin?.right ?? LEGEND_SPACE.right ) - inset ;
+            translateX = offset( 'right' ) ;
             break ;
 
         case 'left' :
-            translateX = -( ( margin?.left ?? LEGEND_SPACE.left ) - inset ) ;
+            translateX = -offset( 'left' ) ;
             break ;
 
         case 'top' :
-            translateY = -( ( margin?.top ?? LEGEND_SPACE.top ) - inset ) ;
+            translateY = -offset( 'top' ) ;
             break ;
 
         default :
-            translateY = ( margin?.bottom ?? LEGEND_SPACE.bottom ) - inset ;
+            translateY = offset( 'bottom' ) ;
             break ;
     }
 
@@ -178,7 +185,14 @@ export const getContinuousLegends = ( { legend , margin } = {} ) =>
 
     const { anchor , direction } = ANCHORS[ position ] ?? ANCHORS.bottom ;
 
+    // The legend sits at the *start* of the band reserved for it, not at the
+    // far edge of the whole margin : that margin also holds the axis, its
+    // title or the labels drawn outside the shape, and placing the legend
+    // past all of them left a visible gap between it and the chart.
     const inset = 12 ;
+
+    const offset = ( side ) =>
+        Math.max( ( margin?.[ side ] ?? LEGEND_SPACE[ side ] ) - LEGEND_SPACE[ side ] , 0 ) + inset ;
 
     let translateX = 0 ;
     let translateY = 0 ;
@@ -186,19 +200,19 @@ export const getContinuousLegends = ( { legend , margin } = {} ) =>
     switch ( position )
     {
         case 'right' :
-            translateX = ( margin?.right ?? LEGEND_SPACE.right ) - inset ;
+            translateX = offset( 'right' ) ;
             break ;
 
         case 'left' :
-            translateX = -( ( margin?.left ?? LEGEND_SPACE.left ) - inset ) ;
+            translateX = -offset( 'left' ) ;
             break ;
 
         case 'top' :
-            translateY = -( ( margin?.top ?? LEGEND_SPACE.top ) - inset ) ;
+            translateY = -offset( 'top' ) ;
             break ;
 
         default :
-            translateY = ( margin?.bottom ?? LEGEND_SPACE.bottom ) - inset ;
+            translateY = offset( 'bottom' ) ;
             break ;
     }
 

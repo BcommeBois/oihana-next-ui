@@ -24,6 +24,8 @@ import { buildChartTheme , CHART_COLOR_KEYS } from '../themes/charts/theme' ;
  * @param {number} [props.fontSize=12] - Base font size in px.
  * @param {number|string} [props.labelFontWeight=500] - Weight of the data labels only, not the axis or legend text.
  * @param {Object} [props.overrides] - Partial nivo theme, deeply merged on top.
+ * @param {number|string} [props.tickFontWeight=500] - Weight of the axis tick labels.
+ * @param {number} [props.tickOutlineWidth=2] - Halo around the tick labels, in the surface color. `0` removes it.
  *
  * @returns {Object} A nivo theme object.
  *
@@ -42,25 +44,34 @@ import { buildChartTheme , CHART_COLOR_KEYS } from '../themes/charts/theme' ;
  * } ) ;
  * ```
  */
-const useChartTheme = ( { fontFamily = 'inherit' , fontSize = 12 , labelFontWeight = 500 , overrides } = {} ) =>
+const useChartTheme = ( {
+    fontFamily = 'inherit' ,
+    fontSize = 12 ,
+    labelFontWeight = 500 ,
+    overrides ,
+    tickFontWeight = 500 ,
+    tickOutlineWidth = 2 ,
+} = {} ) =>
 {
     const colors = useThemeColors( CHART_COLOR_KEYS ) ;
 
     // `useThemeColors` returns a fresh object on every render, so the
     // individual values are the dependencies, not the map itself.
-    const { text , muted , grid , border } = colors ?? {} ;
+    const { text , muted , grid , border , surface } = colors ?? {} ;
 
     return useMemo
     (
         () => buildChartTheme
         ({
-            colors : { text , muted , grid , border } ,
+            colors : { text , muted , grid , border , surface } ,
             fontFamily ,
             fontSize ,
             labelFontWeight ,
             overrides ,
+            tickFontWeight ,
+            tickOutlineWidth ,
         }) ,
-        [ text , muted , grid , border , fontFamily , fontSize , labelFontWeight , overrides ] ,
+        [ text , muted , grid , border , surface , fontFamily , fontSize , labelFontWeight , overrides , tickFontWeight , tickOutlineWidth ] ,
     ) ;
 } ;
 

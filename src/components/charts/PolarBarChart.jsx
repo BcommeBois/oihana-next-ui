@@ -43,6 +43,36 @@ const inferKeys = ( data , indexBy ) =>
 } ;
 
 /**
+ * Builds the default radial axis config.
+ *
+ * Two things nivo leaves to the caller and which look wrong without :
+ *
+ * - **the tick labels are rotated by default**, so the values read sideways ;
+ *   `tickRotation : 0` puts them back upright, as nivo's own showcase does.
+ * - **the axis angle must fall inside the drawn arc.** The usual `180`
+ *   (pointing down) is fine on a full circle, but on a half circle it points
+ *   at empty space and the ticks float outside the chart. So it is only used
+ *   when the arc actually covers it, and the arc's start is taken otherwise.
+ *
+ * @param {number} startAngle - Where the arc starts, in degrees.
+ * @param {number} endAngle - Where the arc ends, in degrees.
+ * @returns {Object} A nivo radial axis config.
+ */
+const defaultRadialAxis = ( startAngle , endAngle ) =>
+{
+    const from = Math.min( startAngle , endAngle ) ;
+    const to   = Math.max( startAngle , endAngle ) ;
+
+    return {
+        angle         : from <= 180 && 180 <= to ? 180 : from ,
+        ticksPosition : 'after' ,
+        tickSize      : 5 ,
+        tickPadding   : 5 ,
+        tickRotation  : 0 ,
+    } ;
+} ;
+
+/**
  * Polar bar chart.
  *
  * Takes the same data as {@link BarChart} — one object per index, one key
@@ -81,10 +111,11 @@ const inferKeys = ( data , indexBy ) =>
  * @param {Object} [props.margin] - Explicit margin overrides, merged over the computed one.
  * @param {Object} [props.nivoProps] - Escape hatch — spread last onto the nivo component.
  * @param {string|string[]} [props.palette='nivo'] - Series palette.
- * @param {boolean|Object} [props.radialAxis=true] - Radial axis ; an object is passed through to nivo.
+ * @param {boolean|Object} [props.radialAxis=true] - Radial axis ; an object is merged over the defaults. Its `angle` must fall inside the arc — on a partial circle, one outside it draws the ticks in empty space.
  * @param {number} [props.startAngle=0] - Where the circle starts, in degrees.
  * @param {Object} [props.theme] - Partial nivo theme, deeply merged over the DaisyUI one.
  * @param {string} [props.valueFormat] - d3-format string for values.
+ * @param {number|number[]} [props.valueSteps] - Number of rings on the value scale, or the explicit values to place them at.
  *
  * @example
  * ```jsx
@@ -124,6 +155,7 @@ const PolarBarChart =
     startAngle = 0 ,
     theme : themeOverrides ,
     valueFormat ,
+    valueSteps ,
     ...rest
 }) =>
 {
@@ -189,11 +221,16 @@ const PolarBarChart =
                 keys              = { resolvedKeys }
                 legends           = { legends }
                 margin            = { resolvedMargin }
-                radialAxis        = { radialAxis === true ? {} : ( radialAxis || null ) }
+                radialAxis        = { radialAxis === true
+                                        ? defaultRadialAxis( startAngle , endAngle )
+                                        : ( radialAxis
+                                            ? { ...defaultRadialAxis( startAngle , endAngle ) , ...radialAxis }
+                                            : null ) }
                 startAngle        = { startAngle }
                 theme             = { theme }
                 tooltip           = { tooltip }
                 valueFormat       = { valueFormat }
+                valueSteps        = { valueSteps }
                 { ...rest }
                 { ...nivoProps }
             />
