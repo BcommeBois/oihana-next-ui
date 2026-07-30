@@ -1,10 +1,9 @@
 'use client' ;
 
-import { useState } from 'react' ;
-
 import TextArea from './TextArea' ;
 
 import Markdown from '../typography/Markdown' ;
+import Tabs     from '../tabs/Tabs' ;
 
 import cn       from '../../themes/helpers/cn' ;
 import useValue from '../../hooks/useValue' ;
@@ -39,7 +38,6 @@ const TextAreaMarkdown =
 }) =>
 {
     const [ value, setValue ] = useValue( defaultValue || '' , valueFromProps , onChangeFromProps ) ;
-    const [ activeTab, setActiveTab ] = useState( 'write' ) ;
 
     const handleChange = newValue =>
     {
@@ -47,46 +45,42 @@ const TextAreaMarkdown =
     } ;
 
     // Tab mode : Write | Preview
+    //
+    // Both panels stay mounted (DaisyUI hides the inactive one), so switching back to
+    // the editor keeps its scroll position and caret — the hand-rolled version this
+    // replaced unmounted the TextArea on every switch.
     if ( previewPosition === 'tab' )
     {
         return (
-            <div className="flex flex-col gap-2">
-                {/* Tabs */}
-                <div role="tablist" className="tabs tabs-boxed">
-                    <button
-                        type="button"
-                        role="tab"
-                        className={ cn( 'tab', activeTab === 'write' && 'tab-active' ) }
-                        onClick={ () => setActiveTab( 'write' ) }
-                    >
-                        Write
-                    </button>
-                    <button
-                        type="button"
-                        role="tab"
-                        className={ cn( 'tab', activeTab === 'preview' && 'tab-active' ) }
-                        onClick={ () => setActiveTab( 'preview' ) }
-                    >
-                        Preview
-                    </button>
-                </div>
-
-                {/* Content */}
-                { activeTab === 'write' ? (
-                    <TextArea
-                        { ...rest }
-                        ref      = { ref }
-                        value    =  { value }
-                        onChange = { handleChange }
-                    />
-                ) : (
-                    <div className="border border-base-300 rounded-box p-4 min-h-50">
-                        <Markdown { ...markdownProps }>
-                            { value || '*Nothing to preview*' }
-                        </Markdown>
-                    </div>
-                )}
-            </div>
+            <Tabs
+                style            = "box"
+                contentClassName = "border-base-300 p-4"
+                items            = {[
+                    {
+                        id      : 'write' ,
+                        label   : 'Write' ,
+                        content : (
+                            <TextArea
+                                { ...rest }
+                                ref      = { ref }
+                                value    = { value }
+                                onChange = { handleChange }
+                            />
+                        ) ,
+                    } ,
+                    {
+                        id      : 'preview' ,
+                        label   : 'Preview' ,
+                        content : (
+                            <div className="min-h-50">
+                                <Markdown { ...markdownProps }>
+                                    { value || '*Nothing to preview*' }
+                                </Markdown>
+                            </div>
+                        ) ,
+                    } ,
+                ]}
+            />
         ) ;
     }
 

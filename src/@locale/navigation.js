@@ -65,6 +65,7 @@ const navigation =
                 menus          : 'Menus' ,
                 megamenu       : 'Megamenu' ,
                 pagination     : 'Pagination' ,
+                tabs           : 'Onglets' ,
             tests        : 'Tests' ,
 
     } ,
@@ -133,6 +134,7 @@ const navigation =
                 menus          : 'Menus' ,
                 megamenu       : 'Megamenu' ,
                 pagination     : 'Pagination' ,
+                tabs           : 'Tabs' ,
             tests        : 'Tests' ,
 
     }

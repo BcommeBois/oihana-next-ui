@@ -8,6 +8,25 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Components — `Tabs` (accessible tabs, new)**
+- New **`Tabs`** (`components/tabs/Tabs.jsx`) — data-driven like `Dropdown` (`items` of `{ id, label, icon, content, disabled }`), controlled or uncontrolled through the house `useValue` hook. Styles `box` / `border` / `lift` (or none), sizes `xs`→`xl` including per-breakpoint objects, and `top` / `bottom` placement.
+- **Implements the WAI-ARIA tabs pattern**, which is the bulk of the work and the part a screenshot cannot show: `role="tablist"` / `tab` / `tabpanel`, roving tabindex so `Tab` enters on the selected tab and leaves immediately instead of walking the whole row, Left / Right arrows with wrap-around, `Home` / `End`, and disabled tabs skipped. New `activation` prop — `automatic` (default, arrow selects, the WAI-ARIA recommendation for light panels) or `manual` (arrow moves focus, `Enter` / `Space` selects).
+- **The selected state is carried by `aria-selected` alone.** DaisyUI styles `[aria-selected=true]` natively alongside `.tab-active`, so one attribute drives both the look and the accessible state — there is no second class to keep in sync with it.
+- **Panels interleave with tabs in the DOM.** DaisyUI reveals a panel through `.tab:is(…) + .tab-content`, so each panel is emitted as the immediate sibling of its own tab rather than grouped after the row. The panel element is always rendered, even when `lazy` defers its children: `tabs-lift` corner rules count siblings, and a missing panel would shift them.
+- **New `lazy` (default off).** Off reproduces DaisyUI — every panel mounted, inactive ones hidden — which is what preserves a form's state across tab switches. On, a panel's children are mounted at its first selection and stay mounted.
+- **No orientation prop.** DaisyUI 5 dropped `tabs-vertical` (`--tabs-direction` is always `row`), so exposing one would only offer a setting that breaks the layout — same call as `PagedMenu` being vertical-only.
+- **Icons are spaced.** DaisyUI leaves `.tab` gapless and expects the caller to space an icon by hand, so an icon sat flush against its label. The generator emits `gap-2`, DaisyUI's own `menu` spacing — tabs are navigation, not buttons (`.375rem`). A label-only tab is unaffected, and `className` still wins.
+
+**Themes — `themes/components/tab.js` (new)**
+- New `getTabsClasses` / `getTabClasses` / `getTabContentClasses`, built on the same shape as the other generators (`after` / `before` / `beforeClassName` / `className`, exported constants, `sizes` / `styles` / `placements` arrays and typedefs). Responsive sizes go through `getResponsiveDefinition`, hence the `@safelist` block at the top of the module — those classes are assembled at runtime and the scanner would never see them.
+
+**Components — `TextAreaMarkdown` (tab preview rebuilt on `Tabs`)**
+- **Fixed — the tab-mode preview had no container styling.** It carried **`tabs-boxed`**, a DaisyUI 4 class the v5 renamed `tabs-box`, so the tab row rendered unstyled. Same leftover as the `menu-active` fix in 0.7.6.
+- **The hand-rolled tabs are gone**, replaced by `<Tabs>` — which also means the mode gains keyboard navigation it never had. As a side effect the editor **keeps its caret and scroll position** when switching back from the preview: the previous implementation unmounted the `TextArea` on every switch.
+
+**Lab**
+- New **`/lab/tabs`** page under *Navigation*: the four styles, sizes and placement, a keyboard section with a disabled tab and an `activation` switch, a deferred-mount section that stamps each panel with its render order, and tabs composed inside a `SidePanel`.
+
 **Components — `SplitPanel` (the overlay could not be dismissed)**
 - **Fixed — on a phone the panel opened and never closed.** The only way out was DaisyUI's `drawer-overlay` strip, but the default `width` was `w-full` below `sm` : the panel covered that strip entirely, leaving nothing to tap. The default now stops at **`w-[85%]`** on the smallest screens so the strip stays reachable, and the JSDoc spells out that a full-width value traps the panel open — it is not something a caller can guess.
 - **New `showCloseButton` (default on).** A dismiss button in the panel corner while it overlays, dropped once the panel is pinned and there is nothing left to close. It is a `<label>` pointing at the same checkbox as the overlay, so the component keeps a single dismiss mechanism rather than two to hold in sync.

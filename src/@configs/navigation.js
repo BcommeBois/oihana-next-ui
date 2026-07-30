@@ -51,6 +51,7 @@ import { BiFoodMenu             as NavigationIcon     } from "react-icons/bi";
 import { MdOutlineNetworkWifi   as NetworkIcon        } from "react-icons/md";
 import { TfiLayoutMenu          as PaginationIcon     } from "react-icons/tfi";
 import { TbLayoutSidebarRightExpand as PanelIcon      } from "react-icons/tb";
+import { TbLayoutNavbar             as TabsIcon       } from "react-icons/tb";
 import { FaBarsProgress         as ProgressIcon       } from "react-icons/fa6";
 import { RiProgress5Line        as RadialProgressIcon } from "react-icons/ri";
 import { IoMdRadioButtonOn      as RadioIcon          } from "react-icons/io";
@@ -157,6 +158,7 @@ const navigation =
                     { id : 'pagination'  , type : LINK  , Icon : PaginationIcon  , path  : '/lab/pagination'  } ,
                     { id : 'menus'       , type : LINK  , Icon : MenuIcon        , path  : '/lab/menus'       } ,
                     { id : 'megamenu'    , type : LINK  , Icon : MegamenuIcon    , path  : '/lab/megamenu'    } ,
+                    { id : 'tabs'        , type : LINK  , Icon : TabsIcon        , path  : '/lab/tabs'        } ,
                 ]
             } ,
             {
