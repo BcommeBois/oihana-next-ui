@@ -30,7 +30,10 @@ const useCallbackState = ( initialValue ) =>
     {
         if ( callbackQueue.current.length > 0 )
         {
-            callbackQueue.current.forEach( ( callback ) => callback( state ) ) ;
+            callbackQueue.current.forEach( ( callback ) =>
+            {
+                callback( state )
+            } ) ;
             callbackQueue.current = [] ;
         }
     }
