@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.8.0] — 2026-07-30
+
 **Components — `Steps` / `Step` (new)**
 - New **`Steps`** and **`Step`** (`components/steps/`) — an ordered process on DaisyUI's `steps`: a checkout funnel, a multi-part form. `Steps` takes `items` or raw `<Step>` children, the same pair of shapes `Dropdown`, `Tabs` and `Stats` accept.
 - **`current` does the colouring.** In raw DaisyUI you place `step-primary` by hand on every step already reached. Here an index or an item `id` drives it, through **three independent colours** so the three states can be told apart: `color` for the steps behind (default `primary`), `currentColor` for the one in progress (falls back to `color`), `upcomingColor` for those ahead (omitted leaves DaisyUI's grey). An item's own `color` beats all three, and leaving `current` unset disables the automatic colouring entirely.
