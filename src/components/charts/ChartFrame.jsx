@@ -10,7 +10,8 @@ import isChartDataEmpty from '../../helpers/charts/isChartDataEmpty' ;
 
 import cn from '../../themes/helpers/cn' ;
 
-import Skeleton from '../Skeleton' ;
+import EmptyState from '../EmptyState' ;
+import Skeleton   from '../Skeleton' ;
 
 /**
  * Gives a chart the explicit box it needs, and owns its empty and loading
@@ -42,10 +43,15 @@ import Skeleton from '../Skeleton' ;
  * `role="img"` hides the SVG internals from assistive technology, which is
  * what you want : hundreds of unlabelled paths are noise, and `ariaLabel`
  * is the readable summary that replaces them. It suits these charts because
- * they are hover-driven, not keyboard-interactive. It is written as a
- * literal rather than a prop so static analysis can check the ARIA
- * attributes against it ; a caller who genuinely needs another role can
- * still pass `role` through, since the spread lands last.
+ * they are hover-driven, not keyboard-interactive. A caller who genuinely
+ * needs another role can still pass `role` through, since the spread
+ * lands last.
+ *
+ * The role and its label **step aside while the frame is empty**. Collapsing
+ * the subtree into one labelled image is right for a chart and wrong for a
+ * placeholder : it made the empty text unreadable — only `ariaLabel` was ever
+ * announced — and it would silently swallow anything richer put in its place,
+ * a description, a retry button, a live region.
  *
  * @param {Object} props
  * @param {React.ReactNode} props.children - The chart.
@@ -56,7 +62,8 @@ import Skeleton from '../Skeleton' ;
  * @param {string} [props.className] - Additional classes.
  * @param {*} [props.data] - The chart data ; emptiness is derived from it unless `empty` says otherwise.
  * @param {boolean} [props.empty] - Force the empty state, for data shapes this cannot inspect on its own.
- * @param {string} [props.emptyLabel='No data'] - Text shown in the default empty state.
+ * @param {string} [props.emptyLabel='No data'] - Title of the default empty state.
+ * @param {Object} [props.emptyProps] - Spread onto the default `EmptyState` — `icon`, `description`, `actions`, `announce`, `size`… Ignored when `emptyState` replaces it. **Only reachable on `ChartFrame` itself**: the fourteen chart wrappers forward `emptyLabel` and `emptyState` only, so from a chart a rich empty state goes through `emptyState={ <EmptyState … /> }`.
  * @param {React.ReactNode} [props.emptyState] - Replaces the default empty state entirely.
  * @param {number|string} [props.height=400] - Height in px, or any CSS length.
  * @param {boolean} [props.loading=false] - Show a skeleton instead of the chart.
@@ -87,6 +94,7 @@ const ChartFrame =
     data ,
     empty ,
     emptyLabel = 'No data' ,
+    emptyProps ,
     emptyState ,
     height = 400 ,
     loading = false ,
@@ -119,8 +127,31 @@ const ChartFrame =
     else if ( isEmpty )
     {
         content = emptyState ?? (
-            <div className="flex size-full items-center justify-center text-sm text-base-content/50">
-                { emptyLabel }
+            <EmptyState className="size-full" size="sm" title={ emptyLabel } { ...emptyProps } />
+        ) ;
+    }
+
+    // `role="img"` collapses the whole subtree into a single labelled image, which is
+    // right for the chart — but wrong the moment there is no chart. It made the empty
+    // text unreadable to a screen reader (only `ariaLabel` was ever announced), and it
+    // would silently swallow anything richer put in its place : a description, a retry
+    // button, an `announce` live region. So the role and its label step aside while the
+    // frame holds an empty state, and the text inside speaks for itself.
+    //
+    // Loading keeps the role : the frame still stands in for the chart that is coming,
+    // nothing readable is being hidden, and `aria-busy` needs a role to sit on.
+    const describesChart = loading || !isEmpty ;
+
+    const frameClassName = cn( 'w-full' , className ) ;
+
+    // Two branches rather than a computed `role` : written as a literal, the role can
+    // still be checked against the ARIA attributes by static analysis, which is what
+    // caught the `aria-busy` / `aria-label` mismatch a conditional had introduced here.
+    if ( !describesChart )
+    {
+        return (
+            <div className={ frameClassName } style={ style } { ...rest }>
+                { content }
             </div>
         ) ;
     }
@@ -131,7 +162,7 @@ const ChartFrame =
             aria-describedby = { ariaDescribedBy }
             aria-label       = { ariaLabelledBy ? undefined : ariaLabel }
             aria-labelledby  = { ariaLabelledBy }
-            className        = { cn( 'w-full' , className ) }
+            className        = { frameClassName }
             role             = "img"
             style            = { style }
             { ...rest }

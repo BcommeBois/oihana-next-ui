@@ -6,8 +6,11 @@ import BarChart       from '@/components/charts/BarChart' ;
 import LineChart      from '@/components/charts/LineChart' ;
 import MarimekkoChart from '@/components/charts/MarimekkoChart' ;
 
-import Button  from '@/components/Button' ;
-import Divider from '@/components/Divider' ;
+import Button     from '@/components/Button' ;
+import Divider    from '@/components/Divider' ;
+import EmptyState from '@/components/EmptyState' ;
+
+import { MdBarChart as NoChartIcon , MdRefresh as RefreshIcon } from 'react-icons/md' ;
 
 import PalettePicker from './PalettePicker' ;
 import Section       from './Section' ;
@@ -261,6 +264,31 @@ const CartesianChartsDemo = () =>
                             legend     = { false }
                             loading    = { loading }
                             emptyLabel = "Aucune donnée sur la période"
+                        />
+
+                        <BarChart
+                            ariaLabel  = "Exemple d'état vide enrichi, sans aucune donnée"
+                            data       = { [] }
+                            indexBy    = "country"
+                            palette    = { palette }
+                            height     = { 260 }
+                            legend     = { false }
+                            loading    = { loading }
+                            emptyState = {
+                                <EmptyState
+                                    className   = "size-full"
+                                    size        = "sm"
+                                    icon        = { <NoChartIcon /> }
+                                    title       = "Aucune donnée sur la période"
+                                    description = "Élargis l'intervalle ou change de filtre."
+                                    actions     = {
+                                        <Button size="sm" style="outline">
+                                            <RefreshIcon size={ 16 } />
+                                            Réinitialiser
+                                        </Button>
+                                    }
+                                />
+                            }
                         />
                     </div>
                 </div>
