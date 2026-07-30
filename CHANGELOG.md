@@ -8,6 +8,23 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Components — `Card` (new)**
+- New **`Card`** (`components/Card.jsx`) — the DaisyUI card shell driven by slots (`image`, `title`, children, `actions`), like the rest of the library. Every slot whose prop is falsy is dropped entirely, so an image-less card emits no empty `<figure>` and no phantom actions row.
+- **`image` takes a node, not a source.** A `next/image`, a plain `<img>`, an SVG — or our own `Picture`, whose corner and center slots then lay a badge or a play button over the photo without `Card` needing an overlay API of its own.
+- **New `titleAs` (default `h2`).** DaisyUI hard-codes its title as an `<h2>`. A card lives inside a list, in the middle of a document outline, so leaving every card at `h2` breaks that outline as soon as one is nested under an existing `h2`. A deliberate divergence from `Modal`, which keeps its `<h3>` hard-coded — a dialog is an isolated heading context, a card is not.
+- **`side` accepts a breakpoint, not just a boolean.** `side="lg"` gives the vertical-on-mobile, horizontal-on-desktop layout DaisyUI documents. Whole class literals per breakpoint, and the prop stops at `xl` because DaisyUI ships no `2xl` variant.
+- **New `input` slot for selectable cards.** DaisyUI turns a card into a selection control through `:has()` — a checked checkbox or radio lights the card outline, and the input is hidden with `appearance: none`. The rule matches **direct children of the card**, so the input cannot travel through `children`, which lands inside `card-body`. Pair it with `as="label"` to make the whole block clickable.
+- **The selection outline is drawn in `currentColor`**, 2px outside the card — so a card with light text gets a light outline, invisible on a light page. Not something the API can hint at and not documented upstream, so the JSDoc gives the fix: drive it with a text colour on the root and restore the body colour through `bodyClassName`.
+- **`card-actions` defaults to `justify-end`**, which is what every example in the DaisyUI docs pairs it with — better a default than a class to repeat at every call site. Overridable through `actionsClassName`.
+
+**Themes — `themes/components/card.js` (completed)**
+- The generator already existed and, checked against DaisyUI 5.7.4, was **correct and complete on the root class** — it was simply imported by nothing. Completed rather than rewritten: the `after` / `before` parameters the rest of the family takes, the three part generators (`getCardBodyClasses`, `getCardTitleClasses`, `getCardActionsClasses`), and `side` accepting a breakpoint.
+- **The default export and the `getCardClassNames` name are unchanged.** It is published through `./themes/*`, and `labelBadge.js` already carries the same suffix — two naming conventions coexist in the codebase and churning one buys nothing.
+
+**Lab**
+- New **`/lab/card`** page under *Display*: slots and their empty states, sizes and styles, the figure in its four arrangements, the heading level, and the selectable form with a live checkbox and radio group.
+- The demo runs `Picture` in **`fill`** mode. In its default mode `Picture` lays the image out at its intrinsic pixel size inside an `inline-block` over a `bg-base-300`, which in a card figure means an image ignoring the card width and grey bands showing through — and `card-side` stretches the `Picture` container without reaching the `<img>` one level below. Worth knowing before dropping a `Picture` into any fixed-width container.
+
 **Components — `Indicator` (new)**
 - New **`Indicator`** (`components/Indicator.jsx`) — anchors a floating item (a counter, a status dot, a "new" flag) on a corner of whatever it wraps. Sits flat next to `Badge` / `Tooltip` / `Status`, the same family of small display primitives. `align` (`start` / `center` / `end`, default `end`) crossed with `position` (`top` / `middle` / `bottom`, default `top`).
 - **It is the positioning mechanism, not the content.** The item is any node — typically a `Badge` or a `Status` — so `Indicator` composes with the existing badges instead of competing with them.
