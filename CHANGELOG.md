@@ -8,6 +8,22 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Components — `Indicator` (new)**
+- New **`Indicator`** (`components/Indicator.jsx`) — anchors a floating item (a counter, a status dot, a "new" flag) on a corner of whatever it wraps. Sits flat next to `Badge` / `Tooltip` / `Status`, the same family of small display primitives. `align` (`start` / `center` / `end`, default `end`) crossed with `position` (`top` / `middle` / `bottom`, default `top`).
+- **It is the positioning mechanism, not the content.** The item is any node — typically a `Badge` or a `Status` — so `Indicator` composes with the existing badges instead of competing with them.
+- **A falsy `item` renders no `indicator-item` at all**, so a cart at zero shows no pill rather than a "0". `item={ count > 0 && <Badge>{ count }</Badge> }` is the intended shape, and no extra `show` prop was added for it.
+- **Placement modifiers belong on the item, not on the container.** They only set the CSS variables `.indicator-item` reads, which is exactly what lets several items sit at different corners of one container — hence the exported **`IndicatorItem`** for that case, alongside the single-item `item` prop.
+- **The item is wrapped in `indicator-item` rather than becoming it.** DaisyUI writes `<span class="indicator-item badge">`, which would mean merging class names into the caller's own node through a brittle `cloneElement`. One extra DOM level costs less and accepts any node as an item.
+- **Accessibility is documented rather than abstracted.** The item renders before the anchored content, so a screen reader announces "3, Cart" — and a bare number out of context means nothing. The JSDoc spells out the two correct shapes: the control carrying the whole accessible name with an `aria-hidden` pill, or a pill that names itself.
+- **Width caveat.** DaisyUI makes the container `inline-flex` at `width: max-content`, so it hugs its child: wrapping a full-width control shrinks it back unless the width is restated on the container.
+- **No responsive placement.** DaisyUI ships `sm:indicator-end` and friends, but the case is rare and supporting it would cost a thirty-class `@safelist` — deliberately left out until something asks for it.
+
+**Themes — `themes/components/indicator.js` (new)**
+- `getIndicatorClasses` / `getIndicatorItemClasses`, on the same generator shape as the rest of the family. Alignments and positions reuse the existing `enums/alignments` (`start` / `center` / `end`) and `enums/positions` (`top` / `middle` / `bottom`) — those names already match DaisyUI's, so the component introduces no new vocabulary.
+
+**Lab**
+- New **`/lab/indicator`** page under *Display*: the nine align × position combinations, a live cart counter demonstrating the empty state, three pills on a single container, and the `max-content` width trap shown side by side with its fix.
+
 **Components — `Tabs` (accessible tabs, new)**
 - New **`Tabs`** (`components/tabs/Tabs.jsx`) — data-driven like `Dropdown` (`items` of `{ id, label, icon, content, disabled }`), controlled or uncontrolled through the house `useValue` hook. Styles `box` / `border` / `lift` (or none), sizes `xs`→`xl` including per-breakpoint objects, and `top` / `bottom` placement.
 - **Implements the WAI-ARIA tabs pattern**, which is the bulk of the work and the part a screenshot cannot show: `role="tablist"` / `tab` / `tabpanel`, roving tabindex so `Tab` enters on the selected tab and leaves immediately instead of walking the whole row, Left / Right arrows with wrap-around, `Home` / `End`, and disabled tabs skipped. New `activation` prop — `automatic` (default, arrow selects, the WAI-ARIA recommendation for light panels) or `manual` (arrow moves focus, `Enter` / `Space` selects).
