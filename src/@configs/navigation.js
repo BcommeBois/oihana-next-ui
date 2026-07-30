@@ -55,6 +55,7 @@ import { TbLayoutNavbar             as TabsIcon       } from "react-icons/tb";
 import { TbBadgeFilled              as IndicatorIcon  } from "react-icons/tb";
 import { TbCards                    as CardIcon       } from "react-icons/tb";
 import { TbPackageOff               as EmptyStateIcon } from "react-icons/tb";
+import { TbChartBar                 as StatIcon       } from "react-icons/tb";
 import { FaBarsProgress         as ProgressIcon       } from "react-icons/fa6";
 import { RiProgress5Line        as RadialProgressIcon } from "react-icons/ri";
 import { IoMdRadioButtonOn      as RadioIcon          } from "react-icons/io";
@@ -150,6 +151,7 @@ const navigation =
                     { id : 'motion'     , type : LINK  , Icon : MotionIcon     , path  : '/lab/motion'     } ,
                     { id : 'headers'    , type : LINK  , Icon : HeaderIcon     , path  : '/lab/headers'    } ,
                     { id : 'network'    , type : LINK  , Icon : NetworkIcon    , path  : '/lab/network'    } ,
+                    { id : 'stat'       , type : LINK  , Icon : StatIcon       , path  : '/lab/stat'       } ,
                     { id : 'status'     , type : LINK  , Icon : StatusIcon     , path  : '/lab/status'     } ,
                 ]
             } ,

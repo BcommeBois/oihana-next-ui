@@ -8,6 +8,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Components — `Stats` / `Stat` (new)**
+- New **`Stats`** and **`Stat`** (`components/stats/`) — KPI blocks on DaisyUI's `stats`. `Stats` takes `items` or raw `<Stat>` children, the same pair of shapes `Dropdown` and `Tabs` accept. `Stat` has five optional slots: `title`, `value`, `description`, `figure`, `actions`.
+- **Every part takes its own colour.** DaisyUI exposes no colour modifier on the stat parts — its own examples drop plain utilities on them and routinely tint the value and the description differently. So `titleColor`, `valueColor`, `descriptionColor` and `figureColor` each stand alone, while `color` acts as the shared accent for the value and the figure and loses to any of them. They resolve through the existing `themes/colors/textColor` map, so all 25 theme colours are available and no private map was added.
+- **The figure is rendered last in the DOM, and hidden from assistive technology.** DaisyUI places every part with an explicit `grid-column` / `grid-row` rather than by source order, so moving the figure to the end changes nothing visually while letting a screen reader announce "Mentions, 25.6k" instead of opening on a bare number — which is what DaisyUI's own third example does. `aria-hidden` because an icon beside an already-labelled number adds nothing; `figureDecorative={ false }` when it does carry information, such as an avatar naming whose stat it is.
+- **`direction` accepts a breakpoint object**, through the same `getResponsiveDefinition` helper as the `rating` and `tab` sizes: `direction={{ xs: 'vertical', lg: 'horizontal' }}` emits `stats-vertical lg:stats-horizontal`. Hence the `@safelist` block — those classes are assembled at runtime. No `2xl`, DaisyUI ships none.
+- **Two DaisyUI behaviours documented rather than papered over.** `.stats` is an `inline-grid`, so it hugs its content and a full-width band needs `w-full`; and it carries `overflow-x: auto`, so blocks **scroll sideways rather than wrap** once they outgrow the container. Kept faithful for now — an explicit option to switch the overflow mode is a follow-up, once the demo has been lived with.
+
+**Themes — `themes/components/stat.js` (new)**
+- `getStatsClasses` and `getStatClasses` plus the five part generators. The part generators are built from one internal factory, since they differ only by their base class and all accept the same optional colour.
+
+**Lab**
+- New **`/lab/stat`** page under *Display*: the band and its slots, a live four-row colour picker showing per-part precedence, direction with its responsive form and a deliberately narrow container to expose the horizontal overflow, then centring and actions.
+
 **Components — `EmptyState` (new)**
 - New **`EmptyState`** (`components/EmptyState.jsx`) — the placeholder shown where content would be: an empty list, a search with no result, a panel before its first item. Four optional slots (`icon`, `title`, `description`, `actions`), each dropped entirely when its prop is falsy.
 - **A house component, but not a new vocabulary.** DaisyUI has no empty-state primitive, so the classes are plain Tailwind on theme tokens. The naming follows what the chart family already established through `ChartFrame` (`emptyLabel`, `emptyState`), so the words stay the same across the library.
