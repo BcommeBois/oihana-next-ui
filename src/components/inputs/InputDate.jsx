@@ -35,7 +35,7 @@ import { MdCalendarToday as CalendarIcon } from 'react-icons/md'
  * @param {string} [props.defaultValue=''] - Default date value (formatted string)
  * @param {string} [props.value] - Controlled date value (formatted string)
  * @param {Function} [props.onChange] - Change handler (receives formatted date string)
- * @param {Function} [props.onDate] - Date object change handler (receives Date object or null)
+ * @param {Function} [props.onDate] - Date object change handler (receives Date object or null; called only when the parsed date actually changes)
  * @param {'dd/mm'|'dd/mm/yyyy'|'mm/dd'|'mm/dd/yyyy'|'mm/yy'|'mm/yyyy'|'yyyy/mm/dd'} [props.mode='dd/mm/yyyy'] - Date format mode
  * @param {string} [props.separator='/'] - Separator character ('/', '.', '-')
  * @param {Date} [props.min] - Minimum allowed date
@@ -193,6 +193,11 @@ const InputDate =
 
     // --------- Date parsing
 
+    // Parents may recreate `onDate` on every render (inline arrow), so this effect
+    // re-runs freely : only a real change of the parsed date may reach the handler,
+    // otherwise a non-idempotent setState upstream loops ("Maximum update depth").
+    const lastEmittedRef = useRef( undefined ) ;
+
     useEffect( () =>
     {
         if ( !onDate )
@@ -200,31 +205,40 @@ const InputDate =
             return ;
         }
 
-        if ( !value )
+        let parsedDate = null ;
+
+        if ( value )
         {
-            onDate( null ) ;
+            try
+            {
+                const candidate = isISOMode
+                    ? parseISO( value, separator )
+                    : maskitoParseDate( value ,
+                    {
+                        mode : /** @type {any} */ (mode),
+                        min ,
+                        max
+                    } ) ;
+
+                parsedDate = candidate && !isNaN( candidate.getTime() ) ? candidate : null ;
+            }
+            catch ( error )
+            {
+                parsedDate = null ;
+            }
+        }
+
+        const stamp = parsedDate ? parsedDate.getTime() : null ;
+
+        if ( stamp === lastEmittedRef.current )
+        {
             return ;
         }
 
-        try
-        {
-            const parsedDate = isISOMode
-                ? parseISO( value, separator )
-                : maskitoParseDate( value ,
-                {
-                    mode : /** @type {any} */ (mode),
-                    min ,
-                    max
-                } ) ;
-
-            onDate( parsedDate && !isNaN( parsedDate.getTime() ) ? parsedDate : null ) ;
-        }
-        catch ( error )
-        {
-            onDate( null ) ;
-        }
+        lastEmittedRef.current = stamp ;
+        onDate( parsedDate ) ;
     }
-    , [ value, mode, separator, isISOMode, onDate ]) ;
+    , [ value, mode, separator, isISOMode, min, max, onDate ]) ;
 
     // --------- Handlers
 

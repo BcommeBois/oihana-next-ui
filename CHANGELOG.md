@@ -8,6 +8,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.8.1] — 2026-08-02
+
+**Components — `InputDate` / `InputDateRange` (parse-effect loop fix)**
+- **Fixed — an inline `onDate` / `onDateRange` handler could loop the page** ("Maximum update depth exceeded", met in production in a quote-creation modal). The parse effect keys on the handler, which parents recreate on every render — `InputDatePicker` does, and apps pass inline arrows — so it re-ran on every parent render and re-emitted a **fresh `Date` instance** each time; any non-idempotent setState in the handler then fed the next render, closing the loop. A ref now stamps the last emitted value (`getTime()`, a `start:end` pair for the range, or `null`) and the handler is only called when the parsed value **actually changed**. The first emission on mount is preserved, including `null` for an empty field.
+- `min` / `max` join the parse-effect deps — they take part in parsing and were missing, and the stamp guard makes their per-render identity churn (`min={ new Date() }`) harmless.
+- Audited and left alone, already sound : `InputDateTimePicker` keeps `onDateTime` out of its effect deps, `useTime` bails out through `usePrevious`, and `InputDatePicker`'s per-render handlers are fine once the emission is idempotent.
+
+**Lab**
+- `/lab/dates` gains a regression block : both pickers wired to inline handlers doing a never-idempotent setState (a counter plus a fresh object) — the exact shape that looped. The visible emit counters must settle at one emit on mount, plus one per real change.
+
 ## [0.8.0] — 2026-07-30
 
 **Components — `Steps` / `Step` (new)**

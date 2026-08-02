@@ -31,6 +31,10 @@ const DateDemo = () =>
     const [ pickRange    , setPickRange    ] = useState( '' ) ;
     const [ pickDateTime , setPickDateTime ] = useState( '' ) ;
     const [ dtObject     , setDtObject     ] = useState( null ) ;
+    const [ inlineDate       , setInlineDate       ] = useState( null ) ;
+    const [ inlineDateEmits  , setInlineDateEmits  ] = useState( 0 ) ;
+    const [ inlineRange      , setInlineRange      ] = useState( null ) ;
+    const [ inlineRangeEmits , setInlineRangeEmits ] = useState( 0 ) ;
 
     const today    = new Date() ;
     const inAMonth = new Date( today.getFullYear() , today.getMonth() + 1 , today.getDate() ) ;
@@ -298,6 +302,34 @@ const DateDemo = () =>
                     <InputDateRangePicker label="footer=mobile" footer="mobile" helper="Footer only below md" />
                     <InputDateRangePicker label="footer=desktop" footer="desktop" helper="Footer only at md+" />
                 </div>
+            </div>
+
+            <div className="flex flex-col gap-3">
+                <span className="font-semibold">Regression — inline handlers, fresh-object setState</span>
+                <p className="text-xs opacity-50">
+                    Both fields get an <span className="font-mono">onDate</span> / <span className="font-mono">onDateRange</span> arrow
+                    recreated on every render, whose setState is never idempotent (a counter plus a fresh object).
+                    The emit counters must settle — one emit on mount, one per real change. If they run away
+                    (« Maximum update depth exceeded »), the parse effect is looping again.
+                </p>
+                <div className="grid max-w-3xl grid-cols-1 gap-6 md:grid-cols-2">
+                    <InputDatePicker
+                        label="Inline onDate"
+                        defaultValue="24/12/2024"
+                        onDate={ ( d ) => { setInlineDateEmits( ( c ) => c + 1 ) ; setInlineDate( d ) ; } }
+                    />
+                    <InputDateRangePicker
+                        label="Inline onDateRange"
+                        defaultValue="01/01/2026 – 31/01/2026"
+                        onDateRange={ ( r ) => { setInlineRangeEmits( ( c ) => c + 1 ) ; setInlineRange( r ) ; } }
+                    />
+                </div>
+                <p className="text-sm opacity-70">
+                    onDate emits : <span className="font-mono">{ inlineDateEmits }</span> · last : <span className="font-mono">{ fmt( inlineDate ) }</span>
+                </p>
+                <p className="text-sm opacity-70 -mt-2">
+                    onDateRange emits : <span className="font-mono">{ inlineRangeEmits }</span> · last : <span className="font-mono">{ inlineRange ? `${ fmt( inlineRange.start ) } → ${ fmt( inlineRange.end ) }` : '—' }</span>
+                </p>
             </div>
 
             <Divider />

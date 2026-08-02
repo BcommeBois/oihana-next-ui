@@ -35,7 +35,7 @@ import { MdDateRange as DateRangeIcon } from 'react-icons/md'
  * @param {string} [props.defaultValue=''] - Default date range value
  * @param {string} [props.value] - Controlled date range value
  * @param {Function} [props.onChange] - Change handler (formatted string)
- * @param {Function} [props.onDateRange] - Callback {start: Date, end: Date}
+ * @param {Function} [props.onDateRange] - Callback {start: Date, end: Date} or null; called only when the parsed range actually changes
  * @param {string} [props.mode='dd/mm/yyyy'] - Date format mode
  * @param {string} [props.dateSeparator='/'] - Date segments separator
  * @param {string} [props.rangeSeparator=' – '] - Dates separator
@@ -202,70 +202,75 @@ const InputDateRange =
 
     // --------- Date range parsing
 
+    // Parents may recreate `onDateRange` on every render (inline arrow), so this
+    // effect re-runs freely : only a real change of the parsed range may reach the
+    // handler, otherwise a non-idempotent setState upstream loops ("Maximum update depth").
+    const lastEmittedRef = useRef( undefined ) ;
+
     useEffect( () =>
     {
         if ( !onDateRange ) return ;
 
-        if ( !value )
+        let range = null ;
+
+        if ( value )
         {
-            onDateRange( null ) ;
+            try
+            {
+                const parts = value.split( rangeSeparator ) ;
+
+                if ( parts.length === 2 )
+                {
+                    const [ startStr , endStr ] = parts ;
+
+                    let startDate, endDate ;
+
+                    if ( isISOMode )
+                    {
+                        startDate = parseISO( startStr.trim() , dateSeparator ) ;
+                        endDate   = parseISO( endStr.trim()   , dateSeparator ) ;
+                    }
+                    else
+                    {
+                        const params =
+                        {
+                            mode : /** @type {any} */ (mode),
+                            min,
+                            max
+                        } ;
+
+                        startDate = maskitoParseDate( startStr.trim() , params ) ;
+                        endDate   = maskitoParseDate( endStr.trim()   , params ) ;
+                    }
+
+                    // Validate both dates exist and are valid, in order
+                    // (end date must be >= start date unless allowReversedRange)
+                    const valid = startDate && !isNaN( startDate.getTime() )
+                               && endDate   && !isNaN( endDate.getTime() ) ;
+
+                    if ( valid && ( allowReversedRange || endDate >= startDate ) )
+                    {
+                        range = { start : startDate , end : endDate } ;
+                    }
+                }
+            }
+            catch ( error )
+            {
+                range = null ;
+            }
+        }
+
+        const stamp = range ? `${ range.start.getTime() }:${ range.end.getTime() }` : null ;
+
+        if ( stamp === lastEmittedRef.current )
+        {
             return ;
         }
 
-        try
-        {
-            const parts = value.split( rangeSeparator ) ;
-
-            if ( parts.length !== 2 )
-            {
-                onDateRange( null ) ;
-                return ;
-            }
-
-            const [ startStr , endStr ] = parts ;
-
-            let startDate, endDate ;
-
-            if ( isISOMode )
-            {
-                startDate = parseISO( startStr.trim() , dateSeparator ) ;
-                endDate   = parseISO( endStr.trim()   , dateSeparator ) ;
-            }
-            else
-            {
-                const params =
-                {
-                    mode : /** @type {any} */ (mode),
-                    min,
-                    max
-                } ;
-
-                startDate = maskitoParseDate( startStr.trim() , params ) ;
-                endDate   = maskitoParseDate( endStr.trim()   , params ) ;
-            }
-
-            // Validate both dates exist and are valid
-            if ( !startDate || isNaN( startDate.getTime() ) || !endDate || isNaN( endDate.getTime() ) )
-            {
-                onDateRange( null ) ;
-                return ;
-            }
-
-            // Validate date order: end date must be >= start date (unless allowReversedRange)
-            if ( !allowReversedRange && endDate < startDate )
-            {
-                onDateRange( null ) ;
-                return ;
-            }
-
-            onDateRange( { start : startDate , end : endDate } ) ;
-        }
-        catch ( error )
-        {
-            onDateRange( null ) ;
-        }
+        lastEmittedRef.current = stamp ;
+        onDateRange( range ) ;
     }
-    , [ value , mode , dateSeparator , rangeSeparator , isISOMode , allowReversedRange , onDateRange ] ) ;
+    , [ value , mode , dateSeparator , rangeSeparator , isISOMode , allowReversedRange , min , max , onDateRange ] ) ;
 
     // --------- Build placeholder
 
