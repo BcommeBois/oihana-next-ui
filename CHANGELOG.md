@@ -8,6 +8,39 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.9.0] — 2026-08-05
+
+**Components — modal family (i18n) — BREAKING**
+
+- **`Modal` now localizes its own labels.** `agree`, `disagree` and `closeTitle` each resolve in three steps: the explicit prop first, then the i18n bundle read at the new `path` prop (default `components.modal`), then an English last resort. Until now the three were hardcoded English defaults in the signature, so **every single call site had to re-supply them** or leak an English label — a forgotten `disagree` surfaced a stray "Cancel" in an otherwise French dialog, and `closeTitle` was so easy to overlook that a consuming app had it on 2 modals out of 39. Leave the props out and the modal localizes itself; pass one for the genuinely one-off label a bundle should not carry.
+- The bundle lookup is **non-throwable** (`useI18n( path , NO_LOCALE , false )`), unlike `Pagination`'s: a `Modal` renders on public pages that may sit outside any `LocaleProvider`, and the English last resort covers that case rather than crashing.
+- New **`@locale/components/modal.js`** bundle (`fr` / `en`), carrying the base `agree` / `disagree` / `close` and one sub-block per preset.
+
+- **BREAKING — `ConfirmModal`, `AlertModal` and `InputModal` no longer declare their own label defaults.** They used to destructure `agree = 'Confirm'` / `'OK'` / `'Apply'` and `disagree = 'Cancel'` and forward them **unconditionally**, so `Modal` always received a defined value and could never tell "not supplied" from "supplied". That shadowing is what made the fix above impossible without touching them. Each preset now owns only the label that genuinely differs from the base — its `agree`, read from `components.modal.{confirm,alert,input}` — and leaves `disagree` and the close button to `Modal`. `InputModal.actionLabel` follows the same rule (`components.modal.input.action`).
+  - *Migration*: a call site that already passes its own labels is unaffected. One that relied on the implicit defaults **without** a `components.modal` bundle now reads `'OK'` where `ConfirmModal` used to read `'Confirm'` — declare the bundle, or pass `agree` explicitly.
+  - `AlertModal` also stops forwarding `disagreeColor`, which was inert next to its `showDisagree={false}`.
+- Presets no longer inject their footer props when a **`footerNode`** is present. They previously forwarded `agreeColor`, `showAgree` and friends in every case, which tripped `Modal`'s development warning with a list of prop names the caller had never written.
+
+**Components — `Modal` (footer)**
+
+- **Fixed — `footerClassName` was applied twice**, on the sticky footer wrapper *and* on the inner `modal-action` row through `getModalActionClasses`. A single `justify-between` or `px-4` landed on two nested elements at once. It now goes to the `modal-action` row only, which is what call sites actually aim at, and the wrapper stops building its class list by string concatenation — the one spot in the file bypassing `cn()`, and therefore tailwind-merge.
+
+**Components — `SplitPanel`**
+
+- `closeAriaLabel` joins the same resolution chain, reading `close` from the new `components.splitPanel` bundle at the new `path` prop. Its hardcoded default was `'close panel'` — untranslated, and lowercase where every other accessible name in the library is capitalized.
+
+**Contexts**
+
+- New **`contexts/locale/noLocale.js`** exporting `NO_LOCALE`, the frozen empty object handed to `useI18n` when no bundle is expected to answer. Hoisted so every component passes the same reference across renders instead of allocating a fresh `{}` each time.
+
+**Locales**
+
+- Removed `@locale/components/buttons/inputClear.js` — byte-for-byte identical to `clear.js`, and referenced by no component. `clear.js` also declared its object as `const inputClear`, a copy-paste slip.
+
+**Lab**
+
+- `/lab/modals` gains a **Localized labels** block: a `Modal`, a `ConfirmModal` and an `AlertModal` with no label prop whatsoever. Switching the lab language and reopening them is the regression test for the whole resolution chain, including the accessible name of the header close button.
+
 ## [0.8.1] — 2026-08-02
 
 **Components — `InputDate` / `InputDateRange` (parse-effect loop fix)**

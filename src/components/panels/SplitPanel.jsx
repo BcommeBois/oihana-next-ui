@@ -6,6 +6,9 @@ import { MdOutlineClose as CloseIcon } from 'react-icons/md' ;
 
 import cn from '../../themes/helpers/cn' ;
 
+import useI18n   from '../../contexts/locale/useI18n' ;
+import NO_LOCALE from '../../contexts/locale/noLocale' ;
+
 import useValue      from '../../hooks/useValue' ;
 import useBreakpoint from '../../themes/hooks/useBreakpoint' ;
 
@@ -93,7 +96,8 @@ const FREEZE_CLASS = 'transition-none' ;
  * @param {import('../../themes/enums/breakpoints').BreakpointKey} [props.breakpoint='lg'] - At and above this width the panel becomes a permanent column.
  * @param {React.ReactNode} props.children - Main content, beside the panel.
  * @param {string} [props.className] - Extra classes on the root grid.
- * @param {string} [props.closeAriaLabel='close panel'] - Accessible name of the dismiss overlay.
+ * @param {string} [props.closeAriaLabel] - Accessible name of the dismiss overlay and of the corner button. Defaults to the i18n `close` key read at `path`, then `'Close panel'`.
+ * @param {string} [props.path='components.splitPanel'] - i18n path the `close` label is read from.
  * @param {string} [props.contentClassName] - Extra classes on the content area.
  * @param {boolean} [props.defaultOpen=false] - Initial open state, uncontrolled mode.
  * @param {(open: boolean) => void} [props.onOpenChange] - Called with the next open state when the user opens or dismisses the overlay.
@@ -126,13 +130,14 @@ const SplitPanel =
     breakpoint = LG ,
     children ,
     className ,
-    closeAriaLabel = 'close panel' ,
+    closeAriaLabel ,
     contentClassName ,
     defaultOpen = false ,
     onOpenChange ,
     open ,
     panel ,
     panelClassName ,
+    path = 'components.splitPanel' ,
     ref ,
     showCloseButton = true ,
     sideClassName ,
@@ -140,6 +145,13 @@ const SplitPanel =
 }) =>
 {
     const panelId = useId() ;
+
+    // Same resolution order as `Modal` : the explicit prop first, then the i18n
+    // bundle, then the English last resort — non-throwable, so the panel renders
+    // with no LocaleProvider in the tree.
+    const { close : closeFromI18n = 'Close panel' } = useI18n( path , NO_LOCALE , false ) ;
+
+    const closeLabel = closeAriaLabel ?? closeFromI18n ;
 
     const [ isOpen , setOpen ] = useValue( defaultOpen , open , onOpenChange ) ;
 
@@ -312,7 +324,7 @@ const SplitPanel =
                 <label
                     htmlFor    = { panelId }
                     className  = "drawer-overlay"
-                    aria-label = { closeAriaLabel }
+                    aria-label = { closeLabel }
                 />
 
                 <aside className={ panelClassNames } ref={ asideRef }>
@@ -323,7 +335,7 @@ const SplitPanel =
                         <label
                             htmlFor    = { panelId }
                             className  = "btn btn-sm btn-circle btn-ghost absolute top-2 end-2 z-1"
-                            aria-label = { closeAriaLabel }
+                            aria-label = { closeLabel }
                         >
                             <CloseIcon size={ 18 } />
                         </label>

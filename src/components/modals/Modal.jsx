@@ -2,6 +2,9 @@
 
 import { useEffect , useId , useRef , useState } from 'react'
 
+import useI18n   from '../../contexts/locale/useI18n'
+import NO_LOCALE from '../../contexts/locale/noLocale'
+
 import useBreakpoint from '../../themes/hooks/useBreakpoint'
 
 import Button from '../Button'
@@ -59,6 +62,17 @@ const FOOTER_NODE_OVERRIDE_PROPS =
  * ignored** — `footerNode` wins. A `console.warn` is emitted in development if overlapping
  * props are passed alongside.
  *
+ * ### Labels and i18n
+ *
+ * `agree`, `disagree` and `closeTitle` each resolve in three steps : the explicit prop
+ * first, then the i18n bundle read at `path`, then an English last resort. Leave the props
+ * out and the modal localizes itself from `components.modal` — that is the intended usage,
+ * and what keeps a forgotten `disagree` from surfacing a stray "Cancel". Passing a prop
+ * stays supported for the one-off label a bundle should not carry.
+ *
+ * The bundle lookup is non-throwable : with no `LocaleProvider` in the tree the English
+ * last resort applies and the component still renders.
+ *
  * @example Standard usage with agree / disagree
  * ```jsx
  * <Modal
@@ -94,6 +108,10 @@ const FOOTER_NODE_OVERRIDE_PROPS =
  * ```
  *
  * @param {Object} props
+ * @param {string} [props.path='components.modal'] - i18n path the `agree` / `disagree` / `close` labels are read from.
+ * @param {React.ReactNode} [props.agree] - Agree button label. Defaults to the i18n `agree` key, then `'OK'`.
+ * @param {React.ReactNode} [props.disagree] - Disagree button label. Defaults to the i18n `disagree` key, then `'Cancel'`.
+ * @param {string} [props.closeTitle] - Accessible name of the header close button. Defaults to the i18n `close` key, then `'Close'`.
  * @param {React.ReactNode} [props.title] - Modal title (rendered in the header).
  * @param {React.ReactNode} [props.icon] - Icon shown left of the title.
  * @param {React.ReactNode} [props.headerOptions] - Extra nodes injected in the header row.
@@ -122,10 +140,13 @@ const Modal = ( props ) =>
 {
     const
     {
+        // i18n
+        path = 'components.modal' ,
+
         // Header
         closeClassName ,
         closeIcon= <CloseIcon size={20}/>,
-        closeTitle = 'Close' ,
+        closeTitle ,
         title,
         icon,
         showHeader = true,
@@ -136,8 +157,8 @@ const Modal = ( props ) =>
         headerOptions,
 
         // Footer (standard mode)
-        agree = 'OK',
-        disagree = 'Cancel',
+        agree,
+        disagree,
         agreeColor = 'primary',
         disagreeColor = 'neutral',
         agreeIcon,
@@ -193,6 +214,24 @@ const Modal = ( props ) =>
         ref,
     }
     = props ;
+
+    // --------- i18n
+    //
+    // Resolution order for every label : the explicit prop wins, then the i18n
+    // bundle at `path`, then the English last resort below. The last resort is
+    // what keeps the component usable with no LocaleProvider at all — hence the
+    // non-throwable form of the hook, unlike `Pagination`.
+
+    const {
+        agree    : agreeFromI18n    = 'OK' ,
+        disagree : disagreeFromI18n = 'Cancel' ,
+        close    : closeFromI18n    = 'Close' ,
+    }
+    = useI18n( path , NO_LOCALE , false ) ;
+
+    const agreeLabel    = agree      ?? agreeFromI18n ;
+    const disagreeLabel = disagree   ?? disagreeFromI18n ;
+    const closeLabel    = closeTitle ?? closeFromI18n ;
 
     const dialogRef = useRef( null ) ;
     const titleId   = useId() ;
@@ -427,11 +466,11 @@ const Modal = ( props ) =>
                             { showCloseButton && (
                                 <button
                                     type       = "button"
-                                    aria-label = { closeTitle }
+                                    aria-label = { closeLabel }
                                     className  = { cn( "btn btn-md btn-circle btn-ghost" , closeClassName ) }
                                     onClick    = { handleCancelClick }
                                     disabled   = { disabled }
-                                    title      = { closeTitle }
+                                    title      = { closeLabel }
                                 >
                                     { closeIcon }
                                 </button>
@@ -449,7 +488,7 @@ const Modal = ( props ) =>
                         { footerNode }
                     </div>
                 ) : showFooter && (
-                    <div className={`sticky bottom-0 bg-base-100 border-t border-base-300/60 p-0 ${ footerClassName || '' }`}>
+                    <div className="sticky bottom-0 bg-base-100 border-t border-base-300/60 p-0">
 
                         <div className={ modalActionClasses }>
 
@@ -462,7 +501,7 @@ const Modal = ( props ) =>
                                     disabled = { disabled || disagreeDisabled }
                                 >
                                     { disagreeIcon }
-                                    { disagree }
+                                    { disagreeLabel }
                                 </Button>
                             )}
 
@@ -473,7 +512,7 @@ const Modal = ( props ) =>
                                     disabled = { disabled || agreeDisabled }
                                 >
                                     { agreeIcon }
-                                    { agree }
+                                    { agreeLabel }
                                 </Button>
                             )}
                         </div>

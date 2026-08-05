@@ -2,7 +2,6 @@ import add        from './add'
 import clear      from './clear'
 import copy       from './copy'
 import download   from './download'
-import inputClear from './inputClear'
 import less       from './less'
 import more       from './more'
 import refresh    from './refresh'
@@ -16,7 +15,6 @@ const buttons =
     clear ,
     copy ,
     download ,
-    inputClear ,
     less ,
     more ,
     refresh ,

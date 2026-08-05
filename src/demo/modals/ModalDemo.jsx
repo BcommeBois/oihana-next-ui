@@ -33,6 +33,11 @@ const ModalDemo = () =>
     // Simple modal
     const { modalRef: simpleRef, open: openSimple } = useModal() ;
 
+    // Localized labels — no label prop at all, everything comes from `components.modal`
+    const { modalRef: i18nModalRef   , open: openI18nModal   } = useModal() ;
+    const { modalRef: i18nConfirmRef , open: openI18nConfirm } = useModal() ;
+    const { modalRef: i18nAlertRef   , open: openI18nAlert   } = useModal() ;
+
     // Popover-mode modals (opt-in usePopover)
     const popoverId = `modal-popover-${ useId().replace( /:/g , '' ) }` ;
     const { modalRef: popoverHookRef, open: openPopoverHook } = useModal() ;
@@ -113,6 +118,56 @@ const ModalDemo = () =>
                         Press ESC key or click the button below to close
                     </p>
                 </Modal>
+            </div>
+
+            <Divider />
+
+            {/* Localized labels (i18n) */}
+            <div className="flex flex-col gap-4">
+                <h3 className="text-xl font-semibold border-b-2 border-primary pb-2">
+                    Localized labels
+                </h3>
+
+                <p className="text-sm opacity-70">
+                    None of the three modals below is given an <code>agree</code>,
+                    a <code>disagree</code> or a <code>closeTitle</code> prop. Every label —
+                    the two buttons and the accessible name of the header close button —
+                    is read from the <code>components.modal</code> bundle. Switch the
+                    language of the lab and reopen them : the labels follow.
+                </p>
+
+                <div className="flex flex-wrap gap-3">
+                    <Button onClick={ openI18nModal }>
+                        Modal
+                    </Button>
+                    <Button color="error" onClick={ openI18nConfirm }>
+                        ConfirmModal
+                    </Button>
+                    <Button color="info" onClick={ openI18nAlert }>
+                        AlertModal
+                    </Button>
+                </div>
+
+                <Modal ref={ i18nModalRef } title="Modal">
+                    <p className="py-2">
+                        Base labels : <code>components.modal.agree</code> and
+                        {' '}<code>components.modal.disagree</code>.
+                    </p>
+                </Modal>
+
+                <ConfirmModal ref={ i18nConfirmRef } title="ConfirmModal">
+                    <p className="py-2">
+                        The agree button reads <code>components.modal.confirm.agree</code>,
+                        the disagree button falls back to the base
+                        {' '}<code>components.modal.disagree</code>.
+                    </p>
+                </ConfirmModal>
+
+                <AlertModal ref={ i18nAlertRef } title="AlertModal">
+                    <p className="py-2">
+                        Single button, reading <code>components.modal.alert.agree</code>.
+                    </p>
+                </AlertModal>
             </div>
 
             <Divider />

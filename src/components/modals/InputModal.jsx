@@ -1,6 +1,9 @@
 'use client' ;
 
 
+import useI18n   from '../../contexts/locale/useI18n' ;
+import NO_LOCALE from '../../contexts/locale/noLocale' ;
+
 import Input  from '../inputs/Input' ;
 import Modal  from './Modal' ;
 import Button from '../Button' ;
@@ -10,7 +13,16 @@ import useModal from './hooks/useModal' ;
 /**
  * Input with a modal trigger for complex input scenarios.
  *
+ * The preset owns the two labels of its own making — the trigger button
+ * (`actionLabel`) and the `agree` button, both read from `components.modal.input`.
+ * `disagree` and the close button are left to {@link Modal}, which resolves them
+ * from `components.modal`.
+ *
  * @param {Object} props
+ * @param {string} [props.path='components.modal.input'] - i18n path the `action` / `agree` labels are read from.
+ * @param {React.ReactNode} [props.actionLabel] - Trigger button label. Defaults to the i18n `action` key, then `'Browse'`.
+ * @param {React.ReactNode} [props.agree] - Agree button label. Defaults to the i18n `agree` key, then to `Modal`'s own resolution.
+ * @param {React.ReactNode} [props.disagree] - Disagree button label. Left to `Modal` when omitted.
  *
  * @example
  * ```jsx
@@ -19,7 +31,6 @@ import useModal from './hooks/useModal' ;
  *     value={color}
  *     onChange={setColor}
  *     modalTitle="Choose a Color"
- *     actionLabel="Browse"
  *     openOnFocus
  * >
  *     <ColorPicker value={color} onChange={setColor} />
@@ -42,8 +53,11 @@ const InputModal =
     inputClassName,
     size,
 
+    // i18n
+    path = 'components.modal.input',
+
     // Action button
-    actionLabel = 'Browse',
+    actionLabel,
     actionIcon,
     actionColor = 'primary',
     showActionButton = true,
@@ -51,10 +65,10 @@ const InputModal =
     // Modal props
     modalTitle,
     modalIcon,
-    agree = 'Apply',
+    agree,
     agreeColor = 'primary',
     agreeIcon,
-    disagree = 'Cancel',
+    disagree,
     disagreeColor = 'neutral',
     disagreeIcon,
     maxWidth = 'max-w-2xl',
@@ -86,6 +100,14 @@ const InputModal =
         onOpen  : onModalOpen,
         onClose : onModalClose,
     }) ;
+
+    const {
+        action : actionFromI18n = 'Browse' ,
+        agree  : agreeFromI18n ,
+    }
+    = useI18n( path , NO_LOCALE , false ) ;
+
+    const actionText = actionLabel ?? actionFromI18n ;
 
     // ✅ Modal.jsx ferme déjà le dialog avant d'appeler ces callbacks
     const handleAgree = () =>
@@ -120,7 +142,7 @@ const InputModal =
             className = "join-item"
         >
             { actionIcon }
-            { actionLabel }
+            { actionText }
         </Button>
     ) : null ;
 
@@ -147,7 +169,7 @@ const InputModal =
                 ref                  = { modalRef }
                 title                = { modalTitle || label }
                 icon                 = { modalIcon }
-                agree                = { agree }
+                agree                = { agree ?? agreeFromI18n }
                 agreeColor           = { agreeColor }
                 agreeIcon            = { agreeIcon }
                 disagree             = { disagree }

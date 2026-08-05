@@ -1,4 +1,4 @@
-const inputClear =
+const clear =
 {
     fr :
     {
@@ -12,4 +12,4 @@ const inputClear =
     }
 }
 
-export default inputClear ;
+export default clear ;
