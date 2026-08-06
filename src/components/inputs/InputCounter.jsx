@@ -2,6 +2,9 @@
 
 import { useRef } from 'react'
 
+import useI18n   from '../../contexts/locale/useI18n' ;
+import NO_LOCALE from '../../contexts/locale/noLocale' ;
+
 import useValue from '../../hooks/useValue'
 
 import clamp from 'vegas-js-core/src/maths/clamp'
@@ -35,8 +38,9 @@ import { MdAdd as MoreIcon, MdRemove as LessIcon } from 'react-icons/md'
  * @param {React.ReactNode} [props.moreIcon] - Custom more button icon (default: MdAdd)
  * @param {boolean} [props.showIcon=true] - Show icon
  * @param {boolean} [props.showStepper=true] - Show increment/decrement buttons
- * @param {string} [props.decreaseLabel='Decrease'] - A11y label for the decrease button
- * @param {string} [props.increaseLabel='Increase'] - A11y label for the increase button
+ * @param {string} [props.decreaseLabel] - A11y label for the decrease button. Defaults to the i18n `decrease` key read at `path`, then `'Decrease'`.
+ * @param {string} [props.path='components.input.counter'] - i18n path the stepper labels are read from.
+ * @param {string} [props.increaseLabel] - A11y label for the increase button. Defaults to the i18n `increase` key read at `path`, then `'Increase'`.
  * @param {boolean} [props.disabled=false] - Disable input and buttons
  * @param {boolean} [props.readOnly=false] - Make input read-only (hides stepper)
  * @param {string} [props.error] - Error message
@@ -65,8 +69,9 @@ const InputCounter =
     icon,
     iconClassName,
 
-    decreaseLabel = 'Decrease',
-    increaseLabel = 'Increase',
+    decreaseLabel ,
+    increaseLabel ,
+    path = 'components.input.counter' ,
 
     lessIcon,
     moreIcon,
@@ -87,6 +92,17 @@ const InputCounter =
     ...rest
 }) =>
 {
+    // aria-label / title only : no host ever forwarded these, so reading them
+    // here is what makes them localizable at all.
+    const {
+        decrease : decreaseFromI18n = 'Decrease' ,
+        increase : increaseFromI18n = 'Increase' ,
+    }
+    = useI18n( path , NO_LOCALE , false ) ;
+
+    const decreaseText = decreaseLabel ?? decreaseFromI18n ;
+    const increaseText = increaseLabel ?? increaseFromI18n ;
+
     const [ value , setValue ] = useValue( defaultValue , valueFromProps , onChangeFromProps ) ;
 
     const internalRef = useRef( null );
@@ -160,8 +176,8 @@ const InputCounter =
             onClick    = { handleLess }
             disabled   = { disabled || numericValue <= min }
             className  = { btnClassNames }
-            aria-label = { decreaseLabel }
-            title      = { decreaseLabel }
+            aria-label = { decreaseText }
+            title      = { decreaseText }
         >
             { lessIcon || <LessIcon /> }
         </button>,
@@ -171,8 +187,8 @@ const InputCounter =
             onClick    = { handleMore }
             disabled   = { disabled || numericValue >= max }
             className  = { btnClassNames }
-            aria-label = { increaseLabel }
-            title      = { increaseLabel }
+            aria-label = { increaseText }
+            title      = { increaseText }
         >
             { moreIcon || <MoreIcon /> }
         </button>

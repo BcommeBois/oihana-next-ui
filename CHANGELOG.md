@@ -20,6 +20,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - **`TimeColumns` and `ColorPicker` localize the labels their hosts never exposed.** The "Now" button (`components.picker.time.now`), the preset-palette heading and the eyedropper aria-label (`components.picker.color.{presets,eyeDropper}`) were hardcoded English — and, worse, **unreachable from the outside**: neither time picker forwarded `nowLabel`, and `InputColor` exposes `presetsLabel` / `eyeDropperLabel` only through the `pickerProps` escape hatch. Reading them from the bundle is what makes them localizable at all, not merely convenient. « Now » was visible in the date-time picker of every French screen.
 
+**Components — accessible names (i18n)**
+
+- **The five sortable components share one `handle` key.** `SortableFlexItem`, `SortableGridItem`, `SortableListRow`, `SortableTableRow` and `SortableTreeItem` each declared the identical `'Drag to reorder'` string. They now read `components.sortable.handle`, and `SortableTreeItem` its `toggle` alongside — a handle is a handle whatever it drags, and naming it five times is five chances to drift.
+- **`InputPassword` and `InputCounter` / `InputCurrency` localize their controls** through the new `components.input` bundle (`password.{show,hide}`, `counter.{decrease,increase}`). Like the sortable handles, no host ever passed them, so a screen reader announced "Show password" and "Increase" on an otherwise French form.
+- New **`@locale/components/sortable.js`** and **`@locale/components/input.js`** bundles (`fr` / `en`).
+- Nothing here is visible copy — these are `aria-label` (and `title`) values only, so no screen changes. Each keeps its prop as an override and its English string as a last resort, the same three-step resolution as `Modal` and `Popover`.
+
 **Lab**
 
 - The three picker demos stop hardcoding `applyLabel="Appliquer"` / `cancelLabel="Annuler"` (and `title`). They were masking the very resolution they should exercise — switching the lab language and reopening a picker is now the regression test.

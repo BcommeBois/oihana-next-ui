@@ -2,6 +2,9 @@
 
 import { useSortable } from '@dnd-kit/react/sortable' ;
 
+import useI18n   from '../../contexts/locale/useI18n' ;
+import NO_LOCALE from '../../contexts/locale/noLocale' ;
+
 import { MdDragIndicator } from 'react-icons/md' ;
 
 import { getSortableHandleClasses , getSortableListRowClasses } from '../../themes/components/list' ;
@@ -40,7 +43,8 @@ import ListRow from './ListRow' ;
  * @param {string|number} [props.group] - Optional sortable group identifier
  * @param {boolean} [props.handle=true] - Show a drag handle (when false, the whole row is draggable)
  * @param {string} [props.handleClassName] - Additional classes for the drag handle
- * @param {string} [props.handleLabel='Drag to reorder'] - Accessible label of the drag handle
+ * @param {string} [props.handleLabel] - Accessible label of the drag handle. Defaults to the i18n `handle` key read at `path`, then `'Drag to reorder'`.
+ * @param {string} [props.path='components.sortable'] - i18n path the handle label is read from.
  * @param {string|number} props.id - Unique identifier of the item (injected by SortableList)
  * @param {number} props.index - Index of the item within the list (injected by SortableList)
  * @param {React.ReactNode} [props.leading] - Leading element, rendered after the drag handle
@@ -52,18 +56,28 @@ const SortableListRow =
     group ,
     handle = true ,
     handleClassName ,
-    handleLabel = 'Drag to reorder' ,
+    handleLabel ,
     id ,
     index ,
     leading ,
+    path = 'components.sortable' ,
     ...rest
 }) =>
 {
+    // One bundle for the five sortable components : they draw the same handle and
+    // all declared the same string. Nothing here is visible — aria-label only.
+    const {
+        handle : handleFromI18n = 'Drag to reorder' ,
+    }
+    = useI18n( path , NO_LOCALE , false ) ;
+
+    const handleText = handleLabel ?? handleFromI18n ;
+
     const { ref , handleRef , isDragSource } = useSortable({ id , index , group , disabled }) ;
 
     const handleElement = handle ? (
         <button
-            aria-label = { handleLabel }
+            aria-label = { handleText }
             className  = { getSortableHandleClasses({ className : handleClassName }) }
             disabled   = { disabled }
             ref        = { handleRef }

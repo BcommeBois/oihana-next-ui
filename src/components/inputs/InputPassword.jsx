@@ -2,6 +2,9 @@
 
 import { useState , useRef } from 'react'
 
+import useI18n   from '../../contexts/locale/useI18n' ;
+import NO_LOCALE from '../../contexts/locale/noLocale' ;
+
 import Input from './Input'
 
 import cn           from '../../themes/helpers/cn' ;
@@ -27,6 +30,9 @@ from 'react-icons/md' ;
  * @param {React.ReactNode} [props.visibleIcon] - Custom visible icon (default: VisibleIcon)
  * @param {React.ReactNode} [props.hiddenIcon] - Custom hidden icon (default: HiddenIcon)
  * @param {boolean} [props.showToggle=true] - Show visibility toggle button
+ * @param {string} [props.showPasswordLabel] - Toggle a11y label while the password is hidden. Defaults to the i18n `show` key read at `path`, then `'Show password'`.
+ * @param {string} [props.hidePasswordLabel] - Toggle a11y label while the password is visible. Defaults to the i18n `hide` key read at `path`, then `'Hide password'`.
+ * @param {string} [props.path='components.input.password'] - i18n path the toggle labels are read from.
  * @param {boolean} [props.showIcon=true] - Show left icon
  * @param {boolean} [props.disabled=false] - Disable input
  * @param {boolean} [props.readOnly=false] - Make input read-only
@@ -79,8 +85,9 @@ const InputPassword =
     showToggle = true,
     showIcon = true,
 
-    showPasswordLabel = 'Show password',
-    hidePasswordLabel = 'Hide password',
+    showPasswordLabel ,
+    hidePasswordLabel ,
+    path = 'components.input.password' ,
 
     disabled = false,
     readOnly = false,
@@ -105,6 +112,17 @@ const InputPassword =
     ...rest
 }) =>
 {
+    // aria-label / title only : no host ever forwarded these, so reading them
+    // here is what makes them localizable at all.
+    const {
+        hide : hideFromI18n = 'Hide password' ,
+        show : showFromI18n = 'Show password' ,
+    }
+    = useI18n( path , NO_LOCALE , false ) ;
+
+    const hideText = hidePasswordLabel ?? hideFromI18n ;
+    const showText = showPasswordLabel ?? showFromI18n ;
+
     const [ isVisible, setIsVisible ] = useState( false ) ;
 
     const internalRef = useRef( null ) ;
@@ -145,9 +163,9 @@ const InputPassword =
             type         = "button"
             onClick      = { handleToggle }
             className    = { cn( 'btn join-item btn-square font-semibold' , styles.btnInput , error && styles.btnInputError ) }
-            aria-label   = { isVisible ? hidePasswordLabel : showPasswordLabel }
+            aria-label   = { isVisible ? hideText : showText }
             aria-pressed = { isVisible }
-            title        = { isVisible ? hidePasswordLabel : showPasswordLabel }
+            title        = { isVisible ? hideText : showText }
         >
         {
             isVisible ? ( visibleIcon || <VisibleIcon /> ) : ( hiddenIcon  || <HiddenIcon  /> )

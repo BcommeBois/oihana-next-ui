@@ -2,6 +2,9 @@
 
 import { useMemo , useRef } from 'react'
 
+import useI18n   from '../../contexts/locale/useI18n' ;
+import NO_LOCALE from '../../contexts/locale/noLocale' ;
+
 import { useMaskito } from '@maskito/react'
 import { maskitoNumberOptionsGenerator } from '@maskito/kit'
 
@@ -38,8 +41,9 @@ from 'react-icons/md'
  * @param {string} [props.prefix=''] - Prefix before number (e.g., '$')
  * @param {string} [props.postfix=' €'] - Postfix after number (e.g., ' €')
  * @param {boolean} [props.decimalZeroPadding=true] - Pad decimals with zeros
- * @param {string} [props.decreaseLabel='Decrease'] - A11y label for less button
- * @param {string} [props.increaseLabel='Increase'] - A11y label for more button
+ * @param {string} [props.decreaseLabel] - A11y label for less button. Defaults to the i18n `decrease` key read at `path`, then `'Decrease'`.
+ * @param {string} [props.path='components.input.counter'] - i18n path the stepper labels are read from.
+ * @param {string} [props.increaseLabel] - A11y label for more button. Defaults to the i18n `increase` key read at `path`, then `'Increase'`.
  * @param {React.ReactNode} [props.icon] - Icon component (default: EuroIcon)
  * @param {string} [props.iconClassName] - Icon container classes
  * @param {React.ReactNode} [props.lessIcon] - Custom less button icon
@@ -87,8 +91,9 @@ const InputCurrency =
      postfix = ' €',
      decimalZeroPadding = true,
 
-     decreaseLabel = 'Decrease',
-     increaseLabel = 'Increase',
+     decreaseLabel ,
+     increaseLabel ,
+     path = 'components.input.counter' ,
 
      icon,
      iconClassName,
@@ -112,6 +117,17 @@ const InputCurrency =
      ...rest
 }) =>
 {
+    // aria-label / title only : no host ever forwarded these, so reading them
+    // here is what makes them localizable at all.
+    const {
+        decrease : decreaseFromI18n = 'Decrease' ,
+        increase : increaseFromI18n = 'Increase' ,
+    }
+    = useI18n( path , NO_LOCALE , false ) ;
+
+    const decreaseText = decreaseLabel ?? decreaseFromI18n ;
+    const increaseText = increaseLabel ?? increaseFromI18n ;
+
     const [ value, setValue ] = useValue( defaultValue, valueFromProps, onChangeFromProps ) ;
 
     const internalRef = useRef( null ) ;
@@ -199,23 +215,23 @@ const InputCurrency =
     const actions = showStepper && !readOnly ?
     [
         <button
-            aria-label = { decreaseLabel }
+            aria-label = { decreaseText }
             className  = { btnClassNames }
             disabled   = { disabled || currentNum <= min }
             key        = "less"
             onClick    = { handleLess }
-            title      = { decreaseLabel }
+            title      = { decreaseText }
             type       = "button"
         >
             { lessIcon || <LessIcon /> }
         </button>,
         <button
-            aria-label = { increaseLabel }
+            aria-label = { increaseText }
             key        = "more"
             className  = { btnClassNames }
             disabled   = { disabled || currentNum >= max }
             onClick    = { handleMore }
-            title      = { increaseLabel }
+            title      = { increaseText }
             type       = "button"
         >
             { moreIcon || <MoreIcon /> }

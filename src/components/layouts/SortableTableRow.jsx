@@ -2,6 +2,9 @@
 
 import { useSortable } from '@dnd-kit/react/sortable' ;
 
+import useI18n   from '../../contexts/locale/useI18n' ;
+import NO_LOCALE from '../../contexts/locale/noLocale' ;
+
 import { MdDragIndicator } from 'react-icons/md' ;
 
 import {
@@ -42,7 +45,8 @@ import {
  * @param {boolean} [props.disabled] - Disable dragging for this row
  * @param {boolean} [props.handle=true] - Show a drag-handle cell (when false, the whole row is draggable)
  * @param {string} [props.handleClassName] - Additional classes for the drag handle
- * @param {string} [props.handleLabel='Drag to reorder'] - Accessible label of the drag handle
+ * @param {string} [props.handleLabel] - Accessible label of the drag handle. Defaults to the i18n `handle` key read at `path`, then `'Drag to reorder'`.
+ * @param {string} [props.path='components.sortable'] - i18n path the handle label is read from.
  * @param {string|number} props.id - Unique identifier of the row (injected by SortableTable)
  * @param {number} props.index - Index of the row within the table (injected by SortableTable)
  */
@@ -53,12 +57,22 @@ const SortableTableRow =
     disabled = false ,
     handle = true ,
     handleClassName ,
-    handleLabel = 'Drag to reorder' ,
+    handleLabel ,
     id ,
     index ,
+    path = 'components.sortable' ,
     ...rest
 }) =>
 {
+    // One bundle for the five sortable components : they draw the same handle and
+    // all declared the same string. Nothing here is visible — aria-label only.
+    const {
+        handle : handleFromI18n = 'Drag to reorder' ,
+    }
+    = useI18n( path , NO_LOCALE , false ) ;
+
+    const handleText = handleLabel ?? handleFromI18n ;
+
     const { ref , handleRef , isDragSource } = useSortable({ id , index , disabled }) ;
 
     return (
@@ -70,7 +84,7 @@ const SortableTableRow =
             { handle && (
                 <td className="w-0">
                     <button
-                        aria-label = { handleLabel }
+                        aria-label = { handleText }
                         className  = { getSortableInlineHandleClasses({ className : handleClassName }) }
                         disabled   = { disabled }
                         ref        = { handleRef }

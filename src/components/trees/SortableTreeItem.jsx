@@ -1,8 +1,10 @@
 'use client' ;
 
 import { useSortable } from '@dnd-kit/react/sortable' ;
-
 import { OptimisticSortingPlugin } from '@dnd-kit/dom/sortable' ;
+
+import useI18n   from '../../contexts/locale/useI18n' ;
+import NO_LOCALE from '../../contexts/locale/noLocale' ;
 
 import { MdChevronRight , MdDragIndicator , MdExpandMore } from 'react-icons/md' ;
 
@@ -51,12 +53,13 @@ import {
  * @param {boolean} [props.disabled] - Disable dragging for this row
  * @param {boolean} [props.handle=true] - Show a drag handle (when false, the whole row is draggable)
  * @param {string} [props.handleClassName] - Additional classes for the drag handle
- * @param {string} [props.handleLabel='Drag to reorder'] - Accessible label of the drag handle
+ * @param {string} [props.handleLabel] - Accessible label of the drag handle. Defaults to the i18n `handle` key read at `path`, then `'Drag to reorder'`.
+ * @param {string} [props.path='components.sortable'] - i18n path the handle label is read from.
  * @param {string|number} props.id - Unique identifier of the node (injected by SortableTree)
  * @param {number} [props.indent=24] - Indentation width per depth level, in pixels (injected)
  * @param {number} props.index - Index of the row within the flat list (injected by SortableTree)
  * @param {Function} [props.onToggle] - Expand/collapse handler (injected)
- * @param {string} [props.toggleLabel='Toggle'] - Accessible label of the expand/collapse toggle
+ * @param {string} [props.toggleLabel] - Accessible label of the expand/collapse toggle. Defaults to the i18n `toggle` key read at `path`, then `'Toggle'`.
  */
 const SortableTreeItem =
 ({
@@ -69,16 +72,28 @@ const SortableTreeItem =
     disabled = false ,
     handle = true ,
     handleClassName ,
-    handleLabel = 'Drag to reorder' ,
+    handleLabel ,
     id ,
     indent = 24 ,
     index ,
     onToggle ,
     style ,
-    toggleLabel = 'Toggle' ,
+    toggleLabel ,
+    path = 'components.sortable' ,
     ...rest
 }) =>
 {
+    // One bundle for the five sortable components : they draw the same handle and
+    // all declared the same string. Nothing here is visible — aria-label only.
+    const {
+        handle : handleFromI18n = 'Drag to reorder' ,
+        toggle : toggleFromI18n = 'Toggle' ,
+    }
+    = useI18n( path , NO_LOCALE , false ) ;
+
+    const handleText = handleLabel ?? handleFromI18n ;
+    const toggleText = toggleLabel ?? toggleFromI18n ;
+
     const { ref , handleRef , isDragSource } = useSortable({ id , index , disabled , plugins : withoutOptimisticSorting }) ;
 
     return (
@@ -90,7 +105,7 @@ const SortableTreeItem =
         >
             { handle && (
                 <button
-                    aria-label = { handleLabel }
+                    aria-label = { handleText }
                     className  = { getTreeHandleClasses({ className : handleClassName }) }
                     disabled   = { disabled }
                     ref        = { handleRef }
@@ -103,7 +118,7 @@ const SortableTreeItem =
             { collapsible && childCount > 0 ? (
                 <button
                     aria-expanded = { !collapsed }
-                    aria-label    = { toggleLabel }
+                    aria-label    = { toggleText }
                     className     = { getTreeToggleClasses() }
                     onClick       = { onToggle }
                     type          = "button"
