@@ -24,8 +24,10 @@ const picker =
 
         color :
         {
-            clear : 'Retirer la couleur' ,
-            title : 'Choisir une couleur' ,
+            clear      : 'Retirer la couleur' ,
+            eyeDropper : 'Choisir une couleur à l’écran' ,
+            presets    : 'Préréglages' ,
+            title      : 'Choisir une couleur' ,
         } ,
 
         date :
@@ -49,6 +51,7 @@ const picker =
         time :
         {
             clear : 'Effacer l’heure' ,
+            now   : 'Maintenant' ,
             open  : 'Ouvrir le sélecteur d’heure' ,
         } ,
     } ,
@@ -62,8 +65,10 @@ const picker =
 
         color :
         {
-            clear : 'Clear color' ,
-            title : 'Pick a color' ,
+            clear      : 'Clear color' ,
+            eyeDropper : 'Pick a color from the screen' ,
+            presets    : 'Presets' ,
+            title      : 'Pick a color' ,
         } ,
 
         date :
@@ -87,6 +92,7 @@ const picker =
         time :
         {
             clear : 'Clear time' ,
+            now   : 'Now' ,
             open  : 'Open time picker' ,
         } ,
     } ,

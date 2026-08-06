@@ -2,6 +2,9 @@
 
 import { useMemo } from 'react' ;
 
+import useI18n   from '../../contexts/locale/useI18n' ;
+import NO_LOCALE from '../../contexts/locale/noLocale' ;
+
 import useTime from '../../helpers/time/useTime' ;
 import Time from '../../helpers/time/Time' ;
 import formatTime from '../../helpers/time/formatTime' ;
@@ -42,7 +45,8 @@ const toTime = ( value ) => value == null ? null : ( value instanceof Time ? val
  * @param {(time: Time|null) => void} [props.onTime] - Time-object change handler.
  * @param {number} [props.secondStep=1] - Seconds increment.
  * @param {boolean} [props.showNow=true] - Show the "Now" shortcut button.
- * @param {string} [props.nowLabel='Now'] - Label of the "Now" button.
+ * @param {string} [props.nowLabel] - Label of the "Now" button. Defaults to the i18n `now` key read at `path`, then `'Now'`.
+ * @param {string} [props.path='components.picker.time'] - i18n path the `now` label is read from. The button belongs to the time-picking vocabulary, so it shares the bundle of the pickers hosting it.
  * @param {boolean} [props.useSeconds=false] - Add a seconds column.
  * @param {string} [props.value] - Controlled time string.
  *
@@ -64,10 +68,11 @@ const TimeColumns =
     meridiem : meridiemFromProps ,
     min ,
     minuteStep = 1 ,
-    nowLabel = 'Now' ,
+    nowLabel ,
     onChange : onChangeFromProps ,
     onChangeMeridiem : onChangeMeridiemFromProps ,
     onTime ,
+    path = 'components.picker.time' ,
     secondStep = 1 ,
     showNow = true ,
     useSeconds = false ,
@@ -75,6 +80,13 @@ const TimeColumns =
     ...rest
 }) =>
 {
+    // The hosting pickers never forwarded `nowLabel`, so this label was
+    // unreachable from the outside — reading it here is what makes it
+    // localizable at all, not merely convenient.
+    const { now : nowFromI18n = 'Now' } = useI18n( path , NO_LOCALE , false ) ;
+
+    const nowText = nowLabel ?? nowFromI18n ;
+
     const { meridiem , time , setValue , setMeridiem } = useTime({
         ampm ,
         defaultMeridiem ,
@@ -138,7 +150,7 @@ const TimeColumns =
 
             { showNow && (
                 <button type="button" disabled={ disabled } className="btn btn-ghost btn-sm gap-1 self-center" onClick={ handleNow }>
-                    <NowIcon className="size-4" /> { nowLabel }
+                    <NowIcon className="size-4" /> { nowText }
                 </button>
             ) }
         </div>

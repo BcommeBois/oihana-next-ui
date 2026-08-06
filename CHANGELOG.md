@@ -18,6 +18,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - New **`@locale/components/picker.js`** bundle (`fr` / `en`): the two footer labels, plus one sub-block per picker.
   - *Migration*: a call site passing its own labels is unaffected. One relying on the implicit defaults without a `components.picker` bundle keeps the same English last resort.
 
+- **`TimeColumns` and `ColorPicker` localize the labels their hosts never exposed.** The "Now" button (`components.picker.time.now`), the preset-palette heading and the eyedropper aria-label (`components.picker.color.{presets,eyeDropper}`) were hardcoded English — and, worse, **unreachable from the outside**: neither time picker forwarded `nowLabel`, and `InputColor` exposes `presetsLabel` / `eyeDropperLabel` only through the `pickerProps` escape hatch. Reading them from the bundle is what makes them localizable at all, not merely convenient. « Now » was visible in the date-time picker of every French screen.
+
 **Lab**
 
 - The three picker demos stop hardcoding `applyLabel="Appliquer"` / `cancelLabel="Annuler"` (and `title`). They were masking the very resolution they should exercise — switching the lab language and reopening a picker is now the regression test.

@@ -2,6 +2,9 @@
 
 import { useCallback , useEffect , useRef , useState } from 'react' ;
 
+import useI18n   from '../../contexts/locale/useI18n' ;
+import NO_LOCALE from '../../contexts/locale/noLocale' ;
+
 import useValue from '../../hooks/useValue' ;
 
 import hexToHsva from '../../helpers/colors/hexToHsva' ;
@@ -53,11 +56,12 @@ const HEX_RE = /^#?([0-9a-f]{6}|[0-9a-f]{8})$/i ;
  * @param {string} [props.className] - Extra classes for the panel.
  * @param {import('../../themes/components/colorPicker').ColorPickerCollapse} [props.collapse='viewport'] - When/how the horizontal layout collapses to vertical.
  * @param {string} [props.defaultValue] - Initial value (uncontrolled).
- * @param {string} [props.eyeDropperLabel='Pick a color from the screen'] - Eyedropper button aria-label (localizable).
+ * @param {string} [props.eyeDropperLabel] - Eyedropper button aria-label. Defaults to the i18n `eyeDropper` key read at `path`, then `'Pick a color from the screen'`.
  * @param {(value: string) => void} [props.onChange] - Change handler.
  * @param {import('../../themes/enums/orientations').Orientation} [props.orientation='vertical'] - Panel layout.
  * @param {string[]} [props.presets] - Preset swatches (defaults to a built-in palette).
- * @param {string} [props.presetsLabel='Presets'] - Heading above the preset palette (localizable).
+ * @param {string} [props.presetsLabel] - Heading above the preset palette. Defaults to the i18n `presets` key read at `path`, then `'Presets'`.
+ * @param {string} [props.path='components.picker.color'] - i18n path the `eyeDropper` / `presets` labels are read from.
  * @param {boolean} [props.showEyeDropper=true] - Show the screen eyedropper (when supported).
  * @param {boolean} [props.showInput=true] - Show the editable hex field.
  * @param {boolean} [props.showPresets=true] - Show the preset palette.
@@ -82,11 +86,12 @@ const ColorPicker =
     className ,
     collapse = VIEWPORT ,
     defaultValue ,
-    eyeDropperLabel = 'Pick a color from the screen' ,
+    eyeDropperLabel ,
     onChange : onChangeFromProps ,
     orientation = VERTICAL ,
     presets = DEFAULT_PRESETS ,
-    presetsLabel = 'Presets' ,
+    presetsLabel ,
+    path = 'components.picker.color' ,
     showEyeDropper = true ,
     showInput = true ,
     showPresets = true ,
@@ -95,6 +100,17 @@ const ColorPicker =
     ...rest
 }) =>
 {
+    // `InputColor` exposes neither of these as a prop (only through `pickerProps`),
+    // so reading them here is what makes them localizable from a host at all.
+    const {
+        eyeDropper : eyeDropperFromI18n = 'Pick a color from the screen' ,
+        presets    : presetsFromI18n    = 'Presets' ,
+    }
+    = useI18n( path , NO_LOCALE , false ) ;
+
+    const eyeDropperText = eyeDropperLabel ?? eyeDropperFromI18n ;
+    const presetsText    = presetsLabel    ?? presetsFromI18n ;
+
     const [ hex , setHex ] = useValue( defaultValue , valueFromProps , onChangeFromProps ) ;
 
     const [ hsva , setHsva ] = useState( () => hexToHsva( hex || FALLBACK ) ) ;
@@ -183,7 +199,7 @@ const ColorPicker =
                         type       = "button"
                         className  = "btn btn-ghost btn-square btn-sm shrink-0"
                         onClick    = { handleEyeDropper }
-                        aria-label = { eyeDropperLabel }
+                        aria-label = { eyeDropperText }
                     >
                         <EyeDropperIcon className="size-5" />
                     </button>
@@ -214,7 +230,7 @@ const ColorPicker =
             {/* Presets */}
             { showPresets && presets?.length > 0 && (
                 <div className="flex flex-col gap-2">
-                    <span className="text-xs font-medium opacity-60">{ presetsLabel }</span>
+                    <span className="text-xs font-medium opacity-60">{ presetsText }</span>
                     <div className="flex flex-wrap gap-1.5">
                         { presets.map( ( color ) => (
                             <button
