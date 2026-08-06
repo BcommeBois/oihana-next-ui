@@ -8,6 +8,9 @@ import { maskitoParseDate } from '@maskito/kit' ;
 import daysInMonthOf from 'vegas-js-core/src/date/daysInMonth' ;
 
 import cn from '../../themes/helpers/cn' ;
+
+import useI18n   from '../../contexts/locale/useI18n' ;
+import NO_LOCALE from '../../contexts/locale/noLocale' ;
 import useValue from '../../hooks/useValue' ;
 import useMergeRefs from '../../hooks/useMergeRefs' ;
 import useBreakpoint from '../../themes/hooks/useBreakpoint' ;
@@ -190,11 +193,11 @@ const splitField = ( field ) =>
 const InputDateTimePicker =
 ({
     ampm = false ,
-    applyLabel = 'Apply' ,
+    applyLabel ,
     calendarProps ,
-    cancelLabel = 'Cancel' ,
+    cancelLabel ,
     clearable = true ,
-    clearLabel = 'Clear date-time' ,
+    clearLabel ,
     defaultValue = '' ,
     disabled = false ,
     display = 'responsive' ,
@@ -205,16 +208,29 @@ const InputDateTimePicker =
     minuteStep = 1 ,
     onChange : onChangeFromProps ,
     onDateTime ,
+    path = 'components.picker.dateTime' ,
     secondStep = 1 ,
     separator = '/' ,
     showIcon = true ,
     size ,
-    triggerLabel = 'Open date-time picker' ,
+    triggerLabel ,
     useSeconds = false ,
     value : valueFromProps ,
     ...rest
 }) =>
 {
+    // Only the labels naming *what* is picked are resolved here ; the two footer
+    // buttons are left undefined on purpose, so `Popover` resolves them from the
+    // shared `components.picker` block rather than each picker restating them.
+    const {
+        clear : clearFromI18n = 'Clear date-time' ,
+        open  : openFromI18n  = 'Open date-time picker' ,
+    }
+    = useI18n( path , NO_LOCALE , false ) ;
+
+    const clearText   = clearLabel   ?? clearFromI18n ;
+    const triggerText = triggerLabel ?? openFromI18n ;
+
     const [ value , setValue ] = useValue( defaultValue , valueFromProps , onChangeFromProps ) ;
 
     const isISOMode = mode === YYYY_MM_DD ;
@@ -412,7 +428,7 @@ const InputDateTimePicker =
             <button
                 key        = "clear"
                 type       = "button"
-                aria-label = { clearLabel }
+                aria-label = { clearText }
                 disabled   = { disabled }
                 className  = { cn( getButtonClassNames({ shape : SQUARE , size , style : GHOST }) , 'join-item' ) }
                 onClick    = { handleClear }
@@ -426,7 +442,7 @@ const InputDateTimePicker =
         <button
             key        = "trigger"
             type       = "button"
-            aria-label = { triggerLabel }
+            aria-label = { triggerText }
             disabled   = { disabled }
             className  = { cn( getButtonClassNames({ shape : SQUARE , size }) , 'join-item' ) }
             onClick    = { toggleOpen }

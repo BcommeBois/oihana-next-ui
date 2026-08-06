@@ -4,6 +4,9 @@ import { useState } from 'react' ;
 
 import cn from '../../themes/helpers/cn' ;
 
+import useI18n   from '../../contexts/locale/useI18n' ;
+import NO_LOCALE from '../../contexts/locale/noLocale' ;
+
 import useValue from '../../hooks/useValue' ;
 
 import getButtonClassNames , { GHOST , SQUARE } from '../../themes/components/button' ;
@@ -49,10 +52,11 @@ import { MdColorize as DefaultPickerIcon , MdClose as ClearIcon } from 'react-ic
  *
  * @param {Object} props
  * @param {boolean} [props.alpha=false] - Allow an alpha channel ('#RRGGBBAA').
- * @param {string} [props.applyLabel='Apply'] - Footer Apply button label (when `footer`).
- * @param {string} [props.cancelLabel='Cancel'] - Footer Cancel button label (when `footer`).
+ * @param {string} [props.applyLabel] - Footer Apply button label (when `footer`). Defaults to the i18n `apply` key read at `path`, then `'Apply'`.
+ * @param {string} [props.cancelLabel] - Footer Cancel button label (when `footer`). Defaults to the i18n `cancel` key read at `path`, then `'Cancel'`.
  * @param {boolean} [props.clearable=false] - Show a clear button (left of the trigger) when the field has a value.
- * @param {string} [props.clearLabel='Clear color'] - Clear button aria-label (localizable).
+ * @param {string} [props.clearLabel] - Clear button aria-label. Defaults to the i18n `color.clear` key read at `path`, then `'Clear color'`.
+ * @param {string} [props.path='components.picker'] - i18n path the picker labels are read from.
  * @param {import('../../themes/components/colorPicker').ColorPickerCollapse} [props.collapse='viewport'] - How the horizontal picker folds back to vertical.
  * @param {string} [props.defaultValue] - Initial value (uncontrolled).
  * @param {boolean} [props.disabled=false] - Disable the field and the trigger.
@@ -65,7 +69,7 @@ import { MdColorize as DefaultPickerIcon , MdClose as ClearIcon } from 'react-ic
  * @param {Object} [props.pickerProps] - Extra props forwarded to the ColorPicker (presets, showPresets…).
  * @param {string[]} [props.presets] - Preset swatches forwarded to the ColorPicker.
  * @param {import('../../themes/sizing/sizes').Size} [props.size='md'] - Input + trigger size.
- * @param {React.ReactNode} [props.title='Pick a color'] - Modal title / trigger a11y label.
+ * @param {React.ReactNode} [props.title] - Modal title / trigger a11y label. Defaults to the i18n `color.title` key read at `path`, then `'Pick a color'`.
  * @param {string} [props.triggerClassName] - Extra classes for the trigger button.
  * @param {string} [props.value] - Controlled value.
  * @param {Object} props.rest - Other props forwarded to InputHexColor (label, error, helper, placeholder…).
@@ -85,16 +89,16 @@ import { MdColorize as DefaultPickerIcon , MdClose as ClearIcon } from 'react-ic
  * @example
  * ```jsx
  * // Deferred commit with a localized Apply / Cancel footer
- * <InputColor footer applyLabel="Appliquer" cancelLabel="Annuler" label="Couleur" defaultValue="#0EA5E9" />
+ * <InputColor footer label="Couleur" defaultValue="#0EA5E9" />
  * ```
  */
 const InputColor =
 ({
     alpha = false ,
-    applyLabel = 'Apply' ,
-    cancelLabel = 'Cancel' ,
+    applyLabel ,
+    cancelLabel ,
     clearable = false ,
-    clearLabel = 'Clear color' ,
+    clearLabel ,
     collapse = VIEWPORT ,
     defaultValue ,
     disabled = false ,
@@ -104,15 +108,31 @@ const InputColor =
     orientation = HORIZONTAL ,
     pickerIcon ,
     PickerIcon = DefaultPickerIcon ,
+    path = 'components.picker' ,
     pickerProps ,
     presets ,
     size = MD ,
-    title = 'Pick a color' ,
+    title ,
     triggerClassName ,
     value : valueFromProps ,
     ...rest
 }) =>
 {
+    // Unlike its siblings this picker opens a `Modal`, not a `Popover`, so it has no
+    // base component to defer the two footer buttons to : it reads them here. They
+    // stay the picker wording (« Appliquer ») rather than the modal one (« OK »).
+    const {
+        apply  : applyFromI18n  = 'Apply' ,
+        cancel : cancelFromI18n = 'Cancel' ,
+        color  : { clear : clearFromI18n = 'Clear color' , title : titleFromI18n = 'Pick a color' } = NO_LOCALE ,
+    }
+    = useI18n( path , NO_LOCALE , false ) ;
+
+    const applyText  = applyLabel  ?? applyFromI18n ;
+    const cancelText = cancelLabel ?? cancelFromI18n ;
+    const clearText  = clearLabel  ?? clearFromI18n ;
+    const titleText  = title       ?? titleFromI18n ;
+
     const [ value , setValue ] = useValue( defaultValue , valueFromProps , onChangeFromProps ) ;
 
     const { modalRef , open } = useModal() ;
@@ -140,7 +160,7 @@ const InputColor =
             <button
                 key        = "clear"
                 type       = "button"
-                aria-label = { clearLabel }
+                aria-label = { clearText }
                 disabled   = { disabled }
                 className  = { cn( getButtonClassNames({ shape : SQUARE , size , style : GHOST }) , 'join-item' ) }
                 onClick    = { () => setValue( '' ) }
@@ -178,12 +198,12 @@ const InputColor =
 
             <Modal
                 ref               = { modalRef }
-                title             = { title }
+                title             = { titleText }
                 maxWidth          = { isHorizontal ? 'max-w-md' : 'max-w-xs' }
                 portal
                 showFooter        = { footer }
-                agree             = { applyLabel }
-                disagree          = { cancelLabel }
+                agree             = { applyText }
+                disagree          = { cancelText }
                 onAgree           = { () => setValue( draft ) }
                 modalBoxClassName = "w-fit p-3"
                 contentClassName  = "px-0 py-2"

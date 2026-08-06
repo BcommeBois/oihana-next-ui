@@ -73,8 +73,6 @@ const PickersInModalDemo = () =>
                     <InputDateTimePicker
                         footer
                         label       = "Date et heure (footer)"
-                        applyLabel  = "Appliquer"
-                        cancelLabel = "Annuler"
                         value       = { dateTime }
                         onChange    = { setDateTime }
                         helper      = "Deferred commit : Appliquer commits, Annuler discards"

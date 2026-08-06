@@ -3,6 +3,9 @@
 import { useState } from 'react' ;
 
 import cn from '../../themes/helpers/cn' ;
+
+import useI18n   from '../../contexts/locale/useI18n' ;
+import NO_LOCALE from '../../contexts/locale/noLocale' ;
 import useValue from '../../hooks/useValue' ;
 import useDropdownPosition from '../../themes/hooks/useDropdownPosition' ;
 
@@ -58,7 +61,7 @@ const InputDatePicker =
 ({
     calendarProps ,
     clearable = true ,
-    clearLabel = 'Clear date' ,
+    clearLabel ,
     defaultValue = '' ,
     disabled = false ,
     display = 'responsive' ,
@@ -68,13 +71,24 @@ const InputDatePicker =
     onChange : onChangeFromProps ,
     onDate ,
     separator = '/' ,
+    path = 'components.picker.date' ,
     showIcon = false ,
     size ,
-    triggerLabel = 'Open calendar' ,
+    triggerLabel ,
     value : valueFromProps ,
     ...rest
 }) =>
 {
+    // Only the labels naming *what* is picked are resolved here ; this picker has no footer of its own.
+    const {
+        clear : clearFromI18n = 'Clear date' ,
+        open  : openFromI18n  = 'Open calendar' ,
+    }
+    = useI18n( path , NO_LOCALE , false ) ;
+
+    const clearText   = clearLabel   ?? clearFromI18n ;
+    const triggerText = triggerLabel ?? openFromI18n ;
+
     const [ strValue , setStrValue ] = useValue( defaultValue , valueFromProps , onChangeFromProps ) ;
     const [ dateValue , setDateValue ] = useState( null ) ;
     const [ open , setOpen ] = useState( false ) ;
@@ -123,7 +137,7 @@ const InputDatePicker =
             <button
                 key        = "clear"
                 type       = "button"
-                aria-label = { clearLabel }
+                aria-label = { clearText }
                 disabled   = { disabled }
                 className  = { cn( getButtonClassNames({ shape : SQUARE , size , style : GHOST }) , 'join-item' ) }
                 onClick    = { handleClear }
@@ -137,7 +151,7 @@ const InputDatePicker =
         <button
             key        = "trigger"
             type       = "button"
-            aria-label = { triggerLabel }
+            aria-label = { triggerText }
             disabled   = { disabled }
             className  = { cn( getButtonClassNames({ shape : SQUARE , size }) , 'join-item' ) }
             onClick    = { toggleOpen }

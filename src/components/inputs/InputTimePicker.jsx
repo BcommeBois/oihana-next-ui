@@ -3,6 +3,10 @@
 import { useRef , useState } from 'react' ;
 
 import cn from '../../themes/helpers/cn' ;
+
+import useI18n   from '../../contexts/locale/useI18n' ;
+import NO_LOCALE from '../../contexts/locale/noLocale' ;
+
 import useValue from '../../hooks/useValue' ;
 import useBreakpoint from '../../themes/hooks/useBreakpoint' ;
 import useDropdownPosition from '../../themes/hooks/useDropdownPosition' ;
@@ -29,10 +33,10 @@ import { MdAccessTime as ClockIcon , MdClose as ClearIcon } from 'react-icons/md
  *
  * @param {Object} props
  * @param {boolean} [props.ampm=false] - 12-hour field + an AM/PM column.
- * @param {string} [props.applyLabel='Apply'] - Footer Apply button label.
- * @param {string} [props.cancelLabel='Cancel'] - Footer Cancel button label.
+ * @param {string} [props.applyLabel] - Footer Apply button label. Left to `Popover` when omitted.
+ * @param {string} [props.cancelLabel] - Footer Cancel button label. Left to `Popover` when omitted.
  * @param {boolean} [props.clearable=true] - Show the clear button when the field has a value.
- * @param {string} [props.clearLabel='Clear time'] - Clear button aria-label (localizable).
+ * @param {string} [props.clearLabel] - Clear button aria-label. Defaults to the i18n `clear` key read at `path`, then `'Clear time'`.
  * @param {string} [props.defaultMeridiem] - Initial meridiem (uncontrolled, AM/PM).
  * @param {string} [props.defaultValue=''] - Initial time string (uncontrolled).
  * @param {boolean} [props.disabled=false] - Disable the field and buttons.
@@ -45,10 +49,11 @@ import { MdAccessTime as ClockIcon , MdClose as ClearIcon } from 'react-icons/md
  * @param {(value: string) => void} [props.onChange] - Change handler (formatted string).
  * @param {(meridiem: string) => void} [props.onChangeMeridiem] - Meridiem change handler.
  * @param {(time: import('../../helpers/time/Time').default|null) => void} [props.onTime] - Time-object handler.
+ * @param {string} [props.path='components.picker.time'] - i18n path the `clear` / `open` labels are read from.
  * @param {number} [props.secondStep=1] - Seconds increment in the picker.
  * @param {boolean} [props.showIcon=false] - Show the left clock icon of the field.
  * @param {import('../../themes/sizing/sizes').Size} [props.size] - Field + button size.
- * @param {string} [props.triggerLabel='Open time picker'] - Trigger button aria-label (localizable).
+ * @param {string} [props.triggerLabel] - Trigger button aria-label. Defaults to the i18n `open` key read at `path`, then `'Open time picker'`.
  * @param {boolean} [props.useMinutes=true] - Include minutes in the field format.
  * @param {boolean} [props.useSeconds=false] - Add a seconds column / field segment.
  * @param {string} [props.value] - Controlled time string.
@@ -63,10 +68,10 @@ import { MdAccessTime as ClockIcon , MdClose as ClearIcon } from 'react-icons/md
 const InputTimePicker =
 ({
     ampm = false ,
-    applyLabel = 'Apply' ,
-    cancelLabel = 'Cancel' ,
+    applyLabel ,
+    cancelLabel ,
     clearable = true ,
-    clearLabel = 'Clear time' ,
+    clearLabel ,
     defaultMeridiem ,
     defaultValue = '' ,
     disabled = false ,
@@ -79,16 +84,29 @@ const InputTimePicker =
     onChange : onChangeFromProps ,
     onChangeMeridiem : onChangeMeridiemFromProps ,
     onTime ,
+    path = 'components.picker.time' ,
     secondStep = 1 ,
     showIcon = false ,
     size ,
-    triggerLabel = 'Open time picker' ,
+    triggerLabel ,
     useMinutes = true ,
     useSeconds = false ,
     value : valueFromProps ,
     ...rest
 }) =>
 {
+    // Only the labels naming *what* is picked are resolved here ; the two footer
+    // buttons are left undefined on purpose, so `Popover` resolves them from the
+    // shared `components.picker` block rather than each picker restating them.
+    const {
+        clear : clearFromI18n = 'Clear time' ,
+        open  : openFromI18n  = 'Open time picker' ,
+    }
+    = useI18n( path , NO_LOCALE , false ) ;
+
+    const clearText   = clearLabel   ?? clearFromI18n ;
+    const triggerText = triggerLabel ?? openFromI18n ;
+
     const [ value , setValue ] = useValue( defaultValue , valueFromProps , onChangeFromProps ) ;
     const [ meridiem , setMeridiem ] = useValue( defaultMeridiem , meridiemFromProps , onChangeMeridiemFromProps ) ;
 
@@ -201,7 +219,7 @@ const InputTimePicker =
             <button
                 key        = "clear"
                 type       = "button"
-                aria-label = { clearLabel }
+                aria-label = { clearText }
                 disabled   = { disabled }
                 className  = { cn( getButtonClassNames({ shape : SQUARE , size , style : GHOST }) , 'join-item' ) }
                 onClick    = { handleClear }
@@ -215,7 +233,7 @@ const InputTimePicker =
         <button
             key        = "trigger"
             type       = "button"
-            aria-label = { triggerLabel }
+            aria-label = { triggerText }
             disabled   = { disabled }
             className  = { cn( getButtonClassNames({ shape : SQUARE , size }) , 'join-item' ) }
             onClick    = { toggleOpen }

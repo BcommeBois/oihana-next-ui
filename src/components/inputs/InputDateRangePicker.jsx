@@ -3,6 +3,9 @@
 import { useRef , useState } from 'react' ;
 
 import cn from '../../themes/helpers/cn' ;
+
+import useI18n   from '../../contexts/locale/useI18n' ;
+import NO_LOCALE from '../../contexts/locale/noLocale' ;
 import useValue from '../../hooks/useValue' ;
 import useBreakpoint from '../../themes/hooks/useBreakpoint' ;
 import useDropdownPosition from '../../themes/hooks/useDropdownPosition' ;
@@ -74,11 +77,11 @@ const EMPTY_RANGE = { from : null , to : null } ;
 const InputDateRangePicker =
 ({
     allowReversedRange = false ,
-    applyLabel = 'Apply' ,
+    applyLabel ,
     calendarProps ,
-    cancelLabel = 'Cancel' ,
+    cancelLabel ,
     clearable = true ,
-    clearLabel = 'Clear date range' ,
+    clearLabel ,
     dateSeparator = '/' ,
     defaultValue = '' ,
     disabled = false ,
@@ -92,13 +95,26 @@ const InputDateRangePicker =
     onChange : onChangeFromProps ,
     onDateRange ,
     rangeSeparator = ' – ' ,
+    path = 'components.picker.dateRange' ,
     showIcon = false ,
     size ,
-    triggerLabel = 'Open calendar' ,
+    triggerLabel ,
     value : valueFromProps ,
     ...rest
 }) =>
 {
+    // Only the labels naming *what* is picked are resolved here ; the two footer
+    // buttons are left undefined on purpose, so `Popover` resolves them from the
+    // shared `components.picker` block rather than each picker restating them.
+    const {
+        clear : clearFromI18n = 'Clear date range' ,
+        open  : openFromI18n  = 'Open calendar' ,
+    }
+    = useI18n( path , NO_LOCALE , false ) ;
+
+    const clearText   = clearLabel   ?? clearFromI18n ;
+    const triggerText = triggerLabel ?? openFromI18n ;
+
     const [ strValue , setStrValue ] = useValue( defaultValue , valueFromProps , onChangeFromProps ) ;
     const [ rangeValue , setRangeValue ] = useState( EMPTY_RANGE ) ;
     const [ open , setOpen ] = useState( false ) ;
@@ -202,7 +218,7 @@ const InputDateRangePicker =
             <button
                 key        = "clear"
                 type       = "button"
-                aria-label = { clearLabel }
+                aria-label = { clearText }
                 disabled   = { disabled }
                 className  = { cn( getButtonClassNames({ shape : SQUARE , size , style : GHOST }) , 'join-item' ) }
                 onClick    = { handleClear }
@@ -216,7 +232,7 @@ const InputDateRangePicker =
         <button
             key        = "trigger"
             type       = "button"
-            aria-label = { triggerLabel }
+            aria-label = { triggerText }
             disabled   = { disabled }
             className  = { cn( getButtonClassNames({ shape : SQUARE , size }) , 'join-item' ) }
             onClick    = { toggleOpen }

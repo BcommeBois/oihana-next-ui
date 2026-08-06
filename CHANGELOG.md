@@ -8,6 +8,20 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Components — picker family (i18n) — BREAKING**
+
+- **`Popover` now localizes its footer.** `applyLabel` and `cancelLabel` resolve prop → i18n bundle at the new `path` prop (default `components.picker`) → English last resort, the same three steps `Modal` took in 0.9.0. They were hardcoded `'Apply'` / `'Cancel'` in the signature, so every picker built on `Popover` had to restate them — and every *app* screen had to restate them again on top.
+- **BREAKING — `InputTimePicker`, `InputDateRangePicker` and `InputDateTimePicker` no longer declare their own `applyLabel` / `cancelLabel` defaults.** They forwarded hardcoded values to `Popover` unconditionally, shadowing it exactly as the modal presets shadowed `Modal`. The two footer buttons are now left undefined and `Popover` answers for them.
+- **Each picker keeps only the labels that name *what* is picked**, read from its own sub-block: `clear` and `open` from `components.picker.{date,dateRange,dateTime,time}`. A shared « Effacer » would tell a screen reader nothing — « Effacer la période » does.
+- **`InputColor` is the exception, and reads `apply` / `cancel` itself.** It opens a `Modal` rather than a `Popover`, so deferring would have given it the modal vocabulary (« OK ») instead of the picker one (« Appliquer »). Its `clearLabel` and `title` come from `components.picker.color`.
+- `InputDatePicker` joins the same chain for `clearLabel` / `triggerLabel`, though it never had a footer to begin with.
+- New **`@locale/components/picker.js`** bundle (`fr` / `en`): the two footer labels, plus one sub-block per picker.
+  - *Migration*: a call site passing its own labels is unaffected. One relying on the implicit defaults without a `components.picker` bundle keeps the same English last resort.
+
+**Lab**
+
+- The three picker demos stop hardcoding `applyLabel="Appliquer"` / `cancelLabel="Annuler"` (and `title`). They were masking the very resolution they should exercise — switching the lab language and reopening a picker is now the regression test.
+
 ## [0.9.0] — 2026-08-05
 
 **Components — modal family (i18n) — BREAKING**

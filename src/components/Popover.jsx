@@ -6,6 +6,9 @@ import clamp from 'vegas-js-core/src/maths/clamp';
 
 import cn from '../themes/helpers/cn' ;
 
+import useI18n   from '../contexts/locale/useI18n' ;
+import NO_LOCALE from '../contexts/locale/noLocale' ;
+
 import useBreakpoint from '../themes/hooks/useBreakpoint' ;
 
 import Portal from './Portal' ;
@@ -58,8 +61,9 @@ const GAP = 6 ;
  * @param {() => void} [props.onApply] - Apply button handler.
  * @param {() => void} [props.onCancel] - Cancel button handler.
  * @param {boolean} [props.applyDisabled=false] - Disable the Apply button.
- * @param {string} [props.applyLabel='Apply'] - Apply button label.
- * @param {string} [props.cancelLabel='Cancel'] - Cancel button label.
+ * @param {string} [props.applyLabel] - Apply button label. Defaults to the i18n `apply` key read at `path`, then `'Apply'`.
+ * @param {string} [props.cancelLabel] - Cancel button label. Defaults to the i18n `cancel` key read at `path`, then `'Cancel'`.
+ * @param {string} [props.path='components.picker'] - i18n path the `apply` / `cancel` labels are read from.
  * @param {string} [props.ariaLabel] - Accessible name for the panel (when there is no visible title).
  * @param {string} [props.ariaLabelledBy] - Id of the element that labels the panel (takes precedence over ariaLabel).
  * @param {React.RefObject<HTMLElement>} [props.initialFocusRef] - Element to focus on open (defaults to the panel itself).
@@ -79,15 +83,28 @@ const Popover =
     onApply ,
     onCancel ,
     applyDisabled = false ,
-    applyLabel = 'Apply' ,
-    cancelLabel = 'Cancel' ,
+    applyLabel ,
+    cancelLabel ,
     ariaLabel ,
     ariaLabelledBy ,
     initialFocusRef ,
     trapFocus ,
+    path = 'components.picker' ,
     children ,
 }) =>
 {
+    // Same resolution order as `Modal` : the explicit prop wins, then the i18n
+    // bundle at `path`, then the English last resort — non-throwable, so the
+    // popover renders with no LocaleProvider in the tree.
+    const {
+        apply  : applyFromI18n  = 'Apply' ,
+        cancel : cancelFromI18n = 'Cancel' ,
+    }
+    = useI18n( path , NO_LOCALE , false ) ;
+
+    const applyText  = applyLabel  ?? applyFromI18n ;
+    const cancelText = cancelLabel ?? cancelFromI18n ;
+
     const isMdUp  = useBreakpoint( 'md' ) ;
     const asModal = display === MODAL || ( display === RESPONSIVE && !isMdUp ) ;
 
@@ -278,10 +295,10 @@ const Popover =
         ? (
             <div className="mt-3 flex justify-end gap-2 border-t border-base-300 pt-3">
                 <button type="button" className="btn btn-ghost btn-sm" onClick={ onCancel }>
-                    { cancelLabel }
+                    { cancelText }
                 </button>
                 <button type="button" className="btn btn-primary btn-sm" disabled={ applyDisabled } onClick={ onApply }>
-                    { applyLabel }
+                    { applyText }
                 </button>
             </div>
         )

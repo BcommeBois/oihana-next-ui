@@ -65,9 +65,6 @@ const InputColorInModalDemo = () =>
                         footer
                         clearable
                         label       = "Couleur (footer)"
-                        applyLabel  = "Appliquer"
-                        cancelLabel = "Annuler"
-                        title       = "Choisir une couleur"
                         value       = { deferred }
                         onChange    = { setDeferred }
                         helper      = "Appliquer commits the draft ; Annuler / backdrop / Escape discard it"

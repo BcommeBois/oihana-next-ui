@@ -62,9 +62,6 @@ const ColorDemo = () =>
                 <InputColor
                     footer
                     label       = "Deferred commit (footer)"
-                    applyLabel  = "Appliquer"
-                    cancelLabel = "Annuler"
-                    title       = "Choisir une couleur"
                     value       = { deferred }
                     onChange    = { setDeferred }
                     placeholder = "FFFFFF"
