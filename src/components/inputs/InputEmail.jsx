@@ -7,6 +7,8 @@ import Input from './Input'
 import useMergeRefs from '../../hooks/useMergeRefs'
 import useValue     from '../../hooks/useValue'
 
+import readInputValue from '../../helpers/react/readInputValue'
+
 import { MdEmail as EmailIcon } from 'react-icons/md'
 
 /**
@@ -170,7 +172,7 @@ const InputEmail =
 
     const handleChange = event =>
     {
-        const inputValue = event?.target?.value ?? (typeof event === 'string' ? event : '') ;
+        const inputValue = readInputValue( event ) ;
         setValue( inputValue ) ;
     } ;
 

@@ -7,6 +7,8 @@ import { useMaskito } from '@maskito/react'
 import useValue     from '../../hooks/useValue'
 import useMergeRefs from '../../hooks/useMergeRefs'
 
+import readInputValue from '../../helpers/react/readInputValue'
+
 import Input from './Input'
 
 import { MdLock as LockIcon } from 'react-icons/md'
@@ -90,7 +92,7 @@ const InputCardCVV =
 
     const handleChange = event =>
     {
-        const inputValue = event?.target?.value ?? ( typeof event === 'string' ? event : '' ) ;
+        const inputValue = readInputValue( event ) ;
         setValue( inputValue ) ;
     } ;
 

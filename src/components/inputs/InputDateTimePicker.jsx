@@ -20,6 +20,7 @@ import getButtonClassNames , { GHOST , SQUARE } from '../../themes/components/bu
 
 import formatDateForMode from '../../helpers/date/formatDateForMode' ;
 import parseISO from '../../helpers/date/parseISO' ;
+import readInputValue from '../../helpers/react/readInputValue' ;
 import { DD_MM_YYYY , YYYY_MM_DD } from '../../helpers/date/dateModes' ;
 import Time from '../../helpers/time/Time' ;
 import convertTo24Hour from '../../helpers/time/convertTo24Hour' ;
@@ -338,7 +339,7 @@ const InputDateTimePicker =
     // ---- Field typing / AM-PM toggle.
     const handleFieldChange = ( event ) =>
     {
-        const fv = event?.target?.value ?? ( typeof event === 'string' ? event : '' ) ;
+        const fv = readInputValue( event ) ;
         setValue( withMeridiem( fv , meridiem ) ) ;
     } ;
 

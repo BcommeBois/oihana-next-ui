@@ -15,6 +15,8 @@ import styles from './styles/InputActions.module.css' ;
 import useMergeRefs from '../../hooks/useMergeRefs'
 import useTime      from '../../helpers/time/useTime'
 
+import readInputValue from '../../helpers/react/readInputValue'
+
 import { MdAccessTime as TimeIcon } from 'react-icons/md'
 
 /**
@@ -193,7 +195,7 @@ const InputTime =
 
     const handleChange = event =>
     {
-        const inputValue = event?.target?.value ?? ( typeof event === 'string' ? event : '' ) ;
+        const inputValue = readInputValue( event ) ;
         setValue( inputValue ) ;
     } ;
 

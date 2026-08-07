@@ -16,6 +16,8 @@ import cn           from '../../themes/helpers/cn' ;
 import styles       from './styles/InputActions.module.css' ;
 import useMergeRefs from '../../hooks/useMergeRefs'
 
+import readInputValue from '../../helpers/react/readInputValue'
+
 import { MdNumbers as DefaultIcon } from 'react-icons/md'
 import { MdAdd as MoreIcon, MdRemove as LessIcon } from 'react-icons/md'
 
@@ -120,7 +122,7 @@ const InputCounter =
 
     const handleChange = event =>
     {
-        const inputValue = event?.target?.value ?? (typeof event === 'string' || typeof event === 'number' ? event : '') ;
+        const inputValue = readInputValue( event ) ;
         setValue( inputValue ) ;
     };
 

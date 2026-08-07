@@ -18,6 +18,8 @@ import styles       from './styles/InputActions.module.css' ;
 import useMergeRefs from '../../hooks/useMergeRefs'
 import useValue     from '../../hooks/useValue'
 
+import readInputValue from '../../helpers/react/readInputValue'
+
 import {
     MdEuro   as EuroIcon ,
     MdAdd    as MoreIcon ,
@@ -171,7 +173,7 @@ const InputCurrency =
 
     const handleChange = event =>
     {
-        const inputValue = event?.target?.value ?? '' ;
+        const inputValue = readInputValue( event ) ;
 
         let rawValue = inputValue
                      .replace ( prefix  , '' )

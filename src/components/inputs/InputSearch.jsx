@@ -12,6 +12,8 @@ import useDebouncedValue from '../../hooks/useDebouncedValue'
 import useMergeRefs      from '../../hooks/useMergeRefs'
 import useValue          from '../../hooks/useValue'
 
+import readInputValue from '../../helpers/react/readInputValue'
+
 import { MdClose as CloseIcon, MdSearch as SearchIcon } from 'react-icons/md';
 
 /**
@@ -62,7 +64,7 @@ const InputSearch =
 
     const handleChange = event =>
     {
-        const inputValue = event?.target?.value ?? ( typeof event === 'string' ? event : '' ) ;
+        const inputValue = readInputValue( event ) ;
         setValue( inputValue ) ;
     };
 

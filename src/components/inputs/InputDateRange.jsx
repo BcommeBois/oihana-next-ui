@@ -9,6 +9,8 @@ import useMergeRefs from '../../hooks/useMergeRefs'
 import useValue     from '../../hooks/useValue'
 import parseISO     from '../../helpers/date/parseISO'
 
+import readInputValue from '../../helpers/react/readInputValue'
+
 import Input from './Input'
 
 import
@@ -294,7 +296,7 @@ const InputDateRange =
 
     const handleChange = event =>
     {
-        const inputValue = event?.target?.value ?? ( typeof event === 'string' ? event : '' ) ;
+        const inputValue = readInputValue( event ) ;
         setValue( inputValue ) ;
     } ;
 

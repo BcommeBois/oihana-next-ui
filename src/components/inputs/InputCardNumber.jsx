@@ -6,6 +6,8 @@ import { useMaskito } from '@maskito/react'
 import useValue     from '../../hooks/useValue'
 import useMergeRefs from '../../hooks/useMergeRefs'
 
+import readInputValue from '../../helpers/react/readInputValue'
+
 import Input from './Input'
 
 import { FaCreditCard as CardIcon } from 'react-icons/fa' ;
@@ -110,7 +112,7 @@ const InputCardNumber =
 
     const handleChange = event =>
     {
-        const inputValue = event?.target?.value ?? '' ;
+        const inputValue = readInputValue( event ) ;
 
         setValue( inputValue ) ;
 
