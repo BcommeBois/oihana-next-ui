@@ -27,7 +27,7 @@ const InputSearchDemo = () =>
         try
         {
             console.log( 'Searching for:', value ) ;
-            // Simuler un appel API
+            // Simulate an API call
             await new Promise( resolve => setTimeout( resolve, 1000 ) ) ;
             setResults( [ 'Result 1', 'Result 2', 'Result 3' ] ) ;
         }
@@ -42,7 +42,7 @@ const InputSearchDemo = () =>
 
             <h3 className="text-2xl font-bold">Input Search Examples</h3>
 
-            {/* Recherche automatique avec debounce (pas de bouton search) */}
+            {/* Debounced auto-search (no search button) */}
             <InputSearch
                 placeholder      = "Search products (auto-search with 500ms debounce)..."
                 onSearch         = { value => console.log( 'Auto-searching:', value ) }
@@ -64,7 +64,7 @@ const InputSearchDemo = () =>
                 helper        = { loading ? 'Searching...' : 'Type to search or click button' }
             />
 
-            {/* Avec fieldset */}
+            {/* With fieldset */}
             <InputSearch
                 useFieldset
                 legend      = "Product Search"
@@ -73,21 +73,21 @@ const InputSearchDemo = () =>
                 helper      = "Press Enter or click search button"
             />
 
-            {/* Sans bouton clear */}
+            {/* Without clear button */}
             <InputSearch
                 placeholder     = "With a clear button..."
                 onSearch        = { handleSearch }
                 showClearButton = { true }
             />
 
-            {/* Sans icône à gauche */}
+            {/* Without the leading icon */}
             <InputSearch
                 placeholder = "No left icon..."
                 onSearch    = { handleSearch }
                 showIcon    = { false }
             />
 
-            {/* Avec erreur */}
+            {/* With error */}
             <InputSearch
                 useFieldset
                 legend      = "Search"
@@ -104,7 +104,7 @@ const InputSearchDemo = () =>
                 onSearch     = { handleSearch }
             />
 
-            {/* Read-only (pas de boutons) */}
+            {/* Read-only (no buttons) */}
             <InputSearch
                 readOnly
                 defaultValue = "Read-only value"

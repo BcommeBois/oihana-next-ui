@@ -101,7 +101,7 @@ const Alert =
                     color           : level ,
                     shape           : 'circle' ,
                     size            : 'sm' ,
-                    style           : 'ghost' , // Un bouton ghost est souvent plus élégant ici
+                    style           : 'ghost' , // A ghost button usually reads better here
                 })}
                 onClick   = { onClose }
                 type      = "button"

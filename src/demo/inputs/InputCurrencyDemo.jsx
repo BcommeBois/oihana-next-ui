@@ -62,7 +62,7 @@ const InputCurrencyDemo = () =>
                 </div>
             </div>
 
-            {/* Euro par défaut */}
+            {/* Euro by default */}
             <InputCurrency
                 label       = "Price (EUR)"
                 defaultValue = { 100 }
@@ -87,7 +87,7 @@ const InputCurrencyDemo = () =>
                 precision         = { 2 }
             />
 
-            {/* Avec fieldset */}
+            {/* With fieldset */}
             <InputCurrency
                 useFieldset
                 legend            = "Product Price"
@@ -99,7 +99,7 @@ const InputCurrencyDemo = () =>
                 helper            = "Price must be between 0 and 999.99"
             />
 
-            {/* Contrôlé */}
+            {/* Controlled */}
             <InputCurrency
                 label        = "Controlled Price"
                 value        = { price }
@@ -111,7 +111,7 @@ const InputCurrencyDemo = () =>
             />
             <ValueProbe label="price" value={ price } />
 
-            {/* Sans stepper */}
+            {/* Without stepper */}
             <InputCurrency
                 label        = "No Stepper"
                 defaultValue = { 250 }
@@ -120,14 +120,14 @@ const InputCurrencyDemo = () =>
                 max          = { 10000 }
             />
 
-            {/* Sans icône */}
+            {/* Without icon */}
             <InputCurrency
                 label        = "No Icon"
                 defaultValue = { 75.50 }
                 showIcon     = { false }
             />
 
-            {/* Séparateurs français (virgule) */}
+            {/* French separators (comma) */}
             <InputCurrency
                 label             = "Prix (Format FR)"
                 defaultValue      = { 1234.56 }
@@ -137,7 +137,7 @@ const InputCurrencyDemo = () =>
                 precision         = { 2 }
             />
 
-            {/* Sans padding des zéros */}
+            {/* Without zero padding */}
             <InputCurrency
                 label              = "No Zero Padding"
                 defaultValue       = { 100 }
@@ -145,7 +145,7 @@ const InputCurrencyDemo = () =>
                 precision          = { 2 }
             />
 
-            {/* Avec erreur */}
+            {/* With error */}
             <InputCurrency
                 label        = "Price"
                 defaultValue = { 0 }

@@ -250,7 +250,7 @@ const InputDate =
         setValue( inputValue ) ;
     } ;
 
-    // --------- Build placeholder (avec le bon séparateur)
+    // --------- Build placeholder (with the right separator)
 
     const placeholder = mode
         .toUpperCase()

@@ -198,7 +198,7 @@ const Picture =
                     )}
                 </>
             ) : (
-                // Placeholder maintient les dimensions avant chargement
+                // Placeholder holds the dimensions until the image loads
                 !fill && width && height && (
                     <div style={{ width , height }} className="bg-base-300" />
                 )

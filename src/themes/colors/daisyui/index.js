@@ -136,7 +136,7 @@ export const extractColorsFromDom = ( computedStyles = null ) =>
         {
             colors[ name ] = chroma( value ).hex() ;
 
-            // Ajouter les opacités
+            // Add the opacities
             opacities.forEach( ( opacity ) =>
             {
                 colors[ `${ name }/${ opacity }` ] = colors[ name ] + percentToHex( opacity ) ;

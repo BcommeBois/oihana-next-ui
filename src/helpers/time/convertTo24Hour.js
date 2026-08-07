@@ -9,8 +9,8 @@ import { AM, PM } from './meridies' ;
  *
  * @example
  * convertTo24Hour(12, 'AM')  // 0  (minuit)
- * convertTo24Hour(1, 'AM')   // 1  (1h du matin)
- * convertTo24Hour(11, 'AM')  // 11 (11h du matin)
+ * convertTo24Hour(1, 'AM')   // 1  (1 in the morning)
+ * convertTo24Hour(11, 'AM')  // 11 (11 in the morning)
  * convertTo24Hour(12, 'PM')  // 12 (midi)
  * convertTo24Hour(1, 'PM')   // 13 (13h)
  * convertTo24Hour(11, 'PM')  // 23 (23h)

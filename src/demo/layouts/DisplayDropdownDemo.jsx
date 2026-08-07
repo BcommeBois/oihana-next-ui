@@ -328,7 +328,7 @@ const DisplayDropDownDemo = () =>
 
                 <div className="flex flex-col gap-3">
 
-                    {/* Défaut — pour comparaison */}
+                    {/* Default — for comparison */}
 
                     <div className="flex flex-col gap-1">
                         <p className="text-xs text-base-content/50 font-mono">
@@ -395,11 +395,11 @@ const DisplayDropDownDemo = () =>
                     Le hook calcule direction + placement d'après la position réelle dans le viewport au moment du clic.
                 </p>
 
-                {/* Grille 3×2 simulant des coins et bords différents */}
+                {/* 3×2 grid standing in for different corners and edges */}
 
                 <div className="grid grid-cols-3 gap-3">
 
-                    {/* Ligne 1 — haut */}
+                    {/* Row 1 — top */}
 
                     <AutoCell
                         label   = "haut-gauche"
@@ -425,7 +425,7 @@ const DisplayDropDownDemo = () =>
                         onChange = { setAuto }
                     />
 
-                    {/* Ligne 2 — bas */}
+                    {/* Row 2 — bottom */}
 
                     <AutoCell
                         label   = "bas-gauche"

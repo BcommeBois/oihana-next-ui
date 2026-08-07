@@ -50,7 +50,7 @@ const Toggle =
     toggleClassName ,
     value ,
 
-    toggleRef : _ignore , // Extraction pour protection DOM
+    toggleRef : _ignore , // Extracted so it never reaches the DOM
     ref ,
 
     ...rest

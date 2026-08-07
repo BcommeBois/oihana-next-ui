@@ -142,7 +142,7 @@ const CRUDDemo = () =>
                                 </tr>
                             </thead>
                             <tbody>
-                                {/* ✅ Utilise sortedUsers au lieu de users */}
+                                {/* Uses sortedUsers rather than users */}
                                 { sortedUsers.length === 0 ? (
                                     <tr>
                                         <td colSpan={5} className="text-center py-8 text-base-content/50">

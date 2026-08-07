@@ -174,7 +174,7 @@ const BubbleSection = () =>
 
             <div className="flex flex-col gap-2">
                 <Badge color="neutral">content — y compris la chaîne vide</Badge>
-                { /* En mode enfants, `color` et `current` ne s'appliquent pas : chaque Step se gouverne. */ }
+                { /* In children mode `color` and `current` do not apply : each Step governs itself. */ }
                 <Steps className="w-full">
                     <Step color="neutral" content="?" label="Question" />
                     <Step color="neutral" content="!" label="Alerte" />

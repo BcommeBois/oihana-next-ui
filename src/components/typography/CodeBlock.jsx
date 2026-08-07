@@ -56,7 +56,7 @@ const CodeBlock =
 
         if ( showToast )
         {
-            // Mode avec toast
+            // Toast mode
             const result = await copyToClipboard( text ) ;
 
             if ( result === ERROR )
@@ -70,7 +70,7 @@ const CodeBlock =
         }
         else
         {
-            // Mode simple avec état copied
+            // Plain mode, with a copied state
             await navigator.clipboard.writeText( text ) ;
             setCopied( true ) ;
             setTimeout( () => setCopied( false ), 2000 ) ;

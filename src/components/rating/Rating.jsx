@@ -93,7 +93,7 @@ const Rating =
     const items = [] ;
     const totalItems = half ? count * 2 : count ;
 
-    // Hidden clear button (absolute pour éviter le gap à gauche)
+    // Hidden clear button (absolute, to avoid the gap on the left)
     if ( allowClear && !readOnly )
     {
         items.push(

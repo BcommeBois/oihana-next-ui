@@ -25,7 +25,7 @@ const InputCounterDemo = () =>
 
             <h3 className="text-2xl font-bold">Input Counter Examples</h3>
 
-            {/* Sans icône */}
+            {/* Without icon */}
             <InputCounter
                 defaultValue = { 18 }
                 min          = { 0 }
@@ -33,7 +33,7 @@ const InputCounterDemo = () =>
                 showIcon     = { false }
             />
 
-            {/* Sans stepper */}
+            {/* Without stepper */}
             <InputCounter
                 defaultValue = { 50 }
                 showStepper  = { false }

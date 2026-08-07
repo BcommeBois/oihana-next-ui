@@ -20,7 +20,7 @@ import hasPath from 'vegas-js-core/src/objects/hasPath' ;
  * // → '#a3e635'
  *
  * const withOpacity = useThemeColor( { color: 'base-content/50' } ) ;
- * // → '#1f2937' avec 50% opacité
+ * // → '#1f2937' at 50% opacity
  *
  * const withFallback = useThemeColor( { color: 'unknown' , defaultColor: '#000000' } ) ;
  * // → '#000000'

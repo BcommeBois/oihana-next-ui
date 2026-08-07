@@ -33,8 +33,8 @@ const BouncingBlocks =
 ({
     as,
     className,
-    color = 'base-100', // Utilisé comme primary-color
-    secondaryColor = 'error', // Sera passé via borderColor pour la résolution
+    color = 'base-100', // Used as primary-color
+    secondaryColor = 'error', // Passed through borderColor for resolution
     style,
     tag = 'spinner-bouncing-blocks',
     ref,

@@ -20,7 +20,7 @@ const InputCardDemo = () =>
     const handleCardTypeChange = ( type ) =>
     {
         setCardType( type ) ;
-        // American Express utilise 4 chiffres pour le CVV
+        // American Express uses a 4-digit CVV
         setCvvLength( type === 'amex' ? 4 : 3 ) ;
     } ;
 
@@ -83,7 +83,7 @@ const InputCardDemo = () =>
                 </form>
             </div>
 
-            {/* Avec fieldset */}
+            {/* With fieldset */}
             <div className="flex flex-col gap-4">
                 <h3 className="text-xl font-semibold">With Fieldsets</h3>
 
@@ -106,7 +106,7 @@ const InputCardDemo = () =>
                 </div>
             </div>
 
-            {/* Sans icônes */}
+            {/* Without icons */}
             <div className="flex flex-col gap-4">
                 <h3 className="text-xl font-semibold">Without Icons</h3>
 
@@ -128,7 +128,7 @@ const InputCardDemo = () =>
                 </div>
             </div>
 
-            {/* Avec erreurs */}
+            {/* With errors */}
             <div className="flex flex-col gap-4">
                 <h3 className="text-xl font-semibold">With Errors</h3>
 

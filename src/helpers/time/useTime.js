@@ -115,7 +115,7 @@ const useTime =
         {
             console.error( 'Invalid time:', timeString, error ) ;
 
-            // Ne mettre à jour que si time n'est pas déjà null
+            // Only update when time is not already null
             if ( time !== null )
             {
                 setTime( null ) ;
@@ -137,7 +137,7 @@ const useTime =
         const newTime = new Time( time.toObject() ) ;
         newTime.ampm = ampm ;
 
-        const newValue = newTime.value ; // Sans meridiem
+        const newValue = newTime.value ; // Without the meridiem
 
         if ( newValue !== value )
         {

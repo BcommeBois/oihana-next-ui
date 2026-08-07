@@ -3,7 +3,7 @@ import 'flag-icons/css/flag-icons.min.css'
 import cn from '../../themes/helpers/cn'
 
 /**
- * Affiche un drapeau de pays via flag icons
+ * Renders a country flag through flag icons
  * @param {object} props
  * @param {string} props.lang - Code langue ISO 639-1 ('fr', 'en', 'de')
  * @param {boolean} [props.squared=false] - Affichage carré (1:1) au lieu de 4:3

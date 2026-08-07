@@ -159,7 +159,7 @@ const InputCurrency =
     const maskedInputRef = useMaskito({ options: maskOptions }) ;
     const mergedRef      = useMergeRefs( maskedInputRef, internalRef, ref ) ;
 
-    // --------- Helpers de validation
+    // --------- Validation helpers
 
     const isValueEmpty = val => val === null || val === undefined || String( val ) === '' ;
 

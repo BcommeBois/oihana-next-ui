@@ -156,7 +156,7 @@ const Input =
 
                     <input
                         aria-invalid     = { hasError }
-                        aria-describedby = { error || helper ? helperId : undefined } // ⬅️ Relie le texte d'aide
+                        aria-describedby = { error || helper ? helperId : undefined } // links the help text
                         id               = { inputId }
                         ref              = { ref }
                         type             = { type }

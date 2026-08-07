@@ -8,8 +8,8 @@ import { AM, PM } from './meridies' ;
  *
  * @example
  * convertTo12Hour(0)   // [12, 'AM'] (minuit)
- * convertTo12Hour(1)   // [1, 'AM']  (1h du matin)
- * convertTo12Hour(11)  // [11, 'AM'] (11h du matin)
+ * convertTo12Hour(1)   // [1, 'AM']  (1 in the morning)
+ * convertTo12Hour(11)  // [11, 'AM'] (11 in the morning)
  * convertTo12Hour(12)  // [12, 'PM'] (midi)
  * convertTo12Hour(13)  // [1, 'PM']  (13h)
  * convertTo12Hour(23)  // [11, 'PM'] (23h)
@@ -30,7 +30,7 @@ export const convertTo12Hour = ( hour ) =>
     }
     else
     {
-        return [ hour - 12, PM ] ; // Après-midi/soir
+        return [ hour - 12, PM ] ; // Afternoon / evening
     }
 } ;
 

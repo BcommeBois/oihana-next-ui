@@ -49,7 +49,7 @@ const InputTransformDemo = () =>
                 helper      = "Reverts to previous value if invalid on blur"
             />
 
-            {/* Phone formatting (display only) - CORRIGÉ */}
+            {/* Phone formatting (display only) */}
             <InputTransform
                 label       = "Phone Number (FR Format)"
                 value       = { phone }
@@ -68,7 +68,7 @@ const InputTransformDemo = () =>
                 helper      = "Special characters are removed"
             />
 
-            {/* Trim on blur - CORRIGÉ */}
+            {/* Trim on blur */}
             <InputTransform
                 label         = "Name (Trimmed on Blur)"
                 processOnBlur = { v => v.trim() }

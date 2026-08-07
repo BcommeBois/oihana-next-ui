@@ -100,7 +100,7 @@ const InputSearch =
         onKeyDownFromProps?.( event ) ;
     };
 
-    // Auto-search avec debounce
+    // Debounced auto-search
     useEffect(() =>
     {
         if ( debounceDelay > 0 && debouncedValue !== defaultValue )

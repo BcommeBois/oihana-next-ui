@@ -172,7 +172,7 @@ const InputTime =
 
     const mode = pattern.join( ':' ) + ( useMilliseconds ? '.MSS' : '' ) ;
 
-    // --------- Maskito options (DOIT être stable pour Maskito)
+    // --------- Maskito options (MUST stay stable for Maskito)
 
     const maskOptions = useMemo( () => maskitoTimeOptionsGenerator({
         mode,

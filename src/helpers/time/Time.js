@@ -106,7 +106,7 @@ class Time
     {
         this.#hour = requireValidHourNumber( number, this.#ampm ) ;
 
-        // Mettre à jour le meridiem automatiquement si en mode 24h
+        // Update the meridiem automatically when in 24h mode
         if ( !this.#ampm )
         {
             this.#meridiem = this.#hour >= 12 ? PM : AM ;
@@ -139,7 +139,7 @@ class Time
         this.#ampm = notEmpty( meridiem ) ;
         this.#meridiem = meridiem ;
 
-        // Si on change de format
+        // Format is changing
         if ( wasAmPm !== this.#ampm )
         {
             if ( this.#ampm ) // Passer en format 12h

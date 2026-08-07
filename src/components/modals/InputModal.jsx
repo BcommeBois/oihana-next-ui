@@ -109,7 +109,7 @@ const InputModal =
 
     const actionText = actionLabel ?? actionFromI18n ;
 
-    // ✅ Modal.jsx ferme déjà le dialog avant d'appeler ces callbacks
+    // Modal.jsx already closes the dialog before calling these callbacks
     const handleAgree = () =>
     {
         onAgree?.() ;

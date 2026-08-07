@@ -134,12 +134,12 @@ const InputPin =
 
             if ( values[ index ] )
             {
-                // Si la case actuelle est pleine, on l'efface
+                // Current box is filled : clear it
                 newValues[ index ] = '' ;
             }
             else if ( index > 0 )
             {
-                // Si la case est vide, on efface la précédente et on y va
+                // Current box is empty : clear the previous one and move there
                 newValues[ index - 1 ] = '' ;
                 inputsRef.current[ index - 1 ]?.focus() ;
             }
@@ -241,7 +241,7 @@ const InputPin =
                         onKeyDown      = { e => handleKeyDown( index, e ) }
                         onPaste        = { handlePaste }
                         ref            = { el => { inputsRef.current[ index ] = el } }
-                        type           = { type === 'number' ? 'text' : type }
+                        type           = { type === 'number' ? 'text' : type } // text, to avoid the number stepper arrows
                         value          = { String( val ?? '' ) }
                     />
                 )

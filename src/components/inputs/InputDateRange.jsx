@@ -166,9 +166,9 @@ const InputDateRange =
     {
         if ( isISOMode )
         {
-            // Masque complet statique pour yyyy/mm/dd – yyyy/mm/dd
+            // Full static mask for yyyy/mm/dd – yyyy/mm/dd
             const mask = [
-                // Première date
+                // First date
                 /[1-2]/, /\d/, /\d/, /\d/, // Year: 1000-2999
                 dateSeparator,
                 /[0-1]/, /\d/,    // Month: 01-12
@@ -176,7 +176,7 @@ const InputDateRange =
                 /[0-3]/, /\d/,    // Day: 01-31
                 // Range separator
                 ...rangeSeparator.split( '' ),
-                // Deuxième date
+                // Second date
                 /[1-2]/, /\d/, /\d/, /\d/, // Year: 1000-2999
                 dateSeparator,
                 /[0-1]/, /\d/,    // Month: 01-12
