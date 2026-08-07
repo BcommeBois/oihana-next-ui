@@ -77,7 +77,8 @@ import Checkbox from '../../components/checkboxes/Checkbox' ;
  * @param {string} [props.growClassName] - Additional classes for grow container
  * @param {React.ReactNode} [props.leading] - Leading element (before avatar/checkbox)
  * @param {string} [props.leadingClassName] - Additional classes for leading container
- * @param {Function} [props.onClick] - Row click handler
+ * @param {Function} [props.onClick] - Row click handler: () => void. Called with no arguments —
+ *        not the DOM event — and only while the row is not `disabled`.
  * @param {Function} [props.onSelect] - Selection change handler: (checked) => void
  * @param {React.Ref} [props.ref] - Reference to the root element
  * @param {boolean} [props.selectable] - Show checkbox for selection

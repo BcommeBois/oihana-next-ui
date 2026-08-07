@@ -38,6 +38,10 @@ The same shape sat in `Input`, `TextArea` and `InputPin` — the three base comp
   - *Migration*: a call site passing `onBlur` to `Input` or `TextArea` will now also get the hook's blur processing, which is what it was documented to get. One relying on props in `rest` to override `InputPin`'s own input attributes will no longer win that contest — pass the component's own props instead.
 - **`Tilt` kept neither its handlers nor its styles.** Passing `onMouseMove` or `onMouseLeave` removed the tilt outright, since those two handlers *are* the effect. `style` mattered just as much and was easier to reach for: the element carries the `perspective` and the `transition` the effect depends on, and a call site setting a margin replaced both. Handlers chain now, and the caller's `style` merges over the effect's rather than displacing it.
 
+**Documentation**
+
+- **`Range` and `ListRow` now say what their callback receives.** Auditing the value-versus-event contract turned up two callbacks documented too thinly to act on: `Range.onChange` (a `number`, or the sorted `[start, end]` tuple in `range` mode — never the DOM event) and `ListRow.onClick` (called with no arguments at all, and only while the row is not `disabled`). Both were correct in code and unguessable from the doc, which is the shape every bug in this release started from.
+
 **Lab**
 
 - **The controlled `TextArea` demo threw on the first keystroke.** It read `event.target.value` from a handler `TextArea` calls with the value, so `event.target` was `undefined` and the property access raised a `TypeError` — the same contract the two input components got wrong, except here it crashed the tab outright instead of quietly emptying a field. It takes the value directly now, and carries a probe of its own.

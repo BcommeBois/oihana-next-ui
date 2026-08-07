@@ -19,6 +19,8 @@ import DualRange from './DualRange' ;
  *
  * @param {Object} props
  * @param {boolean} [props.range=false] - Enable the dual-thumb (start + end) mode.
+ * @param {Function} [props.onChange] - Change handler. Receives a `number` in single-thumb mode,
+ *        and the sorted `[start, end]` tuple in `range` mode — never the DOM event.
  */
 const Range =
 ({
