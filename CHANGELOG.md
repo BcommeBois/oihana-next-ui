@@ -6,7 +6,24 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [0.10.0] — 2026-08-07
+
+**Components — inputs — the `onChange` contract**
+
+- **`InputCurrency` and `InputCardNumber` could not retain a single keystroke.** Both read their handler argument as `event?.target?.value ?? ''`, but `Input` never hands its `onChange` the DOM event: it routes the event through `useTransformValue`, which emits the transformed *value*. So `event.target` was `undefined`, the fallback returned `''`, and the parse that followed produced `NaN` — writing an empty value straight back into the controlled field on every keypress. Neither component had ever worked; the defect dates from the first commit. `InputCardNumber` was reached despite its mask, and reported `unknown` to `onCardTypeChange` for every card.
+- **New `readInputValue` helper (`@/helpers/react/readInputValue`).** Eleven sibling components already carried the same fallback, hand-written in three slightly different variants — the two that got it wrong differed from the eleven precisely because each copy was rewritten rather than imported. All thirteen now call one helper, which accepts a DOM event or a bare value, and lets numbers through (a `process` prop may legitimately produce one before `onChange` fires).
+- **The contract is now documented** on `Input`, `TextArea` and `useTransformValue`: their `onChange` receives the value, never the event. The helper alone treats the symptom; the missing sentence is what let three components guess right and two guess wrong.
+- **`InputPercentage` is unaffected — and was never broken.** It passes `onChange` straight to `Input`, but it also passes `process`, so `useTransformValue` calls it with `process( transformed )` — a number, exactly as its JSDoc claims. Only its doc changed, to say that an empty field yields `null`.
+
+**Components — `InputCurrency` — masked display**
+
+- **The mask no longer collapses while you type.** `InputCurrency` fed its parsed *number* back to `Input` as the controlled value, so React overwrote Maskito's string with `String( value )` on every keystroke: the postfix and the thousand separators vanished during entry and only reappeared on blur — `1 234,50 €` typed back as `1234.5`. The masked string and the numeric model are now two distinct things. While the field holds focus Maskito owns the string; out of focus the display follows the model, so a value from the host, a stepper click and the blur normalization all reformat as before.
+- **`onBlur` and `onFocus` are now explicit props rather than members of `rest`.** They were spread onto `Input` *after* the internal handler, silently replacing it — a call site passing its own `onBlur` lost the blur normalization without any sign. Both now run: the component's first, the host's after.
+  - *Migration*: a call site passing neither is unaffected. One passing `onBlur` will now also see the value normalized on blur, which is what it was meant to get.
+
+**Lab**
+
+- **New `ValueProbe`, and probes in the currency, card and percentage demos.** The currency demo rendered the component eleven times and asserted nothing about typing — which is exactly how a field that discarded every keystroke stayed invisible for so long. The probe prints the value a field hands back and its type; the currency demo pairs a controlled field with an uncontrolled one so both paths through `useValue` are visible at once.
 
 **Components — picker family (i18n) — BREAKING**
 
