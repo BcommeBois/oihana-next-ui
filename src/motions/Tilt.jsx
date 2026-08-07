@@ -15,6 +15,10 @@ import { motion } from 'motion/react' ;
  * @param {number} [props.perspective=800] - CSS perspective value in pixels.
  * @param {number} [props.scale=1.05] - Scale factor on hover.
  * @param {number} [props.duration=0.3] - Transition duration in seconds.
+ * @param {Function} [props.onMouseMove] - Pointer move handler, called after the tilt is applied.
+ * @param {Function} [props.onMouseLeave] - Pointer leave handler, called after the tilt is reset.
+ * @param {Object} [props.style] - Inline styles, merged over the perspective and transition the
+ *        effect needs — pass one and the tilt keeps working.
  *
  * @returns {React.ReactElement} Tilt wrapper.
  *
@@ -41,6 +45,12 @@ const Tilt =
     perspective = 800 ,
     scale       = 1.05 ,
     duration    = 0.3 ,
+
+    // Out of `rest` : the spread below would override them, and they are the effect.
+    onMouseMove  : onMouseMoveFromProps ,
+    onMouseLeave : onMouseLeaveFromProps ,
+    style ,
+
     ...rest
 }) =>
 {
@@ -58,18 +68,22 @@ const Tilt =
 
         e.currentTarget.style.transform =
             `perspective(${ perspective }px) rotateX(${ rotateX }deg) rotateY(${ rotateY }deg) scale(${ scale })` ;
+
+        onMouseMoveFromProps?.( e ) ;
     } ;
 
     const handleMouseLeave = ( e ) =>
     {
         e.currentTarget.style.transform =
             `perspective(${ perspective }px) rotateX(0deg) rotateY(0deg) scale(1)` ;
+
+        onMouseLeaveFromProps?.( e ) ;
     } ;
 
     return (
         <MotionTag
             className    = { className }
-            style        = { { transformStyle: 'preserve-3d' , transition: `transform ${ duration }s ease-out` } }
+            style        = { { transformStyle: 'preserve-3d' , transition: `transform ${ duration }s ease-out` , ...style } }
             onMouseMove  = { handleMouseMove }
             onMouseLeave = { handleMouseLeave }
             { ...rest }
