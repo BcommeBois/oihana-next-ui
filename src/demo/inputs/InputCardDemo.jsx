@@ -7,6 +7,8 @@ import InputCardNumber from '@/components/inputs/InputCardNumber' ;
 import InputCardExpiry from '@/components/inputs/InputCardExpiry' ;
 import InputCardCVV from '@/components/inputs/InputCardCVV' ;
 
+import ValueProbe from './ValueProbe' ;
+
 const InputCardDemo = () =>
 {
     const [ cardNumber, setCardNumber ] = useState( '' ) ;
@@ -62,6 +64,14 @@ const InputCardDemo = () =>
                             length   = { cvvLength }
                             helper   = { cvvLength === 4 ? '4 digits for Amex' : '3 digits' }
                         />
+                    </div>
+
+                    {/* Sonde de frappe — voir ValueProbe */}
+                    <div className="flex flex-col gap-1 rounded-box border border-base-300 p-3">
+                        <ValueProbe label="cardNumber" value={ cardNumber } />
+                        <ValueProbe label="expiry"     value={ expiry } />
+                        <ValueProbe label="cvv"        value={ cvv } />
+                        <ValueProbe label="cardType"   value={ cardType } />
                     </div>
 
                     <button

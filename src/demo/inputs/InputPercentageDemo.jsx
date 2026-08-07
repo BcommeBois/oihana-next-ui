@@ -6,6 +6,8 @@ import { useState } from 'react' ;
 import Container from '@/display/Container' ;
 import InputPercentage from '@/components/inputs/InputPercentage' ;
 
+import ValueProbe from './ValueProbe' ;
+
 const InputPercentageDemo = () =>
 {
     const [ percentage, setPercentage ] = useState( 75 ) ;
@@ -29,8 +31,9 @@ const InputPercentageDemo = () =>
                     label  = "Progress"
                     value  = { percentage }
                     onChange = { setPercentage }
-                    helper = { `Current: ${percentage}%` }
                 />
+                { /* `process` converts before onChange fires : the probe must read `number`. */ }
+                <ValueProbe label="percentage" value={ percentage } />
             </div>
 
             {/* Custom range */}
