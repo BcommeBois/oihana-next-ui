@@ -8,7 +8,9 @@ import { useState, useEffect, useRef } from 'react'
  * @param {Object} options
  * @param {string|number} [options.defaultValue=''] - Default value
  * @param {string|number} [options.value] - Controlled value
- * @param {Function} [options.onChange] - Change handler
+ * @param {Function} [options.onChange] - Change handler. **Called with the value, never the DOM
+ *        event**: the transformed string, or `process( transformed )` when `process` is set. The
+ *        returned `handleChange` / `handleBlur` accept either shape, but what they emit is a value.
  * @param {Function} [options.transform] - Transform input before storing
  * @param {Function} [options.validate] - Validate value before onChange
  * @param {Function} [options.format] - Format value for display only

@@ -38,7 +38,9 @@ import useMergeRefs       from '../../hooks/useMergeRefs'
  * @param {number} [props.maxRows] - Maximum rows when autosize enabled
  * @param {string|number} [props.defaultValue] - Default value
  * @param {string|number} [props.value] - Controlled value
- * @param {Function} [props.onChange] - Change handler
+ * @param {Function} [props.onChange] - Change handler. **Receives the value, not the DOM event** —
+ *        the transformed string, or whatever `process` returns when that prop is set. A handler
+ *        reading `event.target.value` gets `undefined`; use `readInputValue` if it must accept both.
  * @param {Function} [props.transform] - Transform input before storing
  * @param {Function} [props.validate] - Validate value before onChange
  * @param {Function} [props.format] - Format value for display only
