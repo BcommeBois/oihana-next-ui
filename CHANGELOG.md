@@ -39,6 +39,7 @@ The same shape sat in `Input`, `TextArea` and `InputPin` — the three base comp
 
 **Lab**
 
+- **The controlled `TextArea` demo threw on the first keystroke.** It read `event.target.value` from a handler `TextArea` calls with the value, so `event.target` was `undefined` and the property access raised a `TypeError` — the same contract the two input components got wrong, except here it crashed the tab outright instead of quietly emptying a field. It takes the value directly now, and carries a probe of its own.
 - **New `ValueProbe`, and probes in the currency, card and percentage demos.** The currency demo rendered the component eleven times and asserted nothing about typing — which is exactly how a field that discarded every keystroke stayed invisible for so long. The probe prints the value a field hands back and its type; the currency demo pairs a controlled field with an uncontrolled one so both paths through `useValue` are visible at once.
 
 **Components — picker family (i18n) — BREAKING**

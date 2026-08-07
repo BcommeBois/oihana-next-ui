@@ -4,6 +4,8 @@ import { useState } from 'react' ;
 import Container from '@/display/Container' ;
 import TextArea from '@/components/inputs/TextArea' ;
 
+import ValueProbe from './ValueProbe' ;
+
 const TextAreaDemo = () =>
 {
     const [ message, setMessage ] = useState( '' ) ;
@@ -210,13 +212,16 @@ const TextAreaDemo = () =>
             <div className="flex flex-col gap-4">
                 <h3 className="text-xl font-semibold">Controlled</h3>
 
+                { /* `TextArea` hands its `onChange` the value, never the DOM event — reading
+                     `event.target.value` here threw on the first keystroke. */ }
                 <TextArea
                     label       = "Your Message"
                     value       = { message }
-                    onChange    = { e => setMessage( e.target.value ) }
+                    onChange    = { setMessage }
                     placeholder = "Type something..."
                     helper      = { `${message.length} characters` }
                 />
+                <ValueProbe label="message" value={ message } />
             </div>
 
             {/* With fieldset */}
