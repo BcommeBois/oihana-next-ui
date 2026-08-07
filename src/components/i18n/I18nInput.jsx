@@ -60,6 +60,8 @@ import useI18nField from '../../hooks/useI18nField' ;
  * @param {string}        [props.defaultLang]         - Initial active language (defaults to `useLang().lang`, then the first available).
  * @param {boolean}       [props.disabled=false]
  * @param {string}        [props.flagMenuClassName]   - Extra classes for the FlagMenu container.
+ * @param {Object}        [props.inputProps]          - Extra props forwarded to the `Input`. `onChange` is
+ *        applied after this spread and cannot be replaced — it is what writes the active language.
  *
  * Other props are forwarded to oihana-next-ui's `Input`.
  */
@@ -106,8 +108,8 @@ const I18nInput =
             <Input
                 disabled = { disabled }
                 value    = { currentValue }
-                onChange = { handleValueChange }
                 { ...inputProps }
+                onChange = { handleValueChange }
             />
 
         </div>

@@ -61,12 +61,14 @@ import { MdColorize as DefaultPickerIcon , MdClose as ClearIcon } from 'react-ic
  * @param {string} [props.defaultValue] - Initial value (uncontrolled).
  * @param {boolean} [props.disabled=false] - Disable the field and the trigger.
  * @param {boolean} [props.footer=false] - Show an Apply / Cancel footer in the modal (deferred commit : the picker edits a draft, Apply commits it, any other close discards it).
- * @param {Object} [props.modalProps] - Extra props forwarded to the Modal (spread last, can override defaults).
+ * @param {Object} [props.modalProps] - Extra props forwarded to the Modal (spread last, can override the
+ *        presentation defaults). `onAgree` is applied after this spread and cannot be replaced.
  * @param {(value: string) => void} [props.onChange] - Change handler (receives '#RRGGBB[AA]').
  * @param {import('../../themes/enums/orientations').Orientation} [props.orientation='horizontal'] - Picker layout inside the modal.
  * @param {React.ReactNode} [props.pickerIcon] - Custom trigger icon node (overrides `PickerIcon`).
  * @param {React.ComponentType} [props.PickerIcon] - Trigger icon component (default: eyedropper).
  * @param {Object} [props.pickerProps] - Extra props forwarded to the ColorPicker (presets, showPresets…).
+ *        `onChange` is applied after this spread and cannot be replaced.
  * @param {string[]} [props.presets] - Preset swatches forwarded to the ColorPicker.
  * @param {import('../../themes/sizing/sizes').Size} [props.size='md'] - Input + trigger size.
  * @param {React.ReactNode} [props.title] - Modal title / trigger a11y label. Defaults to the i18n `color.title` key read at `path`, then `'Pick a color'`.
@@ -204,10 +206,10 @@ const InputColor =
                 showFooter        = { footer }
                 agree             = { applyText }
                 disagree          = { cancelText }
-                onAgree           = { () => setValue( draft ) }
                 modalBoxClassName = "w-fit p-3"
                 contentClassName  = "px-0 py-2"
                 { ...modalProps }
+                onAgree           = { () => setValue( draft ) }
             >
                 <div className="flex justify-center">
                     <ColorPicker
@@ -216,8 +218,8 @@ const InputColor =
                         orientation = { orientation }
                         presets     = { presets }
                         value       = { footer ? draft : ( value ?? '' ) }
-                        onChange    = { footer ? setDraft : setValue }
                         { ...pickerProps }
+                        onChange    = { footer ? setDraft : setValue }
                     />
                 </div>
             </Modal>

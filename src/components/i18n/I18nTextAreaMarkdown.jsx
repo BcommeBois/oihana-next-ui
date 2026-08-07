@@ -60,6 +60,8 @@ import useI18nField from '../../hooks/useI18nField' ;
  * @param {string}        [props.defaultLang]         - Initial active language (defaults to `useLang().lang`, then the first available).
  * @param {boolean}       [props.disabled=false]
  * @param {string}        [props.flagMenuClassName]   - Extra classes for the FlagMenu container.
+ * @param {Object}        [props.textAreaMarkdownProps] - Extra props forwarded to the `TextAreaMarkdown`.
+ *        `onChange` is applied after this spread and cannot be replaced — it writes the active language.
  *
  * Other props are forwarded to oihana-next-ui's `TextAreaMarkdown`.
  */
@@ -106,8 +108,8 @@ const I18nTextAreaMarkdown =
             <TextAreaMarkdown
                 disabled = { disabled }
                 value    = { currentValue }
-                onChange = { handleValueChange }
                 { ...textAreaMarkdownProps }
+                onChange = { handleValueChange }
             />
 
         </div>

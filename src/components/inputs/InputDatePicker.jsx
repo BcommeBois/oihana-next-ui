@@ -34,6 +34,7 @@ import { MdCalendarToday as CalendarIcon , MdClose as ClearIcon } from 'react-ic
  *
  * @param {Object} props
  * @param {Object} [props.calendarProps] - Extra props forwarded to the `Calendar` (shortcuts…).
+ *        `onChange` is applied after this spread and cannot be replaced.
  * @param {boolean} [props.clearable=true] - Show the clear button when the field has a value.
  * @param {string} [props.clearLabel='Clear date'] - Clear button aria-label (localizable).
  * @param {string} [props.defaultValue=''] - Initial formatted value (uncontrolled).
@@ -185,7 +186,7 @@ const InputDatePicker =
                 direction = { direction }
                 placement = { placement }
             >
-                <Calendar value={ dateValue } onChange={ handlePick } min={ min } max={ max } { ...calendarProps } />
+                <Calendar value={ dateValue } min={ min } max={ max } { ...calendarProps } onChange={ handlePick } />
             </Popover>
         </div>
     ) ;

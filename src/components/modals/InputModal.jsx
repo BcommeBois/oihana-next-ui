@@ -23,6 +23,8 @@ import useModal from './hooks/useModal' ;
  * @param {React.ReactNode} [props.actionLabel] - Trigger button label. Defaults to the i18n `action` key, then `'Browse'`.
  * @param {React.ReactNode} [props.agree] - Agree button label. Defaults to the i18n `agree` key, then to `Modal`'s own resolution.
  * @param {React.ReactNode} [props.disagree] - Disagree button label. Left to `Modal` when omitted.
+ * @param {Object} [props.inputProps] - Extra props forwarded to the `Input`. `onFocus` is applied after this
+ *        spread and cannot be replaced — it is what `openOnFocus` runs on.
  *
  * @example
  * ```jsx
@@ -161,8 +163,8 @@ const InputModal =
                 className   = { className }
                 size        = { size }
                 actions     = { actionButton }
-                onFocus     = { handleFocus }
                 { ...inputProps }
+                onFocus     = { handleFocus }
             />
 
             <Modal

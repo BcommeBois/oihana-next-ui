@@ -163,6 +163,7 @@ const splitField = ( field ) =>
  * @param {boolean} [props.ampm=false] - 12-hour time with an AM/PM toggle + column.
  * @param {string} [props.applyLabel='Apply'] - Footer Apply button label.
  * @param {Object} [props.calendarProps] - Extra props forwarded to the `Calendar` (shortcuts, months…).
+ *        `onChange` is applied after this spread and cannot be replaced.
  * @param {string} [props.cancelLabel='Cancel'] - Footer Cancel button label.
  * @param {boolean} [props.clearable=true] - Show the clear button when there is a value.
  * @param {string} [props.clearLabel='Clear date-time'] - Clear button aria-label (localizable).
@@ -491,10 +492,10 @@ const InputDateTimePicker =
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
                     <Calendar
                         value    = { draftDate }
-                        onChange = { handlePickDate }
                         min      = { min }
                         max      = { max }
                         { ...calendarProps }
+                        onChange = { handlePickDate }
                     />
                     <TimeColumns
                         ampm             = { ampm }

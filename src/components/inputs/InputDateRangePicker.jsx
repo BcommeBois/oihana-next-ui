@@ -46,6 +46,7 @@ const EMPTY_RANGE = { from : null , to : null } ;
  * @param {boolean} [props.allowReversedRange=false] - Allow the end date before the start (forwarded to the field).
  * @param {string} [props.applyLabel='Apply'] - Footer Apply button label.
  * @param {Object} [props.calendarProps] - Extra props forwarded to the `Calendar` (shortcuts, months…).
+ *        `onChange` is applied after this spread and cannot be replaced.
  * @param {string} [props.cancelLabel='Cancel'] - Footer Cancel button label.
  * @param {boolean} [props.clearable=true] - Show the clear button when the field has a value.
  * @param {string} [props.clearLabel='Clear date range'] - Clear button aria-label (localizable).
@@ -280,10 +281,10 @@ const InputDateRangePicker =
                     mode     = "range"
                     months   = "auto"
                     value    = { rangeValue }
-                    onChange = { handlePick }
                     min      = { min }
                     max      = { max }
                     { ...calendarProps }
+                    onChange = { handlePick }
                 />
             </Popover>
         </div>
