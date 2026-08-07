@@ -10,7 +10,9 @@ import Input from './Input' ;
  * @param {Object} props
  * @param {number} [props.defaultValue=0] - Default value (number)
  * @param {number} [props.value] - Controlled value (number)
- * @param {Function} [props.onChange] - Change handler (receives number)
+ * @param {Function} [props.onChange] - Change handler. Receives a number, rounded to `precision`
+ *        and clamped between `min` and `max` — `process` converts before `Input` calls it — or
+ *        `null` when the field is empty or holds nothing parseable.
  * @param {number} [props.min=0] - Minimum value
  * @param {number} [props.max=100] - Maximum value
  * @param {number} [props.precision=2] - Decimal precision

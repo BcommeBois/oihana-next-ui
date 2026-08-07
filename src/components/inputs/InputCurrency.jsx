@@ -1,11 +1,12 @@
 'use client' ;
 
-import { useMemo , useRef } from 'react'
+import { useCallback , useEffect , useMemo , useRef , useState } from 'react'
 
 import useI18n   from '../../contexts/locale/useI18n' ;
 import NO_LOCALE from '../../contexts/locale/noLocale' ;
 
 import { useMaskito } from '@maskito/react'
+import { maskitoTransform } from '@maskito/core'
 import { maskitoNumberOptionsGenerator } from '@maskito/kit'
 
 import clamp from 'vegas-js-core/src/maths/clamp'
@@ -34,6 +35,8 @@ from 'react-icons/md'
  * @param {number} [props.defaultValue=0] - Default value
  * @param {number} [props.value] - Controlled value
  * @param {Function} [props.onChange] - Change handler (receives raw number)
+ * @param {Function} [props.onBlur] - Blur handler, called after the value has been normalized
+ * @param {Function} [props.onFocus] - Focus handler
  * @param {number} [props.min=0] - Minimum value
  * @param {number} [props.max=999999] - Maximum value
  * @param {number} [props.step=1] - Step increment/decrement
@@ -114,6 +117,11 @@ const InputCurrency =
      legend,
      useFieldset = false,
 
+     // Extraits de `rest` : le spread qui suit `onBlur` / `onFocus` dans le JSX les
+     // écraserait sinon, et le champ ne saurait plus quand il a le focus.
+     onBlur  : onBlurFromProps ,
+     onFocus : onFocusFromProps ,
+
      ref,
 
      ...rest
@@ -165,23 +173,78 @@ const InputCurrency =
         return round( clamp( numVal, min, max ) , precision ) ;
     } ;
 
+    // --------- Chaîne masquée / modèle numérique
+    //
+    // `value` est le nombre que l'hôte manipule ; `displayValue` est la chaîne que Maskito
+    // a écrite dans le champ. Les deux doivent rester distincts : renvoyer `value` tel quel
+    // à `Input` faisait réécrire `String( value )` par-dessus le masque à chaque frappe, si
+    // bien que le postfix et les séparateurs de milliers ne réapparaissaient qu'au blur.
+
+    const toRawString = inputValue => String( inputValue ?? '' )
+                                    .replace ( prefix  , '' )
+                                    .replace ( postfix , '' )
+                                    .split   ( thousandSeparator ).join( '' )
+                                    .replace ( decimalSeparator , '.' ) ;
+
+    const toDisplayString = useCallback( num =>
+    {
+        if ( num === null || num === undefined || num === '' || isNaN( num ) )
+        {
+            return '' ;
+        }
+
+        const raw = decimalZeroPadding ? Number( num ).toFixed( precision )
+                                       : String( round( Number( num ) , precision ) ) ;
+
+        return maskitoTransform( raw.replace( '.' , decimalSeparator ) , maskOptions ) ;
+    }
+    , [ decimalSeparator , decimalZeroPadding , maskOptions , precision ] ) ;
+
+    const [ displayValue , setDisplayValue ] = useState( () => toDisplayString( valueFromProps ?? defaultValue ) ) ;
+
+    // Tant que le champ a le focus, Maskito est seul maître de la chaîne affichée : la
+    // reformater sous les doigts de l'utilisateur est précisément ce qui mangeait le masque.
+    // Hors focus, l'affichage suit le modèle — valeur reçue de l'hôte, stepper, blur.
+
+    const isFocusedRef = useRef( false ) ;
+
+    useEffect( () =>
+    {
+        if ( isFocusedRef.current )
+        {
+            return ;
+        }
+        setDisplayValue( toDisplayString( value ) ) ;
+    }
+    , [ toDisplayString , value ] ) ;
+
+    const commit = num =>
+    {
+        setValue( num ) ;
+        setDisplayValue( toDisplayString( num ) ) ;
+    } ;
+
+    const handleFocus = event =>
+    {
+        isFocusedRef.current = true ;
+        onFocusFromProps?.( event ) ;
+    } ;
+
     const handleBlur = event =>
     {
-        setValue( normalizeValue( value ) ) ;
-        rest.onBlur?.( event ) ;
+        isFocusedRef.current = false ;
+        commit( normalizeValue( value ) ) ;
+        onBlurFromProps?.( event ) ;
     } ;
 
     const handleChange = event =>
     {
         const inputValue = readInputValue( event ) ;
 
-        let rawValue = inputValue
-                     .replace ( prefix  , '' )
-                     .replace ( postfix , '' )
-                     .split   ( thousandSeparator ).join( '' )
-                     .replace ( decimalSeparator , '.' ) ;
+        // La chaîne est conservée telle que Maskito l'a produite ; seul le modèle est parsé.
+        setDisplayValue( inputValue ) ;
 
-        const numValue = parseFloat( rawValue ) ;
+        const numValue = parseFloat( toRawString( inputValue ) ) ;
 
         setValue( isNaN( numValue ) ? '' : numValue ) ;
     } ;
@@ -190,7 +253,7 @@ const InputCurrency =
     {
         event?.preventDefault() ;
         const currentValue = isValueEmpty( value ) || isNaN( value ) ? defaultValue : Number( value ) ;
-        setValue( normalizeValue( currentValue - step ) ) ;
+        commit( normalizeValue( currentValue - step ) ) ;
         requestAnimationFrame( () => internalRef.current?.focus() ) ;
     } ;
 
@@ -198,7 +261,7 @@ const InputCurrency =
     {
         event?.preventDefault() ;
         const currentValue = isValueEmpty( value ) || isNaN( value ) ? defaultValue : Number( value ) ;
-        setValue( normalizeValue( currentValue + step ) ) ;
+        commit( normalizeValue( currentValue + step ) ) ;
         requestAnimationFrame( () => internalRef.current?.focus() ) ;
     } ;
 
@@ -253,11 +316,12 @@ const InputCurrency =
             legend        = { legend }
             onChange      = { handleChange }
             onBlur        = { handleBlur }
+            onFocus       = { handleFocus }
             readOnly      = { readOnly }
             ref           = { mergedRef }
             type          = "text"
             useFieldset   = { useFieldset }
-            value         = { value ?? '' }
+            value         = { displayValue }
             { ...rest }
         />
     ) ;
