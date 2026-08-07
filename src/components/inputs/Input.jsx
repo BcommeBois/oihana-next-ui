@@ -41,6 +41,8 @@ import getInputClasses   from '../../themes/components/input'
  * @param {Function} [props.onChange] - Change handler. **Receives the value, not the DOM event** —
  *        the transformed string, or whatever `process` returns when that prop is set. A handler
  *        reading `event.target.value` gets `undefined`; use `readInputValue` if it must accept both.
+ * @param {Function} [props.onBlur] - Blur handler, called with the DOM event after `processOnBlur`
+ *        and `revertOnBlurIfInvalid` have run — it complements them rather than replacing them.
  * @param {Function} [props.transform] - Transform input before storing
  * @param {Function} [props.validate] - Validate value before onChange
  * @param {Function} [props.format] - Format value for display only
@@ -98,6 +100,12 @@ const Input =
     processOnBlur,
     revertOnBlurIfInvalid = true,
 
+    // Extrait de `inputProps` : le spread qui suit `onBlur` sur l'élément l'écraserait
+    // sinon, et `processOnBlur` comme `revertOnBlurIfInvalid` cesseraient de s'appliquer
+    // dès qu'un appelant passe son propre gestionnaire. `useTransformValue` l'appelle en
+    // dernier, après son propre travail.
+    onBlur: onBlurFromProps,
+
     ...inputProps
 }) =>
 {
@@ -128,7 +136,7 @@ const Input =
         format,
         process,
         processOnBlur,
-        onBlur: inputProps.onBlur,
+        onBlur: onBlurFromProps,
         revertOnBlurIfInvalid
     }) ;
 

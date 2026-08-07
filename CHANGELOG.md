@@ -31,6 +31,12 @@ The `InputCurrency` blur fix above turned out to be one instance of a pattern: a
 
 All three now take the handler as an explicit prop and call it after their own, the idiom `InputAction` already used. A call site passing nothing is unaffected; one that passed a handler gets the behaviour it should have had all along, in addition to its own.
 
+The same shape sat in `Input`, `TextArea` and `InputPin` — the three base components — where nothing had yet triggered it. Closing it there is what stops the next component from inheriting it.
+
+- **`Input` and `TextArea` take `onBlur` as an explicit prop.** It used to travel in the props spread and land on the element after `onBlur={ handleTransformBlur }`, so passing one turned off `processOnBlur` and `revertOnBlurIfInvalid` for that field — silently, since `useTransformValue` was still being handed the very handler it would never get to call. Both now run: the hook's blur pass first, the call site's handler last, exactly as `useTransformValue` always intended.
+- **`InputPin` spreads `{ ...rest }` first rather than last**, the way `TextAreaCode` already did. Placed last it overrode the per-box handlers — arrow-key navigation, paste-to-fill, select-on-focus — and, worse, the `maxLength={ 1 }` that makes the component a row of single-character boxes at all.
+  - *Migration*: a call site passing `onBlur` to `Input` or `TextArea` will now also get the hook's blur processing, which is what it was documented to get. One relying on props in `rest` to override `InputPin`'s own input attributes will no longer win that contest — pass the component's own props instead.
+
 **Lab**
 
 - **New `ValueProbe`, and probes in the currency, card and percentage demos.** The currency demo rendered the component eleven times and asserted nothing about typing — which is exactly how a field that discarded every keystroke stayed invisible for so long. The probe prints the value a field hands back and its type; the currency demo pairs a controlled field with an uncontrolled one so both paths through `useValue` are visible at once.

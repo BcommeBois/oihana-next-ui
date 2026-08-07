@@ -224,6 +224,11 @@ const InputPin =
                 values.map( ( val , index ) =>
                 (
                     <input
+                        // Spread en premier — comme `TextAreaCode` : placé en dernier, il
+                        // écrasait les gestionnaires ci-dessous (navigation entre cases,
+                        // collage, sélection au focus) ainsi que le `maxLength` d'un
+                        // caractère qui fait tout le composant.
+                        { ...rest }
                         aria-label     = { `Digit ${index + 1}` }
                         autoComplete   = "one-time-code"
                         autoFocus      = { autoFocus && index === 0 }
@@ -240,7 +245,6 @@ const InputPin =
                         ref            = { el => { inputsRef.current[ index ] = el } }
                         type           = { type === 'number' ? 'text' : type } // Force text pour éviter les flèches de step
                         value          = { String( val ?? '' ) }
-                        { ...rest }
                     />
                 )
             )}
