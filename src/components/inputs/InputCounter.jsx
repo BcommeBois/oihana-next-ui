@@ -30,6 +30,7 @@ import { MdAdd as MoreIcon, MdRemove as LessIcon } from 'react-icons/md'
  * @param {number} [props.defaultValue=0] - Default value
  * @param {number|string} [props.value] - Controlled value
  * @param {Function} [props.onChange] - Change handler
+ * @param {Function} [props.onBlur] - Blur handler, called after the value has been normalized
  * @param {number} [props.min=0] - Minimum value
  * @param {number} [props.max=999999] - Maximum value
  * @param {number} [props.step=1] - Step increment/decrement
@@ -89,6 +90,10 @@ const InputCounter =
     legend,
     useFieldset = false,
 
+    // Extrait de `rest` : le spread qui suit `onBlur` dans le JSX l'écraserait sinon, et
+    // la normalisation au blur — clamp `min`/`max`, arrondi `precision` — ne tournerait plus.
+    onBlur : onBlurFromProps ,
+
     ref,
 
     ...rest
@@ -129,7 +134,7 @@ const InputCounter =
     const handleBlur = event =>
     {
         setValue( normalizeValue( value ) ) ;
-        rest.onBlur?.( event ) ;
+        onBlurFromProps?.( event ) ;
     };
 
     const handleLess = event =>

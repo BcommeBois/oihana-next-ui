@@ -21,6 +21,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - **`onBlur` and `onFocus` are now explicit props rather than members of `rest`.** They were spread onto `Input` *after* the internal handler, silently replacing it — a call site passing its own `onBlur` lost the blur normalization without any sign. Both now run: the component's first, the host's after.
   - *Migration*: a call site passing neither is unaffected. One passing `onBlur` will now also see the value normalized on blur, which is what it was meant to get.
 
+**Components — inputs — handlers swallowed by the props spread**
+
+The `InputCurrency` blur fix above turned out to be one instance of a pattern: a component sets its own handler on the element and then spreads `{ ...rest }` after it, so a call site passing that same handler replaces the internal one outright. No warning, no type error — the component's own logic simply stops running. Three cases were reachable from outside the library.
+
+- **`InputCounter` — a host-supplied `onBlur` disabled the blur normalization.** Passing `onBlur` meant the value was no longer clamped to `min` / `max` nor rounded to `precision` when the field lost focus. The component's own `rest.onBlur?.()` call was dead code: it sat inside a handler that could never run in that case.
+- **`InputUrl` — a host-supplied `onBlur` disabled `autoProtocol`.** Same shape: the `https://` prefix was never added, and the same dead `rest.onBlur?.()` call.
+- **`InputSearch` — a host-supplied `onKeyDown` stopped Enter from triggering `onSearch`.** This one was a pure replacement — the internal handler never chained the host's, so the two could not coexist in either direction.
+
+All three now take the handler as an explicit prop and call it after their own, the idiom `InputAction` already used. A call site passing nothing is unaffected; one that passed a handler gets the behaviour it should have had all along, in addition to its own.
+
 **Lab**
 
 - **New `ValueProbe`, and probes in the currency, card and percentage demos.** The currency demo rendered the component eleven times and asserted nothing about typing — which is exactly how a field that discarded every keystroke stayed invisible for so long. The probe prints the value a field hands back and its type; the currency demo pairs a controlled field with an uncontrolled one so both paths through `useValue` are visible at once.

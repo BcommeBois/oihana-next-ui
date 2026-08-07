@@ -20,6 +20,7 @@ import { MdLink as LinkIcon, MdOpenInNew as OpenIcon } from 'react-icons/md' ;
  * @param {string} [props.defaultValue=''] - Default value
  * @param {string} [props.value] - Controlled value
  * @param {Function} [props.onChange] - Change handler
+ * @param {Function} [props.onBlur] - Blur handler, called after `autoProtocol` has been applied
  * @param {boolean} [props.autoProtocol=true] - Auto-add https:// if missing on blur
  * @param {'both'|'https'|'http'} [props.allowedProtocols='both'] - Allowed protocols
  * @param {boolean} [props.showOpenButton=true] - Show "Open URL" button
@@ -129,6 +130,10 @@ const InputURL =
     maxLength,
     title,
 
+    // Extrait de `rest` : le spread qui suit `onBlur` dans le JSX l'écraserait sinon, et
+    // `autoProtocol` — le `https://` ajouté au blur — ne s'appliquerait plus.
+    onBlur : onBlurFromProps ,
+
      ref ,
 
     ...rest
@@ -154,7 +159,7 @@ const InputURL =
             setValue( urlWithProtocol ) ;
         }
 
-        rest.onBlur?.( event ) ;
+        onBlurFromProps?.( event ) ;
     } ;
 
     const handleOpen = event =>

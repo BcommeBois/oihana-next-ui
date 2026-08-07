@@ -50,6 +50,10 @@ const InputSearch =
 
     placeholder = 'Search...' ,
 
+    // Extrait de `rest` : le spread qui suit `onKeyDown` dans le JSX l'écraserait sinon, et
+    // Entrée ne déclencherait plus `onSearch`.
+    onKeyDown : onKeyDownFromProps ,
+
      ref,
 
     ...rest
@@ -92,6 +96,8 @@ const InputSearch =
             event.preventDefault() ;
             onSearch?.( value ) ;
         }
+
+        onKeyDownFromProps?.( event ) ;
     };
 
     // Auto-search avec debounce
