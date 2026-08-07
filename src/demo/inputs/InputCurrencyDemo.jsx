@@ -22,7 +22,6 @@ const InputCurrencyDemo = () =>
 
             <h2 className="text-3xl font-bold">Input Currency Examples</h2>
 
-            {/* Sonde de frappe — voir ValueProbe */}
             <div className="flex flex-col gap-4 rounded-box border border-base-300 p-4">
 
                 <h3 className="text-xl font-semibold">Typing probe</h3>

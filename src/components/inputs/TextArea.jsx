@@ -98,10 +98,8 @@ const TextArea =
     processOnBlur,
     revertOnBlurIfInvalid = true,
 
-    // Extrait de `rest` : le spread qui suit `onBlur` sur l'élément l'écraserait sinon,
-    // et `processOnBlur` comme `revertOnBlurIfInvalid` cesseraient de s'appliquer dès
-    // qu'un appelant passe son propre gestionnaire. `useTransformValue` l'appelle en
-    // dernier, après son propre travail.
+    // Out of `rest` : the spread below would override it, and `processOnBlur` /
+    // `revertOnBlurIfInvalid` would stop applying. `useTransformValue` calls it last.
     onBlur : onBlurFromProps ,
 
     ref ,

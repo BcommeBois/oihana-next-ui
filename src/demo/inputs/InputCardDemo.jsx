@@ -66,7 +66,6 @@ const InputCardDemo = () =>
                         />
                     </div>
 
-                    {/* Sonde de frappe — voir ValueProbe */}
                     <div className="flex flex-col gap-1 rounded-box border border-base-300 p-3">
                         <ValueProbe label="cardNumber" value={ cardNumber } />
                         <ValueProbe label="expiry"     value={ expiry } />

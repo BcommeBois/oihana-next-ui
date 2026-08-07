@@ -130,8 +130,8 @@ const InputURL =
     maxLength,
     title,
 
-    // Extrait de `rest` : le spread qui suit `onBlur` dans le JSX l'écraserait sinon, et
-    // `autoProtocol` — le `https://` ajouté au blur — ne s'appliquerait plus.
+    // Out of `rest` : the spread below would override it, and `autoProtocol` would
+    // stop prefixing `https://` on blur.
     onBlur : onBlurFromProps ,
 
      ref ,

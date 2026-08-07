@@ -50,8 +50,8 @@ const InputSearch =
 
     placeholder = 'Search...' ,
 
-    // Extrait de `rest` : le spread qui suit `onKeyDown` dans le JSX l'écraserait sinon, et
-    // Entrée ne déclencherait plus `onSearch`.
+    // Out of `rest` : the spread below would override it, and Enter would stop
+    // triggering `onSearch`.
     onKeyDown : onKeyDownFromProps ,
 
      ref,

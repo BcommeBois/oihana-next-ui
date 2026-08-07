@@ -117,8 +117,8 @@ const InputCurrency =
      legend,
      useFieldset = false,
 
-     // Extraits de `rest` : le spread qui suit `onBlur` / `onFocus` dans le JSX les
-     // écraserait sinon, et le champ ne saurait plus quand il a le focus.
+     // Out of `rest` : the spread below would override them, and the field would no
+     // longer know when it holds focus.
      onBlur  : onBlurFromProps ,
      onFocus : onFocusFromProps ,
 
@@ -173,12 +173,11 @@ const InputCurrency =
         return round( clamp( numVal, min, max ) , precision ) ;
     } ;
 
-    // --------- Chaîne masquée / modèle numérique
+    // --------- Masked string / numeric model
     //
-    // `value` est le nombre que l'hôte manipule ; `displayValue` est la chaîne que Maskito
-    // a écrite dans le champ. Les deux doivent rester distincts : renvoyer `value` tel quel
-    // à `Input` faisait réécrire `String( value )` par-dessus le masque à chaque frappe, si
-    // bien que le postfix et les séparateurs de milliers ne réapparaissaient qu'au blur.
+    // `value` is the number the host works with ; `displayValue` is what Maskito wrote in
+    // the field. Handing `value` back to `Input` made React overwrite the mask with
+    // `String( value )` on every keystroke.
 
     const toRawString = inputValue => String( inputValue ?? '' )
                                     .replace ( prefix  , '' )
@@ -202,9 +201,8 @@ const InputCurrency =
 
     const [ displayValue , setDisplayValue ] = useState( () => toDisplayString( valueFromProps ?? defaultValue ) ) ;
 
-    // Tant que le champ a le focus, Maskito est seul maître de la chaîne affichée : la
-    // reformater sous les doigts de l'utilisateur est précisément ce qui mangeait le masque.
-    // Hors focus, l'affichage suit le modèle — valeur reçue de l'hôte, stepper, blur.
+    // While the field holds focus Maskito owns the string. Out of focus the display
+    // follows the model — host value, stepper, blur.
 
     const isFocusedRef = useRef( false ) ;
 
@@ -241,7 +239,6 @@ const InputCurrency =
     {
         const inputValue = readInputValue( event ) ;
 
-        // La chaîne est conservée telle que Maskito l'a produite ; seul le modèle est parsé.
         setDisplayValue( inputValue ) ;
 
         const numValue = parseFloat( toRawString( inputValue ) ) ;

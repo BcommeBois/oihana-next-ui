@@ -90,8 +90,8 @@ const InputCounter =
     legend,
     useFieldset = false,
 
-    // Extrait de `rest` : le spread qui suit `onBlur` dans le JSX l'écraserait sinon, et
-    // la normalisation au blur — clamp `min`/`max`, arrondi `precision` — ne tournerait plus.
+    // Out of `rest` : the spread below would override it, and the blur normalization
+    // — clamp to `min`/`max`, round to `precision` — would stop running.
     onBlur : onBlurFromProps ,
 
     ref,
