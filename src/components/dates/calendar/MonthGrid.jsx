@@ -18,6 +18,8 @@ import Day      from './Day' ;
  * @param {string} props.lang - Active locale code.
  * @param {boolean} props.showPrev - Show the previous-month arrow.
  * @param {boolean} props.showNext - Show the next-month arrow.
+ * @param {boolean} [props.prevDisabled=false] - Disable the previous-month arrow (out of the `min` bound).
+ * @param {boolean} [props.nextDisabled=false] - Disable the next-month arrow (out of the `max` bound).
  * @param {() => void} props.onPrev - Previous month.
  * @param {() => void} props.onNext - Next month.
  * @param {(day: import('dayjs').Dayjs) => Object} props.getDayState - Returns a day's modifiers.
@@ -35,6 +37,8 @@ const MonthGrid =
     lang ,
     showPrev ,
     showNext ,
+    prevDisabled = false ,
+    nextDisabled = false ,
     onPrev ,
     onNext ,
     getDayState ,
@@ -58,6 +62,8 @@ const MonthGrid =
                 lang        = { lang }
                 showPrev    = { showPrev }
                 showNext    = { showNext }
+                prevDisabled = { prevDisabled }
+                nextDisabled = { nextDisabled }
                 onPrev      = { onPrev }
                 onNext      = { onNext }
                 interactive = { headerInteractive }

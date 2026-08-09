@@ -331,6 +331,22 @@ const Calendar =
 
     const monthsArr = Array.from( { length : monthCount } , ( _ , i ) => viewMonth.add( i , 'month' ) ) ;
 
+    // Navigation bounds. Only min / max ever bound navigation : a blocked month or
+    // year stays reachable, otherwise the month after it would be too. The rule is
+    // simply never to bring into view a month entirely outside the bounds.
+    const minYear = minDay ? minDay.year() : null ;
+    const maxYear = maxDay ? maxDay.year() : null ;
+
+    const prevMonthDisabled = !!minDay && viewMonth.subtract( 1 , 'month' ).isBefore( minDay , 'month' ) ;
+    const nextMonthDisabled = !!maxDay && viewMonth.add( monthCount , 'month' ).isAfter( maxDay , 'month' ) ;
+
+    const prevYearDisabled = minYear !== null && pickerYear - 1 < minYear ;
+    const nextYearDisabled = maxYear !== null && pickerYear + 1 > maxYear ;
+
+    // A 12-year page is out when even its last year falls short of the bound.
+    const prevPageDisabled = minYear !== null && yearPageStart - 1 < minYear ;
+    const nextPageDisabled = maxYear !== null && yearPageStart + 12 > maxYear ;
+
     return (
         <div className={ getCalendarClasses({ className }) } onKeyDown={ handleKeyDown } { ...rest }>
             <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
@@ -352,6 +368,8 @@ const Calendar =
                                     currentYear    = { slotMonth( i ).year() }
                                     lang           = { lang }
                                     getMonthReason = { getMonthReason }
+                                    prevDisabled   = { prevYearDisabled }
+                                    nextDisabled   = { nextYearDisabled }
                                     onPick         = { pickMonth }
                                     onPrevYear     = { () => setPickerYear( ( y ) => y - 1 ) }
                                     onNextYear     = { () => setPickerYear( ( y ) => y + 1 ) }
@@ -368,6 +386,8 @@ const Calendar =
                                     pageStart     = { yearPageStart }
                                     currentYear   = { slotMonth( i ).year() }
                                     getYearReason = { getYearReason }
+                                    prevDisabled  = { prevPageDisabled }
+                                    nextDisabled  = { nextPageDisabled }
                                     onPick        = { pickYear }
                                     onPrevPage    = { () => setYearPageStart( ( s ) => s - 12 ) }
                                     onNextPage    = { () => setYearPageStart( ( s ) => s + 12 ) }
@@ -382,6 +402,8 @@ const Calendar =
                                 lang         = { lang }
                                 showPrev     = { i === 0 }
                                 showNext     = { i === monthCount - 1 }
+                                prevDisabled = { prevMonthDisabled }
+                                nextDisabled = { nextMonthDisabled }
                                 onPrev       = { () => setViewMonth( ( m ) => m.subtract( 1 , 'month' ) ) }
                                 onNext       = { () => setViewMonth( ( m ) => m.add( 1 , 'month' ) ) }
                                 getDayState  = { ( day ) => getDayState( day , month ) }

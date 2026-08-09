@@ -4,7 +4,7 @@ import { MdChevronLeft as PrevIcon , MdChevronRight as NextIcon } from 'react-ic
  * A nav button, or an invisible same-size placeholder (keeps the month label
  * centered when the arrow is hidden — e.g. the inner edge of a dual-month view).
  */
-const NavButton = ({ Icon , onClick , label , hidden }) =>
+const NavButton = ({ Icon , onClick , label , hidden , disabled }) =>
 (
     hidden
         ? <span className="btn btn-ghost btn-sm btn-square invisible" aria-hidden="true" />
@@ -12,6 +12,7 @@ const NavButton = ({ Icon , onClick , label , hidden }) =>
             <button
                 type       = "button"
                 className  = "btn btn-ghost btn-sm btn-square"
+                disabled   = { disabled }
                 onClick    = { onClick }
                 aria-label = { label }
             >
@@ -34,14 +35,16 @@ const NavButton = ({ Icon , onClick , label , hidden }) =>
  * @param {() => void} props.onNext - Go to the next month.
  * @param {boolean} [props.showPrev=true] - Show the previous-month arrow.
  * @param {boolean} [props.showNext=true] - Show the next-month arrow.
+ * @param {boolean} [props.prevDisabled=false] - Disable the previous-month arrow (the month it would reveal is entirely out of the `min` bound).
+ * @param {boolean} [props.nextDisabled=false] - Disable the next-month arrow (same, against `max`).
  * @param {boolean} [props.interactive=false] - Make the label clickable (quick month/year nav).
  * @param {() => void} [props.onMonthClick] - Open the months grid (interactive only).
  * @param {() => void} [props.onYearClick] - Open the years grid (interactive only).
  */
-const Header = ({ month , lang , onPrev , onNext , showPrev = true , showNext = true , interactive = false , onMonthClick , onYearClick }) =>
+const Header = ({ month , lang , onPrev , onNext , showPrev = true , showNext = true , prevDisabled = false , nextDisabled = false , interactive = false , onMonthClick , onYearClick }) =>
 (
     <div className="flex items-center justify-between gap-2 pb-2">
-        <NavButton Icon={ PrevIcon } onClick={ onPrev } label="Previous month" hidden={ !showPrev } />
+        <NavButton Icon={ PrevIcon } onClick={ onPrev } label="Previous month" hidden={ !showPrev } disabled={ prevDisabled } />
         { interactive
             ? (
                 <span className="flex items-center gap-1">
@@ -59,7 +62,7 @@ const Header = ({ month , lang , onPrev , onNext , showPrev = true , showNext = 
                 </span>
             )
         }
-        <NavButton Icon={ NextIcon } onClick={ onNext } label="Next month" hidden={ !showNext } />
+        <NavButton Icon={ NextIcon } onClick={ onNext } label="Next month" hidden={ !showNext } disabled={ nextDisabled } />
     </div>
 ) ;
 

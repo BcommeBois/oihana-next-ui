@@ -97,8 +97,28 @@ const DateDemo = () =>
 
             <div className="flex flex-col gap-3">
                 <span className="font-semibold">With min / max bounds (today → +1 month)</span>
+                <p className="text-xs opacity-50">
+                    The bounds also stop navigation : the ‹ › arrows go dead rather than walking into a
+                    month that is entirely out. Same in the quick pickers — open the month grid and its
+                    year chevrons are bounded, open the year grid and so is its 12-year pagination.
+                    <span className="font-semibold"> Only</span> min / max bound navigation ; a month blocked
+                    by <span className="font-mono">disabledMonths</span> stays reachable, otherwise the month
+                    behind it would not be.
+                </p>
                 <div className="w-fit max-w-full overflow-x-auto rounded-box border border-base-300 bg-base-100 p-3 shadow-sm">
                     <Calendar defaultValue={ today } min={ today } max={ inAMonth } />
+                </div>
+            </div>
+
+            <div className="flex flex-col gap-3">
+                <span className="font-semibold">Bounded navigation over a wider span</span>
+                <p className="text-xs opacity-50">
+                    Bounds set to { nextYear - 1 } → { nextYear + 1 }, so the year and page arrows are
+                    reachable enough to try. Click the year in the header : the 12-year page stops paging
+                    once even its last year falls short of the bound.
+                </p>
+                <div className="w-fit max-w-full overflow-x-auto rounded-box border border-base-300 bg-base-100 p-3 shadow-sm">
+                    <Calendar min={ new Date( nextYear - 1 , 0 , 1 ) } max={ new Date( nextYear + 1 , 11 , 31 ) } />
                 </div>
             </div>
 
@@ -245,6 +265,8 @@ const DateDemo = () =>
                     The 10th and the 18th–22nd are blocked (struck through, inert). By default a range
                     <span className="font-semibold"> stops before</span> a blocked day; the second calendar
                     sets <span className="font-mono">allowDisabledInRange</span> so a range may span them.
+                    A spanned day keeps the band's square corners but never its primary fill — it is
+                    crossed, not selected.
                 </p>
                 <div className="flex flex-wrap items-start gap-6">
                     <div className="flex flex-col gap-1">
@@ -268,7 +290,8 @@ const DateDemo = () =>
                     Week-ends are blocked. The rule applies to the range exactly as a blackout date does :
                     by default the selection <span className="font-semibold">stops on the Friday</span>, so no
                     range can be longer than a working week. Add <span className="font-mono">allowDisabledInRange</span> to
-                    let it span the week-ends — the blocked days stay inert and visibly out.
+                    let it span the week-ends — select a fortnight on the right and the two week-ends show
+                    as neutral gaps inside the band : crossed, not selected.
                 </p>
                 <div className="flex flex-wrap items-start gap-6">
                     <div className="flex flex-col gap-1">

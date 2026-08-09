@@ -13,6 +13,8 @@ import { getCalendarCellClasses } from '../../../themes/components/calendar' ;
  * @param {number} props.pageStart - First year of the displayed 12-year page.
  * @param {number} props.currentYear - The anchor year, highlighted.
  * @param {(year: number) => string|null} [props.getYearReason] - Why a year is not selectable ('bounds' | 'year'), or `null`.
+ * @param {boolean} [props.prevDisabled=false] - Disable the previous-page arrow (even that page's last year falls short of `min`).
+ * @param {boolean} [props.nextDisabled=false] - Disable the next-page arrow (same, against `max`).
  * @param {(year: number) => void} props.onPick - Year click.
  * @param {() => void} props.onPrevPage - Page back 12 years.
  * @param {() => void} props.onNextPage - Page forward 12 years.
@@ -22,6 +24,8 @@ const YearsGrid =
     pageStart ,
     currentYear ,
     getYearReason ,
+    prevDisabled = false ,
+    nextDisabled = false ,
     onPick ,
     onPrevPage ,
     onNextPage ,
@@ -32,11 +36,11 @@ const YearsGrid =
     return (
         <div className="flex w-full flex-col gap-2 sm:w-60">
             <div className="flex items-center justify-between gap-2 pb-1">
-                <button type="button" className="btn btn-ghost btn-sm btn-square" aria-label="Previous years" onClick={ onPrevPage }>
+                <button type="button" className="btn btn-ghost btn-sm btn-square" aria-label="Previous years" disabled={ prevDisabled } onClick={ onPrevPage }>
                     <PrevIcon className="size-5" />
                 </button>
                 <span className="font-semibold">{ years[ 0 ] } – { years[ 11 ] }</span>
-                <button type="button" className="btn btn-ghost btn-sm btn-square" aria-label="Next years" onClick={ onNextPage }>
+                <button type="button" className="btn btn-ghost btn-sm btn-square" aria-label="Next years" disabled={ nextDisabled } onClick={ onNextPage }>
                     <NextIcon className="size-5" />
                 </button>
             </div>

@@ -21,6 +21,8 @@ const MONTHS = Array.from( { length : 12 } , ( _ , i ) => i ) ; // 0 → 11
  * @param {number} props.currentYear - The anchor year.
  * @param {string} props.lang - Active locale code (month labels).
  * @param {(year: number, month: number) => string|null} [props.getMonthReason] - Why a month is not selectable ('bounds' | 'month' | 'year' | 'blackout'), or `null`.
+ * @param {boolean} [props.prevDisabled=false] - Disable the previous-year arrow (that year is entirely out of the `min` bound).
+ * @param {boolean} [props.nextDisabled=false] - Disable the next-year arrow (same, against `max`).
  * @param {(month: number) => void} props.onPick - Month click (0–11).
  * @param {() => void} props.onPrevYear - Go to the previous year.
  * @param {() => void} props.onNextYear - Go to the next year.
@@ -33,6 +35,8 @@ const MonthsGrid =
     currentYear ,
     lang ,
     getMonthReason ,
+    prevDisabled = false ,
+    nextDisabled = false ,
     onPick ,
     onPrevYear ,
     onNextYear ,
@@ -48,13 +52,13 @@ const MonthsGrid =
     return (
         <div className="flex w-full flex-col gap-2 sm:w-60">
             <div className="flex items-center justify-between gap-2 pb-1">
-                <button type="button" className="btn btn-ghost btn-sm btn-square" aria-label="Previous year" onClick={ onPrevYear }>
+                <button type="button" className="btn btn-ghost btn-sm btn-square" aria-label="Previous year" disabled={ prevDisabled } onClick={ onPrevYear }>
                     <PrevIcon className="size-5" />
                 </button>
                 <button type="button" className="btn btn-ghost btn-sm font-semibold" onClick={ onYearClick }>
                     { year }
                 </button>
-                <button type="button" className="btn btn-ghost btn-sm btn-square" aria-label="Next year" onClick={ onNextYear }>
+                <button type="button" className="btn btn-ghost btn-sm btn-square" aria-label="Next year" disabled={ nextDisabled } onClick={ onNextYear }>
                     <NextIcon className="size-5" />
                 </button>
             </div>

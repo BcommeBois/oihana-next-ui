@@ -85,6 +85,11 @@ export const getCalendarDayClasses =
 {
     const isEndpoint = selected || rangeStart || rangeEnd ;
 
+    // Crossed by the range without belonging to it — only reachable under
+    // `allowDisabledInRange`. It keeps the band's square corners so the selection
+    // still reads as one span, but never its primary fill : it is not selected.
+    const isExcluded = !!disabled && !!inRange && !isEndpoint ;
+
     return cn
     (
         beforeClassName ,
@@ -96,7 +101,8 @@ export const getCalendarDayClasses =
             // mutually exclusive : combining them lets btn-ghost win the background
             // while the primary-content text stays, making the label invisible.
             ...isEndpoint && { 'btn-primary text-primary-content' : true } ,
-            ...!isEndpoint && inRange && { 'btn-ghost bg-primary/20 text-base-content rounded-none' : true } ,
+            ...!isEndpoint && inRange && !isExcluded && { 'btn-ghost bg-primary/20 text-base-content rounded-none' : true } ,
+            ...isExcluded && { 'btn-ghost bg-base-300 rounded-none' : true } ,
             ...!isEndpoint && !inRange && { 'btn-ghost' : true } ,
 
             // Today marker (only when it is not already an endpoint).

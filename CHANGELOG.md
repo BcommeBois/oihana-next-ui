@@ -15,6 +15,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - **New `createDisabledModel` helper (`@/helpers/date/createDisabledModel`).** One place now decides whether a day is selectable, from every rule at once, and — this is what it adds over `createDisabledMatcher` — says *which* rule matched. `createDisabledMatcher` is untouched and still exported; it became the blackout branch of the model.
 - **`normalizeWeekday` moved to `@/helpers/date/weekdays`**, next to the new `normalizeWeekdays`, since it is no longer the week-grid's private business. It is still re-exported from `@/helpers/date/getMonthMatrix`, so existing imports are unaffected.
 
+**Components — `Calendar` — navigation stops at the bounds**
+
+- **The `‹ ›` arrows no longer walk out of `min` / `max`.** They were never disabled: with bounds set, one could page forever into months where every day was greyed out, and nothing said the bound had been passed. All three levels are now bounded — the month arrows, the year chevrons of the quick month picker, and the 12-year pagination of the year picker. The rule is simply never to bring into view a month, year or page that is entirely outside the bounds, which in the dual-month view accounts for both columns.
+  - *Visible change*: a `Calendar` given `min` and / or `max` now disables the corresponding arrows at the edge. One without bounds navigates as freely as before.
+- **Only `min` / `max` ever bound navigation.** A month or a year blocked by `disabledMonths` / `disabledYears` stays reachable on purpose: blocked is not unreachable, and the month behind a blocked one has to be reachable too.
+
+**Components — `Calendar` — a day crossed by a range**
+
+- **A blocked day spanned by a range is no longer painted as part of it.** Under `allowDisabledInRange` such a day got the full `bg-primary/20` fill of the selection, claiming a day the selection does not contain. It now keeps the band's square corners — so the span still reads as one range — over a neutral `bg-base-300` fill instead of the primary one. With week-ends blocked, a fortnight shows them as two gaps inside the band, which is what the value actually holds.
+  - This is the whole of the "third range mode" the audit raised. A `'skip'` semantic on top of `allowDisabledInRange` would have added API for something the caller already knows: it wrote the rule.
+
 **Components — `Calendar` — blocking months and years**
 
 - **New `disabledMonths` and `disabledYears` props.** Until now the quick month and year pickers only knew the `min` / `max` bounds — there was no way to say "never August" or "nothing from 2030 on". Blocking a month meant blacking out each of its days one by one, which greyed the day grid but left the month's own button live in the picker, so the user landed on a fully struck-through month with nothing telling them why. `disabledMonths` takes a month index (0–11, every year), a `{ year, month }` pair, an array of those or a `( year, month )` predicate; `disabledYears` takes a year, a `{ from, to }` range with either bound optional, an array or a `( year )` predicate — the same grammar `disabledDates` already used.
