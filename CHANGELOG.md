@@ -6,6 +6,21 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+
+**Components — `Calendar` — blocking whole weekdays**
+
+- **New `disabledWeekdays` prop.** Blocking every Saturday and Sunday was only reachable through the function form of `disabledDates` — `d => [ 0 , 6 ].includes( d.getDay() )` — which works but is neither documented nor discoverable, and forces a per-day predicate call where a set lookup does. The prop takes `0`–`6` (0 = Sunday) or `'sun'`…`'sat'`, alone or in an array, and combines with `disabledDates` and the `min` / `max` bounds. Weekday numbers are **absolute**: they do not follow `weekStartsOn`, so the same value always designates the same day whatever the locale renders first.
+  - In range mode the rule behaves exactly like a blackout date: by default a selection stops before the first blocked day, so week-ends off means no range longer than a working week. `allowDisabledInRange` lifts that, unchanged.
+- **New `createDisabledModel` helper (`@/helpers/date/createDisabledModel`).** One place now decides whether a day is selectable, from every rule at once, and — this is what it adds over `createDisabledMatcher` — says *which* rule matched. `createDisabledMatcher` is untouched and still exported; it became the blackout branch of the model.
+- **`normalizeWeekday` moved to `@/helpers/date/weekdays`**, next to the new `normalizeWeekdays`, since it is no longer the week-grid's private business. It is still re-exported from `@/helpers/date/getMonthMatrix`, so existing imports are unaffected.
+
+**Components — `Calendar` — how a blocked day looks**
+
+- **A blocked day is now struck through only when it is an exception.** Every non-selectable cell used to get `line-through`, which reads right for a public holiday and turns the grid into a checkerboard once whole weekdays are blocked. `getCalendarDayClasses` takes a `disabledReason` — `'bounds'`, `'weekday'` or `'blackout'` — and reserves the line-through for the last one; structural blocks are muted and inert, nothing more. Called with `disabled` alone and no reason, it renders exactly as before.
+  - *Visible change*: days outside `min` / `max` lose their line-through and stay muted. They were never an exception either.
+- **A range preview no longer runs past `min` / `max`.** The cap that stops a range before the first blocked day only consulted the blackout dates, so hovering beyond a bound previewed a range that the click then refused. It now consults the whole model.
+
 ## [0.10.0] — 2026-08-07
 
 **Components — inputs — the `onChange` contract**

@@ -10,6 +10,8 @@
 
 import cn from '../helpers/cn' ;
 
+import { isStructuralReason } from '../../helpers/date/disabledReasons' ;
+
 /** Base classes for the calendar panel. */
 export const CALENDAR = 'inline-flex flex-col gap-1 select-none' ;
 
@@ -53,7 +55,8 @@ export const CALENDAR_DAY = 'btn btn-sm btn-square rounded-field font-normal' ;
  * @param {Object} [props.before] - Class definitions to prepend.
  * @param {string} [props.beforeClassName] - ClassName to prepend.
  * @param {string} [props.className] - ClassName to append.
- * @param {boolean} [props.disabled] - Out of the allowed range.
+ * @param {boolean} [props.disabled] - Not selectable.
+ * @param {string} [props.disabledReason] - Why : 'bounds' | 'weekday' (structural, muted only) or 'blackout' (exceptional, struck through). Defaults to the blackout rendering.
  * @param {boolean} [props.inRange] - Inside a selected range (between endpoints).
  * @param {boolean} [props.outside] - Belongs to the previous / next month.
  * @param {boolean} [props.rangeEnd] - End of a selected range.
@@ -70,6 +73,7 @@ export const getCalendarDayClasses =
     beforeClassName ,
     className ,
     disabled ,
+    disabledReason ,
     inRange ,
     outside ,
     rangeEnd ,
@@ -99,11 +103,13 @@ export const getCalendarDayClasses =
             ...today && !isEndpoint && { 'ring-1 ring-primary ring-inset' : true } ,
 
             // Visual hierarchy for non-selectable cells :
-            //   normal in-month  → full base-content (clickable)
-            //   other-month day  → muted but clearly clickable
-            //   out-of-range day → readable muted colour + line-through + inert
+            //   normal in-month   → full base-content (clickable)
+            //   other-month day   → muted but clearly clickable
+            //   structural block  → readable muted colour + inert (a bound, a blocked weekday)
+            //   exceptional block → the same, plus a line-through (a blackout date)
             ...outside && !disabled && !isEndpoint && !inRange && { 'text-base-content/40' : true } ,
-            ...disabled && { 'text-base-content/55 line-through pointer-events-none' : true } ,
+            ...disabled && { 'text-base-content/55 pointer-events-none' : true } ,
+            ...disabled && !isStructuralReason( disabledReason ) && { 'line-through' : true } ,
 
             ...after ,
         } ,

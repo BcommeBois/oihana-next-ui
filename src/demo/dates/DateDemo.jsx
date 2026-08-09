@@ -118,6 +118,30 @@ const DateDemo = () =>
                 </div>
             </div>
 
+            <div className="flex flex-col gap-3">
+                <span className="font-semibold">Block whole weekdays (disabledWeekdays)</span>
+                <p className="text-xs opacity-50">
+                    Accepts 0–6 (0 = Sunday) or 'sun'…'sat', alone or in an array. The numbers are
+                    absolute — unlike the grid order, they never follow <span className="font-mono">weekStartsOn</span>.
+                    The two calendars also show the two renderings : a blocked weekday is muted only
+                    (it is the shape of the calendar), a blackout date stays struck through (it is an exception).
+                </p>
+                <div className="flex flex-wrap items-start gap-6">
+                    <div className="flex flex-col gap-1">
+                        <span className="text-xs font-medium opacity-60">week-ends off</span>
+                        <div className="w-fit max-w-full overflow-x-auto rounded-box border border-base-300 bg-base-100 p-3 shadow-sm">
+                            <Calendar disabledWeekdays={[ 'sat' , 'sun' ]} />
+                        </div>
+                    </div>
+                    <div className="flex flex-col gap-1">
+                        <span className="text-xs font-medium opacity-60">week-ends off + blackout dates</span>
+                        <div className="w-fit max-w-full overflow-x-auto rounded-box border border-base-300 bg-base-100 p-3 shadow-sm">
+                            <Calendar disabledWeekdays={[ 'sat' , 'sun' ]} disabledDates={ blocked } />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <Divider />
 
             {/* ---------------------------------------------------------------- Calendar — range */}
@@ -173,6 +197,30 @@ const DateDemo = () =>
                         <span className="text-xs font-medium opacity-60">allowDisabledInRange — may span</span>
                         <div className="w-fit max-w-full overflow-x-auto rounded-box border border-base-300 bg-base-100 p-3 shadow-sm">
                             <Calendar mode="range" months={ 1 } disabledDates={ blocked } allowDisabledInRange defaultValue={{ from : null , to : null }} />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="flex flex-col gap-3">
+                <span className="font-semibold">Ranges over blocked weekdays</span>
+                <p className="text-xs opacity-50">
+                    Week-ends are blocked. The rule applies to the range exactly as a blackout date does :
+                    by default the selection <span className="font-semibold">stops on the Friday</span>, so no
+                    range can be longer than a working week. Add <span className="font-mono">allowDisabledInRange</span> to
+                    let it span the week-ends — the blocked days stay inert and visibly out.
+                </p>
+                <div className="flex flex-wrap items-start gap-6">
+                    <div className="flex flex-col gap-1">
+                        <span className="text-xs font-medium opacity-60">default — one working week at most</span>
+                        <div className="w-fit max-w-full overflow-x-auto rounded-box border border-base-300 bg-base-100 p-3 shadow-sm">
+                            <Calendar mode="range" months={ 1 } disabledWeekdays={[ 'sat' , 'sun' ]} defaultValue={{ from : null , to : null }} />
+                        </div>
+                    </div>
+                    <div className="flex flex-col gap-1">
+                        <span className="text-xs font-medium opacity-60">allowDisabledInRange — may span</span>
+                        <div className="w-fit max-w-full overflow-x-auto rounded-box border border-base-300 bg-base-100 p-3 shadow-sm">
+                            <Calendar mode="range" months={ 1 } disabledWeekdays={[ 'sat' , 'sun' ]} allowDisabledInRange defaultValue={{ from : null , to : null }} />
                         </div>
                     </div>
                 </div>

@@ -11,7 +11,7 @@ import dayjs from '../../helpers/date/configureDayjs' ;
 import getCalendarClasses from '../../themes/components/calendar' ;
 
 import { getRangeShortcuts , getSingleShortcuts } from '../../helpers/date/shortcuts' ;
-import createDisabledMatcher from '../../helpers/date/matchDisabledDate' ;
+import createDisabledModel from '../../helpers/date/createDisabledModel' ;
 
 import MonthGrid from './calendar/MonthGrid' ;
 import MonthsGrid from './calendar/MonthsGrid' ;
@@ -48,6 +48,7 @@ const YEARS_VIEW  = 'years' ;
  * @param {Date} [props.defaultMonth] - Month shown on first render when there is no value (quick navigation start).
  * @param {Date|{from:Date|null,to:Date|null}|null} [props.defaultValue] - Initial value (uncontrolled).
  * @param {Date|{from?:Date,to?:Date}|Array|((date:Date)=>boolean)} [props.disabledDates] - Blackout days : a date, a `{from,to}` range, an array of those, or a predicate.
+ * @param {number|string|Array<number|string>} [props.disabledWeekdays] - Blocked weekdays : `0`–`6` (0 = Sunday) or `'sun'`…`'sat'`, alone or in an array. Absolute — independent of `weekStartsOn`.
  * @param {Date} [props.max] - Latest selectable date (inclusive).
  * @param {Date} [props.min] - Earliest selectable date (inclusive).
  * @param {'single'|'range'} [props.mode='single'] - Selection mode.
@@ -64,6 +65,9 @@ const YEARS_VIEW  = 'years' ;
  *
  * // Range over two months (auto on desktop)
  * <Calendar mode="range" months="auto" value={ range } onChange={ setRange } />
+ *
+ * // Weekdays only — a range may then span a week-end with allowDisabledInRange
+ * <Calendar disabledWeekdays={ [ 'sat' , 'sun' ] } />
  * ```
  */
 const Calendar =
@@ -74,6 +78,7 @@ const Calendar =
     defaultMonth ,
     defaultValue ,
     disabledDates ,
+    disabledWeekdays ,
     max ,
     min ,
     mode = SINGLE ,
@@ -134,8 +139,8 @@ const Calendar =
     }
     , [ anchorTime , monthCount ] ) ;
 
-    const minDay = min ? dayjs( min ).startOf( 'day' ) : null ;
-    const maxDay = max ? dayjs( max ).startOf( 'day' ) : null ;
+    const minDay = useMemo( () => ( min ? dayjs( min ).startOf( 'day' ) : null ) , [ min ] ) ;
+    const maxDay = useMemo( () => ( max ? dayjs( max ).startOf( 'day' ) : null ) , [ max ] ) ;
 
     const minYear = minDay ? minDay.year() : null ;
     const maxYear = maxDay ? maxDay.year() : null ;
@@ -150,14 +155,17 @@ const Calendar =
     const pickMonth  = ( m ) => { setViewMonth( dayjs( new Date( pickerYear , m , 1 ) ).subtract( pickerIndex , 'month' ) ) ; setPickerIndex( null ) ; } ;
     const pickYear   = ( y ) => { setPickerYear( y ) ; setPickerKind( MONTHS_VIEW ) ; } ;
 
-    // Blackout dates (holidays / unavailable days). A day is disabled when out of
-    // the min/max bounds OR matched by `disabledDates`.
-    const isBlocked = useMemo( () => createDisabledMatcher( disabledDates ) , [ disabledDates ] ) ;
+    // Every rule that makes a day non-selectable, resolved in one place : the
+    // min/max bounds, the blocked weekdays and the blackout dates. `getDayReason`
+    // also says which one matched, so the theme can mute a week-end without
+    // striking it through like an exceptional blackout day.
+    const { getDayReason } = useMemo
+    (
+        () => createDisabledModel({ disabledDates , disabledWeekdays , minDay , maxDay }) ,
+        [ disabledDates , disabledWeekdays , minDay , maxDay ]
+    ) ;
 
-    const isDisabled = ( day ) =>
-        ( !!minDay && day.isBefore( minDay , 'day' ) ) ||
-        ( !!maxDay && day.isAfter( maxDay , 'day' ) ) ||
-        isBlocked( day ) ;
+    const isDisabled = ( day ) => getDayReason( day ) !== null ;
 
     // Furthest day reachable from `from` toward `end` without crossing a blocked
     // day (so a range can never span one, unless `allowDisabledInRange`). `from`
@@ -173,7 +181,7 @@ const Calendar =
         while ( !cursor.isSame( end , 'day' ) )
         {
             const nextDay = cursor.add( step , 'day' ) ;
-            if ( isBlocked( nextDay ) )
+            if ( isDisabled( nextDay ) )
             {
                 break ;
             }
@@ -264,11 +272,14 @@ const Calendar =
 
     const getDayState = ( day , monthAnchor ) =>
     {
+        const reason = getDayReason( day ) ;
+
         const base =
         {
-            outside  : !day.isSame( monthAnchor , 'month' ) ,
-            disabled : isDisabled( day ) ,
-            today    : day.isSame( today , 'day' ) ,
+            outside        : !day.isSame( monthAnchor , 'month' ) ,
+            disabled       : reason !== null ,
+            disabledReason : reason ?? undefined ,
+            today          : day.isSame( today , 'day' ) ,
         } ;
 
         if ( !isRange )

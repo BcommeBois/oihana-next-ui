@@ -1,26 +1,11 @@
 import dayjs from './configureDayjs' ;
 
-const DOW = { sun : 0 , mon : 1 , tue : 2 , wed : 3 , thu : 4 , fri : 5 , sat : 6 } ;
+import { normalizeWeekday } from './weekdays' ;
 
-/**
- * Normalises a "week start" value to a dayjs weekday number (0 = Sunday … 6 = Saturday).
- *
- * @param {number|string|null|undefined} value - A number (0–6) or a day name ('sun'…'sat', case-insensitive, 3-letter prefix).
- * @returns {number|null} The weekday number, or `null` when not provided / unrecognised.
- */
-export const normalizeWeekday = ( value ) =>
-{
-    if ( value == null )
-    {
-        return null ;
-    }
-    if ( typeof value === 'number' )
-    {
-        return ( ( value % 7 ) + 7 ) % 7 ;
-    }
-    const key = String( value ).slice( 0 , 3 ).toLowerCase() ;
-    return key in DOW ? DOW[ key ] : null ;
-} ;
+// Kept exported here : `normalizeWeekday` used to live in this module and is part
+// of the published surface. Its home is now `helpers/date/weekdays`, which the
+// disabled-day rules share.
+export { normalizeWeekday } from './weekdays' ;
 
 /**
  * Builds the 6×7 day grid for the month containing `month`. The first day of week

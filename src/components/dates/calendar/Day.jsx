@@ -7,7 +7,8 @@ import { getCalendarDayClasses } from '../../../themes/components/calendar' ;
  *
  * @param {Object} props
  * @param {import('dayjs').Dayjs} props.day - The day this cell represents.
- * @param {boolean} [props.disabled] - Out of the allowed range.
+ * @param {boolean} [props.disabled] - Not selectable.
+ * @param {string} [props.disabledReason] - Why the day is blocked ('bounds' | 'weekday' | 'blackout') — drives the muted / struck-through rendering.
  * @param {boolean} [props.inRange] - Inside a selected range.
  * @param {boolean} [props.outside] - Belongs to the previous / next month.
  * @param {boolean} [props.rangeEnd] - End of a selected range.
@@ -21,6 +22,7 @@ const Day =
 ({
     day ,
     disabled ,
+    disabledReason ,
     inRange ,
     outside ,
     rangeEnd ,
@@ -33,7 +35,7 @@ const Day =
 (
     <button
         type          = "button"
-        className     = { getCalendarDayClasses({ disabled , inRange , outside , rangeEnd , rangeStart , selected , today }) }
+        className     = { getCalendarDayClasses({ disabled , disabledReason , inRange , outside , rangeEnd , rangeStart , selected , today }) }
         aria-disabled = { disabled || undefined }
         tabIndex      = { disabled ? -1 : undefined }
         aria-pressed  = { !!( selected || rangeStart || rangeEnd ) }
