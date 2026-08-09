@@ -35,6 +35,9 @@ const DateDemo = () =>
     const [ inlineDateEmits  , setInlineDateEmits  ] = useState( 0 ) ;
     const [ inlineRange      , setInlineRange      ] = useState( null ) ;
     const [ inlineRangeEmits , setInlineRangeEmits ] = useState( 0 ) ;
+    const [ lenientDate , setLenientDate ] = useState( null ) ;
+    const [ strictDate  , setStrictDate  ] = useState( null ) ;
+    const [ lastRefused , setLastRefused ] = useState( null ) ;
 
     const today    = new Date() ;
     const inAMonth = new Date( today.getFullYear() , today.getMonth() + 1 , today.getDate() ) ;
@@ -376,6 +379,40 @@ const DateDemo = () =>
                 </div>
             </div>
 
+            <div className="flex flex-col gap-3">
+                <span className="font-semibold">Rules on the field, not only on the grid (strict)</span>
+                <p className="text-xs opacity-50">
+                    <span className="font-mono">disabledDates</span>, <span className="font-mono">disabledWeekdays</span>,
+                    <span className="font-mono"> disabledMonths</span> and <span className="font-mono">disabledYears</span> are
+                    now first-class props of the picker : they reach the calendar, and with
+                    <span className="font-mono"> strict</span> they also police what you
+                    <span className="font-semibold"> type</span>. Without it the keyboard accepts what the
+                    click refuses. Try typing a Saturday in both fields — the left one emits it, the right
+                    one keeps the text, goes into error and stays silent on <span className="font-mono">onDate</span>.
+                </p>
+                <div className="grid max-w-3xl grid-cols-1 gap-6 md:grid-cols-2">
+                    <InputDatePicker
+                        label="Week-ends blocked, lenient"
+                        helper="The grid refuses them, the keyboard does not"
+                        disabledWeekdays={[ 'sat' , 'sun' ]}
+                        onDate={ setLenientDate }
+                    />
+                    <InputDatePicker
+                        label="Week-ends blocked, strict"
+                        helper="Typing a Saturday puts the field in error"
+                        disabledWeekdays={[ 'sat' , 'sun' ]}
+                        strict
+                        onDate={ setStrictDate }
+                        onDisabledDate={ ( d ) => setLastRefused( d ) }
+                    />
+                </div>
+                <p className="text-sm opacity-70">
+                    Lenient emitted : <span className="font-mono">{ fmt( lenientDate ) }</span> — strict emitted :{ ' ' }
+                    <span className="font-mono">{ fmt( strictDate ) }</span> — last refused :{ ' ' }
+                    <span className="font-mono">{ fmt( lastRefused ) }</span>
+                </p>
+            </div>
+
             <Divider />
 
             {/* ---------------------------------------------------------------- Input date range picker */}
@@ -417,6 +454,31 @@ const DateDemo = () =>
                         rangeSeparator=" → "
                     />
                     <InputDateRangePicker label="Disabled" defaultValue="01/01/2024 – 31/01/2024" disabled />
+                </div>
+            </div>
+
+            <div className="flex flex-col gap-3">
+                <span className="font-semibold">Strict range</span>
+                <p className="text-xs opacity-50">
+                    Same four props, same <span className="font-mono">strict</span>. It validates the
+                    <span className="font-semibold"> endpoints</span>, not the span : whether a range may
+                    cross a blocked day is <span className="font-mono">allowDisabledInRange</span>'s business,
+                    and that belongs to the grid. Type a period starting on a Saturday.
+                </p>
+                <div className="grid max-w-3xl grid-cols-1 gap-6 md:grid-cols-2">
+                    <InputDateRangePicker
+                        label="Week-ends blocked, strict"
+                        helper="Either endpoint on a week-end is refused"
+                        disabledWeekdays={[ 'sat' , 'sun' ]}
+                        calendarProps={{ allowDisabledInRange : true }}
+                        strict
+                    />
+                    <InputDateTimePicker
+                        label="Blackout dates, strict"
+                        helper="The 10th and the 18th–22nd of this month are refused"
+                        disabledDates={ blocked }
+                        strict
+                    />
                 </div>
             </div>
 

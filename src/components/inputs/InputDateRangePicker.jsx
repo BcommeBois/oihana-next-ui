@@ -6,6 +6,8 @@ import cn from '../../themes/helpers/cn' ;
 
 import useI18n   from '../../contexts/locale/useI18n' ;
 import NO_LOCALE from '../../contexts/locale/noLocale' ;
+import useDisabledModel from '../../hooks/useDisabledModel' ;
+import dayjs from '../../helpers/date/configureDayjs' ;
 import useValue from '../../hooks/useValue' ;
 import useBreakpoint from '../../themes/hooks/useBreakpoint' ;
 import useDropdownPosition from '../../themes/hooks/useDropdownPosition' ;
@@ -53,7 +55,13 @@ const EMPTY_RANGE = { from : null , to : null } ;
  * @param {string} [props.dateSeparator='/'] - Date segments separator.
  * @param {string} [props.defaultValue=''] - Initial formatted value (uncontrolled).
  * @param {boolean} [props.disabled=false] - Disable the field and buttons.
+ * @param {Date|{from?:Date,to?:Date}|Array|((date:Date)=>boolean)} [props.disabledDates] - Blackout days, forwarded to the `Calendar`.
+ * @param {string} [props.disabledLabel='This period is not available'] - Error shown by `strict` when a typed endpoint is blocked (localizable).
+ * @param {number|{year?:number,month:number}|Array|((year:number,month:number)=>boolean)} [props.disabledMonths] - Blocked months, forwarded to the `Calendar`.
+ * @param {number|string|Array<number|string>} [props.disabledWeekdays] - Blocked weekdays, forwarded to the `Calendar`.
+ * @param {number|{from?:number,to?:number}|Array|((year:number)=>boolean)} [props.disabledYears] - Blocked years, forwarded to the `Calendar`.
  * @param {'responsive'|'dropdown'|'modal'} [props.display='responsive'] - Popover display mode.
+ * @param {string} [props.error] - Error message shown under the field.
  * @param {'never'|'always'|'mobile'|'desktop'|boolean} [props.footer='never'] - Show an Apply / Cancel footer (deferred commit) — everywhere, only below `md`, only at `md`+, or never.
  * @param {Date} [props.max] - Latest selectable date.
  * @param {Date} [props.min] - Earliest selectable date.
@@ -62,7 +70,9 @@ const EMPTY_RANGE = { from : null , to : null } ;
  * @param {string} [props.mode='dd/mm/yyyy'] - Date format mode (see `dateModes`).
  * @param {(value: string) => void} [props.onChange] - Change handler (formatted string).
  * @param {(range: {start: Date, end: Date}|null) => void} [props.onDateRange] - Parsed-range handler.
+ * @param {(range: {start: Date, end: Date}) => void} [props.onDisabledDate] - Called instead of `onDateRange` when `strict` refuses a typed range.
  * @param {string} [props.rangeSeparator=' – '] - Separator between the two dates.
+ * @param {boolean} [props.strict=false] - Refuse, rather than emit, a typed range whose start or end the calendar would not let you click. Validates the **endpoints**, not the span : whether a range may cross a blocked day is `allowDisabledInRange`'s business, and it belongs to the grid.
  * @param {boolean} [props.showIcon=false] - Show the left calendar icon of the field.
  * @param {import('../../themes/sizing/sizes').Size} [props.size] - Field + button size.
  * @param {string} [props.triggerLabel='Open calendar'] - Trigger button aria-label (localizable).
@@ -86,7 +96,13 @@ const InputDateRangePicker =
     dateSeparator = '/' ,
     defaultValue = '' ,
     disabled = false ,
+    disabledDates ,
+    disabledLabel ,
+    disabledMonths ,
+    disabledWeekdays ,
+    disabledYears ,
     display = 'responsive' ,
+    error ,
     footer = 'never' ,
     max ,
     maxLength ,
@@ -95,7 +111,9 @@ const InputDateRangePicker =
     mode = DD_MM_YYYY ,
     onChange : onChangeFromProps ,
     onDateRange ,
+    onDisabledDate ,
     rangeSeparator = ' – ' ,
+    strict = false ,
     path = 'components.picker.dateRange' ,
     showIcon = false ,
     size ,
@@ -108,17 +126,25 @@ const InputDateRangePicker =
     // buttons are left undefined on purpose, so `Popover` resolves them from the
     // shared `components.picker` block rather than each picker restating them.
     const {
-        clear : clearFromI18n = 'Clear date range' ,
-        open  : openFromI18n  = 'Open calendar' ,
+        clear    : clearFromI18n    = 'Clear date range' ,
+        disabled : disabledFromI18n = 'This period is not available' ,
+        open     : openFromI18n     = 'Open calendar' ,
     }
     = useI18n( path , NO_LOCALE , false ) ;
 
-    const clearText   = clearLabel   ?? clearFromI18n ;
-    const triggerText = triggerLabel ?? openFromI18n ;
+    const clearText    = clearLabel    ?? clearFromI18n ;
+    const triggerText  = triggerLabel  ?? openFromI18n ;
+    const disabledText = disabledLabel ?? disabledFromI18n ;
 
     const [ strValue , setStrValue ] = useValue( defaultValue , valueFromProps , onChangeFromProps ) ;
     const [ rangeValue , setRangeValue ] = useState( EMPTY_RANGE ) ;
     const [ open , setOpen ] = useState( false ) ;
+
+    // A range typed into the masked field never goes through the grid — see the
+    // `strict` note above for why only the endpoints are checked here.
+    const [ refused , setRefused ] = useState( false ) ;
+
+    const { isDayDisabled } = useDisabledModel({ disabledDates , disabledMonths , disabledWeekdays , disabledYears , min , max }) ;
 
     // Footer (deferred commit) : whether it is active for the current viewport.
     const isMdUp     = useBreakpoint( 'md' ) ;
@@ -154,6 +180,17 @@ const InputDateRangePicker =
     // Field → calendar : the masked field emits { start , end } | null.
     const handleDateRange = ( dr ) =>
     {
+        const blocked = strict && dr
+            && ( ( dr.start && isDayDisabled( dayjs( dr.start ) ) ) || ( dr.end && isDayDisabled( dayjs( dr.end ) ) ) ) ;
+
+        if ( blocked )
+        {
+            setRefused( true ) ;
+            onDisabledDate?.( dr ) ;
+            return ;
+        }
+
+        setRefused( false ) ;
         setRangeValue( dr ? { from : dr.start , to : dr.end } : EMPTY_RANGE ) ;
         onDateRange?.( dr ) ;
     } ;
@@ -175,6 +212,8 @@ const InputDateRangePicker =
     // re-parsed as null by the field and wipe the in-progress selection.
     const handlePick = next =>
     {
+        // Anything coming from the grid passed its rules — clear a previous refusal.
+        setRefused( false ) ;
         setRangeValue( next ?? EMPTY_RANGE ) ;
 
         if ( !footerActive && next?.from && next?.to )
@@ -209,6 +248,7 @@ const InputDateRangePicker =
 
     const handleClear = () =>
     {
+        setRefused( false ) ;
         setStrValue( '' ) ;
         setRangeValue( EMPTY_RANGE ) ;
         onDateRange?.( null ) ;
@@ -260,6 +300,7 @@ const InputDateRangePicker =
                 value              = { strValue }
                 onChange           = { setStrValue }
                 onDateRange        = { handleDateRange }
+                error              = { refused ? disabledText : error }
                 actions            = { [ clearButton , trigger ] }
             />
 
@@ -278,13 +319,17 @@ const InputDateRangePicker =
                 cancelLabel   = { cancelLabel }
             >
                 <Calendar
-                    mode     = "range"
-                    months   = "auto"
-                    value    = { rangeValue }
-                    min      = { min }
-                    max      = { max }
+                    mode             = "range"
+                    months           = "auto"
+                    value            = { rangeValue }
+                    min              = { min }
+                    max              = { max }
+                    disabledDates    = { disabledDates }
+                    disabledMonths   = { disabledMonths }
+                    disabledWeekdays = { disabledWeekdays }
+                    disabledYears    = { disabledYears }
                     { ...calendarProps }
-                    onChange = { handlePick }
+                    onChange         = { handlePick }
                 />
             </Popover>
         </div>

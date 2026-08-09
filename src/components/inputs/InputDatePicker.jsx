@@ -7,10 +7,12 @@ import cn from '../../themes/helpers/cn' ;
 import useI18n   from '../../contexts/locale/useI18n' ;
 import NO_LOCALE from '../../contexts/locale/noLocale' ;
 import useValue from '../../hooks/useValue' ;
+import useDisabledModel from '../../hooks/useDisabledModel' ;
 import useDropdownPosition from '../../themes/hooks/useDropdownPosition' ;
 
 import getButtonClassNames , { GHOST , SQUARE } from '../../themes/components/button' ;
 
+import dayjs from '../../helpers/date/configureDayjs' ;
 import formatDateForMode from '../../helpers/date/formatDateForMode' ;
 import { DD_MM_YYYY } from '../../helpers/date/dateModes' ;
 
@@ -39,13 +41,21 @@ import { MdCalendarToday as CalendarIcon , MdClose as ClearIcon } from 'react-ic
  * @param {string} [props.clearLabel='Clear date'] - Clear button aria-label (localizable).
  * @param {string} [props.defaultValue=''] - Initial formatted value (uncontrolled).
  * @param {boolean} [props.disabled=false] - Disable the field and buttons.
+ * @param {Date|{from?:Date,to?:Date}|Array|((date:Date)=>boolean)} [props.disabledDates] - Blackout days, forwarded to the `Calendar`.
+ * @param {string} [props.disabledLabel='This date is not available'] - Error shown by `strict` when the typed date is blocked (localizable).
+ * @param {number|{year?:number,month:number}|Array|((year:number,month:number)=>boolean)} [props.disabledMonths] - Blocked months, forwarded to the `Calendar`.
+ * @param {number|string|Array<number|string>} [props.disabledWeekdays] - Blocked weekdays, forwarded to the `Calendar`.
+ * @param {number|{from?:number,to?:number}|Array|((year:number)=>boolean)} [props.disabledYears] - Blocked years, forwarded to the `Calendar`.
  * @param {'responsive'|'dropdown'|'modal'} [props.display='responsive'] - Popover display mode.
+ * @param {string} [props.error] - Error message shown under the field.
  * @param {Date} [props.max] - Latest selectable date.
  * @param {Date} [props.min] - Earliest selectable date.
  * @param {string} [props.mode='dd/mm/yyyy'] - Date format mode (see `dateModes`).
  * @param {(value: string) => void} [props.onChange] - Change handler (formatted string).
  * @param {(date: Date|null) => void} [props.onDate] - Parsed-date handler.
+ * @param {(date: Date) => void} [props.onDisabledDate] - Called instead of `onDate` when `strict` refuses a typed date.
  * @param {string} [props.separator='/'] - Segment separator.
+ * @param {boolean} [props.strict=false] - Refuse, rather than emit, a typed date the calendar would not let you click : `onDate` stays silent, the text stays in the field and the field goes into error.
  * @param {boolean} [props.showIcon=false] - Show the left calendar icon of the field.
  * @param {import('../../themes/sizing/sizes').Size} [props.size] - Field + button size.
  * @param {string} [props.triggerLabel='Open calendar'] - Trigger button aria-label (localizable).
@@ -65,13 +75,21 @@ const InputDatePicker =
     clearLabel ,
     defaultValue = '' ,
     disabled = false ,
+    disabledDates ,
+    disabledLabel ,
+    disabledMonths ,
+    disabledWeekdays ,
+    disabledYears ,
     display = 'responsive' ,
+    error ,
     max ,
     min ,
     mode = DD_MM_YYYY ,
     onChange : onChangeFromProps ,
     onDate ,
+    onDisabledDate ,
     separator = '/' ,
+    strict = false ,
     path = 'components.picker.date' ,
     showIcon = false ,
     size ,
@@ -82,17 +100,26 @@ const InputDatePicker =
 {
     // Only the labels naming *what* is picked are resolved here ; this picker has no footer of its own.
     const {
-        clear : clearFromI18n = 'Clear date' ,
-        open  : openFromI18n  = 'Open calendar' ,
+        clear    : clearFromI18n    = 'Clear date' ,
+        disabled : disabledFromI18n = 'This date is not available' ,
+        open     : openFromI18n     = 'Open calendar' ,
     }
     = useI18n( path , NO_LOCALE , false ) ;
 
-    const clearText   = clearLabel   ?? clearFromI18n ;
-    const triggerText = triggerLabel ?? openFromI18n ;
+    const clearText    = clearLabel    ?? clearFromI18n ;
+    const triggerText  = triggerLabel  ?? openFromI18n ;
+    const disabledText = disabledLabel ?? disabledFromI18n ;
 
     const [ strValue , setStrValue ] = useValue( defaultValue , valueFromProps , onChangeFromProps ) ;
     const [ dateValue , setDateValue ] = useState( null ) ;
     const [ open , setOpen ] = useState( false ) ;
+
+    // A date typed into the masked field never goes through the grid, so the rules
+    // have to be asked here too — otherwise the keyboard accepts what the click
+    // refuses. Off by default : `strict` is what turns the refusal on.
+    const [ refused , setRefused ] = useState( false ) ;
+
+    const { isDayDisabled } = useDisabledModel({ disabledDates , disabledMonths , disabledWeekdays , disabledYears , min , max }) ;
 
     // Viewport-aware positioning : the dropdown flips (top/bottom) and aligns
     // (start/center/end) based on where the field sits in the page.
@@ -114,12 +141,23 @@ const InputDatePicker =
 
     const handleInputDate = ( date ) =>
     {
+        if ( strict && date && isDayDisabled( dayjs( date ) ) )
+        {
+            setRefused( true ) ;
+            onDisabledDate?.( date ) ;
+            return ;
+        }
+
+        setRefused( false ) ;
         setDateValue( date ) ;
         onDate?.( date ) ;
     } ;
 
+    // A day can only be picked from the grid when the grid allows it, so anything
+    // coming through here clears a previous refusal.
     const handlePick = ( date ) =>
     {
+        setRefused( false ) ;
         setStrValue( formatDateForMode( date , mode , separator ) ) ;
         setDateValue( date ) ;
         onDate?.( date ) ;
@@ -128,6 +166,7 @@ const InputDatePicker =
 
     const handleClear = () =>
     {
+        setRefused( false ) ;
         setStrValue( '' ) ;
         setDateValue( null ) ;
         onDate?.( null ) ;
@@ -175,6 +214,7 @@ const InputDatePicker =
                 value     = { strValue }
                 onChange  = { setStrValue }
                 onDate    = { handleInputDate }
+                error     = { refused ? disabledText : error }
                 actions   = { [ clearButton , trigger ] }
             />
 
@@ -186,7 +226,17 @@ const InputDatePicker =
                 direction = { direction }
                 placement = { placement }
             >
-                <Calendar value={ dateValue } min={ min } max={ max } { ...calendarProps } onChange={ handlePick } />
+                <Calendar
+                    value            = { dateValue }
+                    min              = { min }
+                    max              = { max }
+                    disabledDates    = { disabledDates }
+                    disabledMonths   = { disabledMonths }
+                    disabledWeekdays = { disabledWeekdays }
+                    disabledYears    = { disabledYears }
+                    { ...calendarProps }
+                    onChange         = { handlePick }
+                />
             </Popover>
         </div>
     ) ;

@@ -32,20 +32,23 @@ const picker =
 
         date :
         {
-            clear : 'Effacer la date' ,
-            open  : 'Ouvrir le calendrier' ,
+            clear    : 'Effacer la date' ,
+            disabled : 'Cette date n’est pas disponible' ,
+            open     : 'Ouvrir le calendrier' ,
         } ,
 
         dateRange :
         {
-            clear : 'Effacer la période' ,
-            open  : 'Ouvrir le calendrier' ,
+            clear    : 'Effacer la période' ,
+            disabled : 'Cette période n’est pas disponible' ,
+            open     : 'Ouvrir le calendrier' ,
         } ,
 
         dateTime :
         {
-            clear : 'Effacer la date et l’heure' ,
-            open  : 'Ouvrir le sélecteur de date et d’heure' ,
+            clear    : 'Effacer la date et l’heure' ,
+            disabled : 'Cette date n’est pas disponible' ,
+            open     : 'Ouvrir le sélecteur de date et d’heure' ,
         } ,
 
         time :
@@ -73,20 +76,23 @@ const picker =
 
         date :
         {
-            clear : 'Clear date' ,
-            open  : 'Open calendar' ,
+            clear    : 'Clear date' ,
+            disabled : 'This date is not available' ,
+            open     : 'Open calendar' ,
         } ,
 
         dateRange :
         {
-            clear : 'Clear date range' ,
-            open  : 'Open calendar' ,
+            clear    : 'Clear date range' ,
+            disabled : 'This period is not available' ,
+            open     : 'Open calendar' ,
         } ,
 
         dateTime :
         {
-            clear : 'Clear date-time' ,
-            open  : 'Open date-time picker' ,
+            clear    : 'Clear date-time' ,
+            disabled : 'This date is not available' ,
+            open     : 'Open date-time picker' ,
         } ,
 
         time :

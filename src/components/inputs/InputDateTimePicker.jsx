@@ -12,12 +12,14 @@ import cn from '../../themes/helpers/cn' ;
 import useI18n   from '../../contexts/locale/useI18n' ;
 import NO_LOCALE from '../../contexts/locale/noLocale' ;
 import useValue from '../../hooks/useValue' ;
+import useDisabledModel from '../../hooks/useDisabledModel' ;
 import useMergeRefs from '../../hooks/useMergeRefs' ;
 import useBreakpoint from '../../themes/hooks/useBreakpoint' ;
 import useDropdownPosition from '../../themes/hooks/useDropdownPosition' ;
 
 import getButtonClassNames , { GHOST , SQUARE } from '../../themes/components/button' ;
 
+import dayjs from '../../helpers/date/configureDayjs' ;
 import formatDateForMode from '../../helpers/date/formatDateForMode' ;
 import parseISO from '../../helpers/date/parseISO' ;
 import readInputValue from '../../helpers/react/readInputValue' ;
@@ -169,7 +171,13 @@ const splitField = ( field ) =>
  * @param {string} [props.clearLabel='Clear date-time'] - Clear button aria-label (localizable).
  * @param {string} [props.defaultValue=''] - Initial combined value (uncontrolled).
  * @param {boolean} [props.disabled=false] - Disable the field and buttons.
+ * @param {Date|{from?:Date,to?:Date}|Array|((date:Date)=>boolean)} [props.disabledDates] - Blackout days, forwarded to the `Calendar`.
+ * @param {string} [props.disabledLabel='This date is not available'] - Error shown by `strict` when the typed date is blocked (localizable).
+ * @param {number|{year?:number,month:number}|Array|((year:number,month:number)=>boolean)} [props.disabledMonths] - Blocked months, forwarded to the `Calendar`.
+ * @param {number|string|Array<number|string>} [props.disabledWeekdays] - Blocked weekdays, forwarded to the `Calendar`.
+ * @param {number|{from?:number,to?:number}|Array|((year:number)=>boolean)} [props.disabledYears] - Blocked years, forwarded to the `Calendar`.
  * @param {'responsive'|'dropdown'|'modal'} [props.display='responsive'] - Popover display mode.
+ * @param {string} [props.error] - Error message shown under the field.
  * @param {'never'|'always'|'mobile'|'desktop'|boolean} [props.footer='never'] - Apply / Cancel footer (deferred commit).
  * @param {Date} [props.max] - Latest selectable date (Calendar + date bound).
  * @param {Date} [props.min] - Earliest selectable date (Calendar + date bound).
@@ -177,8 +185,10 @@ const splitField = ( field ) =>
  * @param {number} [props.minuteStep=1] - Minutes increment in the picker.
  * @param {(value: string) => void} [props.onChange] - Change handler (combined string).
  * @param {(date: Date|null) => void} [props.onDateTime] - Parsed date-time handler.
+ * @param {(date: Date) => void} [props.onDisabledDate] - Called instead of `onDateTime` when `strict` refuses the typed date.
  * @param {number} [props.secondStep=1] - Seconds increment in the picker.
  * @param {string} [props.separator='/'] - Date segment separator.
+ * @param {boolean} [props.strict=false] - Refuse, rather than emit, a typed date the calendar would not let you click : `onDateTime` stays silent, the text stays in the field and the field goes into error. The rules apply to the **date** part only — the time columns are not filtered.
  * @param {boolean} [props.showIcon=true] - Show the left icon of the field.
  * @param {import('../../themes/sizing/sizes').Size} [props.size] - Field + button size.
  * @param {string} [props.triggerLabel='Open date-time picker'] - Trigger button aria-label (localizable).
@@ -202,7 +212,13 @@ const InputDateTimePicker =
     clearLabel ,
     defaultValue = '' ,
     disabled = false ,
+    disabledDates ,
+    disabledLabel ,
+    disabledMonths ,
+    disabledWeekdays ,
+    disabledYears ,
     display = 'responsive' ,
+    error ,
     footer = 'never' ,
     max ,
     min ,
@@ -210,9 +226,11 @@ const InputDateTimePicker =
     minuteStep = 1 ,
     onChange : onChangeFromProps ,
     onDateTime ,
+    onDisabledDate ,
     path = 'components.picker.dateTime' ,
     secondStep = 1 ,
     separator = '/' ,
+    strict = false ,
     showIcon = true ,
     size ,
     triggerLabel ,
@@ -225,15 +243,19 @@ const InputDateTimePicker =
     // buttons are left undefined on purpose, so `Popover` resolves them from the
     // shared `components.picker` block rather than each picker restating them.
     const {
-        clear : clearFromI18n = 'Clear date-time' ,
-        open  : openFromI18n  = 'Open date-time picker' ,
+        clear    : clearFromI18n    = 'Clear date-time' ,
+        disabled : disabledFromI18n = 'This date is not available' ,
+        open     : openFromI18n     = 'Open date-time picker' ,
     }
     = useI18n( path , NO_LOCALE , false ) ;
 
-    const clearText   = clearLabel   ?? clearFromI18n ;
-    const triggerText = triggerLabel ?? openFromI18n ;
+    const clearText    = clearLabel    ?? clearFromI18n ;
+    const triggerText  = triggerLabel  ?? openFromI18n ;
+    const disabledText = disabledLabel ?? disabledFromI18n ;
 
     const [ value , setValue ] = useValue( defaultValue , valueFromProps , onChangeFromProps ) ;
+
+    const { isDayDisabled } = useDisabledModel({ disabledDates , disabledMonths , disabledWeekdays , disabledYears , min , max }) ;
 
     const isISOMode = mode === YYYY_MM_DD ;
 
@@ -296,12 +318,22 @@ const InputDateTimePicker =
         return result ;
     } ;
 
+    // The date part is parsed from the field, never from the grid, so the rules
+    // have to be asked here too — otherwise the keyboard accepts what the click
+    // refuses. Derived rather than stored : `dateObj` already is.
+    const refused = strict && !!dateObj && isDayDisabled( dayjs( dateObj ) ) ;
+
+    // biome-ignore lint/correctness/useExhaustiveDependencies: the effect emits when the *value* changes. `buildDateTime` is rebuilt on every render and the two handlers are usually inline, so listing them would fire the emit on every render instead.
     useEffect( () =>
     {
+        if ( refused )
+        {
+            onDisabledDate?.( dateObj ) ;
+            return ;
+        }
         onDateTime?.( buildDateTime( dateObj , timePart , meridiem ) ) ;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    , [ dateObj , timePart , meridiem ] ) ;
+    , [ dateObj , timePart , meridiem , refused ] ) ;
 
     // ---- Popover + draft (deferred when a footer is active).
     const [ open , setOpen ] = useState( false ) ;
@@ -472,6 +504,7 @@ const InputDateTimePicker =
                 icon         = { iconElement }
                 value        = { fieldValue }
                 onChange     = { handleFieldChange }
+                error        = { refused ? disabledText : error }
                 placeholder  = { placeholder }
                 actions      = { [ meridiemButton , clearButton , trigger ] }
             />
@@ -491,11 +524,15 @@ const InputDateTimePicker =
             >
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
                     <Calendar
-                        value    = { draftDate }
-                        min      = { min }
-                        max      = { max }
+                        value            = { draftDate }
+                        min              = { min }
+                        max              = { max }
+                        disabledDates    = { disabledDates }
+                        disabledMonths   = { disabledMonths }
+                        disabledWeekdays = { disabledWeekdays }
+                        disabledYears    = { disabledYears }
                         { ...calendarProps }
-                        onChange = { handlePickDate }
+                        onChange         = { handlePickDate }
                     />
                     <TimeColumns
                         ampm             = { ampm }
