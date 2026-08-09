@@ -15,6 +15,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - **New `createDisabledModel` helper (`@/helpers/date/createDisabledModel`).** One place now decides whether a day is selectable, from every rule at once, and — this is what it adds over `createDisabledMatcher` — says *which* rule matched. `createDisabledMatcher` is untouched and still exported; it became the blackout branch of the model.
 - **`normalizeWeekday` moved to `@/helpers/date/weekdays`**, next to the new `normalizeWeekdays`, since it is no longer the week-grid's private business. It is still re-exported from `@/helpers/date/getMonthMatrix`, so existing imports are unaffected.
 
+**Components — `Calendar` — blocking months and years**
+
+- **New `disabledMonths` and `disabledYears` props.** Until now the quick month and year pickers only knew the `min` / `max` bounds — there was no way to say "never August" or "nothing from 2030 on". Blocking a month meant blacking out each of its days one by one, which greyed the day grid but left the month's own button live in the picker, so the user landed on a fully struck-through month with nothing telling them why. `disabledMonths` takes a month index (0–11, every year), a `{ year, month }` pair, an array of those or a `( year, month )` predicate; `disabledYears` takes a year, a `{ from, to }` range with either bound optional, an array or a `( year )` predicate — the same grammar `disabledDates` already used.
+- **Rules cascade downwards.** A blocked year blocks its twelve months and all their days; a blocked month blocks its days. Each level reports the reason it inherited, so a day greyed out because its year is off says `'year'`, not `'blackout'`.
+- **Navigation stays free.** Blocked ≠ unreachable: the `‹ ›` arrows still walk through a blocked month to reach the next one. Only `min` / `max` will ever bound navigation, which is the lot that follows.
+- **New opt-in `deriveEmptyMonths`.** The reverse direction — a month whose every day happens to be blacked out showing as blocked in the quick picker — costs a scan of that month, so it stays off by default. When on, such a month is reported as a *blackout* rather than as a month rule and is struck through accordingly: nothing declares it blocked, its contents do. It is never applied to years; twelve month scans per cell over a twelve-year page is not a price a quick picker should pay.
+- **The bounds cascade compares integers, not dates.** The year/month check runs once per day cell; building a dayjs there allocated forty-two objects a month for a pair of comparisons.
+
+**Components — `Calendar` — internal grids**
+
+- **`MonthsGrid` and `YearsGrid` take a `getMonthReason` / `getYearReason` callback** in place of their `minDay` / `maxDay` and `minYear` / `maxYear` props. They had been re-deriving from the bounds what the model already knows, and could not have seen the new rules at all. Both are internal parts of `Calendar`; a call site importing them directly must pass the callback instead.
+- **`getCalendarCellClasses` takes a `disabledReason`**, and strikes a cell through only when it is explicitly `'blackout'`. Called with `disabled` alone it renders exactly as before — the opposite default to the day cells, because a month or a year cell is structural by nature.
+
 **Components — `Calendar` — how a blocked day looks**
 
 - **A blocked day is now struck through only when it is an exception.** Every non-selectable cell used to get `line-through`, which reads right for a public holiday and turns the grid into a checkerboard once whole weekdays are blocked. `getCalendarDayClasses` takes a `disabledReason` — `'bounds'`, `'weekday'` or `'blackout'` — and reserves the line-through for the last one; structural blocks are muted and inert, nothing more. Called with `disabled` alone and no reason, it renders exactly as before.

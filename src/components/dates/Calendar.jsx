@@ -47,8 +47,11 @@ const YEARS_VIEW  = 'years' ;
  * @param {string} [props.className] - Extra classes for the panel.
  * @param {Date} [props.defaultMonth] - Month shown on first render when there is no value (quick navigation start).
  * @param {Date|{from:Date|null,to:Date|null}|null} [props.defaultValue] - Initial value (uncontrolled).
+ * @param {boolean} [props.deriveEmptyMonths=false] - Also grey out, in the quick month picker, a month whose every day is blocked (costs a scan of the month).
  * @param {Date|{from?:Date,to?:Date}|Array|((date:Date)=>boolean)} [props.disabledDates] - Blackout days : a date, a `{from,to}` range, an array of those, or a predicate.
+ * @param {number|{year?:number,month:number}|Array|((year:number,month:number)=>boolean)} [props.disabledMonths] - Blocked months : `0`–`11` (every year), a `{year,month}` pair, an array of those, or a predicate.
  * @param {number|string|Array<number|string>} [props.disabledWeekdays] - Blocked weekdays : `0`–`6` (0 = Sunday) or `'sun'`…`'sat'`, alone or in an array. Absolute — independent of `weekStartsOn`.
+ * @param {number|{from?:number,to?:number}|Array|((year:number)=>boolean)} [props.disabledYears] - Blocked years : a year, a `{from,to}` range, an array of those, or a predicate.
  * @param {Date} [props.max] - Latest selectable date (inclusive).
  * @param {Date} [props.min] - Earliest selectable date (inclusive).
  * @param {'single'|'range'} [props.mode='single'] - Selection mode.
@@ -68,6 +71,9 @@ const YEARS_VIEW  = 'years' ;
  *
  * // Weekdays only — a range may then span a week-end with allowDisabledInRange
  * <Calendar disabledWeekdays={ [ 'sat' , 'sun' ] } />
+ *
+ * // August is out every year, and so is everything from 2030 on
+ * <Calendar disabledMonths={ 7 } disabledYears={ { from : 2030 } } />
  * ```
  */
 const Calendar =
@@ -77,8 +83,11 @@ const Calendar =
     clearable = false ,
     defaultMonth ,
     defaultValue ,
+    deriveEmptyMonths = false ,
     disabledDates ,
+    disabledMonths ,
     disabledWeekdays ,
+    disabledYears ,
     max ,
     min ,
     mode = SINGLE ,
@@ -142,9 +151,6 @@ const Calendar =
     const minDay = useMemo( () => ( min ? dayjs( min ).startOf( 'day' ) : null ) , [ min ] ) ;
     const maxDay = useMemo( () => ( max ? dayjs( max ).startOf( 'day' ) : null ) , [ max ] ) ;
 
-    const minYear = minDay ? minDay.year() : null ;
-    const maxYear = maxDay ? maxDay.year() : null ;
-
     // Quick-navigation handlers, per month column. Picking a month sets the anchor
     // so the picked month lands in the column it was opened from (in a dual view
     // the right column is anchor + 1). The years grid chains into the months grid
@@ -155,14 +161,14 @@ const Calendar =
     const pickMonth  = ( m ) => { setViewMonth( dayjs( new Date( pickerYear , m , 1 ) ).subtract( pickerIndex , 'month' ) ) ; setPickerIndex( null ) ; } ;
     const pickYear   = ( y ) => { setPickerYear( y ) ; setPickerKind( MONTHS_VIEW ) ; } ;
 
-    // Every rule that makes a day non-selectable, resolved in one place : the
-    // min/max bounds, the blocked weekdays and the blackout dates. `getDayReason`
-    // also says which one matched, so the theme can mute a week-end without
-    // striking it through like an exceptional blackout day.
-    const { getDayReason } = useMemo
+    // Every rule that makes a cell non-selectable, resolved in one place : the
+    // min/max bounds, the blocked weekdays / months / years and the blackout
+    // dates. Each getter also says which rule matched, so the theme can mute a
+    // week-end without striking it through like an exceptional blackout day.
+    const { getDayReason , getMonthReason , getYearReason } = useMemo
     (
-        () => createDisabledModel({ disabledDates , disabledWeekdays , minDay , maxDay }) ,
-        [ disabledDates , disabledWeekdays , minDay , maxDay ]
+        () => createDisabledModel({ disabledDates , disabledWeekdays , disabledMonths , disabledYears , minDay , maxDay , deriveEmptyMonths }) ,
+        [ disabledDates , disabledWeekdays , disabledMonths , disabledYears , minDay , maxDay , deriveEmptyMonths ]
     ) ;
 
     const isDisabled = ( day ) => getDayReason( day ) !== null ;
@@ -340,17 +346,16 @@ const Calendar =
                         {
                             return (
                                 <MonthsGrid
-                                    key          = { `picker-${ i }` }
-                                    year         = { pickerYear }
-                                    currentMonth = { slotMonth( i ).month() }
-                                    currentYear  = { slotMonth( i ).year() }
-                                    lang         = { lang }
-                                    minDay       = { minDay }
-                                    maxDay       = { maxDay }
-                                    onPick       = { pickMonth }
-                                    onPrevYear   = { () => setPickerYear( ( y ) => y - 1 ) }
-                                    onNextYear   = { () => setPickerYear( ( y ) => y + 1 ) }
-                                    onYearClick  = { () => openYears( i , pickerYear ) }
+                                    key            = { `picker-${ i }` }
+                                    year           = { pickerYear }
+                                    currentMonth   = { slotMonth( i ).month() }
+                                    currentYear    = { slotMonth( i ).year() }
+                                    lang           = { lang }
+                                    getMonthReason = { getMonthReason }
+                                    onPick         = { pickMonth }
+                                    onPrevYear     = { () => setPickerYear( ( y ) => y - 1 ) }
+                                    onNextYear     = { () => setPickerYear( ( y ) => y + 1 ) }
+                                    onYearClick    = { () => openYears( i , pickerYear ) }
                                 />
                             ) ;
                         }
@@ -359,14 +364,13 @@ const Calendar =
                         {
                             return (
                                 <YearsGrid
-                                    key         = { `picker-${ i }` }
-                                    pageStart   = { yearPageStart }
-                                    currentYear = { slotMonth( i ).year() }
-                                    minYear     = { minYear }
-                                    maxYear     = { maxYear }
-                                    onPick      = { pickYear }
-                                    onPrevPage  = { () => setYearPageStart( ( s ) => s - 12 ) }
-                                    onNextPage  = { () => setYearPageStart( ( s ) => s + 12 ) }
+                                    key           = { `picker-${ i }` }
+                                    pageStart     = { yearPageStart }
+                                    currentYear   = { slotMonth( i ).year() }
+                                    getYearReason = { getYearReason }
+                                    onPick        = { pickYear }
+                                    onPrevPage    = { () => setYearPageStart( ( s ) => s - 12 ) }
+                                    onNextPage    = { () => setYearPageStart( ( s ) => s + 12 ) }
                                 />
                             ) ;
                         }

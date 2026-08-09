@@ -12,8 +12,7 @@ import { getCalendarCellClasses } from '../../../themes/components/calendar' ;
  * @param {Object} props
  * @param {number} props.pageStart - First year of the displayed 12-year page.
  * @param {number} props.currentYear - The anchor year, highlighted.
- * @param {number|null} [props.minYear] - Earliest selectable year.
- * @param {number|null} [props.maxYear] - Latest selectable year.
+ * @param {(year: number) => string|null} [props.getYearReason] - Why a year is not selectable ('bounds' | 'year'), or `null`.
  * @param {(year: number) => void} props.onPick - Year click.
  * @param {() => void} props.onPrevPage - Page back 12 years.
  * @param {() => void} props.onNextPage - Page forward 12 years.
@@ -22,8 +21,7 @@ const YearsGrid =
 ({
     pageStart ,
     currentYear ,
-    minYear ,
-    maxYear ,
+    getYearReason ,
     onPick ,
     onPrevPage ,
     onNextPage ,
@@ -45,15 +43,16 @@ const YearsGrid =
             <div className="grid grid-cols-4 gap-1">
                 { years.map( ( y ) =>
                 {
-                    const active   = y === currentYear ;
-                    const disabled = ( minYear != null && y < minYear ) || ( maxYear != null && y > maxYear ) ;
+                    const active = y === currentYear ;
+                    const reason = getYearReason?.( y ) ?? null ;
+                    const disabled = reason !== null ;
                     return (
                         <button
                             key          = { y }
                             type         = "button"
                             disabled     = { disabled }
                             aria-pressed = { active }
-                            className    = { getCalendarCellClasses({ active , disabled }) }
+                            className    = { getCalendarCellClasses({ active , disabled , disabledReason : reason ?? undefined }) }
                             onClick      = { () => onPick( y ) }
                         >
                             { y }

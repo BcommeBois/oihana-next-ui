@@ -19,11 +19,21 @@ export const BLACKOUT = 'blackout' ;
 /** Matched by `disabledWeekdays`. */
 export const WEEKDAY = 'weekday' ;
 
+/** Matched by `disabledMonths` — or inherited by every day of that month. */
+export const MONTH = 'month' ;
+
+/** Matched by `disabledYears` — or inherited by every month and day of that year. */
+export const YEAR = 'year' ;
+
 /**
  * Reasons that describe the calendar's structure rather than an exception.
  * These are muted but never struck through.
+ *
+ * A month whose every day turns out to be blacked out is reported as
+ * {@link BLACKOUT}, not {@link MONTH} : nothing declares that month blocked, its
+ * contents do — and the line-through says exactly that.
  */
-export const STRUCTURAL_REASONS = [ BOUNDS , WEEKDAY ] ;
+export const STRUCTURAL_REASONS = [ BOUNDS , WEEKDAY , MONTH , YEAR ] ;
 
 /**
  * Tells whether a reason is structural (as opposed to an explicit blackout).

@@ -20,8 +20,7 @@ const MONTHS = Array.from( { length : 12 } , ( _ , i ) => i ) ; // 0 → 11
  * @param {number} props.currentMonth - The anchor month (0–11), highlighted when on `currentYear`.
  * @param {number} props.currentYear - The anchor year.
  * @param {string} props.lang - Active locale code (month labels).
- * @param {import('dayjs').Dayjs|null} [props.minDay] - Earliest selectable day.
- * @param {import('dayjs').Dayjs|null} [props.maxDay] - Latest selectable day.
+ * @param {(year: number, month: number) => string|null} [props.getMonthReason] - Why a month is not selectable ('bounds' | 'month' | 'year' | 'blackout'), or `null`.
  * @param {(month: number) => void} props.onPick - Month click (0–11).
  * @param {() => void} props.onPrevYear - Go to the previous year.
  * @param {() => void} props.onNextYear - Go to the next year.
@@ -33,8 +32,7 @@ const MonthsGrid =
     currentMonth ,
     currentYear ,
     lang ,
-    minDay ,
-    maxDay ,
+    getMonthReason ,
     onPick ,
     onPrevYear ,
     onNextYear ,
@@ -46,10 +44,6 @@ const MonthsGrid =
         () => MONTHS.map( ( m ) => dayjs( new Date( 2021 , m , 1 ) ).locale( lang ).format( 'MMM' ) ) ,
         [ lang ]
     ) ;
-
-    const isDisabled = ( m ) =>
-        ( !!minDay && dayjs( new Date( year , m , 1 ) ).endOf( 'month' ).isBefore( minDay , 'day' ) ) ||
-        ( !!maxDay && dayjs( new Date( year , m , 1 ) ).startOf( 'month' ).isAfter( maxDay , 'day' ) ) ;
 
     return (
         <div className="flex w-full flex-col gap-2 sm:w-60">
@@ -67,15 +61,16 @@ const MonthsGrid =
             <div className="grid grid-cols-4 gap-1">
                 { MONTHS.map( ( m ) =>
                 {
-                    const active   = m === currentMonth && year === currentYear ;
-                    const disabled = isDisabled( m ) ;
+                    const active = m === currentMonth && year === currentYear ;
+                    const reason = getMonthReason?.( year , m ) ?? null ;
+                    const disabled = reason !== null ;
                     return (
                         <button
                             key          = { m }
                             type         = "button"
                             disabled     = { disabled }
                             aria-pressed = { active }
-                            className    = { getCalendarCellClasses({ active , disabled , className : 'capitalize' }) }
+                            className    = { getCalendarCellClasses({ active , disabled , disabledReason : reason ?? undefined , className : 'capitalize' }) }
                             onClick      = { () => onPick( m ) }
                         >
                             { labels[ m ] }

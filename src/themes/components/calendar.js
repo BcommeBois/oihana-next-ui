@@ -10,7 +10,7 @@
 
 import cn from '../helpers/cn' ;
 
-import { isStructuralReason } from '../../helpers/date/disabledReasons' ;
+import { BLACKOUT , isStructuralReason } from '../../helpers/date/disabledReasons' ;
 
 /** Base classes for the calendar panel. */
 export const CALENDAR = 'inline-flex flex-col gap-1 select-none' ;
@@ -131,7 +131,8 @@ export const CALENDAR_CELL = 'btn btn-sm rounded-field font-normal' ;
  * @param {string} [props.beforeClassName] - ClassName to prepend.
  * @param {string} [props.className] - ClassName to append.
  * @param {boolean} [props.active] - The current month / year.
- * @param {boolean} [props.disabled] - Out of the allowed min / max range.
+ * @param {boolean} [props.disabled] - Not selectable.
+ * @param {string} [props.disabledReason] - Why : 'bounds' | 'month' | 'year' (structural, muted only) or 'blackout' — a month every day of which is blocked, struck through like the days it holds.
  *
  * @returns {string} The cell className expression.
  */
@@ -143,6 +144,7 @@ export const getCalendarCellClasses =
     className ,
     active ,
     disabled ,
+    disabledReason ,
 }
 = {} ) => cn
 (
@@ -153,6 +155,9 @@ export const getCalendarCellClasses =
         ...active && { 'btn-primary text-primary-content' : true } ,
         ...!active && { 'btn-ghost' : true } ,
         ...disabled && !active && { 'text-base-content/40' : true } ,
+        // Struck through only when explicitly a blackout : unlike a day, a month or
+        // a year cell is structural by nature, so silence must keep it plain.
+        ...disabled && disabledReason === BLACKOUT && { 'line-through' : true } ,
         ...after ,
     } ,
     className ,

@@ -46,6 +46,11 @@ const DateDemo = () =>
         { from : new Date( today.getFullYear() , today.getMonth() , 18 ) , to : new Date( today.getFullYear() , today.getMonth() , 22 ) } ,
     ] ;
 
+    // A whole month blacked out day by day — nothing declares March blocked, only
+    // deriveEmptyMonths makes the quick picker notice that none of its days is free.
+    const nextYear    = today.getFullYear() + 1 ;
+    const marchOfNext = { from : new Date( nextYear , 2 , 1 ) , to : new Date( nextYear , 2 , 31 ) } ;
+
     // Shortcut labels localized via the language context (anticipates i18n) — we
     // reuse the default range shortcuts and override their labels by id.
     const { lang } = useLang() ;
@@ -137,6 +142,61 @@ const DateDemo = () =>
                         <span className="text-xs font-medium opacity-60">week-ends off + blackout dates</span>
                         <div className="w-fit max-w-full overflow-x-auto rounded-box border border-base-300 bg-base-100 p-3 shadow-sm">
                             <Calendar disabledWeekdays={[ 'sat' , 'sun' ]} disabledDates={ blocked } />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="flex flex-col gap-3">
+                <span className="font-semibold">Block months and years (disabledMonths, disabledYears)</span>
+                <p className="text-xs opacity-50">
+                    Click the month or the year in the header to open the quick pickers — that is where
+                    the rules show. <span className="font-mono">disabledMonths</span> takes 0–11 (that month
+                    every year), a <span className="font-mono">{ '{ year , month }' }</span> pair, an array of
+                    those or a <span className="font-mono">( year , month )</span> predicate ;
+                    <span className="font-mono"> disabledYears</span> takes a year, a
+                    <span className="font-mono"> { '{ from , to }' }</span> range (either bound optional), an
+                    array or a <span className="font-mono">( year )</span> predicate. Rules cascade
+                    <span className="font-semibold"> downwards</span> : a blocked year greys its twelve
+                    months, a blocked month greys all its days. Navigation stays free — you can still walk
+                    through a blocked month to reach the next one.
+                </p>
+                <div className="flex flex-wrap items-start gap-6">
+                    <div className="flex flex-col gap-1">
+                        <span className="text-xs font-medium opacity-60">July and August off, every year</span>
+                        <div className="w-fit max-w-full overflow-x-auto rounded-box border border-base-300 bg-base-100 p-3 shadow-sm">
+                            <Calendar disabledMonths={[ 6 , 7 ]} defaultMonth={ new Date( today.getFullYear() , 6 , 1 ) } />
+                        </div>
+                    </div>
+                    <div className="flex flex-col gap-1">
+                        <span className="text-xs font-medium opacity-60">nothing from { nextYear + 1 } on</span>
+                        <div className="w-fit max-w-full overflow-x-auto rounded-box border border-base-300 bg-base-100 p-3 shadow-sm">
+                            <Calendar disabledYears={{ from : nextYear + 1 }} />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="flex flex-col gap-3">
+                <span className="font-semibold">Months emptied by their days (deriveEmptyMonths)</span>
+                <p className="text-xs opacity-50">
+                    Every day of March { nextYear } is blacked out, but nothing declares the month itself
+                    blocked — so by default its button in the quick picker stays live and lands you on a
+                    fully greyed grid. <span className="font-mono">deriveEmptyMonths</span> makes the picker
+                    scan the month and strike it through instead. It is opt-in because it costs that scan,
+                    and it is never applied to years. Open the month picker on { nextYear } to compare.
+                </p>
+                <div className="flex flex-wrap items-start gap-6">
+                    <div className="flex flex-col gap-1">
+                        <span className="text-xs font-medium opacity-60">default — March stays live</span>
+                        <div className="w-fit max-w-full overflow-x-auto rounded-box border border-base-300 bg-base-100 p-3 shadow-sm">
+                            <Calendar disabledDates={ marchOfNext } defaultMonth={ new Date( nextYear , 2 , 1 ) } />
+                        </div>
+                    </div>
+                    <div className="flex flex-col gap-1">
+                        <span className="text-xs font-medium opacity-60">deriveEmptyMonths — March struck through</span>
+                        <div className="w-fit max-w-full overflow-x-auto rounded-box border border-base-300 bg-base-100 p-3 shadow-sm">
+                            <Calendar deriveEmptyMonths disabledDates={ marchOfNext } defaultMonth={ new Date( nextYear , 2 , 1 ) } />
                         </div>
                     </div>
                 </div>
