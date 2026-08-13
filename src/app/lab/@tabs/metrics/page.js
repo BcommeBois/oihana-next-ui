@@ -5,6 +5,7 @@ import useI18n   from '@/contexts/locale/useI18n.js' ;
 
 import BarListDemo     from '@/demo/metrics/BarListDemo' ;
 import CategoryBarDemo from '@/demo/metrics/CategoryBarDemo' ;
+import DeltaDemo       from '@/demo/metrics/DeltaDemo' ;
 import SparklineDemo   from '@/demo/metrics/SparklineDemo' ;
 import TrackerDemo     from '@/demo/metrics/TrackerDemo' ;
 
@@ -52,6 +53,10 @@ const MetricsShowcase = ( { path = 'app.lab.metrics' } ) =>
             <Divider />
 
             <SparklineDemo />
+
+            <Divider />
+
+            <DeltaDemo />
 
         </Page>
     ) ;
