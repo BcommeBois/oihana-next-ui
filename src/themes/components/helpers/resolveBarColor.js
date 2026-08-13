@@ -1,12 +1,14 @@
 import getBackgroundColor from '../../colors/backgroundColor' ;
 
+import resolveColor from './resolveColor' ;
+
 /**
- * Resolves a bar color into a class definition, or an inline style when the value is not a theme token.
+ * Resolves a bar color into a class definition, or an inline `backgroundColor` when the
+ * value is not a theme token.
  *
- * Semantic tokens come first : `'primary'` becomes `bg-primary` and follows the
- * DaisyUI theme. Anything else — a hex, an `oklch()`, a CSS variable — falls back
- * to an inline `backgroundColor`, which is the escape hatch for a bar that has to
- * match colors imposed elsewhere, typically a nivo chart sitting next to it.
+ * The background half of {@link module:themes/components/helpers/resolveColor} — used by
+ * every filled mark of the `metrics` group : the segments of a category bar, the bars of
+ * a bar list, the blocks of a tracker.
  *
  * @param {string} [value] - A DaisyUI color token or any CSS color.
  *
@@ -21,21 +23,9 @@ import getBackgroundColor from '../../colors/backgroundColor' ;
  * // → { definition : {} , style : { backgroundColor : '#4E79A7' } }
  * ```
  */
-export const resolveBarColor = value =>
-{
-    if ( !value )
-    {
-        return { definition : {} , style : undefined } ;
-    }
-
-    const definition = getBackgroundColor( value ) ;
-
-    if ( Object.keys( definition ).length > 0 )
-    {
-        return { definition , style : undefined } ;
-    }
-
-    return { definition : {} , style : { backgroundColor : value } } ;
-} ;
+export const resolveBarColor = value => resolveColor( value , {
+    getter    : getBackgroundColor ,
+    styleProp : 'backgroundColor' ,
+} ) ;
 
 export default resolveBarColor ;
