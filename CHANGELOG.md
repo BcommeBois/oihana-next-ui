@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.12.0] — 2026-08-13
+
 **Components — new `metrics` group — `CategoryBar`**
 
 - **New `components/metrics/` group.** Micro-visualisations : compact, dependency-free readings meant to sit inside a card or a table cell. They are deliberately *not* in `components/charts/`, which carries the nivo peer dependencies, nor in `components/progress/`, which mirrors the DaisyUI components one to one.
@@ -98,6 +100,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - **The measure defaults to `primary`, and the bands to nothing at all.** Few drew the measure in black over grey bands, on paper, where black *was* the ink; on a themed screen the same bar reads as a slab and hides the bands it exists to be compared against. Here the measure is the data — the role `primary` already plays for `Sparkline` and `BarList` — and the bands are muted ground. `QUALITATIVE_COLORS` is exported for them but deliberately **not** made the default: swapping a palette on the presence of a prop is the kind of magic that makes a component impossible to predict.
 - **`QUALITATIVE_COLORS` are tints of `base-content`**, not `base-*` surfaces. A surface token only reads against *other* surfaces — `base-200` bands vanish on a `base-200` card, which is exactly where a bullet ends up. A tint of the content colour is drawn against whatever it sits on and flips with the theme on its own, with no `dark:` variant and nothing to re-tune per card.
 - **`resolveColor` takes a ready-made utility class**, through a new `prefix` option wired into `resolveBarColor` (`bg-`) and `resolveTextColor` (`text-`). This is what makes *translucent* colours reachable at all: `base-content/20` is no theme token, and as an inline style it would be nonsense, yet it is the only kind of colour that reads on any surface in both themes. The three forms a colour can now take are a theme token, a utility class, or any CSS colour.
+
+**Documentation — the `metrics` guide**
+
+- **New `src/components/metrics/README.md`**, the first per-group guide — shipped with the package (`files` carries all of `src`) and rendered by GitHub when browsing the folder, so it sits next to the code it describes rather than in a documentation tree that rots on its own.
+- It covers what the group is **not** (`charts/`, which carries the nivo peer dependencies; `progress/`, which mirrors DaisyUI one to one), a table of the seven readings and the question each answers, and the rules that hold across all of them: the three forms a colour takes, responsive size props, the CSS-only DaisyUI tooltip and the `overflow` constraint that comes with it, `items`-or-raw, and the degenerate cases that are handled rather than left to divide by zero.
+- **Four recipes, with complete code**: the KPI tile (`Stat`'s `figure` and `description` slots, hence still no KPI component), the bullet graph, the status page, and the analytics panel.
+- **An accessibility section**, which is the part no screenshot shows and the reason these are components rather than snippets.
+- **No hand-copied props table**: the JSDoc in each file is the API reference, and a table restating it diverges within two commits.
 
 **Demo — `/lab/metrics`**
 

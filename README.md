@@ -43,6 +43,11 @@ import Button    from 'oihana-next-ui/components/Button'
 import useThemes from 'oihana-next-ui/contexts/themes/useThemes'
 ```
 
+Every component carries its own JSDoc — props, defaults and examples — and the live demos
+sit under `/lab`. Some groups add a guide of their own :
+[`components/metrics`](src/components/metrics/README.md), the compact dashboard readings
+(category bar, bar list, tracker, sparkline, delta, bullet graph).
+
 ### CSS
 
 Some components require their stylesheet to be imported explicitly :
