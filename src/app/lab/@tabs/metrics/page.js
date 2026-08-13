@@ -5,6 +5,7 @@ import useI18n   from '@/contexts/locale/useI18n.js' ;
 
 import BarListDemo     from '@/demo/metrics/BarListDemo' ;
 import CategoryBarDemo from '@/demo/metrics/CategoryBarDemo' ;
+import TrackerDemo     from '@/demo/metrics/TrackerDemo' ;
 
 import Container from '@/display/Container' ;
 import Divider   from '@/components/Divider' ;
@@ -42,6 +43,10 @@ const MetricsShowcase = ( { path = 'app.lab.metrics' } ) =>
             <Divider />
 
             <BarListDemo />
+
+            <Divider />
+
+            <TrackerDemo />
 
         </Page>
     ) ;

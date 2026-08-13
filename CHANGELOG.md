@@ -36,9 +36,22 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - **New `themes/components/barList` generator**, and a `BarListRow` part, both exported for a caller who needs to build the rows themselves.
 - **Rows are subgrids.** The list is a two-column grid and every row spans both columns through `grid-cols-subgrid`, so bars and values share the same columns by construction. Laid out as two independent columns — the obvious implementation — the two sides only stay aligned through margins copied by hand on both sides, and drift apart the moment a row changes height.
 
+**Components — `metrics` — `Tracker`**
+
+- **New `Tracker` component.** A strip of blocks, one per observation, where the colour carries the state — ninety days of uptime, the last fifty builds, a month of backups. The shape of a status page.
+  - **New `status` per block**, a theme token (`'success'`, `'warning'`, `'error'`, `'base-300'`…) rather than a raw Tailwind class, so the strip follows the DaisyUI theme and needs no dark-mode variant on every one of its blocks. Any other CSS colour is accepted too, through the shared `resolveBarColor`. `defaultStatus` colours a block nothing is known about.
+  - **Blocks that cannot be read are dropped, not squeezed.** Ninety blocks across a phone leave each one about three pixels wide: unreadable, and impossible to tap. The track measures itself and keeps as many of the **most recent** blocks as fit at `minBlockWidth` (6px by default), so the same `data` works on a phone and on a dashboard. `maxBlocks` caps it further when the number is known in advance.
+  - **The measurement is of the container, not of the viewport.** A tracker inside a narrow side panel on a wide screen gets it right, where a breakpoint could not — and a narrow container keeps the same block count whatever the window does.
+  - **New `startLabel` / `endLabel` bounds and `summary`**, the status-page pattern. Both bounds accept a node *or* a `( visible, total ) => node` function: after truncation a fixed "90 days ago" would be a lie, and only the component knows how many blocks are on screen.
+  - **The tooltip is the DaisyUI one, which is pure CSS** — an attribute on the block, no state and no portal. That is what lets a track carry ninety of them without ninety React components watching their own hover.
+  - **The strip is an `<ol>` of `<li>`**, each block labelled by its tooltip. When no block has anything to say the whole strip goes `aria-hidden`: ninety mute list items teach a screen reader nothing, and the bounds and summary are real text that carries the meaning.
+  - **`size` is responsive**, scalar or per breakpoint.
+- **New `themes/components/tracker` generator**, and a `TrackerBlock` part, both exported.
+- **Nothing in the track clips.** Blocks are flex items that always fit, so the track needs no `overflow-hidden` — which is what leaves the tooltip free to appear above a block. Dropping what will not fit is the component's job, not the stylesheet's: `overflow-x: hidden` forces `overflow-y` to `auto`, so a clipping track would have cut the tooltips off vertically as well.
+
 **Demo — `/lab/metrics`**
 
-- **New showcase page** listing the `metrics` components, with a `CategoryBar` demo covering thickness, labels, marker, named segments and legend, free colours, and the edge cases, and a `BarList` demo covering formatting, sizes, colours, the shared scale, clickable rows and links, and the loading and empty states.
+- **New showcase page** listing the `metrics` components, with a `CategoryBar` demo covering thickness, labels, marker, named segments and legend, free colours, and the edge cases, a `BarList` demo covering formatting, sizes, colours, the shared scale, clickable rows and links, and the loading and empty states, and a `Tracker` demo covering states, heights, bounds, the explicit cap, and the same ninety days at three container widths.
 - **New `demo` locale namespace** (`@locale/demo/`), for strings that belong to a demo rather than to a page. The page itself is localized under `app.lab.metrics`, like the rest of the lab.
 
 ## [0.11.0] — 2026-08-09
