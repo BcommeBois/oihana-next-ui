@@ -3,9 +3,11 @@
 import I18nMetas from '@/components/i18n/I18nMetas.jsx' ;
 import useI18n   from '@/contexts/locale/useI18n.js' ;
 
+import BarListDemo     from '@/demo/metrics/BarListDemo' ;
 import CategoryBarDemo from '@/demo/metrics/CategoryBarDemo' ;
 
 import Container from '@/display/Container' ;
+import Divider   from '@/components/Divider' ;
 import Page      from '@/display/Page' ;
 
 /**
@@ -36,6 +38,10 @@ const MetricsShowcase = ( { path = 'app.lab.metrics' } ) =>
             </Container>
 
             <CategoryBarDemo />
+
+            <Divider />
+
+            <BarListDemo />
 
         </Page>
     ) ;

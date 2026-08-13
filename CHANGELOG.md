@@ -23,9 +23,22 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - **New `themes/components/helpers/resolveBarColor` helper.** Resolves a colour into a class definition when it is a DaisyUI token, and into an inline `backgroundColor` otherwise. Shared, so every future bar-shaped component in `metrics` accepts the same two forms.
 - **Segments round their own outer corners** rather than being clipped by an `overflow-hidden` track. The clipping track is the obvious implementation and a trap here: the DaisyUI tooltip renders through `::before` / `::after`, so a tooltip attached to a segment would be cut off by that very overflow.
 
+**Components — `metrics` — `BarList`**
+
+- **New `BarList` component.** A ranked list of values, each drawn as a bar as wide as its share — top pages, top referrers, top error codes. `sortOrder` defaults to `'descending'`, since a bar list is a ranking; `'none'` keeps the order the data came in.
+  - **New `max` prop.** Bar widths are relative to the largest value, so the leader always fills its row and the shape of the distribution is what one reads. `max` imposes the scale instead, which is the only way two lists side by side can be compared — normalised each on its own leader, they show the same picture for very different numbers.
+  - **`color` applies to the list and to a single row**, through `item.color`. Theme tokens and free CSS colours are both accepted, via the shared `resolveBarColor`. The bar is a tint rather than a solid fill, since the label sits on top of it.
+  - **New per-row `icon`**, the favicon-or-flag every analytics panel ends up wanting, and **`showPercentage`**, which appends each value's share of the total in a muted span.
+  - **`size` is responsive**, scalar or per breakpoint. The scale is row height, which on a touch screen is also the size of the target: `lg` clears the 40px mark.
+  - **`loading` shows as many skeleton rows as the data will have**, so the panel does not jump when the query lands, and an empty list falls back to `EmptyState` — `emptyLabel` / `emptyProps` for the default one, `emptyState` to replace it.
+  - **One interactive element per row, at most.** `href` turns the row into a link — a `Link`, or a plain anchor with `target="_blank" rel="noreferrer"` under `external` — and `onSelect` turns it into a button when there is no `href`. A row with neither stays inert. The value cell stays outside the interactive element, as the bar width is measured on the label column alone.
+  - **The list is an `<ol>` of `<li>`**, with the bar `aria-hidden`: it is a decorative restatement of the value already written next to it.
+- **New `themes/components/barList` generator**, and a `BarListRow` part, both exported for a caller who needs to build the rows themselves.
+- **Rows are subgrids.** The list is a two-column grid and every row spans both columns through `grid-cols-subgrid`, so bars and values share the same columns by construction. Laid out as two independent columns — the obvious implementation — the two sides only stay aligned through margins copied by hand on both sides, and drift apart the moment a row changes height.
+
 **Demo — `/lab/metrics`**
 
-- **New showcase page** listing the `metrics` components, with a `CategoryBar` demo covering thickness, labels, marker, named segments and legend, free colours, and the edge cases.
+- **New showcase page** listing the `metrics` components, with a `CategoryBar` demo covering thickness, labels, marker, named segments and legend, free colours, and the edge cases, and a `BarList` demo covering formatting, sizes, colours, the shared scale, clickable rows and links, and the loading and empty states.
 - **New `demo` locale namespace** (`@locale/demo/`), for strings that belong to a demo rather than to a page. The page itself is localized under `app.lab.metrics`, like the rest of the lab.
 
 ## [0.11.0] — 2026-08-09
