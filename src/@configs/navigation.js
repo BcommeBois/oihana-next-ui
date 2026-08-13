@@ -35,6 +35,7 @@ import { TbLayoutKanban         as KanbanIcon         } from "react-icons/tb";
 import { TbChartHistogram       as ChartIcon          } from "react-icons/tb";
 import { TbChartDonut           as ChartCircularIcon  } from "react-icons/tb";
 import { TbChartGridDots        as ChartGridIcon      } from "react-icons/tb";
+import { TbGauge                as MetricsIcon        } from "react-icons/tb";
 import { CiBoxList              as ListIcon           } from "react-icons/ci";
 import { LuListTree             as TreeIcon           } from "react-icons/lu";
 import { RiProgress7Line        as LoadingIcon        } from "react-icons/ri";
@@ -130,6 +131,7 @@ const navigation =
                     { id : 'chartsCartesian' , type : LINK  , Icon : ChartIcon         , path  : '/lab/charts'    } ,
                     { id : 'chartsCirculars' , type : LINK  , Icon : ChartCircularIcon , path  : '/lab/circulars' } ,
                     { id : 'chartsGrids'     , type : LINK  , Icon : ChartGridIcon     , path  : '/lab/grids'     } ,
+                    { id : 'chartsMetrics'   , type : LINK  , Icon : MetricsIcon       , path  : '/lab/metrics'   } ,
                 ]
             } ,
             {

@@ -6,6 +6,28 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+
+**Components — new `metrics` group — `CategoryBar`**
+
+- **New `components/metrics/` group.** Micro-visualisations : compact, dependency-free readings meant to sit inside a card or a table cell. They are deliberately *not* in `components/charts/`, which carries the nivo peer dependencies, nor in `components/progress/`, which mirrors the DaisyUI components one to one.
+- **New `CategoryBar` component.** A horizontal bar splitting a total into proportional segments — a budget across categories, a quota across plans, a score across bands. Not a progress bar: `Progress` reports one value against a maximum, this shows how a whole is *divided*.
+  - **Colours are theme tokens** (`'primary'`, `'success'`, `'base-300'`…), so the bar follows the DaisyUI theme and needs no dark-mode variant. Any other CSS colour — a hex, an `oklch()`, a variable — is accepted too and lands as an inline style, which is how a bar gets aligned with the palette of a chart next to it.
+  - **Two ways to label it, for two screen widths.** `showLabels` draws the running totals above the bar, in the manner of a ruler; a label that cannot fit is dropped rather than overlapped. `showLegend` — which needs `items`, since it has names to show — wraps onto as many rows as it needs, and is the better answer on a narrow screen. Both default to `false`: a bar embedded in a card usually has a heading already.
+  - **`items` unlocks per-segment tooltips**, on top of the legend: `[ { name, value, color, tooltip } ]`, taking precedence over `values`. This follows the items-or-children shape of `Dropdown`, `Tabs`, `Stats` and `Steps`.
+  - **`marker` points at a threshold**, with an optional tooltip, and takes the colour of the segment it lands on. Its value is clamped into the bar, and `animated` eases it to its new position instead of jumping.
+  - **`size` is responsive**, scalar or per breakpoint: `size={ { xs : 'xs', lg : 'lg' } }` gives a thin bar on mobile and a thick one from `lg` up.
+  - **A zero total renders an empty track** rather than a row of `NaN%` widths, and negative values are floored to zero so they cannot corrupt the denominator every segment divides by.
+  - **`role="img"` sits on the bar, not on the container.** The role collapses its whole subtree, and the labels and legend are text worth reading on their own — the same lesson `ChartFrame`'s empty state taught. The label is derived from the data and overridable through `ariaLabel`.
+- **New `themes/components/categoryBar` generator**, with `sizes`, `DEFAULT_COLORS` and the usual `after` / `before` / `beforeClassName` / `className` escape hatches.
+- **New `themes/components/helpers/resolveBarColor` helper.** Resolves a colour into a class definition when it is a DaisyUI token, and into an inline `backgroundColor` otherwise. Shared, so every future bar-shaped component in `metrics` accepts the same two forms.
+- **Segments round their own outer corners** rather than being clipped by an `overflow-hidden` track. The clipping track is the obvious implementation and a trap here: the DaisyUI tooltip renders through `::before` / `::after`, so a tooltip attached to a segment would be cut off by that very overflow.
+
+**Demo — `/lab/metrics`**
+
+- **New showcase page** listing the `metrics` components, with a `CategoryBar` demo covering thickness, labels, marker, named segments and legend, free colours, and the edge cases.
+- **New `demo` locale namespace** (`@locale/demo/`), for strings that belong to a demo rather than to a page. The page itself is localized under `app.lab.metrics`, like the rest of the lab.
+
 ## [0.11.0] — 2026-08-09
 
 **Components — `Calendar` — blocking whole weekdays**

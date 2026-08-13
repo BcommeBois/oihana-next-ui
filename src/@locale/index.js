@@ -7,6 +7,7 @@ import languages from '../@configs/languages' ;
 
 import app        from './app' ;
 import components from './components' ;
+import demo       from './demo' ;
 import error      from './error' ;
 import navigation from './navigation' ;
 import notFound   from './notFound' ;
@@ -17,6 +18,7 @@ const i18n =
 
     app ,
     components ,
+    demo ,
     error ,
     navigation,
     notFound ,
