@@ -6,14 +6,13 @@ import {
     DEFAULT_COLORS ,
     getCategoryBarClasses ,
     getCategoryBarLabelsClasses ,
-    getCategoryBarLegendClasses ,
-    getCategoryBarLegendDot ,
     getCategoryBarMarker ,
     getCategoryBarSegment ,
     getCategoryBarTrackClasses ,
 } from '../../themes/components/categoryBar' ;
 
-import Tooltip from '../Tooltip' ;
+import MetricLegend from './MetricLegend' ;
+import Tooltip      from '../Tooltip' ;
 
 /**
  * Formats a value for the cumulative labels and the legend.
@@ -129,6 +128,7 @@ const Band = ( { className , style , tip } ) => tip
  * @param {Array<{ color : string , key : string , name : string , tooltip : string , value : number }>} [props.items] - Named segments. Takes precedence over `values`, and unlocks per-segment tooltips and the legend.
  * @param {string} [props.labelsClassName] - Additional classes on the cumulative labels row.
  * @param {string} [props.legendClassName] - Additional classes on the legend.
+ * @param {Object} [props.legendProps] - Spread onto the underlying `MetricLegend` — `marker`, `orientation`, `size`.
  * @param {{ animated : boolean , tooltip : string , value : number }} [props.marker] - A threshold to point at, clamped into the bar.
  * @param {string} [props.markerClassName] - Additional classes on the marker.
  * @param {React.Ref} [props.ref] - Forwarded to the container.
@@ -171,6 +171,7 @@ const CategoryBar =
     items ,
     labelsClassName ,
     legendClassName ,
+    legendProps ,
     marker ,
     markerClassName ,
     ref ,
@@ -298,21 +299,13 @@ const CategoryBar =
                 </div>
             ) }
 
-            { showLegend && entries.length > 0 ? (
-                <ul className={ getCategoryBarLegendClasses({ className : legendClassName }) }>
-                    { entries.map( ( entry , index ) =>
-                    {
-                        const { className : dotClassName , style } = getCategoryBarLegendDot({ color : entry.color }) ;
-
-                        return (
-                            <li className="flex items-center gap-1.5" key={ entry.key ?? entry.name ?? `segment-${ index }` }>
-                                <span aria-hidden="true" className={ dotClassName } style={ style } />
-                                <span className="text-base-content/70">{ entry.name }</span>
-                                <span className="font-medium tabular-nums">{ valueFormatter( entry.value ) }</span>
-                            </li>
-                        ) ;
-                    } ) }
-                </ul>
+            { showLegend ? (
+                <MetricLegend
+                    className      = { legendClassName }
+                    items          = { entries }
+                    valueFormatter = { valueFormatter }
+                    { ...legendProps }
+                />
             ) : null }
 
         </div>

@@ -130,7 +130,6 @@ export const CATEGORY_BAR_SEGMENT = 'h-full first:rounded-l-full last:rounded-r-
 // The fixed height matters : the row is made of empty spacer cells, so without it a bar
 // whose labels are all hidden would collapse and drop the `0` and total anchors onto it.
 export const CATEGORY_BAR_LABELS  = 'relative flex h-5 w-full items-end text-xs font-medium tabular-nums text-base-content/70 sm:text-sm' ;
-export const CATEGORY_BAR_LEGEND  = 'flex flex-wrap items-center gap-x-4 gap-y-1 text-xs sm:text-sm' ;
 
 /**
  * Generates the container className expression.
@@ -346,71 +345,5 @@ export const getCategoryBarLabelsClasses =
     } ,
     className ,
 ) ;
-
-/**
- * Generates the legend className expression.
- *
- * `flex-wrap` is the whole point : on a narrow screen the legend wraps onto as many rows
- * as it needs, where the cumulative labels above the bar can only crowd.
- *
- * @param {Object} [props]
- * @param {Object} [props.after] - Class definitions to append.
- * @param {Object} [props.before] - Class definitions to prepend.
- * @param {string} [props.beforeClassName] - ClassName to prepend.
- * @param {string} [props.className] - ClassName to append.
- *
- * @returns {string} The legend className expression.
- *
- * @example
- * ```js
- * getCategoryBarLegendClasses() ;
- * // → 'flex flex-wrap items-center gap-x-4 gap-y-1 text-xs sm:text-sm'
- * ```
- */
-export const getCategoryBarLegendClasses =
-({
-    after ,
-    before ,
-    beforeClassName ,
-    className ,
-} = {} ) => cn
-(
-    beforeClassName ,
-    CATEGORY_BAR_LEGEND ,
-    {
-        ...before ,
-        ...after ,
-    } ,
-    className ,
-) ;
-
-/**
- * Generates a legend dot className expression, and the inline style a non-token colour needs.
- *
- * @param {Object} [props]
- * @param {string} [props.className] - ClassName to append.
- * @param {string} [props.color] - A DaisyUI colour token, or any CSS colour.
- *
- * @returns {{ className : string , style : Object | undefined }} The dot className and style.
- *
- * @example
- * ```js
- * getCategoryBarLegendDot({ color: 'success' }) ;
- * // → { className : 'size-2.5 shrink-0 rounded-full bg-success' , style : undefined }
- * ```
- */
-export const getCategoryBarLegendDot =
-({
-    className ,
-    color ,
-} = {} ) =>
-{
-    const { definition , style } = resolveBarColor( color ) ;
-
-    return {
-        className : cn( 'size-2.5 shrink-0 rounded-full' , definition , className ) ,
-        style ,
-    } ;
-} ;
 
 export default getCategoryBarClasses ;

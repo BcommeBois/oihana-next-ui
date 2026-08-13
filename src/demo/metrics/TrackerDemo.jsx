@@ -71,12 +71,22 @@ const SHORT =
  */
 const TrackerDemo = ( { path = 'demo.metrics.tracker' } ) =>
 {
-    const { bounds , colors , day , description , limit , responsive , simple , sizes , statuses , title } = useI18n( path ) ;
+    const { bounds , colors , day , description , legend , limit , responsive , simple , sizes , statuses , title } = useI18n( path ) ;
 
     const data = HISTORY.map( entry => ({
         key     : entry.key ,
         status  : STATUSES[ entry.status ] ,
         tooltip : t( day?.[ entry.status ] , `J-${ entry.day }` ) ,
+    }) ) ;
+
+    // Counted here rather than by the component : the strip drops the blocks that do not
+    // fit, so a count it derived would describe either the period or the screen — and
+    // never obviously which of the two.
+    const legendItems = [ 'up' , 'slow' , 'down' , 'unknown' ].map( key => ({
+        key ,
+        name   : legend?.[ key ] ,
+        status : STATUSES[ key ] ,
+        value  : HISTORY.filter( entry => entry.status === key ).length ,
     }) ) ;
 
     return (
@@ -118,6 +128,19 @@ const TrackerDemo = ( { path = 'demo.metrics.tracker' } ) =>
                     data       = { data }
                     endLabel   = { bounds?.end }
                     hoverEffect
+                    startLabel = { visible => t( bounds?.start , visible ) }
+                    summary    = { t( bounds?.summary , UPTIME ) }
+                />
+            </Section>
+
+            <Divider />
+
+            <Section title={ legend?.title } description={ legend?.description }>
+                <Tracker
+                    data       = { data }
+                    endLabel   = { bounds?.end }
+                    hoverEffect
+                    legend     = { legendItems }
                     startLabel = { visible => t( bounds?.start , visible ) }
                     summary    = { t( bounds?.summary , UPTIME ) }
                 />

@@ -13,6 +13,7 @@ import {
     getTrackerTrackClasses ,
 } from '../../themes/components/tracker' ;
 
+import MetricLegend from './MetricLegend' ;
 import TrackerBlock from './TrackerBlock' ;
 
 /**
@@ -25,6 +26,14 @@ import TrackerBlock from './TrackerBlock' ;
  */
 const resolveLabel = ( label , visible , total ) =>
     typeof label === 'function' ? label( visible , total ) : label ;
+
+/**
+ * Turns a legend entry into what `MetricLegend` reads : here a colour is called a status.
+ *
+ * @param {{ color : string , status : string }} entry - The legend entry.
+ * @returns {Object} The entry, with its colour resolved.
+ */
+const toLegendItem = ( { status , ...entry } ) => ( { ...entry , color : entry.color ?? status } ) ;
 
 /**
  * A strip of blocks, one per observation, where the colour carries the state — ninety days
@@ -55,6 +64,9 @@ const resolveLabel = ( label , visible , total ) =>
  * @param {React.ReactNode|Function} [props.endLabel] - Right-hand bound, or `( visible , total ) => node`.
  * @param {boolean} [props.hoverEffect=false] - Fade a block on hover.
  * @param {string} [props.labelsClassName] - Additional classes on the bounds row.
+ * @param {Array<{ key : string , name : React.ReactNode , status : string , tooltip : string , value : number|string }>} [props.legend] - What the colours mean, drawn under the bounds. Counts are the caller's to compute — see the example.
+ * @param {string} [props.legendClassName] - Additional classes on the legend.
+ * @param {Object} [props.legendProps] - Spread onto the underlying `MetricLegend` — `marker`, `orientation`, `size`.
  * @param {number} [props.maxBlocks] - Hard cap on the number of blocks shown, on top of what fits.
  * @param {number} [props.minBlockWidth=6] - Narrowest a block may get, in pixels, before one is dropped.
  * @param {React.Ref} [props.ref] - Forwarded to the container.
@@ -77,6 +89,20 @@ const resolveLabel = ( label , visible , total ) =>
  * ```jsx
  * <Tracker data={ builds } size="xs" maxBlocks={ 40 } />
  * ```
+ *
+ * @example With a legend
+ * ```jsx
+ * // The counts are computed here on purpose : the strip drops the blocks that do not
+ * // fit, so a count the component derived would describe either the period or the
+ * // screen, and never obviously which.
+ * <Tracker
+ *     data   = { days }
+ *     legend = {[
+ *         { name : 'Opérationnel' , status : 'success' , value : days.filter( day => day.status === 'success' ).length } ,
+ *         { name : 'Panne'        , status : 'error'   , value : days.filter( day => day.status === 'error'   ).length } ,
+ *     ]}
+ * />
+ * ```
  */
 const Tracker =
 ({
@@ -86,6 +112,9 @@ const Tracker =
     endLabel ,
     hoverEffect = false ,
     labelsClassName ,
+    legend ,
+    legendClassName ,
+    legendProps ,
     maxBlocks ,
     minBlockWidth = MIN_BLOCK_WIDTH ,
     ref ,
@@ -145,6 +174,14 @@ const Tracker =
                     <span>{ start }</span>
                     <span>{ end }</span>
                 </div>
+            ) : null }
+
+            { Array.isArray( legend ) ? (
+                <MetricLegend
+                    className = { legendClassName }
+                    items     = { legend.map( toLegendItem ) }
+                    { ...legendProps }
+                />
             ) : null }
 
         </div>

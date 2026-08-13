@@ -32,6 +32,16 @@ const tracker =
             end         : "aujourd'hui" ,
         } ,
 
+        legend :
+        {
+            title       : 'Légende' ,
+            description : "legend décrit ce que les couleurs veulent dire, sous les bornes. Les comptes sont calculés par l'appelant : la bande retire les blocs qui ne tiennent pas, un compte fait par le composant ne dirait pas clairement s'il parle de la période ou de l'écran." ,
+            up          : 'Opérationnel' ,
+            slow        : 'Lenteurs' ,
+            down        : 'Indisponible' ,
+            unknown     : 'Aucune donnée' ,
+        } ,
+
         responsive :
         {
             title       : 'Troncature responsive' ,
@@ -91,6 +101,16 @@ const tracker =
             summary     : '{0} % uptime over the period' ,
             start       : '{0} days ago' ,
             end         : 'today' ,
+        } ,
+
+        legend :
+        {
+            title       : 'Legend' ,
+            description : 'legend states what the colors mean, under the bounds. The counts are the caller\'s: the strip drops the blocks that do not fit, so a count derived by the component would not obviously describe the period rather than the screen.' ,
+            up          : 'Operational' ,
+            slow        : 'Degraded' ,
+            down        : 'Down' ,
+            unknown     : 'No data' ,
         } ,
 
         responsive :
