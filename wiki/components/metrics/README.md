@@ -233,6 +233,10 @@ The part no screenshot shows, and the reason these are components rather than sn
 ## See also
 
 - The live demos : `/lab/metrics` — one tab per component.
-- `CHANGELOG.md`, whose `metrics` entries record why each decision went the way it did.
-- The JSDoc in each file is the API reference : props, defaults and examples live there
-  rather than in a table here, which would diverge within two commits.
+- The sources : [`src/components/metrics`](../../../src/components/metrics) and their
+  generators in [`src/themes/components`](../../../src/themes/components). **The JSDoc there
+  is the API reference** : props, defaults and examples live in the files rather than in a
+  table here, which would diverge within two commits.
+- [`CHANGELOG.md`](../../../CHANGELOG.md), whose `metrics` entries record why each decision
+  went the way it did.
+- [The wiki index](../../README.md).

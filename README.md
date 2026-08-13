@@ -44,9 +44,9 @@ import useThemes from 'oihana-next-ui/contexts/themes/useThemes'
 ```
 
 Every component carries its own JSDoc — props, defaults and examples — and the live demos
-sit under `/lab`. Some groups add a guide of their own :
-[`components/metrics`](src/components/metrics/README.md), the compact dashboard readings
-(category bar, bar list, tracker, sparkline, delta, bullet graph).
+sit under `/lab`. The [**wiki**](wiki/README.md) holds the long-form guides, one per group :
+which component to reach for, and the recipes that span several of them. First one up :
+[`components/metrics`](wiki/components/metrics/README.md).
 
 ### CSS
 

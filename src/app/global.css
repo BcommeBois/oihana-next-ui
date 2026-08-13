@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+/* Automatic source detection scans every file that is neither gitignored nor binary, so
+   the class names quoted in prose — the wiki, the changelog, the readmes — would generate
+   CSS nobody asked for. Paths are resolved from this file, hence the climb to the root.
+   The markdown rendered by the lab is content, not markup : it carries no class names. */
+@source not "../../**/*.md";
+
 /* =============================
    Fonts (via next/font variables)
    ============================= */

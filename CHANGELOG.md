@@ -8,6 +8,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.12.1] — 2026-08-13
+
+**Documentation — long-form guides move to a `wiki/`**
+
+- **New `wiki/` at the root of the repository**, with an index and one folder per group mirroring the path under `src/`. The guide shipped in `0.12.0` sat in `src/components/metrics/`, where it read as a source file that is not one : **`src/` stays code**. The JSDoc in each file remains the API reference, and the wiki holds what no single file can say — the shape of a group, which component to reach for, and the recipes that span several of them.
+- **`src/components/metrics/README.md` → `wiki/components/metrics/README.md`**, moved as it was : only its links were rewritten. The root `README.md` now points at the wiki rather than into the sources.
+- Consequence worth knowing : the guide **no longer ships with the npm package**, since `files` carries `src` and not `wiki`. It stays one click away on GitHub, and the JSDoc — which does ship — is unaffected.
+
+**Build — Tailwind stops scanning markdown**
+
+- **`@source not "**/*.md"` in `src/app/global.css`.** Automatic source detection scans every file that is neither gitignored nor binary, so the class names quoted in prose — the wiki, the changelog, the readmes — were generating CSS nobody asked for. The markdown rendered by the lab is content rather than markup and carries no class names, so nothing on screen depends on it.
+
 ## [0.12.0] — 2026-08-13
 
 **Components — new `metrics` group — `CategoryBar`**
