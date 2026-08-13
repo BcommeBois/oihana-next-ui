@@ -10,7 +10,12 @@ import CategoryBar from '@/components/metrics/CategoryBar' ;
 import Container   from '@/display/Container' ;
 import Divider     from '@/components/Divider' ;
 
+import { QUALITATIVE_COLORS } from '@/themes/components/categoryBar' ;
+
 import Section from '@/demo/charts/Section' ;
+
+// A bullet's bands are cumulative ranges — poor up to 50, fair up to 80, good up to 100.
+const BANDS = [ 50 , 30 , 20 ] ;
 
 const STORAGE =
 [
@@ -39,7 +44,7 @@ const CategoryBarDemo = ( { path = 'demo.metrics.categoryBar' } ) =>
 {
     const locale = useI18n( path ) ;
 
-    const { colors , description , edges , labels , legend , marker : markerLocale , simple , sizes , storage , title } = locale ;
+    const { bullet , colors , compare , description , domain , edges , labels , legend , marker : markerLocale , measureColors , simple , sizes , storage , title } = locale ;
 
     const [ marker , setMarker ] = useState( 65 ) ;
 
@@ -78,6 +83,7 @@ const CategoryBarDemo = ( { path = 'demo.metrics.categoryBar' } ) =>
                     <CategoryBar values={ [ 55 , 30 , 15 ] } size="sm" />
                     <CategoryBar values={ [ 55 , 30 , 15 ] } size="md" />
                     <CategoryBar values={ [ 55 , 30 , 15 ] } size="lg" />
+                    <CategoryBar values={ [ 55 , 30 , 15 ] } size="xl" />
                     <CategoryBar values={ [ 55 , 30 , 15 ] } size={ { xs : 'xs' , lg : 'lg' } } />
                 </div>
             </Section>
@@ -118,6 +124,98 @@ const CategoryBarDemo = ( { path = 'demo.metrics.categoryBar' } ) =>
                     size           = "lg"
                     valueFormatter = { value => t( storage?.unit , value ) ?? String( value ) }
                 />
+            </Section>
+
+            <Divider />
+
+            <Section title={ bullet?.title } description={ bullet?.description }>
+                <div className="flex flex-col gap-6">
+                    <CategoryBar
+                        colors  = { QUALITATIVE_COLORS }
+                        marker  = {{ tooltip : t( markerLocale?.goal , 90 ) , value : 90 }}
+                        measure = {{ tooltip : t( bullet?.current , 82 ) , value : 82 }}
+                        showLabels
+                        size    = "xl"
+                        values  = { BANDS }
+                    />
+                    {/*
+                        Saturated bands are the one case the ring earns its keep : `info`
+                        sits close to the warning band it crosses, and the `base-100` ring
+                        is what keeps the two apart.
+                    */}
+                    <CategoryBar
+                        colors  = { [ 'error' , 'warning' , 'success' ] }
+                        marker  = {{ tooltip : t( markerLocale?.goal , 90 ) , value : 90 }}
+                        measure = {{ color : 'info' , ring : true , value : 45 }}
+                        size    = "xl"
+                        values  = { BANDS }
+                    />
+                </div>
+            </Section>
+
+            <Divider />
+
+            <Section title={ measureColors?.title } description={ measureColors?.description }>
+                <div className="flex flex-col gap-4">
+                    { [ 'primary' , 'info' , 'success' , 'bg-base-content/70' , '#4E79A7' ].map( color => (
+                        <div className="flex items-center gap-4" key={ color }>
+                            <code className="w-40 shrink-0 text-xs text-base-content/60">{ color }</code>
+                            <CategoryBar
+                                className = "flex-1"
+                                colors    = { QUALITATIVE_COLORS }
+                                marker    = {{ value : 90 }}
+                                measure   = {{ color , value : 82 }}
+                                size      = "xl"
+                                values    = { BANDS }
+                            />
+                        </div>
+                    ) ) }
+                </div>
+            </Section>
+
+            <Divider />
+
+            <Section title={ domain?.title } description={ domain?.description }>
+                <CategoryBar
+                    colors  = { QUALITATIVE_COLORS }
+                    marker  = {{ tooltip : t( markerLocale?.goal , 90 ) , value : 90 }}
+                    max     = { 140 }
+                    measure = { 82 }
+                    showLabels
+                    size    = "xl"
+                    values  = { BANDS }
+                />
+            </Section>
+
+            <Divider />
+
+            {/*
+                The argument for the shape : one scale, three rows, and the comparison is
+                immediate. Three gauges of the same data would take ten times the room and
+                still not line up.
+            */}
+            <Section title={ compare?.title } description={ compare?.description }>
+                <div className="flex flex-col gap-4">
+                    { [
+                        { key : 'sales'        , measure : 82 , target : 90 } ,
+                        { key : 'margin'       , measure : 45 , target : 70 } ,
+                        { key : 'satisfaction' , measure : 96 , target : 85 } ,
+                    ].map( item => (
+                        <div className="flex flex-col gap-1" key={ item.key }>
+                            <div className="flex items-baseline justify-between text-sm">
+                                <span className="font-medium">{ compare?.[ item.key ] }</span>
+                                <span className="tabular-nums text-base-content/60">{ `${ item.measure } / ${ item.target }` }</span>
+                            </div>
+                            <CategoryBar
+                                colors  = { QUALITATIVE_COLORS }
+                                marker  = {{ tooltip : t( markerLocale?.goal , item.target ) , value : item.target }}
+                                measure = { item.measure }
+                                size    = "lg"
+                                values  = { BANDS }
+                            />
+                        </div>
+                    ) ) }
+                </div>
             </Section>
 
             <Divider />

@@ -26,6 +26,7 @@ import resolveColor from './resolveColor' ;
  */
 export const resolveTextColor = value => resolveColor( value , {
     getter    : getTextColor ,
+    prefix    : 'text-' ,
     styleProp : 'color' ,
 } ) ;
 
