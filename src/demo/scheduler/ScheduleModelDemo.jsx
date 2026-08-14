@@ -91,7 +91,7 @@ const ScheduleModelDemo = ( { path = 'demo.scheduler.scheduleModel' } ) =>
     const days = Array.from( { length : 7 } , ( _ , index ) => weekStart.add( index , 'day' ) ) ;
 
     return (
-        <Container className="flex flex-col gap-8 rounded-box bg-base-200/60 p-4 sm:p-8" maxWidth="max-w-6xl">
+        <Container className="flex flex-col gap-8 rounded-box bg-base-200/60 p-3 sm:p-8" maxWidth="max-w-6xl">
 
             <header className="flex flex-col gap-1" id="schedule-model">
                 <h2 className="text-3xl font-bold">{ title }</h2>

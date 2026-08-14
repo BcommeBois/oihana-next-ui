@@ -33,6 +33,8 @@ import { TbInfinity             as InfiniteScrollIcon } from "react-icons/tb";
 import { LuLayoutDashboard      as LayoutIcon         } from "react-icons/lu";
 import { TbLayoutKanban         as KanbanIcon         } from "react-icons/tb";
 import { TbCalendarEvent        as SchedulerIcon      } from "react-icons/tb";
+import { TbListDetails          as AgendaIcon         } from "react-icons/tb";
+import { TbBraces               as SchemaIcon         } from "react-icons/tb";
 import { TbChartHistogram       as ChartIcon          } from "react-icons/tb";
 import { TbChartDonut           as ChartCircularIcon  } from "react-icons/tb";
 import { TbChartGridDots        as ChartGridIcon      } from "react-icons/tb";
@@ -129,7 +131,8 @@ const navigation =
                 Icon : SchedulerIcon ,
                 items :
                 [
-                    { id : 'schedulerModel' , type : LINK  , Icon : SchedulerIcon , path  : '/lab/scheduler' } ,
+                    { id : 'schedulerAgenda' , type : LINK  , Icon : AgendaIcon , path  : '/lab/scheduler'      } ,
+                    { id : 'schedulerModel'  , type : LINK  , Icon : SchemaIcon , path  : '/lab/schedulerModel' } ,
                 ]
             } ,
             {

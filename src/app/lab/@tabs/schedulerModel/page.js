@@ -6,19 +6,19 @@ import useI18n   from '@/contexts/locale/useI18n.js' ;
 import Container from '@/display/Container' ;
 import Page      from '@/display/Page' ;
 
-import SchedulerAgendaDemo from '@/demo/scheduler/SchedulerAgendaDemo' ;
+import ScheduleModelDemo from '@/demo/scheduler/ScheduleModelDemo' ;
 
 /**
- * Scheduler — the agenda view.
+ * Scheduler — the model and its adapter.
  *
- * The shell and the first of the views. The calculation everything is drawn from
- * lives on its own page, `lab/schedulerModel`, since it is a reference rather
- * than a component.
+ * A reference page rather than a component showcase : it shows what comes out of
+ * `helpers/schedule`, so the numbers can be checked before anything is drawn from
+ * them. The views live on their own pages.
  *
  * @param {Object} props
- * @param {string} [props.path='app.lab.scheduler'] - Dot notation path to the page locale.
+ * @param {string} [props.path='app.lab.schedulerModel'] - Dot notation path to the page locale.
  */
-const SchedulerShowcase = ( { path = 'app.lab.scheduler' } ) =>
+const SchedulerModelShowcase = ( { path = 'app.lab.schedulerModel' } ) =>
 {
     const { description , title } = useI18n( path ) ;
 
@@ -36,10 +36,10 @@ const SchedulerShowcase = ( { path = 'app.lab.scheduler' } ) =>
                 </p>
             </Container>
 
-            <SchedulerAgendaDemo />
+            <ScheduleModelDemo />
 
         </Page>
     ) ;
 } ;
 
-export default SchedulerShowcase ;
+export default SchedulerModelShowcase ;
