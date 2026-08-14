@@ -32,6 +32,7 @@ import { RiInputField           as InputIcon          } from "react-icons/ri" ;
 import { TbInfinity             as InfiniteScrollIcon } from "react-icons/tb";
 import { LuLayoutDashboard      as LayoutIcon         } from "react-icons/lu";
 import { TbLayoutKanban         as KanbanIcon         } from "react-icons/tb";
+import { TbCalendarEvent        as SchedulerIcon      } from "react-icons/tb";
 import { TbChartHistogram       as ChartIcon          } from "react-icons/tb";
 import { TbChartDonut           as ChartCircularIcon  } from "react-icons/tb";
 import { TbChartGridDots        as ChartGridIcon      } from "react-icons/tb";
@@ -120,6 +121,15 @@ const navigation =
                 items :
                 [
                     { id : 'kanbanBoard' , type : LINK  , Icon : KanbanIcon , path  : '/lab/kanban' } ,
+                ]
+            } ,
+            {
+                id   : 'scheduler'   ,
+                type : COLLAPSE      ,
+                Icon : SchedulerIcon ,
+                items :
+                [
+                    { id : 'schedulerModel' , type : LINK  , Icon : SchedulerIcon , path  : '/lab/scheduler' } ,
                 ]
             } ,
             {
