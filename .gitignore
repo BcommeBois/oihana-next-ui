@@ -58,3 +58,7 @@ next-env.d.ts
 # Bun
 #bun.lock
 pnpm-lock.yaml
+
+# Working notes — plans, audits and decisions kept as a local backup of the
+# project memories. Never committed : they are drafts, not documentation.
+/todo
