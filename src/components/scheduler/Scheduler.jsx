@@ -7,6 +7,7 @@ import { AGENDA , DAY , MONTH , TIMELINE , WEEK } from '../../helpers/schedule/g
 import { getSchedulerClasses } from '../../themes/components/scheduler' ;
 
 import SchedulerAgenda  from './SchedulerAgenda' ;
+import SchedulerMonth   from './SchedulerMonth' ;
 import SchedulerToolbar from './SchedulerToolbar' ;
 
 export { AGENDA , DAY , MONTH , TIMELINE , WEEK } ;
@@ -18,7 +19,7 @@ export { AGENDA , DAY , MONTH , TIMELINE , WEEK } ;
  * cannot put a tab in the switcher that leads nowhere. The list grows as the
  * views land, and nothing an application wrote has to change when it does.
  */
-export const builtViews = [ AGENDA ] ;
+export const builtViews = [ AGENDA , MONTH ] ;
 
 /** Keeps only the views that exist, and says so in development when one does not. */
 const resolveViews = ( requested ) =>
@@ -78,6 +79,9 @@ const resolveViews = ( requested ) =>
  * @param {Function} [props.getColor] - Reads an event's display color.
  * @param {Function} [props.getEventId] - Reads an event's identity. Required when neither `identifier`, `id` nor `url` is the real key.
  * @param {Function} [props.getResourceId] - Reads the timeline row an event belongs to.
+ * @param {number}   [props.maxEventsPerDay=3] - Month view : how many events a cell shows before it counts the rest.
+ * @param {Function} [props.onDayClick] - Called with a day, when a cell is activated.
+ * @param {Function} [props.onEventClick] - Called with a record, when an event is activated.
  * @param {Function} [props.onChange] - `( nextEvents , change ) => void|Promise`. A rejected promise reverts, in uncontrolled mode.
  * @param {Function} [props.onDateChange] - Called with the new anchor.
  * @param {Function} [props.onViewChange] - Called with the new view.
@@ -125,7 +129,10 @@ const Scheduler =
     getColor ,
     getEventId ,
     getResourceId ,
+    maxEventsPerDay = 3 ,
     onChange ,
+    onDayClick ,
+    onEventClick ,
     onDateChange ,
     onViewChange ,
     path = 'components.scheduler' ,
@@ -182,16 +189,30 @@ const Scheduler =
                 </SchedulerToolbar>
             ) }
 
-            {/* One view is built so far. The others land in their own lots, and
-                the shell already knows how to size their windows. */}
-            <SchedulerAgenda
-                emptyState    = { emptyState }
-                events        = { scheduler.events }
-                path          = { path }
-                renderEvent   = { renderEvent }
-                showEmptyDays = { showEmptyDays }
-                window        = { scheduler.window }
-            />
+            { scheduler.view === MONTH
+                ? (
+                    <SchedulerMonth
+                        date            = { scheduler.date }
+                        events          = { scheduler.events }
+                        maxEventsPerDay = { maxEventsPerDay }
+                        onDayClick      = { onDayClick }
+                        onEventClick    = { onEventClick }
+                        path            = { path }
+                        renderEvent     = { renderEvent }
+                        weekStartsOn    = { weekStartsOn }
+                        window          = { scheduler.window }
+                    />
+                )
+                : (
+                    <SchedulerAgenda
+                        emptyState    = { emptyState }
+                        events        = { scheduler.events }
+                        path          = { path }
+                        renderEvent   = { renderEvent }
+                        showEmptyDays = { showEmptyDays }
+                        window        = { scheduler.window }
+                    />
+                ) }
 
         </div>
     ) ;

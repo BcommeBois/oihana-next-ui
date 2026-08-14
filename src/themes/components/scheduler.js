@@ -67,7 +67,7 @@ export const SCHEDULER_AGENDA_ROW = 'flex flex-col gap-0.5 @md:flex-row @md:item
  * two when the gutter is all there is — see the break in `SchedulerAgenda`, which
  * is toggled by the same container query.
  */
-export const SCHEDULER_AGENDA_TIME = 'w-full shrink-0 ps-1 text-start @md:w-16 @md:ps-0 @md:pt-1 @md:text-end font-mono text-xs tabular-nums text-base-content/60' ;
+export const SCHEDULER_AGENDA_TIME = 'w-full shrink-0 ps-1 text-start @md:w-16 @md:ps-0 @md:pt-1 @md:text-end font-mono text-xs tabular-nums text-base-content/70' ;
 
 /**
  * An event, as a card in a list.
@@ -81,7 +81,7 @@ export const SCHEDULER_AGENDA_TIME = 'w-full shrink-0 ps-1 text-start @md:w-16 @
 export const SCHEDULER_EVENT = 'flex-1 min-w-0 rounded-field border border-base-300 border-s-4 px-3 py-2' ;
 
 /** The same event, once it is over. */
-export const SCHEDULER_EVENT_PAST = 'opacity-60' ;
+export const SCHEDULER_EVENT_PAST = 'opacity-75' ;
 
 /** A cancelled event : struck through, the way a blackout day is in the calendar. */
 export const SCHEDULER_EVENT_CANCELLED = 'line-through' ;
@@ -90,42 +90,139 @@ export const SCHEDULER_EVENT_CANCELLED = 'line-through' ;
 export const SCHEDULER_EVENT_POSTPONED = 'border-dashed' ;
 
 /** Said of an event whose span runs past the day it is drawn in. */
-export const SCHEDULER_EVENT_CONTINUES = 'text-base-content/50' ;
+export const SCHEDULER_EVENT_CONTINUES = 'text-base-content/60' ;
+
+/**
+ * The month grid.
+ *
+ * A container, like the agenda : seven columns need roughly 90 pixels each before
+ * a title is worth printing, and below that the cells show density instead. What
+ * decides is the grid's own width, never the window's.
+ */
+export const SCHEDULER_MONTH = '@container flex flex-col' ;
+
+/** The weekday header row. */
+export const SCHEDULER_MONTH_WEEKDAYS = 'grid grid-cols-7 border-b border-base-300' ;
+
+/** One weekday name. */
+export const SCHEDULER_MONTH_WEEKDAY = 'truncate px-1 py-1.5 text-center text-xs font-semibold uppercase text-base-content/70' ;
+
+/** One week row. */
+export const SCHEDULER_MONTH_WEEK = 'grid grid-cols-7' ;
+
+/** One day cell. */
+export const SCHEDULER_MONTH_CELL = 'flex min-h-14 flex-col gap-0.5 border-b border-e border-base-300 p-1 text-start @2xl:min-h-24' ;
+
+/** A cell of the previous or next month — present for the grid's sake, not for its own. */
+export const SCHEDULER_MONTH_CELL_OUTSIDE = 'bg-base-200/70' ;
+
+/** The cell the reader is most likely looking for. */
+export const SCHEDULER_MONTH_CELL_TODAY = 'bg-primary/10' ;
+
+/** The day number. */
+export const SCHEDULER_MONTH_DAYNUM = 'px-0.5 text-xs font-medium tabular-nums text-base-content/80' ;
+
+/** Today's number, marked the way the calendar marks it. */
+export const SCHEDULER_MONTH_DAYNUM_TODAY = 'inline-flex size-5 items-center justify-center rounded-full bg-primary font-semibold text-primary-content' ;
+
+/** The number of a day outside the month. */
+export const SCHEDULER_MONTH_DAYNUM_OUTSIDE = 'text-base-content/50' ;
+
+/**
+ * Height of one rail, in pixels : the chip's `leading-5` plus the `gap-y-0.5`
+ * between two of them.
+ *
+ * It is a number rather than a class because the cells have to **reserve** the
+ * space the rails take — the rails are an overlay, and a layout that lets them
+ * float over the day numbers is the classic way a month grid ends up unreadable.
+ * Kept next to the classes it is derived from, so the two move together.
+ */
+export const MONTH_RAIL_HEIGHT = 22 ;
+
+/** Height reserved above the rails for the day number. */
+export const MONTH_HEADER_HEIGHT = 24 ;
+
+/** The rails, laid over the seven columns of a week. */
+export const SCHEDULER_MONTH_RAILS = 'pointer-events-none absolute inset-x-0 top-6 grid grid-cols-7 gap-y-0.5 px-1' ;
+
+/** « +2 more ». */
+export const SCHEDULER_MONTH_MORE = 'w-full truncate rounded-field px-1 text-start text-xs font-medium text-base-content/70 hover:bg-base-300' ;
+
+/** The dots standing in for the chips when the grid is too narrow to name anything. */
+export const SCHEDULER_MONTH_DOTS = 'flex flex-wrap gap-0.5 px-0.5 @2xl:hidden' ;
+
+/** One dot. */
+export const SCHEDULER_MONTH_DOT = 'size-1.5 rounded-full' ;
+
+/** An event as a chip : one line, in a cell, sized by its span. */
+export const SCHEDULER_EVENT_CHIP = 'pointer-events-auto flex min-w-0 items-center rounded-field border-s-2' ;
+
+/**
+ * The two sizes a chip comes in.
+ *
+ * `sm` is calibrated for a month cell, where the rail height is fixed and every
+ * pixel is contested. `md` is for a list — the day popover, and the editor later —
+ * where the same text at the cell's size is simply too small to read, especially
+ * on the phone where that list takes the whole screen.
+ */
+export const chipSizeMap =
+{
+    sm : 'gap-1 px-1 text-xs leading-5' ,
+    md : 'gap-2 px-2 py-1 text-sm leading-6' ,
+} ;
+
+/** The sizes {@link chipSizeMap} covers. */
+export const chipSizes = Object.keys( chipSizeMap ) ;
+
+/** A chip whose event started before the row it is drawn in. */
+export const SCHEDULER_EVENT_CHIP_FROM = 'rounded-s-none border-s-0' ;
+
+/** A chip whose event runs past the row it is drawn in. */
+export const SCHEDULER_EVENT_CHIP_TO = 'rounded-e-none' ;
 
 /**
  * DaisyUI tokens an event can be tinted with.
  *
- * Each entry is a whole literal — a background tint, the inline-start rule and
- * the text, kept together so the three can never disagree. Anything else goes
- * through an inline style : `color-mix` builds the tint from the given color, so
- * a hex or an `oklch()` behaves like a token.
+ * **The text is never the token's colour.** A theme only guarantees a contrast
+ * within its own pairs : `base-content` reads on the `base-*` surfaces, and
+ * `<token>-content` reads on `<token>`. Nothing promises that `text-warning` is
+ * legible on a wash of `warning` — and it is not, in either theme, which is how a
+ * calendar ends up with events one has to squint at.
  *
- * @safelist bg-primary/10 border-s-primary text-primary
- * @safelist bg-secondary/10 border-s-secondary text-secondary
- * @safelist bg-accent/10 border-s-accent text-accent
- * @safelist bg-info/10 border-s-info text-info
- * @safelist bg-success/10 border-s-success text-success
- * @safelist bg-warning/10 border-s-warning text-warning
- * @safelist bg-error/10 border-s-error text-error
- * @safelist bg-neutral/10 border-s-neutral text-neutral
+ * So the hue lives where it cannot hurt : a 20 % wash for the fill and the
+ * inline-start rule at full strength, which is what actually carries the colour
+ * at a glance. The label stays `base-content`, on a surface still close enough to
+ * `base-100` for that to hold.
+ *
+ * Each entry is a whole literal, so the three parts can never disagree and the
+ * scanner always sees them.
+ *
+ * @safelist bg-primary/20 border-s-primary
+ * @safelist bg-secondary/20 border-s-secondary
+ * @safelist bg-accent/20 border-s-accent
+ * @safelist bg-info/20 border-s-info
+ * @safelist bg-success/20 border-s-success
+ * @safelist bg-warning/20 border-s-warning
+ * @safelist bg-error/20 border-s-error
+ * @safelist bg-neutral/20 border-s-neutral
  */
 export const colorMap =
 {
-    primary   : 'bg-primary/10 border-s-primary text-primary' ,
-    secondary : 'bg-secondary/10 border-s-secondary text-secondary' ,
-    accent    : 'bg-accent/10 border-s-accent text-accent' ,
-    info      : 'bg-info/10 border-s-info text-info' ,
-    success   : 'bg-success/10 border-s-success text-success' ,
-    warning   : 'bg-warning/10 border-s-warning text-warning' ,
-    error     : 'bg-error/10 border-s-error text-error' ,
-    neutral   : 'bg-neutral/10 border-s-neutral text-neutral' ,
+    primary   : 'bg-primary/20 border-s-primary text-base-content' ,
+    secondary : 'bg-secondary/20 border-s-secondary text-base-content' ,
+    accent    : 'bg-accent/20 border-s-accent text-base-content' ,
+    info      : 'bg-info/20 border-s-info text-base-content' ,
+    success   : 'bg-success/20 border-s-success text-base-content' ,
+    warning   : 'bg-warning/20 border-s-warning text-base-content' ,
+    error     : 'bg-error/20 border-s-error text-base-content' ,
+    neutral   : 'bg-neutral/20 border-s-neutral text-base-content' ,
 } ;
 
 /** The tokens {@link colorMap} covers. */
 export const colors = Object.keys( colorMap ) ;
 
-/** Used when an event names no color of its own. */
-export const DEFAULT_EVENT_COLOR = 'bg-base-100 border-s-base-content/30' ;
+/** Used when an event names no color of its own — visible on a `base-100` surface. */
+export const DEFAULT_EVENT_COLOR = 'bg-base-200 border-s-base-content/40 text-base-content' ;
 
 /**
  * Resolves an event color into classes, or into an inline style when it is not a
@@ -266,5 +363,83 @@ export const getSchedulerEventClasses = ({ after , before , beforeClassName , cl
         style ,
     } ;
 } ;
+
+/**
+ * Generates the className of an event chip, and the inline style a free color needs.
+ *
+ * The chip is the compact form of an event — a month cell, an all-day band, a
+ * timeline row. It shares its colour resolution with the card, so the same event
+ * reads as the same object whether it is a row in an agenda or a bar in a grid.
+ *
+ * @param {Object} [props]
+ * @param {string} [props.className] - ClassName to append.
+ * @param {string} [props.color] - A token from {@link colors}, or any CSS color.
+ * @param {boolean} [props.continuesBefore] - The event started before this row.
+ * @param {boolean} [props.continuesAfter] - The event runs past this row.
+ * @param {boolean} [props.past] - The event is over.
+ * @param {'sm'|'md'} [props.size='sm'] - `sm` for a month cell, `md` for a list.
+ * @param {string} [props.status] - One of the statuses of a normalized record.
+ * @returns {{ className: string, style: Object|undefined }}
+ */
+export const getSchedulerChipClasses = ({ className , color , continuesBefore , continuesAfter , past , size = 'sm' , status } = {} ) =>
+{
+    const { definition , style } = resolveEventColor( color ) ;
+
+    return {
+        className : cn
+        (
+            SCHEDULER_EVENT_CHIP ,
+            chipSizeMap[ size ] ?? chipSizeMap.sm ,
+            {
+                ...definition ,
+                // A bar cut at a row edge loses the corner and the rule on that side,
+                // so the eye reads one span across two rows rather than two events.
+                ...continuesBefore && { [ SCHEDULER_EVENT_CHIP_FROM ] : true } ,
+                ...continuesAfter && { [ SCHEDULER_EVENT_CHIP_TO ] : true } ,
+                ...past && { [ SCHEDULER_EVENT_PAST ] : true } ,
+                ...status === 'cancelled' && { [ SCHEDULER_EVENT_CANCELLED ] : true } ,
+                ...status === 'postponed' && { [ SCHEDULER_EVENT_POSTPONED ] : true } ,
+            } ,
+            className ,
+        ) ,
+        style ,
+    } ;
+} ;
+
+/**
+ * Generates the className of a month day cell.
+ *
+ * @param {Object} [props]
+ * @param {string} [props.className] - ClassName to append.
+ * @param {boolean} [props.outside] - The day belongs to a neighbouring month.
+ * @param {boolean} [props.today] - The day is today.
+ * @returns {string}
+ */
+export const getMonthCellClasses = ({ className , outside , today } = {} ) => cn
+(
+    SCHEDULER_MONTH_CELL ,
+    {
+        ...outside && { [ SCHEDULER_MONTH_CELL_OUTSIDE ] : true } ,
+        ...today && { [ SCHEDULER_MONTH_CELL_TODAY ] : true } ,
+    } ,
+    className ,
+) ;
+
+/**
+ * Generates the className of a month day number.
+ *
+ * @param {Object} [props]
+ * @param {boolean} [props.outside] - The day belongs to a neighbouring month.
+ * @param {boolean} [props.today] - The day is today.
+ * @returns {string}
+ */
+export const getMonthDayNumberClasses = ({ outside , today } = {} ) => cn
+(
+    SCHEDULER_MONTH_DAYNUM ,
+    {
+        ...today && { [ SCHEDULER_MONTH_DAYNUM_TODAY ] : true } ,
+        ...outside && !today && { [ SCHEDULER_MONTH_DAYNUM_OUTSIDE ] : true } ,
+    } ,
+) ;
 
 export default getSchedulerClasses ;

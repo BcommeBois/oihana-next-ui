@@ -18,6 +18,7 @@ const scheduler =
         empty    : 'Rien de prévu sur cette période.' ,
         emptyDay : 'Rien de prévu' ,
         continues : 'suite' ,
+        more      : 'de plus' ,
         views :
         {
             agenda   : 'Agenda' ,
@@ -37,6 +38,7 @@ const scheduler =
         empty    : 'Nothing scheduled in this period.' ,
         emptyDay : 'Nothing scheduled' ,
         continues : 'cont.' ,
+        more      : 'more' ,
         views :
         {
             agenda   : 'Agenda' ,

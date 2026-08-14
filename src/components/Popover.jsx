@@ -57,6 +57,9 @@ const GAP = 6 ;
  * @param {'top'|'bottom'} [props.direction='bottom'] - Opening direction (from useDropdownPosition).
  * @param {'start'|'center'|'end'} [props.placement='start'] - Horizontal alignment (from useDropdownPosition).
  * @param {string} [props.panelClassName] - Extra classes for the panel.
+ * @param {React.ReactNode} [props.title] - **Full-screen only.** Heading of the panel, beside the close button.
+ * @param {string} [props.closeLabel] - Close button label. Defaults to the i18n `close` key read at `path`, then `'Close'`.
+ * @param {boolean} [props.fullScreen=false] - **Modal mode only.** The panel fills the viewport instead of hugging its content. Right when the content is a list of unknown length — a day's events, an editor — where a card that grows with its content is worse than one that simply owns the screen. Ignored by the dropdown, which is anchored and sized by its trigger.
  * @param {boolean} [props.showFooter=false] - Render the Apply / Cancel footer.
  * @param {() => void} [props.onApply] - Apply button handler.
  * @param {() => void} [props.onCancel] - Cancel button handler.
@@ -79,6 +82,9 @@ const Popover =
     direction = 'bottom' ,
     placement = 'start' ,
     panelClassName ,
+    closeLabel ,
+    fullScreen = false ,
+    title ,
     showFooter = false ,
     onApply ,
     onCancel ,
@@ -99,11 +105,13 @@ const Popover =
     const {
         apply  : applyFromI18n  = 'Apply' ,
         cancel : cancelFromI18n = 'Cancel' ,
+        close  : closeFromI18n  = 'Close' ,
     }
     = useI18n( path , NO_LOCALE , false ) ;
 
     const applyText  = applyLabel  ?? applyFromI18n ;
     const cancelText = cancelLabel ?? cancelFromI18n ;
+    const closeText  = closeLabel  ?? closeFromI18n ;
 
     const isMdUp  = useBreakpoint( 'md' ) ;
     const asModal = display === MODAL || ( display === RESPONSIVE && !isMdUp ) ;
@@ -308,7 +316,7 @@ const Popover =
     {
         return (
             <Portal containerRef={ containerRef }>
-                <div className="fixed inset-0 z-60 flex items-center justify-center p-3">
+                <div className={ cn( 'fixed inset-0 z-60 flex' , !fullScreen && 'items-center justify-center p-3' ) }>
                     {/* biome-ignore lint/a11y/noStaticElementInteractions: the backdrop is a decorative dismiss surface — Escape is the keyboard equivalent */}
                     {/* biome-ignore lint/a11y/useKeyWithClickEvents: same — keyboard dismissal goes through Escape, not the backdrop */}
                     <div className="absolute inset-0 bg-black/40" onClick={ onClose } />
@@ -317,12 +325,49 @@ const Popover =
                         aria-label      = { ariaLabel }
                         aria-labelledby = { ariaLabelledBy }
                         aria-modal      = "true"
-                        className       = { cn( 'relative z-10 w-fit max-w-full border border-base-300 bg-base-100 p-3 shadow-xl rounded-box' , panelClassName ) }
+                        className       = { cn
+                        (
+                            'relative z-10 border-base-300 bg-base-100 p-3 shadow-xl' ,
+                            fullScreen
+                                ? 'flex h-full w-full flex-col rounded-none border-0'
+                                : 'w-fit max-w-full border rounded-box' ,
+                            panelClassName ,
+                        ) }
                         role            = "dialog"
                         tabIndex        = { -1 }
                     >
-                        { children }
+                        {/* A panel filling the screen hides whatever was behind it, so the
+                            way out has to be visible rather than remembered : a cross where
+                            every dialog puts one, and a button at the bottom for the thumb
+                            that will never reach the top of a phone. */}
+                        { fullScreen && (
+                            <div className="mb-2 flex shrink-0 items-center gap-2 border-b border-base-300 pb-2">
+                                <span className="min-w-0 flex-1 truncate text-base font-semibold first-letter:uppercase">{ title }</span>
+                                <button
+                                    type       = "button"
+                                    className  = "btn btn-ghost btn-sm btn-square"
+                                    onClick    = { onClose }
+                                    title      = { closeText }
+                                    aria-label = { closeText }
+                                >
+                                    <span aria-hidden="true" className="text-lg leading-none">×</span>
+                                </button>
+                            </div>
+                        ) }
+
+                        <div className={ fullScreen ? 'min-h-0 flex-1 overflow-y-auto' : undefined }>
+                            { children }
+                        </div>
+
                         { footer }
+
+                        { fullScreen && !showFooter && (
+                            <div className="mt-2 shrink-0 border-t border-base-300 pt-2">
+                                <button type="button" className="btn btn-block btn-sm" onClick={ onClose }>
+                                    { closeText }
+                                </button>
+                            </div>
+                        ) }
                     </div>
                 </div>
             </Portal>

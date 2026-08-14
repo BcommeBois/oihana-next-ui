@@ -8,6 +8,28 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Components — `scheduler` — the month view**
+
+- **New `SchedulerMonth`.** Six weeks, always, with events laid on **rails**. An exhibition running from the 10th to the 16th reads as *one bar crossing the week*, not as seven chips — which is why this view needs a placement of its own rather than the overlap columns the time grid will use.
+  - **New `helpers/schedule/layoutMonthBars`.** Where `layoutOverlaps` shares a width between things happening at once, this allocates *vertical order over a seven-column axis* : a bar claims a rail for its whole crossing and keeps it at one height. Longest first, so a span across the row claims its rail before the single days do — otherwise it would have to weave between them and could not stay level. A week is solved on its own, since a bar cannot cross the end of a row.
+  - **What does not fit is counted per day, not per week.** Past `maxEventsPerDay`, a bar is not drawn and every day it covered counts one hidden event ; two days of the same row rarely hide the same number. The figure is **computed rather than measured** : measuring costs a render pass and gets the first one wrong.
+  - **The cells reserve the height the rails take.** The bars are an overlay ; letting them float over the day numbers is the classic way a month grid becomes unreadable at the first busy week.
+  - **Narrow, it stops naming things.** Seven columns need roughly ninety pixels each before a title is worth printing. Below that — a container query, so a panel on a wide screen behaves like a phone — the cells show **density dots** and the whole cell opens the day. A better target for a finger than an eight-pixel « +2 more ».
+  - **Clicking a day opens all of it**, hidden events included : a list showing only the overflow would make the reader rebuild the day in their head. A dropdown placed by `useDropdownPosition` on a wide screen, a full-screen modal on a phone. One `useDropdownPosition` serves forty-two possible anchors — its `ref` is a plain one, pointed at whichever cell was activated.
+- **New `SchedulerEvent`**, the compact form of an event, shared from here on : a month cell today, the all-day band and the timeline rows later. It becomes a `<button>` only when a view gives it an `onSelect` — an inert chip should not announce itself as a control. A chip cut at the edge of a week loses its corner and its rule on that side, so a span over two rows reads as one event.
+  - **Two sizes.** `sm` is calibrated for a month cell, where the rail height is fixed ; `md` is for a list — the day popover — where the same text at the cell's size is simply too small to read, especially on a phone where that list owns the screen.
+- `month` joins `builtViews`, so the view switcher appears with nothing else to change.
+
+**Components — `scheduler` — contrast**
+
+- **An event's text is no longer the token's colour, and this was a real defect.** A theme only guarantees a contrast *within its own pairs* : `base-content` reads on the `base-*` surfaces, `<token>-content` reads on `<token>`. Nothing promises that `text-warning` is legible on a wash of `warning` — and it is not, in either theme, which is how a calendar ends up with events one has to squint at. The hue now lives where it cannot hurt : a 20 % wash for the fill and the inline-start rule at full strength, which is what carries the colour at a glance. The label stays `base-content`.
+- Ten more readings raised along with it : grid lines to `base-300`, day numbers to `/80`, days outside the month from `/35` to `/50`, weekday headings from `/50` to `/70`, today's cell from `primary/5` to `/10`, a past event from `opacity-60` to `75`. The default colour of an event naming none is `base-200` rather than `base-100`, which was invisible on the surface it sat on.
+
+**Components — `Popover` — full-screen modals**
+
+- **New `fullScreen` prop** (opt-in, modal mode only) : the panel fills the viewport instead of hugging its content. Right when the content is a list of unknown length — a day's events, an editor — where a card growing with its content is worse than one that simply owns the screen. The dropdown is untouched.
+- **A full-screen panel heads and foots itself**, with a new `title` and a close button where every dialog puts one, plus a Close button at the bottom for the thumb that will never reach the top of a phone. A panel hiding everything behind it has to show the way out rather than expect it to be remembered. Labels come from the locale (`close`, new in `components.picker`) and are overridable through `closeLabel`.
+
 **Components — new `components/scheduler` group — the shell and its first view**
 
 - **New `Scheduler` component.** A calendar of events : what is scheduled, when, and — once the gestures land — where it moves to. It owns the three pieces of state a scheduler has, **each controlled or uncontrolled on its own** : the events, the current view, and the date being looked at. An application commonly owns the events and leaves the navigation to the component, which two coupled props would have made impossible.

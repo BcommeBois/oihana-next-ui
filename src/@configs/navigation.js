@@ -132,7 +132,8 @@ const navigation =
                 items :
                 [
                     { id : 'schedulerAgenda' , type : LINK  , Icon : AgendaIcon , path  : '/lab/scheduler'      } ,
-                    { id : 'schedulerModel'  , type : LINK  , Icon : SchemaIcon , path  : '/lab/schedulerModel' } ,
+                    { id : 'schedulerMonth'  , type : LINK  , Icon : SchedulerIcon , path  : '/lab/schedulerMonth' } ,
+                    { id : 'schedulerModel'  , type : LINK  , Icon : SchemaIcon    , path  : '/lab/schedulerModel' } ,
                 ]
             } ,
             {

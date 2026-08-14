@@ -19,6 +19,7 @@ const picker =
     {
         apply  : 'Appliquer' ,
         cancel : 'Annuler' ,
+        close  : 'Fermer' ,
         clear  : 'Effacer' ,
         open   : 'Ouvrir' ,
 
@@ -63,6 +64,7 @@ const picker =
     {
         apply  : 'Apply' ,
         cancel : 'Cancel' ,
+        close  : 'Close' ,
         clear  : 'Clear' ,
         open   : 'Open' ,
 
