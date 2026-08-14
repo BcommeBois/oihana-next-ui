@@ -76,7 +76,10 @@ const resolveViews = ( requested ) =>
  * @param {number}   [props.days=7] - Length of the agenda window, in days.
  * @param {React.ReactNode} [props.emptyState] - Replaces a view's default empty state.
  * @param {Array}    [props.events] - Controlled events.
- * @param {Function} [props.getColor] - Reads an event's display color.
+ * @param {Function} [props.getColor] - Reads an event's display color. Wins over the palette.
+ * @param {string|string[]} [props.palette] - Colours the events whose source names none. A palette name (`'brand'`, `'theme'`, `'nivo'`) or explicit colours. Off unless given.
+ * @param {Function} [props.getColorKey] - What decides an event's colour. Defaults to its resource — one colour per room, per round, per calendar.
+ * @param {Array} [props.colorKeys] - The keys in the order they take colours, which freezes the mapping.
  * @param {Function} [props.getEventId] - Reads an event's identity. Required when neither `identifier`, `id` nor `url` is the real key.
  * @param {Function} [props.getResourceId] - Reads the timeline row an event belongs to.
  * @param {number}   [props.maxEventsPerDay=3] - Month view : how many events a cell shows before it counts the rest.
@@ -126,9 +129,12 @@ const Scheduler =
     days = 7 ,
     emptyState ,
     events ,
+    colorKeys ,
     getColor ,
+    getColorKey ,
     getEventId ,
     getResourceId ,
+    palette ,
     maxEventsPerDay = 3 ,
     onChange ,
     onDayClick ,
@@ -159,9 +165,12 @@ const Scheduler =
         defaultEvents ,
         defaultView ,
         events ,
+        colorKeys ,
         getColor ,
+        getColorKey ,
         getEventId ,
         getResourceId ,
+        palette ,
         onChange ,
         onDateChange ,
         onViewChange ,

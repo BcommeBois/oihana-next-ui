@@ -4,16 +4,18 @@ import Select    from '@/components/selects/Select' ;
 import Container from '@/display/Container' ;
 
 /**
- * Palette selector shared by the charts demo pages.
+ * Palette selector, shared by every demo page that colours a set of categories.
  *
- * The palette choice is still provisional, so every charts page carries this
- * so the three can be compared on real data, in both light and dark.
+ * It started on the charts pages and now serves the scheduler too : both resolve
+ * the same palettes through the same hook, so both are worth comparing on real
+ * data, in light and in dark.
  *
  * @param {Object} props
  * @param {string} props.value - The selected palette.
  * @param {Function} props.onChange - Called with the new palette name.
+ * @param {string} [props.hint] - The line under the selector. Defaults to the charts wording.
  */
-const PalettePicker = ( { value , onChange } ) => (
+const PalettePicker = ( { value , onChange , hint } ) => (
     <Container className="flex flex-wrap items-end gap-4" maxWidth="max-w-full">
         <Select
             label    = "Palette"
@@ -27,7 +29,7 @@ const PalettePicker = ( { value , onChange } ) => (
         </Select>
 
         <p className="text-sm text-base-content/60">
-            Basculez aussi le thème clair/sombre : les textes, axes et grilles suivent DaisyUI.
+            { hint ?? 'Basculez aussi le thème clair/sombre : les textes, axes et grilles suivent DaisyUI.' }
         </p>
     </Container>
 ) ;

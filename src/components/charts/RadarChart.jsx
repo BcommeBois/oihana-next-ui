@@ -13,7 +13,7 @@ import { ResponsiveRadar } from '@nivo/radar' ;
 import { useMedia } from 'react-use' ;
 
 import useChartLayout  from '../../hooks/useChartLayout' ;
-import useChartPalette from '../../hooks/useChartPalette' ;
+import usePalette from '../../hooks/usePalette' ;
 import useChartTheme   from '../../hooks/useChartTheme' ;
 
 import { RADIAL } from '../../themes/charts/layout' ;
@@ -131,7 +131,7 @@ const RadarChart =
         [ keys , data , indexBy ] ,
     ) ;
 
-    const colors = useChartPalette( { palette , count : resolvedKeys.length } ) ;
+    const colors = usePalette( { palette , count : resolvedKeys.length } ) ;
 
     const reduceMotion = useMedia( '(prefers-reduced-motion: reduce)' , false ) ;
 

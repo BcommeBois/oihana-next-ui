@@ -10,7 +10,7 @@ import RadialBarChart from '@/components/charts/RadialBarChart' ;
 
 import Divider from '@/components/Divider' ;
 
-import PalettePicker from './PalettePicker' ;
+import PalettePicker from '@/demo/PalettePicker' ;
 import Section       from './Section' ;
 
 const PIE_DATA =

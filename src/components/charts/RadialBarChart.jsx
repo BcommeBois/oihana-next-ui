@@ -13,7 +13,7 @@ import { ResponsiveRadialBar } from '@nivo/radial-bar' ;
 import { useMedia } from 'react-use' ;
 
 import useChartLayout  from '../../hooks/useChartLayout' ;
-import useChartPalette from '../../hooks/useChartPalette' ;
+import usePalette from '../../hooks/usePalette' ;
 import useChartTheme   from '../../hooks/useChartTheme' ;
 
 import { RADIAL } from '../../themes/charts/layout' ;
@@ -123,7 +123,7 @@ const RadialBarChart =
 
     const categories = useMemo( () => countCategories( data ) , [ data ] ) ;
 
-    const colors = useChartPalette( { palette , count : categories } ) ;
+    const colors = usePalette( { palette , count : categories } ) ;
 
     const reduceMotion = useMedia( '(prefers-reduced-motion: reduce)' , false ) ;
 

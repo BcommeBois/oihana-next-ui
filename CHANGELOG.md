@@ -8,6 +8,23 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Hooks — ⚠️ breaking — `useChartPalette` is now `usePalette`**
+
+- **`hooks/useChartPalette` is removed and replaced by `hooks/usePalette`.** Same signature, same result, no alias kept : nothing outside this library imports it yet, and a deprecated shim nobody needs is a debt taken on for free.
+  - **Migration is one line per file** : `import usePalette from '…/hooks/usePalette'`, and rename the call. The twelve chart components were migrated with it.
+  - **Why** : the hook never did anything chart-specific. It turns a palette name into colours that read against the current background — which a scheduler colouring its resources needs exactly as much as a chart colouring its series. The name was the only thing tying it to one group, and it was about to make a second group import something called *chart*.
+
+**Components — `scheduler` — colouring by resource**
+
+- **New `palette` prop.** Eight DaisyUI tokens are enough while colouring *an event*. They stop being enough the moment the colour means a room, a round or a category : fifteen rounds cannot each have their own. The palette answers the count, through the same `usePalette` the charts use — so a scheduler and a chart side by side speak the same chromatic language, and both follow the theme into dark.
+- **New `getColorKey`, which answers the harder half : stability.** A colour handed out in order of appearance drifts — navigate to a week where the Blue Room happens to come first and every room shifts one place. **New `helpers/schedule/assignColors` sorts the keys before indexing them**, so the mapping depends on the *set* of keys and not on what the current window contains nor on the order the payload arrived in. A key added later only moves what sorts after it ; **`colorKeys`** passes an explicit order and freezes the mapping for good.
+  - `getColorKey` receives the **source**, not the normalized record : what decides a colour is almost always a business property — `location.id`, `assignedPOS._key` — that only the source carries.
+  - It **defaults to the event's resource**, which is the usual intent : `palette="brand"` on its own already gives one colour per room.
+  - **The data's own colour always wins.** An event carrying `color` keeps it — the palette only answers for what the data left unsaid, which is what lets it be switched on without rewriting the events that already had one. The rule holds on both paths, JSON-LD and plain objects.
+  - The palette **cycles** rather than running out : more keys than colours is a legibility problem, not a crash, and the application is better placed to decide whether to widen the palette or group the keys.
+- The demo carries the same **palette selector** the charts pages use — promoted from `demo/charts/` to `demo/` now that two groups share it, with the hint line made a prop.
+- Not done, and deliberately : **no legend**. `MetricLegend` already exists and the demo shows how to compose one, but a legend is only worth an API once the names it shows come from somewhere — and they come from the application.
+
 **Components — `scheduler` — the month view**
 
 - **New `SchedulerMonth`.** Six weeks, always, with events laid on **rails**. An exhibition running from the 10th to the 16th reads as *one bar crossing the week*, not as seven chips — which is why this view needs a placement of its own rather than the overlap columns the time grid will use.

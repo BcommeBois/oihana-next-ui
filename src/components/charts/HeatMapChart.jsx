@@ -13,7 +13,7 @@ import { ResponsiveHeatMap , ResponsiveHeatMapCanvas } from '@nivo/heatmap' ;
 import { useMedia } from 'react-use' ;
 
 import useChartLayout  from '../../hooks/useChartLayout' ;
-import useChartPalette from '../../hooks/useChartPalette' ;
+import usePalette from '../../hooks/usePalette' ;
 import useChartTheme   from '../../hooks/useChartTheme' ;
 import useThemeColors  from '../../themes/hooks/useThemeColors' ;
 
@@ -116,7 +116,7 @@ const HeatMapChart =
 {
     const theme = useChartTheme( { overrides : themeOverrides } ) ;
 
-    const ramp = useChartPalette( { palette , count : steps , sequential : true } ) ;
+    const ramp = usePalette( { palette , count : steps , sequential : true } ) ;
 
     const { empty : emptyCell } = useThemeColors( CALENDAR_COLOR_KEYS ) ?? {} ;
 

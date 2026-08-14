@@ -12,7 +12,7 @@ import EmptyState from '@/components/EmptyState' ;
 
 import { MdBarChart as NoChartIcon , MdRefresh as RefreshIcon } from 'react-icons/md' ;
 
-import PalettePicker from './PalettePicker' ;
+import PalettePicker from '@/demo/PalettePicker' ;
 import Section       from './Section' ;
 
 const TRANSPORT = [ 'plane' , 'helicopter' , 'boat' , 'train' , 'subway' , 'bus' , 'car' , 'moto' , 'bicycle' ] ;

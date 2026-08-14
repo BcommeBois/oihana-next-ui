@@ -13,7 +13,7 @@ import { ResponsiveTimeRange } from '@nivo/calendar' ;
 import { useMedia } from 'react-use' ;
 
 import useChartLayout  from '../../hooks/useChartLayout' ;
-import useChartPalette from '../../hooks/useChartPalette' ;
+import usePalette from '../../hooks/usePalette' ;
 import useChartTheme   from '../../hooks/useChartTheme' ;
 import useThemeColors  from '../../themes/hooks/useThemeColors' ;
 
@@ -108,7 +108,7 @@ const TimeRangeChart =
 {
     const theme = useChartTheme( { overrides : themeOverrides } ) ;
 
-    const colors = useChartPalette( { palette , count : steps , sequential : true } ) ;
+    const colors = usePalette( { palette , count : steps , sequential : true } ) ;
 
     const { empty : emptyCell , dayBorder } = useThemeColors( CALENDAR_COLOR_KEYS ) ?? {} ;
 

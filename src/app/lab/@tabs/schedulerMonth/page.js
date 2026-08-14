@@ -6,7 +6,10 @@ import useI18n   from '@/contexts/locale/useI18n.js' ;
 import Container from '@/display/Container' ;
 import Page      from '@/display/Page' ;
 
-import SchedulerMonthDemo from '@/demo/scheduler/SchedulerMonthDemo' ;
+import Divider from '@/components/Divider' ;
+
+import SchedulerMonthDemo   from '@/demo/scheduler/SchedulerMonthDemo' ;
+import SchedulerPaletteDemo from '@/demo/scheduler/SchedulerPaletteDemo' ;
 
 /**
  * Scheduler — the month view.
@@ -37,6 +40,10 @@ const SchedulerMonthShowcase = ( { path = 'app.lab.schedulerMonth' } ) =>
             </Container>
 
             <SchedulerMonthDemo />
+
+            <Divider />
+
+            <SchedulerPaletteDemo />
 
         </Page>
     ) ;

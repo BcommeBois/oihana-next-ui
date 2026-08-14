@@ -15,7 +15,7 @@ import { useMedia } from 'react-use' ;
 import isChordDataValid from '../../helpers/charts/isChordDataValid' ;
 
 import useChartLayout  from '../../hooks/useChartLayout' ;
-import useChartPalette from '../../hooks/useChartPalette' ;
+import usePalette from '../../hooks/usePalette' ;
 import useChartTheme   from '../../hooks/useChartTheme' ;
 
 import { RADIAL } from '../../themes/charts/layout' ;
@@ -111,7 +111,7 @@ const ChordChart =
 {
     const theme = useChartTheme( { overrides : themeOverrides } ) ;
 
-    const colors = useChartPalette( { palette , count : keys?.length ?? 0 } ) ;
+    const colors = usePalette( { palette , count : keys?.length ?? 0 } ) ;
 
     const reduceMotion = useMedia( '(prefers-reduced-motion: reduce)' , false ) ;
 

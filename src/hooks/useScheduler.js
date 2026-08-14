@@ -2,8 +2,11 @@ import { useMemo } from 'react' ;
 
 import useValue from './useValue' ;
 
+import usePalette from './usePalette' ;
+
+import { assignColors }   from '../helpers/schedule/assignColors' ;
 import { fromSchemaList } from '../helpers/schedule/fromSchema' ;
-import { normalizeEvent } from '../helpers/schedule/normalizeEvent' ;
+import { normalizeEvent , resolveResourceId } from '../helpers/schedule/normalizeEvent' ;
 import { readSchedules }  from '../helpers/schedule/expandSchedule' ;
 import { toSchemaPatch }  from '../helpers/schedule/toSchemaPatch' ;
 
@@ -75,6 +78,9 @@ const useScheduler = ( props = {} ) =>
         getEventId ,
         getResourceId ,
         getColor ,
+        palette ,
+        getColorKey ,
+        colorKeys ,
         allDayEndInclusive = true ,
         defaultDuration ,
 
@@ -100,13 +106,69 @@ const useScheduler = ( props = {} ) =>
         [ view , date , days , weekStartsOn ] ,
     ) ;
 
+    // ---- palette
+    //
+    // What decides a colour is a business property — a room, a round — so the
+    // accessor reads the *source*, not the normalized record. Without one, the
+    // resource is the obvious intent and the default.
+    const readColorKey = useMemo
+    (
+        () => getColorKey ?? ( source => resolveResourceId( getResourceId ? getResourceId( source ) : source?.location ) ) ,
+        [ getColorKey , getResourceId ] ,
+    ) ;
+
+    const keys = useMemo( () =>
+    {
+        if ( !palette )
+        {
+            return [] ;
+        }
+        if ( Array.isArray( colorKeys ) )
+        {
+            return colorKeys ;
+        }
+        return ( Array.isArray( sources ) ? sources : [] ).map( readColorKey ) ;
+    }
+    , [ palette , colorKeys , sources , readColorKey ] ) ;
+
+    const paletteColors = usePalette({ palette : palette || undefined , count : Math.max( 1 , new Set( keys ).size ) }) ;
+
+    const colorByKey = useMemo
+    (
+        () => ( palette ? assignColors( keys , paletteColors , { sort : !Array.isArray( colorKeys ) } ) : new Map() ) ,
+        [ palette , keys , paletteColors , colorKeys ] ,
+    ) ;
+
+    // The source's own colour always wins : the data said so, and a palette is
+    // only there to answer for what the data left unsaid.
+    const resolveColor = useMemo( () => ( source ) =>
+    {
+        const own = getColor ? getColor( source ) : source?.color ;
+
+        if ( own )
+        {
+            return own ;
+        }
+        if ( colorByKey.size === 0 )
+        {
+            return null ;
+        }
+
+        const key = readColorKey( source ) ;
+        return key === null || key === undefined ? null : ( colorByKey.get( String( key ) ) ?? null ) ;
+    }
+    , [ getColor , colorByKey , readColorKey ] ) ;
+
     const events = useMemo( () =>
     {
         const list = schema
-            ? fromSchemaList( sources , { window , allDayEndInclusive , defaultDuration , getEventId , getResourceId , getColor } )
+            ? fromSchemaList( sources , { window , allDayEndInclusive , defaultDuration , getEventId , getResourceId , getColor : resolveColor } )
             : ( Array.isArray( sources ) ? sources : [] )
                 .map( ( source , index ) => normalizeEvent( source , { allDayEndInclusive , defaultDuration , getEventId , getResourceId , index } ) )
-                .filter( Boolean ) ;
+                .filter( Boolean )
+                // `normalizeEvent` reads `color` off the object ; the palette answers
+                // for the ones that named none, exactly as it does on the schema path.
+                .map( event => ( event.color ? event : { ...event , color : resolveColor( event.source ) } ) ) ;
 
         // A dated event is read whatever the window ; only a recurring rule is
         // expanded within it. Clipping here keeps both paths saying the same thing.
@@ -114,7 +176,7 @@ const useScheduler = ( props = {} ) =>
             .filter( event => event.end > window.start && event.start < window.end )
             .sort( ( a , b ) => a.start - b.start || a.end - b.end ) ;
     }
-    , [ sources , window , schema , allDayEndInclusive , defaultDuration , getEventId , getResourceId , getColor ] ) ;
+    , [ sources , window , schema , allDayEndInclusive , defaultDuration , getEventId , getResourceId , resolveColor ] ) ;
 
     // ---- navigation
 

@@ -13,7 +13,7 @@ import { ResponsiveCalendar , ResponsiveCalendarCanvas } from '@nivo/calendar' ;
 import { useMedia } from 'react-use' ;
 
 import useChartLayout  from '../../hooks/useChartLayout' ;
-import useChartPalette from '../../hooks/useChartPalette' ;
+import usePalette from '../../hooks/usePalette' ;
 import useChartTheme   from '../../hooks/useChartTheme' ;
 import useThemeColors  from '../../themes/hooks/useThemeColors' ;
 
@@ -31,7 +31,7 @@ import ChartTooltip from './ChartTooltip' ;
  * used for contribution graphs and activity over a year.
  *
  * **The palette is sequential, not categorical.** Cells encode a quantity,
- * so the colors have to be ordered ; the component asks `useChartPalette`
+ * so the colors have to be ordered ; the component asks `usePalette`
  * for a ramp rather than for mutually distinguishable colors, which would
  * destroy the reading.
  *
@@ -114,7 +114,7 @@ const CalendarChart =
 {
     const theme = useChartTheme( { overrides : themeOverrides } ) ;
 
-    const colors = useChartPalette( { palette , count : steps , sequential : true } ) ;
+    const colors = usePalette( { palette , count : steps , sequential : true } ) ;
 
     const { empty : emptyCell , dayBorder , monthBorder } = useThemeColors( CALENDAR_COLOR_KEYS ) ?? {} ;
 

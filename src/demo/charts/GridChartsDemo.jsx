@@ -9,7 +9,7 @@ import WaffleChart    from '@/components/charts/WaffleChart' ;
 
 import Divider from '@/components/Divider' ;
 
-import PalettePicker from './PalettePicker' ;
+import PalettePicker from '@/demo/PalettePicker' ;
 import Section       from './Section' ;
 
 /**

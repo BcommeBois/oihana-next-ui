@@ -13,7 +13,7 @@ import { ResponsiveWaffle , ResponsiveWaffleCanvas } from '@nivo/waffle' ;
 import { useMedia } from 'react-use' ;
 
 import useChartLayout  from '../../hooks/useChartLayout' ;
-import useChartPalette from '../../hooks/useChartPalette' ;
+import usePalette from '../../hooks/usePalette' ;
 import useChartTheme   from '../../hooks/useChartTheme' ;
 import useThemeColors  from '../../themes/hooks/useThemeColors' ;
 
@@ -104,7 +104,7 @@ const WaffleChart =
 {
     const theme = useChartTheme( { overrides : themeOverrides } ) ;
 
-    const colors = useChartPalette( { palette , count : data?.length ?? 0 } ) ;
+    const colors = usePalette( { palette , count : data?.length ?? 0 } ) ;
 
     // Empty cells are a chart color, not chrome, so they do not come from the
     // nivo theme object — they need a resolved value of their own.
