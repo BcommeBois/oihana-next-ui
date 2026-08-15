@@ -2,6 +2,7 @@ import scheduleModel   from './scheduleModel' ;
 import schedulerAgenda from './schedulerAgenda' ;
 import schedulerMonth  from './schedulerMonth' ;
 import schedulerPalette from './schedulerPalette' ;
+import schedulerWeek    from './schedulerWeek' ;
 
 const scheduler =
 {
@@ -9,6 +10,7 @@ const scheduler =
     schedulerAgenda ,
     schedulerMonth ,
     schedulerPalette ,
+    schedulerWeek ,
 } ;
 
 export default scheduler ;

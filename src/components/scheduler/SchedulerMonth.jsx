@@ -10,7 +10,7 @@ import useDropdownPosition from '../../themes/hooks/useDropdownPosition' ;
 import dayjs from '../../helpers/date/configureDayjs' ;
 
 import { getWeekdayLabels } from '../../helpers/date/getMonthMatrix' ;
-import { eventsOfDay , layoutMonthBars } from '../../helpers/schedule/layoutMonthBars' ;
+import { eventsOfDay , layoutBars } from '../../helpers/schedule/layoutBars' ;
 
 import
 {
@@ -51,7 +51,7 @@ const Dot = ( { event } ) =>
  *
  * An event running from the 10th to the 16th reads as **one bar crossing the
  * week**, not as seven chips — which is the whole reason this view needs its own
- * placement (see {@link module:helpers/schedule/layoutMonthBars}) rather than the
+ * placement (see {@link module:helpers/schedule/layoutBars}) rather than the
  * overlap columns the time grid uses.
  *
  * The bars are an overlay above the cells, and the cells **reserve** the height
@@ -112,7 +112,7 @@ const SchedulerMonth =
 
     const weeks = useMemo
     (
-        () => layoutMonthBars( events ?? [] , window , { maxRails : maxEventsPerDay } ) ,
+        () => layoutBars( events ?? [] , window , { maxRails : maxEventsPerDay } ) ,
         [ events , window , maxEventsPerDay ] ,
     ) ;
 

@@ -181,6 +181,67 @@ export const SCHEDULER_EVENT_CHIP_FROM = 'rounded-s-none border-s-0' ;
 export const SCHEDULER_EVENT_CHIP_TO = 'rounded-e-none' ;
 
 /**
+ * The time grid — one column per day, hours down the side.
+ *
+ * A container again : seven columns of events need width, and what decides is
+ * the grid's own. Below it the columns keep a floor and the area scrolls
+ * sideways, because squeezing seven days into a phone does not make a week
+ * readable — it makes it wrong.
+ */
+export const SCHEDULER_TIMEGRID = '@container flex flex-col overflow-hidden rounded-box border border-base-300' ;
+
+/** The row naming the days, above everything and outside the scroll. */
+export const SCHEDULER_TIMEGRID_HEAD = 'flex border-b border-base-300 bg-base-100' ;
+
+/** The all-day band, between the day names and the hours. */
+export const SCHEDULER_TIMEGRID_ALLDAY = 'flex border-b border-base-300 bg-base-100' ;
+
+/** The scrolling part : the hours. */
+export const SCHEDULER_TIMEGRID_BODY = 'flex overflow-y-auto overflow-x-auto' ;
+
+/** The hour gutter, on the inline-start edge of every row. */
+export const SCHEDULER_TIMEGRID_GUTTER = 'relative w-14 shrink-0 border-e border-base-300 bg-base-100' ;
+
+/** One hour label, hung on its own line. */
+export const SCHEDULER_TIMEGRID_HOUR = 'absolute end-1 -translate-y-1/2 font-mono text-xs tabular-nums text-base-content/70' ;
+
+/** The columns, side by side. */
+export const SCHEDULER_TIMEGRID_COLUMNS = 'relative flex flex-1' ;
+
+/** One day column. */
+export const SCHEDULER_TIMEGRID_COLUMN = 'relative min-w-24 flex-1 border-e border-base-200 last:border-e-0' ;
+
+/** A column standing for a day off. */
+export const SCHEDULER_TIMEGRID_COLUMN_WEEKEND = 'bg-base-200/40' ;
+
+/** A line at the hour. */
+export const SCHEDULER_TIMEGRID_LINE = 'pointer-events-none absolute inset-x-0 border-t border-base-300' ;
+
+/** A line at the half hour — present, and quieter. */
+export const SCHEDULER_TIMEGRID_LINE_HALF = 'pointer-events-none absolute inset-x-0 border-t border-base-200' ;
+
+/** The day name and number, above a column. */
+export const SCHEDULER_TIMEGRID_DAY = 'flex min-w-24 flex-1 flex-col items-center border-e border-base-200 py-1 last:border-e-0' ;
+
+/** The weekday, above its number. */
+export const SCHEDULER_TIMEGRID_DAY_NAME = 'text-xs font-medium uppercase text-base-content/70' ;
+
+/** The day number. */
+export const SCHEDULER_TIMEGRID_DAY_NUMBER = 'text-base font-semibold tabular-nums' ;
+
+/** Today's number, marked as it is everywhere else. */
+export const SCHEDULER_TIMEGRID_DAY_TODAY = 'inline-flex size-7 items-center justify-center rounded-full bg-primary text-primary-content' ;
+
+/** An event, placed on the axis. */
+export const SCHEDULER_TIMEGRID_EVENT = 'absolute overflow-hidden rounded-field border-s-4 px-1.5 py-0.5 text-xs' ;
+
+/** The line saying where now is. */
+export const SCHEDULER_NOW = 'pointer-events-none absolute inset-x-0 z-20 border-t-2 border-error' ;
+
+/** The dot anchoring that line to the inline-start edge. */
+export const SCHEDULER_NOW_DOT = 'absolute -start-1 -top-1.5 size-2.5 rounded-full bg-error' ;
+
+/**
  * DaisyUI tokens an event can be tinted with.
  *
  * **The text is never the token's colour.** A theme only guarantees a contrast

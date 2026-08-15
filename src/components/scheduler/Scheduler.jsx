@@ -7,7 +7,8 @@ import { AGENDA , DAY , MONTH , TIMELINE , WEEK } from '../../helpers/schedule/g
 import { getSchedulerClasses } from '../../themes/components/scheduler' ;
 
 import SchedulerAgenda  from './SchedulerAgenda' ;
-import SchedulerMonth   from './SchedulerMonth' ;
+import SchedulerMonth    from './SchedulerMonth' ;
+import SchedulerTimeGrid from './SchedulerTimeGrid' ;
 import SchedulerToolbar from './SchedulerToolbar' ;
 
 export { AGENDA , DAY , MONTH , TIMELINE , WEEK } ;
@@ -19,7 +20,7 @@ export { AGENDA , DAY , MONTH , TIMELINE , WEEK } ;
  * cannot put a tab in the switcher that leads nowhere. The list grows as the
  * views land, and nothing an application wrote has to change when it does.
  */
-export const builtViews = [ AGENDA , MONTH ] ;
+export const builtViews = [ AGENDA , DAY , WEEK , MONTH ] ;
 
 /** Keeps only the views that exist, and says so in development when one does not. */
 const resolveViews = ( requested ) =>
@@ -83,6 +84,13 @@ const resolveViews = ( requested ) =>
  * @param {Function} [props.getEventId] - Reads an event's identity. Required when neither `identifier`, `id` nor `url` is the real key.
  * @param {Function} [props.getResourceId] - Reads the timeline row an event belongs to.
  * @param {number}   [props.maxEventsPerDay=3] - Month view : how many events a cell shows before it counts the rest.
+ * @param {number}   [props.dayStart=0] - Time grid : minutes from midnight where the axis begins.
+ * @param {number}   [props.dayEnd=1440] - Time grid : minutes from midnight where it ends.
+ * @param {number|string} [props.height] - Time grid : height of the scrolling area.
+ * @param {boolean}  [props.nowIndicator=true] - Time grid : draw the line across today.
+ * @param {number}   [props.pixelsPerHour=48] - Time grid : zoom.
+ * @param {string}   [props.scrollTime='08:00'] - Time grid : where it lands on mount.
+ * @param {number}   [props.slotDuration=30] - Time grid : minutes between two rules.
  * @param {Function} [props.onDayClick] - Called with a day, when a cell is activated.
  * @param {Function} [props.onEventClick] - Called with a record, when an event is activated.
  * @param {Function} [props.onChange] - `( nextEvents , change ) => void|Promise`. A rejected promise reverts, in uncontrolled mode.
@@ -126,8 +134,15 @@ const Scheduler =
     defaultDuration ,
     defaultEvents ,
     defaultView = AGENDA ,
+    dayEnd ,
+    dayStart ,
     days = 7 ,
     emptyState ,
+    height ,
+    nowIndicator ,
+    pixelsPerHour ,
+    scrollTime ,
+    slotDuration ,
     events ,
     colorKeys ,
     getColor ,
@@ -198,7 +213,24 @@ const Scheduler =
                 </SchedulerToolbar>
             ) }
 
-            { scheduler.view === MONTH
+            { ( scheduler.view === DAY || scheduler.view === WEEK )
+                ? (
+                    <SchedulerTimeGrid
+                        dayEnd        = { dayEnd }
+                        dayStart      = { dayStart }
+                        events        = { scheduler.events }
+                        height        = { height }
+                        nowIndicator  = { nowIndicator }
+                        onEventClick  = { onEventClick }
+                        path          = { path }
+                        pixelsPerHour = { pixelsPerHour }
+                        renderEvent   = { renderEvent }
+                        scrollTime    = { scrollTime }
+                        slotDuration  = { slotDuration }
+                        window        = { scheduler.window }
+                    />
+                )
+                : scheduler.view === MONTH
                 ? (
                     <SchedulerMonth
                         date            = { scheduler.date }

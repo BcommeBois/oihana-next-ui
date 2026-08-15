@@ -1,10 +1,14 @@
 /**
- * Places events on the rails of a month grid, one week row at a time.
+ * Places events on rails over a row of day columns.
  *
- * A month view is not an agenda with seven columns : an exhibition running from
- * the 10th to the 16th has to read as **one bar crossing the week**, not as seven
+ * Two views need this, and they need the same thing : an exhibition running from
+ * the 10th to the 16th has to read as **one bar crossing the row**, not as seven
  * separate chips. That means reserving a horizontal track — a *rail* — for the
  * whole crossing, and keeping it at the same height for every day it covers.
+ *
+ * A month grid asks for rows of seven. The all-day band of a time grid asks for a
+ * single row as wide as the view — one column in a day view, seven in a week —
+ * which is the whole of the `columns` option.
  *
  * This is a different problem from {@link module:helpers/schedule/layoutOverlaps},
  * which shares a width between things happening at once. Here nothing shares :
@@ -20,17 +24,18 @@
  * « +2 more » of each cell is counting. The count is **per day**, not per week :
  * two days of the same row rarely hide the same number.
  *
- * @module helpers/schedule/layoutMonthBars
+ * @module helpers/schedule/layoutBars
  */
 
 import dayjs from '../date/configureDayjs' ;
 
-const DAYS_PER_WEEK = 7 ;
+/** A week, when nothing says otherwise. */
+export const DAYS_PER_WEEK = 7 ;
 
 /**
- * @typedef {Object} MonthBar
+ * @typedef {Object} Bar
  * @property {import('./normalizeEvent').ScheduleEvent} event - The event drawn.
- * @property {number}  column          - First column it occupies, 0 to 6.
+ * @property {number}  column          - First column it occupies.
  * @property {number}  span            - How many columns it covers.
  * @property {number}  rail            - Its height in the cell, 0 being the topmost.
  * @property {boolean} continuesBefore - It started before this week row.
@@ -38,25 +43,29 @@ const DAYS_PER_WEEK = 7 ;
  */
 
 /**
- * @typedef {Object} MonthWeek
- * @property {number[]}   days   - The seven local midnights of the row.
- * @property {MonthBar[]} bars   - What is drawn, already placed.
+ * @typedef {Object} BarRow
+ * @property {number[]}   days   - The local midnights of the row.
+ * @property {Bar[]} bars   - What is drawn, already placed.
  * @property {number[]}   hidden - Per column, how many events did not fit.
  * @property {number}     rails  - How many rails the row actually uses.
  */
 
 /**
  * @param {Array<import('./normalizeEvent').ScheduleEvent>} events
- * @param {{start: number, end: number}} window - The grid's span — six weeks, from {@link module:helpers/schedule/getViewWindow}.
+ * @param {{start: number, end: number}} window - The span being laid out, from {@link module:helpers/schedule/getViewWindow}.
  * @param {Object} [options]
- * @param {number} [options.maxRails=3] - How many rails a cell can show before it starts counting instead.
- * @returns {Array<MonthWeek>}
+ * @param {number} [options.maxRails=3] - How many rails a row can show before it starts counting instead.
+ * @param {number} [options.columns=7] - Days per row. Seven for a month grid ; the width of the view for the all-day band of a time grid.
+ * @returns {Array<BarRow>}
  *
  * @example
- * const weeks = layoutMonthBars( events , window , { maxRails : 3 } ) ;
- * weeks[ 0 ].bars.forEach( bar => place( bar.column , bar.span , bar.rail ) ) ;
+ * // A month grid : six rows of seven
+ * layoutBars( events , monthWindow , { maxRails : 3 } )
+ *
+ * // The all-day band of a week : one row of seven, and nothing hidden
+ * layoutBars( allDayEvents , weekWindow , { columns : 7 , maxRails : Infinity } )
  */
-export const layoutMonthBars = ( events , window , { maxRails = 3 } = {} ) =>
+export const layoutBars = ( events , window , { maxRails = 3 , columns = DAYS_PER_WEEK } = {} ) =>
 {
     if ( !window )
     {
@@ -74,7 +83,7 @@ export const layoutMonthBars = ( events , window , { maxRails = 3 } = {} ) =>
         || a.start - b.start
         || String( a.id ).localeCompare( String( b.id ) ) ) ;
 
-    const weeks = [] ;
+    const rows = [] ;
 
     let cursor = dayjs( window.start ).startOf( 'day' ) ;
 
@@ -82,16 +91,16 @@ export const layoutMonthBars = ( events , window , { maxRails = 3 } = {} ) =>
     {
         const days = [] ;
 
-        for ( let index = 0 ; index < DAYS_PER_WEEK ; index++ )
+        for ( let index = 0 ; index < columns ; index++ )
         {
             days.push( cursor.add( index , 'day' ).valueOf() ) ;
         }
 
         const rowStart = days[ 0 ] ;
-        const rowEnd   = cursor.add( DAYS_PER_WEEK , 'day' ).valueOf() ;
+        const rowEnd   = cursor.add( columns , 'day' ).valueOf() ;
 
         const bars   = [] ;
-        const hidden = new Array( DAYS_PER_WEEK ).fill( 0 ) ;
+        const hidden = new Array( columns ).fill( 0 ) ;
 
         // rails[ n ] is the set of columns already taken at that height.
         const rails = [] ;
@@ -106,14 +115,14 @@ export const layoutMonthBars = ( events , window , { maxRails = 3 } = {} ) =>
             const from = Math.max( event.start , rowStart ) ;
             const to   = Math.min( event.end , rowEnd ) ;
 
-            const column = dayjs( from ).startOf( 'day' ).diff( dayjs( rowStart ) , 'day' ) ;
+            const first = dayjs( from ).startOf( 'day' ).diff( dayjs( rowStart ) , 'day' ) ;
 
             // The end is exclusive : an event finishing exactly at midnight belongs
             // to the day before, not to the one it touches.
-            const lastColumn = dayjs( to - 1 ).startOf( 'day' ).diff( dayjs( rowStart ) , 'day' ) ;
+            const last = dayjs( to - 1 ).startOf( 'day' ).diff( dayjs( rowStart ) , 'day' ) ;
 
-            const start = Math.max( 0 , column ) ;
-            const span  = Math.min( DAYS_PER_WEEK - 1 , lastColumn ) - start + 1 ;
+            const start = Math.max( 0 , first ) ;
+            const span  = Math.min( columns - 1 , last ) - start + 1 ;
 
             if ( span <= 0 )
             {
@@ -166,7 +175,7 @@ export const layoutMonthBars = ( events , window , { maxRails = 3 } = {} ) =>
             }) ;
         }
 
-        weeks.push
+        rows.push
         ({
             days ,
             bars  : bars.sort( ( a , b ) => a.rail - b.rail || a.column - b.column ) ,
@@ -174,10 +183,10 @@ export const layoutMonthBars = ( events , window , { maxRails = 3 } = {} ) =>
             rails : Math.min( rails.length , maxRails ) ,
         }) ;
 
-        cursor = cursor.add( DAYS_PER_WEEK , 'day' ) ;
+        cursor = cursor.add( columns , 'day' ) ;
     }
 
-    return weeks ;
+    return rows ;
 } ;
 
 /**
@@ -203,4 +212,4 @@ export const eventsOfDay = ( events , day ) =>
             || b.end - a.end ) ;
 } ;
 
-export default layoutMonthBars ;
+export default layoutBars ;

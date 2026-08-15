@@ -35,6 +35,7 @@ import { TbLayoutKanban         as KanbanIcon         } from "react-icons/tb";
 import { TbCalendarEvent        as SchedulerIcon      } from "react-icons/tb";
 import { TbListDetails          as AgendaIcon         } from "react-icons/tb";
 import { TbBraces               as SchemaIcon         } from "react-icons/tb";
+import { TbCalendarWeek         as WeekIcon           } from "react-icons/tb";
 import { TbChartHistogram       as ChartIcon          } from "react-icons/tb";
 import { TbChartDonut           as ChartCircularIcon  } from "react-icons/tb";
 import { TbChartGridDots        as ChartGridIcon      } from "react-icons/tb";
@@ -132,6 +133,7 @@ const navigation =
                 items :
                 [
                     { id : 'schedulerAgenda' , type : LINK  , Icon : AgendaIcon , path  : '/lab/scheduler'      } ,
+                    { id : 'schedulerWeek'   , type : LINK  , Icon : WeekIcon      , path  : '/lab/schedulerWeek'  } ,
                     { id : 'schedulerMonth'  , type : LINK  , Icon : SchedulerIcon , path  : '/lab/schedulerMonth' } ,
                     { id : 'schedulerModel'  , type : LINK  , Icon : SchemaIcon    , path  : '/lab/schedulerModel' } ,
                 ]

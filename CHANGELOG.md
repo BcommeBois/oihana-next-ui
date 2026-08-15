@@ -8,6 +8,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Components — `scheduler` — the time grid**
+
+- **New `SchedulerTimeGrid`.** The view where an event stops being a row and becomes a **placed rectangle** : `top` from its start, `height` from its length, and a width shared with whatever overlaps it. It is the first thing to exercise `createTimeScale` and `layoutOverlaps`, both shipped with the headless core and until now never drawn from.
+  - **It serves Day and Week alike.** The window already says whether there is one column or seven ; nothing else differs, so nothing else was written twice.
+  - **Three bands, one of them scrolling.** The day names and the all-day band stay put while the hours slide under them. An all-day event has no place on an hour axis — it would have to span the whole of it — so it goes into a band above.
+  - **The bounds stay the full day by default**, and `scrollTime` decides where the grid lands on mount. Narrowing the axis to office hours would silently hide a night incident or an on-call shift ; a scroll position costs nothing to correct.
+  - **`slotDuration` and the zoom are separate settings**, as the grid step and the drag snap will be : a grid ruled every thirty minutes while a drag lands on the quarter hour is the usual arrangement, not an inconsistency.
+  - **Narrow, the columns keep a floor and the area scrolls sideways.** Squeezing seven days into a phone does not make a week readable, it makes it wrong — which is what the agenda is for.
+  - A one-minute event still gets a clickable height, and an event falling outside the drawn axis is dropped rather than clamped onto an edge it never touched.
+- **`layoutMonthBars` becomes `layoutBars`, with a `columns` option.** The all-day band is the month grid's problem exactly — bars spanning columns, stacked on rails — differing only in that a month asks for rows of seven while a band asks for a single row as wide as the view. One option, and the helper serves both. Renamed while nothing is published, since it would have meant a time grid importing something called *month*.
+- **New `hooks/useNow`**, for anything drawing *now*. **It starts at `null` on purpose** : a server and a browser cannot render the same clock, and reading the time during the first render mismatches on hydration at every load. The first value lands after mount, and an indicator appearing a frame late is better than one flashing at the wrong minute before correcting itself.
+- `day` and `week` join `builtViews`.
+
 **Hooks — ⚠️ breaking — `useChartPalette` is now `usePalette`**
 
 - **`hooks/useChartPalette` is removed and replaced by `hooks/usePalette`.** Same signature, same result, no alias kept : nothing outside this library imports it yet, and a deprecated shim nobody needs is a debt taken on for free.
