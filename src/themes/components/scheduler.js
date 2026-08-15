@@ -283,6 +283,52 @@ export const SCHEDULER_TIMEGRID_EVENT_GHOST = 'opacity-40' ;
 /** The block following the pointer : above everything, and never a target itself. */
 export const SCHEDULER_TIMEGRID_EVENT_DRAGGING = 'pointer-events-none z-30 cursor-grabbing shadow-lg ring-2 ring-base-content/20' ;
 
+/**
+ * Height, in pixels, below which a card shows only its closing handle.
+ *
+ * Two eight-pixel strips on a twenty-four pixel card leave eight pixels to take
+ * the block by, which takes the move away to give the resize. The closing edge
+ * is the one that gets adjusted, so it is the one that stays.
+ */
+export const TIMEGRID_BOTH_HANDLES_HEIGHT = 28 ;
+
+/**
+ * A resize handle : a strip along an edge of a card.
+ *
+ * **Hidden, and inert, wherever there is no hover.** A finger cannot aim at eight
+ * pixels, and a handle that only *looks* absent would still swallow the press
+ * that was meant to move the block. The `hover: hover` guard is what keeps a
+ * tablet from inheriting a desktop affordance ; touch resizing goes through the
+ * editor instead.
+ *
+ * @safelist [@media(hover:hover)]:group-hover:opacity-100
+ */
+export const SCHEDULER_TIMEGRID_HANDLE = 'pointer-events-none absolute inset-x-0 z-10 flex h-2 items-center justify-center opacity-0 [@media(hover:hover)]:group-hover:pointer-events-auto [@media(hover:hover)]:group-hover:opacity-100' ;
+
+/** The handle of the opening edge. */
+export const SCHEDULER_TIMEGRID_HANDLE_START = 'top-0 cursor-ns-resize' ;
+
+/** The handle of the closing edge. */
+export const SCHEDULER_TIMEGRID_HANDLE_END = 'bottom-0 cursor-ns-resize' ;
+
+/** What a handle actually shows : a grip, not a bar across the card. */
+export const SCHEDULER_TIMEGRID_HANDLE_GRIP = 'h-0.5 w-5 rounded-full bg-base-content/40' ;
+
+/** A card whose edges answer to a drag. */
+export const SCHEDULER_TIMEGRID_EVENT_RESIZABLE = 'group' ;
+
+/**
+ * The range being drawn on an empty column.
+ *
+ * Dashed, because it does not exist yet — and its text is `base-content`, never
+ * the accent it is tinted with : the contrast of a token is only guaranteed
+ * against its own `-content` pair.
+ */
+export const SCHEDULER_TIMEGRID_DRAFT = 'pointer-events-none absolute z-30 flex items-center overflow-hidden rounded-field border-2 border-dashed border-primary bg-primary/10 px-1.5 text-xs leading-none text-base-content' ;
+
+/** A column that answers to a press on its empty space. */
+export const SCHEDULER_TIMEGRID_COLUMN_CREATABLE = 'cursor-cell' ;
+
 /** The line saying where now is. */
 export const SCHEDULER_NOW = 'pointer-events-none absolute inset-x-0 z-20 border-t-2 border-error' ;
 

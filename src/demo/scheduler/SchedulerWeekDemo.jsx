@@ -82,7 +82,9 @@ const SchedulerWeekDemo = ( { path = 'demo.scheduler.schedulerWeek' } ) =>
 
                 <div className="rounded-box bg-base-100 p-2 sm:p-4">
                     <Scheduler
+                        creatable
                         movable
+                        resizable
                         defaultDate    = { ANCHOR }
                         defaultView    = "week"
                         dayEnd         = { 20 * 60 }
@@ -91,11 +93,21 @@ const SchedulerWeekDemo = ( { path = 'demo.scheduler.schedulerWeek' } ) =>
                         height         = "22rem"
                         isEventMovable = { isEventMovable }
                         onChange       = { ( next , report ) => { setEvents( next ) ; setChange( report ) ; } }
+                        // Returning an object is what makes the range land on the
+                        // grid : the identity is ours to give, never the library's.
+                        onEventCreate  = { ({ start , end }) => ({
+                            color : 'primary' ,
+                            end   : new Date( end ) ,
+                            id    : crypto.randomUUID() ,
+                            start : new Date( start ) ,
+                            title : move?.created ?? 'Nouveau' ,
+                        }) }
                         scrollTime     = "08:00"
                     />
                 </div>
 
                 <p className="text-sm text-base-content/60">{ move?.locked }</p>
+                <p className="text-sm text-base-content/60">{ move?.create }</p>
 
                 <pre className="overflow-x-auto rounded-box bg-base-100 p-3 font-mono text-xs">
 { change === null
@@ -113,6 +125,7 @@ const SchedulerWeekDemo = ( { path = 'demo.scheduler.schedulerWeek' } ) =>
                 <div className="rounded-box bg-base-100 p-2 sm:p-4">
                     <Scheduler
                         movable
+                        resizable
                         schema
                         toolbar       = { false }
                         defaultEvents = { libraryProgram }

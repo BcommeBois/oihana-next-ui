@@ -84,7 +84,12 @@ const resolveViews = ( requested ) =>
  * @param {Function} [props.getEventId] - Reads an event's identity. Required when neither `identifier`, `id` nor `url` is the real key.
  * @param {Function} [props.getResourceId] - Reads the timeline row an event belongs to.
  * @param {Function} [props.isEventMovable] - Whether an event may be dragged — a past slot, a cancelled booking, a lock of your own. The recurrence guard applies whatever it answers.
+ * @param {Function} [props.isEventResizable] - Whether an event's edges may be pulled. Defaults to `isEventMovable`.
  * @param {boolean}  [props.movable=false] - Let an event be dragged to another time. Day and week views.
+ * @param {boolean}  [props.resizable=false] - Let an event's edges be pulled. Pointers that hover ; on touch, resizing belongs to the editor.
+ * @param {boolean}  [props.creatable=false] - Let a range be drawn, or clicked, on an empty slot.
+ * @param {number}   [props.createDuration=30] - Minutes a plain click on an empty slot stands for.
+ * @param {Function} [props.onEventCreate] - Called with `{ start , end }`. **Return an object and it is added** ; return nothing and the creation is yours to make — which is what opening an editor does.
  * @param {number}   [props.snapMinutes=15] - Step a dragged event lands on.
  * @param {number}   [props.maxEventsPerDay=3] - Month view : how many events a cell shows before it counts the rest.
  * @param {number}   [props.dayStart=0] - Time grid : minutes from midnight where the axis begins.
@@ -150,15 +155,20 @@ const Scheduler =
     colorKeys ,
     getColor ,
     getColorKey ,
+    creatable = false ,
+    createDuration ,
     getEventId ,
     getResourceId ,
     isEventMovable ,
+    isEventResizable ,
     movable = false ,
+    resizable = false ,
     palette ,
     maxEventsPerDay = 3 ,
     onChange ,
     onDayClick ,
     onEventClick ,
+    onEventCreate ,
     onDateChange ,
     onViewChange ,
     path = 'components.scheduler' ,
@@ -203,7 +213,36 @@ const Scheduler =
     // Two questions, one answer for the views : the application's own rule, and
     // the one the core never gives up — an occurrence of a recurring rule cannot
     // be written through, so it is never offered as draggable in the first place.
-    const canDrag = ( event ) => scheduler.canMove( event ) && ( isEventMovable ? isEventMovable( event ) : true ) ;
+    const canDrag   = ( event ) => scheduler.canMove( event ) && ( isEventMovable ? isEventMovable( event ) : true ) ;
+    const canStretch = ( event ) => scheduler.canMove( event ) && ( ( isEventResizable ?? isEventMovable ) ? ( isEventResizable ?? isEventMovable )( event ) : true ) ;
+
+    /**
+     * What a drawn range, or a clicked slot, becomes.
+     *
+     * **The identity of a new event is the application's**, never this library's :
+     * an invented id is an invented collision, and the real key comes from the
+     * server. So the range is reported, and what comes back decides — an object
+     * is added, nothing at all means the application took it from here, which is
+     * exactly what opening an editor looks like.
+     */
+    const createEvent = ( range ) =>
+    {
+        if ( typeof onEventCreate !== 'function' )
+        {
+            if ( process.env.NODE_ENV === 'development' )
+            {
+                console.warn( 'Scheduler: `creatable` is set but there is no `onEventCreate`, so a drawn range has nowhere to go.' ) ;
+            }
+            return ;
+        }
+
+        const created = onEventCreate( range ) ;
+
+        if ( created !== null && typeof created === 'object' )
+        {
+            scheduler.addEvent( created ) ;
+        }
+    } ;
 
     return (
         <div className={ getSchedulerClasses({ className }) } { ...rest }>
@@ -227,22 +266,28 @@ const Scheduler =
             { ( scheduler.view === DAY || scheduler.view === WEEK )
                 ? (
                     <SchedulerTimeGrid
-                        dayEnd         = { dayEnd }
-                        dayStart       = { dayStart }
-                        events         = { scheduler.events }
-                        height         = { height }
-                        isEventMovable = { canDrag }
-                        movable        = { movable }
-                        nowIndicator   = { nowIndicator }
-                        onEventClick   = { onEventClick }
-                        onEventMove    = { scheduler.moveEvent }
-                        path           = { path }
-                        pixelsPerHour  = { pixelsPerHour }
-                        renderEvent    = { renderEvent }
-                        scrollTime     = { scrollTime }
-                        slotDuration   = { slotDuration }
-                        snapMinutes    = { snapMinutes }
-                        window         = { scheduler.window }
+                        creatable        = { creatable }
+                        createDuration   = { createDuration }
+                        dayEnd           = { dayEnd }
+                        dayStart         = { dayStart }
+                        events           = { scheduler.events }
+                        height           = { height }
+                        isEventMovable   = { canDrag }
+                        isEventResizable = { canStretch }
+                        movable          = { movable }
+                        nowIndicator     = { nowIndicator }
+                        onEventClick     = { onEventClick }
+                        onEventCreate    = { createEvent }
+                        onEventMove      = { scheduler.moveEvent }
+                        onEventResize    = { scheduler.resizeEvent }
+                        path             = { path }
+                        pixelsPerHour    = { pixelsPerHour }
+                        renderEvent      = { renderEvent }
+                        resizable        = { resizable }
+                        scrollTime       = { scrollTime }
+                        slotDuration     = { slotDuration }
+                        snapMinutes      = { snapMinutes }
+                        window           = { scheduler.window }
                     />
                 )
                 : scheduler.view === MONTH

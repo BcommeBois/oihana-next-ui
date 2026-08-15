@@ -5,7 +5,7 @@ import { useEffect , useMemo , useRef } from 'react' ;
 import useI18n    from '../../contexts/locale/useI18n' ;
 import useLang    from '../../contexts/lang/useLang' ;
 import useNow     from '../../hooks/useNow' ;
-import useTimeDrag from '../../hooks/useTimeDrag' ;
+import useTimeDrag , { CREATE , MOVE , RESIZE_END , RESIZE_START } from '../../hooks/useTimeDrag' ;
 
 import dayjs from '../../helpers/date/configureDayjs' ;
 
@@ -25,7 +25,9 @@ import
     SCHEDULER_TIMEGRID_BODY ,
     SCHEDULER_TIMEGRID_COLUMN ,
     SCHEDULER_TIMEGRID_COLUMNS ,
+    SCHEDULER_TIMEGRID_COLUMN_CREATABLE ,
     SCHEDULER_TIMEGRID_COLUMN_WEEKEND ,
+    SCHEDULER_TIMEGRID_DRAFT ,
     SCHEDULER_TIMEGRID_DAY ,
     SCHEDULER_TIMEGRID_DAY_NAME ,
     SCHEDULER_TIMEGRID_DAY_NUMBER ,
@@ -36,12 +38,18 @@ import
     SCHEDULER_TIMEGRID_EVENT_GHOST ,
     SCHEDULER_TIMEGRID_EVENT_LINE ,
     SCHEDULER_TIMEGRID_EVENT_MOVABLE ,
+    SCHEDULER_TIMEGRID_EVENT_RESIZABLE ,
     SCHEDULER_TIMEGRID_EVENT_STACKED ,
     SCHEDULER_TIMEGRID_GUTTER ,
+    SCHEDULER_TIMEGRID_HANDLE ,
+    SCHEDULER_TIMEGRID_HANDLE_END ,
+    SCHEDULER_TIMEGRID_HANDLE_GRIP ,
+    SCHEDULER_TIMEGRID_HANDLE_START ,
     SCHEDULER_TIMEGRID_HEAD ,
     SCHEDULER_TIMEGRID_HOUR ,
     SCHEDULER_TIMEGRID_LINE ,
     SCHEDULER_TIMEGRID_LINE_HALF ,
+    TIMEGRID_BOTH_HANDLES_HEIGHT ,
     TIMEGRID_STACKED_HEIGHT ,
     getSchedulerEventClasses ,
 } from '../../themes/components/scheduler' ;
@@ -75,27 +83,41 @@ const DAY_MINUTES = 24 * 60 ;
  *
  * ### It can be written on, once asked
  *
- * With `movable`, a timed block is dragged to another hour or another day — see
- * {@link module:hooks/useTimeDrag}. The gesture is **off unless asked for**, and
- * it is only ever offered on an event `isEventMovable` accepts : an occurrence of
- * a recurring rule is not one, since writing to it would move the whole series.
- * The all-day band stays read-only for now — it moves by the day, which is a
- * different projection.
+ * Three gestures, each **off unless asked for** — see {@link module:hooks/useTimeDrag}.
+ * With `movable` a block is dragged to another hour or another day ; with
+ * `resizable` its edges are pulled ; with `creatable` a range drawn on an empty
+ * column becomes a new event, and a plain click on one becomes a range of
+ * `createDuration`.
+ *
+ * A gesture is only ever offered on an event `isEventMovable` / `isEventResizable`
+ * accepts : an occurrence of a recurring rule is not one, since writing to it
+ * would move the whole series.
+ *
+ * **Resizing and drawing are for pointers that hover.** A finger cannot aim at an
+ * eight-pixel handle, and drawing a range with it would fight the page scroll ;
+ * on touch, both belong to the editor. The all-day band stays read-only whatever
+ * the device — it moves by the day, which is a different projection.
  *
  * @module components/scheduler/SchedulerTimeGrid
  *
  * @param {Object} props
  * @param {string} [props.className] - Extra classes for the grid.
+ * @param {boolean} [props.creatable=false] - Let a range be drawn, or clicked, on an empty column.
+ * @param {number} [props.createDuration=30] - Minutes a plain click on an empty column stands for.
  * @param {number} [props.dayEnd=1440] - Minutes from midnight where the axis ends.
  * @param {number} [props.dayStart=0] - Minutes from midnight where it begins.
  * @param {Array} props.events - The normalized records to place.
  * @param {number|string} [props.height='36rem'] - Height of the scrolling area. Twenty-four hours at 48 px is 1152 px, which would swallow any page.
  * @param {(event: Object) => boolean} [props.isEventMovable] - Whether an event answers to a drag. Everything is movable when `movable` is set and this is omitted.
+ * @param {(event: Object) => boolean} [props.isEventResizable] - Whether an event's edges answer to a drag.
  * @param {number} [props.maxAllDayRails=2] - Rails the all-day band shows before it counts instead ; a week of leave should not push the hours off screen.
  * @param {boolean} [props.movable=false] - Let a block be dragged to another time.
  * @param {boolean} [props.nowIndicator=true] - Draw the line across today.
  * @param {(event: Object) => void} [props.onEventClick] - Called with a record, when an event is activated.
+ * @param {(range: Object) => void} [props.onEventCreate] - Called with `{ start , end }` when a range is drawn or a slot clicked.
  * @param {(event: Object, to: Object) => void} [props.onEventMove] - Called once on release, with `{ start , end }`.
+ * @param {(event: Object, to: Object) => void} [props.onEventResize] - Called once on release, with `{ start , end }`.
+ * @param {boolean} [props.resizable=false] - Let a block's edges be pulled.
  * @param {string} [props.path='components.scheduler'] - i18n path the labels are read from.
  * @param {number} [props.pixelsPerHour=48] - Zoom.
  * @param {(event: Object, context: Object) => React.ReactNode} [props.renderEvent] - Renders an event, in place of the default block.
@@ -107,16 +129,22 @@ const DAY_MINUTES = 24 * 60 ;
 const SchedulerTimeGrid =
 ({
     className ,
+    creatable = false ,
+    createDuration = 30 ,
     dayEnd = DAY_MINUTES ,
     dayStart = 0 ,
     events ,
     height = '36rem' ,
     isEventMovable ,
+    isEventResizable ,
     maxAllDayRails = 2 ,
     movable = false ,
     nowIndicator = true ,
     onEventClick ,
+    onEventCreate ,
     onEventMove ,
+    onEventResize ,
+    resizable = false ,
     path = 'components.scheduler' ,
     pixelsPerHour = 48 ,
     renderEvent ,
@@ -182,7 +210,9 @@ const SchedulerTimeGrid =
         axisRef ,
         bodyRef ,
         days ,
-        onMove : onEventMove ,
+        onCreate : onEventCreate ,
+        onMove   : onEventMove ,
+        onResize : onEventResize ,
         scale ,
     }) ;
 
@@ -233,6 +263,14 @@ const SchedulerTimeGrid =
         const { dayIndex , dragging = false , event , ghost = false , height , left , segment , top , width } = block ;
 
         const draggable = movable && !dragging && ( isEventMovable ? isEventMovable( event ) : true ) ;
+        const stretchy  = resizable && !dragging && ( isEventResizable ? isEventResizable( event ) : true ) ;
+
+        const geometry = { dayIndex , event , height , left , segment , top , width } ;
+
+        // An edge is only offered where it is real : the middle day of a
+        // three-day event has no start to pull, and the last has no end.
+        const pullStart = stretchy && !segment.continuesBefore && height >= TIMEGRID_BOTH_HANDLES_HEIGHT ;
+        const pullEnd   = stretchy && !segment.continuesAfter ;
 
         const position =
         {
@@ -243,24 +281,44 @@ const SchedulerTimeGrid =
         } ;
 
         const onPointerDown = draggable
-            ? ( look ) => drag.start( look , { dayIndex , event , height , left , segment , top , width } )
+            ? ( look ) => drag.start( look , { ...geometry , mode : MOVE } )
             : undefined ;
+
+        /** A strip along one edge. It takes the press before the block does. */
+        const handle = ( mode ) => (
+            <span
+                aria-hidden   = "true"
+                className     = { `${ SCHEDULER_TIMEGRID_HANDLE } ${ mode === RESIZE_START ? SCHEDULER_TIMEGRID_HANDLE_START : SCHEDULER_TIMEGRID_HANDLE_END }` }
+                onPointerDown = { ( look ) =>
+                {
+                    look.stopPropagation() ;
+                    drag.start( look , { ...geometry , mode }) ;
+                } }
+            >
+                <span className={ SCHEDULER_TIMEGRID_HANDLE_GRIP } />
+            </span>
+        ) ;
 
         const key = dragging ? `${ event.id }-dragging` : `${ event.id }-${ segment.start }` ;
 
         if ( renderEvent )
         {
-            const states = `${ draggable ? SCHEDULER_TIMEGRID_EVENT_MOVABLE : '' } ${ ghost ? SCHEDULER_TIMEGRID_EVENT_GHOST : '' } ${ dragging ? SCHEDULER_TIMEGRID_EVENT_DRAGGING : '' }` ;
+            const states = `${ draggable ? SCHEDULER_TIMEGRID_EVENT_MOVABLE : '' } ${ pullStart || pullEnd ? SCHEDULER_TIMEGRID_EVENT_RESIZABLE : '' } ${ ghost ? SCHEDULER_TIMEGRID_EVENT_GHOST : '' } ${ dragging ? SCHEDULER_TIMEGRID_EVENT_DRAGGING : '' }` ;
 
             return (
-                // A custom block is the application's markup ; the gesture is the
-                // grid's, so it is bound on the wrapper it already had.
+                // A custom block is the application's markup ; the gestures are the
+                // grid's, so they stay on the wrapper it already had — handles
+                // included, since asking for `resizable` should not mean writing
+                // one's own edges.
                 <div
                     key           = { key }
                     className     = { `absolute ${ states }`.replace( /\s+/g , ' ' ).trim() }
                     onPointerDown = { onPointerDown }
                     style         = { position }
                 >
+                    { pullStart && handle( RESIZE_START ) }
+                    { pullEnd && handle( RESIZE_END ) }
+
                     { renderEvent( event , { segment , labels } ) }
                 </div>
             ) ;
@@ -273,7 +331,7 @@ const SchedulerTimeGrid =
 
         const { className : eventClassName , style } = getSchedulerEventClasses
         ({
-            className : `${ SCHEDULER_TIMEGRID_EVENT } ${ stacked ? SCHEDULER_TIMEGRID_EVENT_STACKED : SCHEDULER_TIMEGRID_EVENT_COMPACT }` ,
+            className : `${ SCHEDULER_TIMEGRID_EVENT } ${ stacked ? SCHEDULER_TIMEGRID_EVENT_STACKED : SCHEDULER_TIMEGRID_EVENT_COMPACT } ${ pullStart || pullEnd ? SCHEDULER_TIMEGRID_EVENT_RESIZABLE : '' }` ,
             color     : event.color ,
             dragging ,
             ghost ,
@@ -292,6 +350,9 @@ const SchedulerTimeGrid =
                 style         = {{ ...style , ...position }}
                 title         = { `${ dayjs( segment.start ).format( 'HH:mm' ) } – ${ dayjs( segment.end ).format( 'HH:mm' ) } · ${ event.title }` }
             >
+                { pullStart && handle( RESIZE_START ) }
+                { pullEnd && handle( RESIZE_END ) }
+
                 { stacked
                     ? (
                         <>
@@ -390,11 +451,42 @@ const SchedulerTimeGrid =
                     {
                         const weekend = [ 0 , 6 ].includes( dayjs( day ).day() ) ;
 
+                        // A press on a block bubbles up to its column ; only one
+                        // that landed on the column *itself* is an empty slot.
+                        const onEmpty = ( handler ) => ( look ) =>
+                        {
+                            if ( look.target === look.currentTarget )
+                            {
+                                handler( look ) ;
+                            }
+                        } ;
+
                         return (
+                            // The keyboard answer to « create » is not a focusable
+                            // column — seven tab stops a week that would have to
+                            // invent an hour out of nowhere. It is a command, and it
+                            // arrives with the editor. Claiming it here would be a
+                            // lie the TR3 keyboard attempt already taught us to avoid.
+                            // biome-ignore lint/a11y/noStaticElementInteractions: pointer affordance only ; the keyboard path is a command, at lot 9
+                            // biome-ignore lint/a11y/useKeyWithClickEvents: same — a column is not the right control to focus
                             <div
-                                key       = { day }
-                                ref       = { drag.columnRef( index ) }
-                                className = { `${ SCHEDULER_TIMEGRID_COLUMN } ${ weekend ? SCHEDULER_TIMEGRID_COLUMN_WEEKEND : '' }`.trim() }
+                                key           = { day }
+                                ref           = { drag.columnRef( index ) }
+                                className     = { `${ SCHEDULER_TIMEGRID_COLUMN } ${ weekend ? SCHEDULER_TIMEGRID_COLUMN_WEEKEND : '' } ${ creatable ? SCHEDULER_TIMEGRID_COLUMN_CREATABLE : '' }`.trim() }
+                                onPointerDown = { creatable ? onEmpty( look => drag.start( look , { dayIndex : index , mode : CREATE } ) ) : undefined }
+                                // A click is a range of its own : the threshold has
+                                // already told it apart from a drawn one, and asking
+                                // for a rectangle to book eleven o'clock would be a
+                                // needlessly precise gesture.
+                                onClick       = { creatable ? onEmpty( ( look ) =>
+                                {
+                                    const start = drag.slotAt( look.clientY , index ) ;
+
+                                    if ( start !== null )
+                                    {
+                                        onEventCreate?.({ end : start + createDuration * 60 * 1000 , start }) ;
+                                    }
+                                } ) : undefined }
                             >
                                 { columns[ index ].map( item =>
                                 {
@@ -423,7 +515,7 @@ const SchedulerTimeGrid =
                                     }) ;
                                 } ) }
 
-                                { drag.preview?.dayIndex === index && renderBlock
+                                { drag.preview?.dayIndex === index && drag.preview.mode !== CREATE && renderBlock
                                 ({
                                     dayIndex : index ,
                                     dragging : true ,
@@ -434,6 +526,17 @@ const SchedulerTimeGrid =
                                     top      : drag.preview.top ,
                                     width    : drag.preview.width ,
                                 }) }
+
+                                { drag.preview?.dayIndex === index && drag.preview.mode === CREATE && (
+                                    <div
+                                        className = { SCHEDULER_TIMEGRID_DRAFT }
+                                        style     = {{ height : drag.preview.height , insetInline : 0 , top : drag.preview.top }}
+                                    >
+                                        <span className="truncate font-mono tabular-nums">
+                                            { dayjs( drag.preview.segmentStart ).format( 'HH:mm' ) } – { dayjs( drag.preview.segmentEnd ).format( 'HH:mm' ) }
+                                        </span>
+                                    </div>
+                                ) }
 
                                 { showNow && index === nowColumn && (
                                     <div className={ SCHEDULER_NOW } style={{ top : nowOffset }}>

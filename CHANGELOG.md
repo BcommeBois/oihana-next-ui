@@ -8,6 +8,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Components — `scheduler` — stretching and drawing**
+
+- **New `resizable` prop.** A block's edges are pulled from a handle that appears along them. Two rules decide whether a handle is there at all : an edge is only offered **where it is real** — the middle day of a three-day event has no start to pull and the last has no end — and **a card under 28 px shows only its closing handle**, since two eight-pixel strips on a twenty-four pixel card would leave eight pixels to take the block by, giving the resize by taking the move away.
+- **New `creatable` prop.** A range drawn on an empty column becomes a new event, and **a plain click is a range of `createDuration`** rather than a second callback : the activation threshold already tells a click from a drag, and asking for a rectangle to book eleven o'clock would be a needlessly precise gesture.
+  - **The identity of a new event is the application's, never this library's.** An invented id is an invented collision, and the real key comes from the server. So `onEventCreate({ start , end })` reports the range and **what it returns decides** : an object is added, nothing at all means the application took it from there — which is exactly what opening an editor looks like. Mind that `x => ({ … })` returns the object and `x => { … }` returns nothing.
+  - A range drawn in one flick is given the shortest length the grid accepts rather than refused : it is a real intent, not a mistake.
+- **New `isEventResizable`**, falling back to `isEventMovable`. The recurrence guard applies to a stretch exactly as it does to a move.
+- **`useTimeDrag` now carries four modes rather than spawning three hooks.** Moving, dragging either edge and drawing a range are the same calculation differently anchored — each turns a pointer position into a `{ start , end }` pair. Written apart they would have been three previews, three clamps and three places to fix the same bug. **Only a move changes day** : an edge that jumped columns as it was pulled, or a range that slid sideways as it grew, could not be aimed at all.
+- **Stretching and drawing are for pointers that hover, and say so.** A finger cannot aim at an eight-pixel handle, and drawing a range with one would fight the page scroll. The handles are hidden **and inert** under `hover: hover` — a handle that only *looked* absent would still swallow the press meant to move the block — and the touch equivalents belong to the editor. The keyboard path for creating is a command and not a focusable column ; it is not claimed before it exists.
+
 **Components — `scheduler` — moving an event**
 
 - **New `movable` prop, off unless asked for.** A timed block in the day and week views can be dragged to another hour or another day. Everything the write needs was already there — `moveEvent`, its optimistic revert, `timeScale.timeAt()` and `snap()` — and what was missing was only the gesture.
