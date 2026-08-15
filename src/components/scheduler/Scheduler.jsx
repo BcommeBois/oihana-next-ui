@@ -83,6 +83,9 @@ const resolveViews = ( requested ) =>
  * @param {Array} [props.colorKeys] - The keys in the order they take colours, which freezes the mapping.
  * @param {Function} [props.getEventId] - Reads an event's identity. Required when neither `identifier`, `id` nor `url` is the real key.
  * @param {Function} [props.getResourceId] - Reads the timeline row an event belongs to.
+ * @param {Function} [props.isEventMovable] - Whether an event may be dragged — a past slot, a cancelled booking, a lock of your own. The recurrence guard applies whatever it answers.
+ * @param {boolean}  [props.movable=false] - Let an event be dragged to another time. Day and week views.
+ * @param {number}   [props.snapMinutes=15] - Step a dragged event lands on.
  * @param {number}   [props.maxEventsPerDay=3] - Month view : how many events a cell shows before it counts the rest.
  * @param {number}   [props.dayStart=0] - Time grid : minutes from midnight where the axis begins.
  * @param {number}   [props.dayEnd=1440] - Time grid : minutes from midnight where it ends.
@@ -149,6 +152,8 @@ const Scheduler =
     getColorKey ,
     getEventId ,
     getResourceId ,
+    isEventMovable ,
+    movable = false ,
     palette ,
     maxEventsPerDay = 3 ,
     onChange ,
@@ -160,6 +165,7 @@ const Scheduler =
     renderEvent ,
     schema = false ,
     showEmptyDays = false ,
+    snapMinutes ,
     toolbar = true ,
     toolbarOptions ,
     view ,
@@ -194,6 +200,11 @@ const Scheduler =
         weekStartsOn ,
     }) ;
 
+    // Two questions, one answer for the views : the application's own rule, and
+    // the one the core never gives up — an occurrence of a recurring rule cannot
+    // be written through, so it is never offered as draggable in the first place.
+    const canDrag = ( event ) => scheduler.canMove( event ) && ( isEventMovable ? isEventMovable( event ) : true ) ;
+
     return (
         <div className={ getSchedulerClasses({ className }) } { ...rest }>
 
@@ -216,18 +227,22 @@ const Scheduler =
             { ( scheduler.view === DAY || scheduler.view === WEEK )
                 ? (
                     <SchedulerTimeGrid
-                        dayEnd        = { dayEnd }
-                        dayStart      = { dayStart }
-                        events        = { scheduler.events }
-                        height        = { height }
-                        nowIndicator  = { nowIndicator }
-                        onEventClick  = { onEventClick }
-                        path          = { path }
-                        pixelsPerHour = { pixelsPerHour }
-                        renderEvent   = { renderEvent }
-                        scrollTime    = { scrollTime }
-                        slotDuration  = { slotDuration }
-                        window        = { scheduler.window }
+                        dayEnd         = { dayEnd }
+                        dayStart       = { dayStart }
+                        events         = { scheduler.events }
+                        height         = { height }
+                        isEventMovable = { canDrag }
+                        movable        = { movable }
+                        nowIndicator   = { nowIndicator }
+                        onEventClick   = { onEventClick }
+                        onEventMove    = { scheduler.moveEvent }
+                        path           = { path }
+                        pixelsPerHour  = { pixelsPerHour }
+                        renderEvent    = { renderEvent }
+                        scrollTime     = { scrollTime }
+                        slotDuration   = { slotDuration }
+                        snapMinutes    = { snapMinutes }
+                        window         = { scheduler.window }
                     />
                 )
                 : scheduler.view === MONTH

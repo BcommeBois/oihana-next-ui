@@ -48,8 +48,8 @@ import { AGENDA , getViewWindow , stepViewDate } from '../helpers/schedule/getVi
  * @param {number|string} [props.weekStartsOn] - Force the first day of week ; defaults to the locale.
  *
  * @returns {Object} `{ sources , events , window , view , setView , date , setDate ,
- *          today , previous , next , moveEvent , resizeEvent , updateEvent , addEvent ,
- *          removeEvent , isControlled }`
+ *          today , previous , next , canMove , moveEvent , resizeEvent , updateEvent ,
+ *          addEvent , removeEvent , isControlled }`
  *
  * @example
  * ```js
@@ -269,6 +269,23 @@ const useScheduler = ( props = {} ) =>
         return true ;
     } ;
 
+    /**
+     * Whether a gesture on this event would be accepted.
+     *
+     * A view asks **before** offering the gesture, because a drag that quietly
+     * does nothing when released is worse than one that was never offered : the
+     * reader is left thinking the move was saved.
+     *
+     * @param {Object|string} target - The record, or its id.
+     * @returns {boolean}
+     */
+    const canMove = ( target ) =>
+    {
+        const event = resolve( target ) ;
+
+        return !!event && !isOccurrence( event ) ;
+    } ;
+
     const span = ( event ) => ({ start : event.start , end : event.end , resourceId : event.resourceId }) ;
 
     /**
@@ -405,6 +422,7 @@ const useScheduler = ( props = {} ) =>
         today ,
         previous ,
         next ,
+        canMove ,
         moveEvent ,
         resizeEvent ,
         updateEvent ,

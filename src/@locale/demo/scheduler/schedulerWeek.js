@@ -11,6 +11,14 @@ const schedulerWeek =
             description : "Trois bandes, et une seule défile : les noms de jours et la bande « journée entière » restent en place pendant que les heures glissent dessous. La grille s'ouvre sur scrollTime et non sur minuit, mais les bornes couvrent bien les 24 h — les restreindre masquerait une astreinte de nuit sans le dire." ,
         } ,
 
+        move :
+        {
+            title       : 'Déplacer — movable' ,
+            description : "À la souris, on prend le bloc et on le pose ; au doigt, on appuie une demi-seconde puis on glisse — le temps que le geste se distingue d'un défilement. La position d'origine reste en place, grisée, un aperçu suit le pointeur, et rien n'est recalculé avant le relâché : refaire le partage des colonnes à chaque image ferait sauter le bloc sous le doigt. Le début s'aimante au quart d'heure (snapMinutes), indépendamment du pas de la grille. Échap annule, et près d'un bord la zone défile toute seule." ,
+            locked      : "L'inventaire ne bouge pas : isEventMovable le refuse. Un geste qui ne ferait rien au relâché n'est pas proposé du tout — le curseur ne change même pas." ,
+            recurring   : "Même règle sans qu'on ait à l'écrire : les occurrences d'une règle récurrente (le cycle d'initiation, le club de lecture) refusent le glisser, car écrire le patch déplacerait toute la série. Les événements datés de la même grille, eux, se déplacent." ,
+        } ,
+
         overlap :
         {
             title       : 'Le chevauchement, enfin à l’écran' ,
@@ -45,6 +53,14 @@ const schedulerWeek =
         {
             title       : 'Week' ,
             description : 'Three bands, and only one of them scrolls: the day names and the all-day band stay put while the hours slide under them. The grid opens on scrollTime rather than on midnight, but the bounds still cover the full day — narrowing them would hide a night shift without saying so.' ,
+        } ,
+
+        move :
+        {
+            title       : 'Moving — movable' ,
+            description : 'With a mouse, take the block and drop it; with a finger, press for half a second and then drag — the time it takes for the gesture to tell itself apart from a scroll. The original position stays where it is, greyed, a preview follows the pointer, and nothing is laid out again before the release: re-sharing the columns on every frame would make the block jump out from under the finger. The start snaps to the quarter hour (snapMinutes), independently of the grid step. Escape cancels, and near an edge the area scrolls on its own.' ,
+            locked      : 'The inventory does not move: isEventMovable refuses it. A gesture that would do nothing on release is not offered at all — even the cursor stays as it was.' ,
+            recurring   : 'The same rule, without having to write it: the occurrences of a recurring rule (the initiation cycle, the reading club) refuse the drag, since writing the patch would move the whole series. The dated events of the same grid do move.' ,
         } ,
 
         overlap :

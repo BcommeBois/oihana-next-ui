@@ -4,6 +4,8 @@ import { useState } from 'react' ;
 
 import useI18n from '@/contexts/locale/useI18n' ;
 
+import dayjs from '@/helpers/date/configureDayjs' ;
+
 import Container from '@/display/Container' ;
 import Divider   from '@/components/Divider' ;
 import Scheduler from '@/components/scheduler/Scheduler' ;
@@ -15,6 +17,20 @@ const ANCHOR = new Date( '2026-08-12T00:00:00' ) ;
 
 const getEventId = source => source._key ?? source.id ;
 
+/** A small week of plain objects — the drag writes back into these. */
+const desk =
+[
+    { id : 'standup'   , title : 'Point quotidien' , color : 'info'    , start : '2026-08-13T09:00' , end : '2026-08-13T09:30' } ,
+    { id : 'atelier'   , title : 'Atelier'         , color : 'success' , start : '2026-08-13T10:30' , end : '2026-08-13T12:00' } ,
+    { id : 'inventory' , title : 'Inventaire'      , color : 'neutral' , start : '2026-08-13T14:00' , end : '2026-08-13T16:00' } ,
+    { id : 'demo'      , title : 'Démonstration'   , color : 'warning' , start : '2026-08-14T11:00' , end : '2026-08-14T12:30' } ,
+] ;
+
+/** The one event the application refuses to let go of. */
+const isEventMovable = event => event.id !== 'inventory' ;
+
+const stamp = value => ( value === null || value === undefined ? '—' : dayjs( value ).format( 'ddd DD/MM HH:mm' ) ) ;
+
 /**
  * Time grid demo — the week, the day, and what the overlap calculation draws.
  *
@@ -23,9 +39,12 @@ const getEventId = source => source._key ?? source.id ;
  */
 const SchedulerWeekDemo = ( { path = 'demo.scheduler.schedulerWeek' } ) =>
 {
-    const { day , description , narrow , overlap , title , week , zoom } = useI18n( path ) ;
+    const { day , description , move , narrow , overlap , title , week , zoom } = useI18n( path ) ;
 
     const [ picked , setPicked ] = useState( null ) ;
+
+    const [ events , setEvents ] = useState( desk ) ;
+    const [ change , setChange ] = useState( null ) ;
 
     return (
         <Container className="flex flex-col gap-8 rounded-box bg-base-200/60 p-3 sm:p-8" maxWidth="max-w-6xl">
@@ -53,6 +72,56 @@ const SchedulerWeekDemo = ( { path = 'demo.scheduler.schedulerWeek' } ) =>
                 <p className="font-mono text-xs text-base-content/60">
                     onEventClick → { picked ? `${ picked.id } · ${ picked.title }` : '—' }
                 </p>
+            </section>
+
+            <Divider />
+
+            <section className="flex flex-col gap-3">
+                <h3 className="text-xl font-semibold">{ move?.title }</h3>
+                <p className="text-sm text-base-content/60">{ move?.description }</p>
+
+                <div className="rounded-box bg-base-100 p-2 sm:p-4">
+                    <Scheduler
+                        movable
+                        defaultDate    = { ANCHOR }
+                        defaultView    = "week"
+                        dayEnd         = { 20 * 60 }
+                        dayStart       = { 7 * 60 }
+                        events         = { events }
+                        height         = "22rem"
+                        isEventMovable = { isEventMovable }
+                        onChange       = { ( next , report ) => { setEvents( next ) ; setChange( report ) ; } }
+                        scrollTime     = "08:00"
+                    />
+                </div>
+
+                <p className="text-sm text-base-content/60">{ move?.locked }</p>
+
+                <pre className="overflow-x-auto rounded-box bg-base-100 p-3 font-mono text-xs">
+{ change === null
+    ? `onChange → —`
+    : [
+        `type  : ${ change.type }` ,
+        `from  : ${ stamp( change.from?.start ) } → ${ stamp( change.from?.end ) }` ,
+        `to    : ${ stamp( change.to?.start ) } → ${ stamp( change.to?.end ) }` ,
+        `patch : ${ JSON.stringify( change.patch ) }` ,
+    ].join( '\n' ) }
+                </pre>
+
+                <p className="text-sm text-base-content/60">{ move?.recurring }</p>
+
+                <div className="rounded-box bg-base-100 p-2 sm:p-4">
+                    <Scheduler
+                        movable
+                        schema
+                        toolbar       = { false }
+                        defaultEvents = { libraryProgram }
+                        defaultDate   = { ANCHOR }
+                        defaultView   = "week"
+                        getEventId    = { getEventId }
+                        height        = "20rem"
+                    />
+                </div>
             </section>
 
             <Divider />

@@ -235,6 +235,22 @@ export const SCHEDULER_TIMEGRID_DAY_TODAY = 'inline-flex size-7 items-center jus
 /** An event, placed on the axis. */
 export const SCHEDULER_TIMEGRID_EVENT = 'absolute overflow-hidden rounded-field border-s-4 px-1.5 py-0.5 text-xs' ;
 
+/**
+ * An event that answers to a drag.
+ *
+ * Deliberately **without** `touch-none` : a finger has to be able to scroll the
+ * grid, and a surface that refuses to scroll wherever an event happens to sit
+ * makes a busy day unreachable. The scroll is refused later, once the long press
+ * has said this is a drag — see {@link module:hooks/usePointerDrag}.
+ */
+export const SCHEDULER_TIMEGRID_EVENT_MOVABLE = 'cursor-grab select-none' ;
+
+/** The block left behind at the position a drag started from. */
+export const SCHEDULER_TIMEGRID_EVENT_GHOST = 'opacity-40' ;
+
+/** The block following the pointer : above everything, and never a target itself. */
+export const SCHEDULER_TIMEGRID_EVENT_DRAGGING = 'pointer-events-none z-30 cursor-grabbing shadow-lg ring-2 ring-base-content/20' ;
+
 /** The line saying where now is. */
 export const SCHEDULER_NOW = 'pointer-events-none absolute inset-x-0 z-20 border-t-2 border-error' ;
 
@@ -395,6 +411,9 @@ export const getAgendaRowClasses = ({ className } = {} ) => cn( SCHEDULER_AGENDA
  * @param {string} [props.beforeClassName] - ClassName to prepend.
  * @param {string} [props.className] - ClassName to append.
  * @param {string} [props.color] - A token from {@link colors}, or any CSS color.
+ * @param {boolean} [props.dragging] - The card is the one following the pointer.
+ * @param {boolean} [props.ghost] - The card is the trace left where a drag began.
+ * @param {boolean} [props.movable] - The card answers to a drag.
  * @param {boolean} [props.past] - The event is over.
  * @param {string} [props.status] - One of the statuses of a normalized record.
  * @returns {{ className: string, style: Object|undefined }}
@@ -402,7 +421,7 @@ export const getAgendaRowClasses = ({ className } = {} ) => cn( SCHEDULER_AGENDA
  * @example
  * const { className , style } = getSchedulerEventClasses({ color : 'primary' , status : 'cancelled' }) ;
  */
-export const getSchedulerEventClasses = ({ after , before , beforeClassName , className , color , past , status } = {} ) =>
+export const getSchedulerEventClasses = ({ after , before , beforeClassName , className , color , dragging , ghost , movable , past , status } = {} ) =>
 {
     const { definition , style } = resolveEventColor( color ) ;
 
@@ -417,6 +436,9 @@ export const getSchedulerEventClasses = ({ after , before , beforeClassName , cl
                 ...past && { [ SCHEDULER_EVENT_PAST ] : true } ,
                 ...status === 'cancelled' && { [ SCHEDULER_EVENT_CANCELLED ] : true } ,
                 ...status === 'postponed' && { [ SCHEDULER_EVENT_POSTPONED ] : true } ,
+                ...movable && { [ SCHEDULER_TIMEGRID_EVENT_MOVABLE ] : true } ,
+                ...ghost && { [ SCHEDULER_TIMEGRID_EVENT_GHOST ] : true } ,
+                ...dragging && { [ SCHEDULER_TIMEGRID_EVENT_DRAGGING ] : true } ,
                 ...after ,
             } ,
             className ,

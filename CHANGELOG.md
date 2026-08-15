@@ -8,6 +8,24 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Components — `scheduler` — moving an event**
+
+- **New `movable` prop, off unless asked for.** A timed block in the day and week views can be dragged to another hour or another day. Everything the write needs was already there — `moveEvent`, its optimistic revert, `timeScale.timeAt()` and `snap()` — and what was missing was only the gesture.
+  - **The gesture is written in pointer events, not in a drag-and-drop library.** A drag-and-drop library reorders a list ; a scheduler drags a **coordinate**. Every calendar that lets an event be moved or stretched — FullCalendar, MUI X, Bryntum — writes that by hand for the same reason, and the resize to come needs the same primitive : one engine on one surface rather than two fighting over the same block.
+  - **Nothing is laid out again before the release.** The original stays where it is, greyed, and a single preview follows the pointer. Re-sharing the overlap columns on every frame would be correct and unusable — the blocks around the pointer would shuffle mid-gesture and the one being dragged would jump out from under the finger. The layout settles once, from the committed values.
+  - **`snapMinutes` (15 by default) is independent of `slotDuration`.** A grid ruled every half hour while a drag lands on the quarter is the usual arrangement.
+  - **The day comes from hit-testing the columns**, not from dividing the width : the columns keep a floor and the area scrolls, and the writing direction may be right-to-left. Neither has to be thought about again.
+- **New `isEventMovable` accessor.** Whether the application lets go of an event — a past slot, a cancelled booking, a lock of its own. **The recurrence guard applies whatever it answers** : an occurrence of a recurring rule is never offered as draggable, since writing the patch would move the whole series. A gesture that would quietly do nothing on release is worse than one that was never offered — the reader is left believing the move was saved. **New `canMove` on `useScheduler`** is where that question is answered.
+- **New `hooks/usePointerDrag`** — the gesture, knowing nothing of what it drags.
+  - **An activation threshold**, so a press that never travels is still a click and an event does not open *and* move on the same gesture.
+  - **A long press on touch**, because a finger cannot hover and also has to be able to scroll. Until the press ripens, scrolling wins ; the first real movement calls it off. Once the drag is on, the scroll is refused from a **non-passive `touchmove` listener** — which React's synthetic handlers cannot be — attached for the length of the gesture and no longer.
+  - **Edge auto-scroll**, without which a grid showing eight hours cannot move an event from the morning to the evening, and **`Escape` to abandon**.
+  - **The click that follows a release is swallowed once**, in the capture phase, so a dragged block does not also open whatever a click opens. Consumers have nothing to do about it.
+  - The gesture lives in a **ref, not in state** : it updates dozens of times a second, and re-rendering the view on each would make the thing it drags lag behind the pointer.
+- **New `hooks/useTimeDrag`**, the projection between the two : a vertical position becomes an hour, a horizontal one a day, and the whole move is reported **once**, on release, only if it actually moved.
+- **`getSchedulerEventClasses` gains `movable`, `ghost` and `dragging`.** The movable state is deliberately **without `touch-none`** : a surface that refuses to scroll wherever an event happens to sit makes a busy day unreachable on a phone. The scroll is refused later, once the press has said this is a drag.
+- The all-day band and the month bars stay read-only : they move by the day, which is a different projection.
+
 **Components — `scheduler` — the time grid**
 
 - **New `SchedulerTimeGrid`.** The view where an event stops being a row and becomes a **placed rectangle** : `top` from its start, `height` from its length, and a width shared with whatever overlaps it. It is the first thing to exercise `createTimeScale` and `layoutOverlaps`, both shipped with the headless core and until now never drawn from.
