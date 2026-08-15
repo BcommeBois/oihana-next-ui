@@ -26,6 +26,7 @@
  * @module helpers/schedule/fromSchema
  */
 
+import { DEFAULT_UNWRAP , readReservationStatus , readSpan } from './datePairs' ;
 import { expandSchedule , readSchedules } from './expandSchedule' ;
 import { fragmentOf } from './fragmentOf' ;
 import { parseDuration } from './parseDuration' ;
@@ -63,6 +64,45 @@ export const readStatus = ( value ) =>
 {
     const member = fragmentOf( typeof value === 'object' && value !== null ? ( value.identifier ?? value.name ?? value.url ) : value ) ;
     return STATUS_BY_MEMBER[ member?.toLowerCase() ] ?? SCHEDULED ;
+} ;
+
+/** What an object calls itself, under either of the two names it may use. */
+const nameOf = ( object ) => ( object === null || typeof object !== 'object' ? null : ( object.name ?? object.alternateName ?? null ) ) ;
+
+/**
+ * Reads what to call an event.
+ *
+ * A reservation is very often nameless : what has a name is the concert, the inn
+ * or the restaurant it points at. So the linked object is asked too — **even
+ * when the dates were found on the reservation itself**, which is precisely the
+ * case a lodging booking presents, with its own `checkinTime` and a name that
+ * only exists over in `reservationFor`.
+ *
+ * @param {Object} source
+ * @param {Object} host - Where the dates were read.
+ * @param {Array<string>} unwrapList
+ * @returns {string|null}
+ */
+export const readTitle = ( source , host , unwrapList = DEFAULT_UNWRAP ) =>
+{
+    const own = nameOf( source ) ?? nameOf( host ) ;
+
+    if ( own !== null )
+    {
+        return own ;
+    }
+
+    for ( const property of unwrapList )
+    {
+        const named = nameOf( source[ property ] ) ;
+
+        if ( named !== null )
+        {
+            return named ;
+        }
+    }
+
+    return null ;
 } ;
 
 /**
@@ -110,6 +150,9 @@ export const readResourceId = ( source , getResourceId ) =>
  * @param {Function} [options.getEventId]                     - Reads the identity.
  * @param {Function} [options.getResourceId]                  - Reads the timeline row.
  * @param {Function} [options.getColor]                       - Reads the display color.
+ * @param {Function} [options.getStatus]                      - Reads the status, for a vocabulary of your own.
+ * @param {Array}    [options.datePairs]                      - Where to look for a span. See {@link module:helpers/schedule/datePairs}.
+ * @param {Array}    [options.unwrap]                         - Properties that may hold the dated object.
  * @param {number}   [options.index]                          - Position in the source list.
  * @returns {Array<import('./normalizeEvent').ScheduleEvent>} Zero, one, or as many
  *          records as the rule produced occurrences.
@@ -131,10 +174,13 @@ export const fromSchema = ( source , options = {} ) =>
     const {
         window ,
         allDayEndInclusive = true ,
+        datePairs ,
         defaultDuration    = DEFAULT_DURATION ,
         getEventId ,
         getResourceId ,
         getColor ,
+        getStatus ,
+        unwrap ,
         index ,
     } = options ;
 
@@ -145,14 +191,24 @@ export const fromSchema = ( source , options = {} ) =>
         return [] ;
     }
 
+    // Where the span lives, and on which object. A reservation points at what was
+    // reserved rather than carrying dates of its own, so the name to show is
+    // often over there too.
+    const span = readSpan( source , { datePairs , unwrap }) ;
+    const host = span?.host ?? source ;
+
     const common =
     {
-        title         : source.name ?? source.alternateName ?? null ,
+        title         : readTitle( source , host , unwrap ) ,
         resourceId    : readResourceId( source , getResourceId ) ,
-        status        : readStatus( source.eventStatus ) ,
+        // `reservationStatus` is a vocabulary of its own, and `readStatus` would
+        // answer `scheduled` to all of it — including to a cancellation.
+        status        : getStatus ? getStatus( source ) : ( readReservationStatus( source.reservationStatus ) ?? readStatus( source.eventStatus ?? host.eventStatus ) ) ,
         color         : ( getColor === undefined ? source.color : getColor( source ) ) ?? null ,
         previousStart : parseInstant( source.previousStartDate )?.ms ?? null ,
         editable      : source.editable ,
+        // What an editor needs to write back in the spelling it was read in.
+        span          : span === null ? null : { endProperty : span.endProperty , host , startProperty : span.startProperty } ,
         source ,
     } ;
 
@@ -184,6 +240,10 @@ export const fromSchema = ( source , options = {} ) =>
                     start  : occurrence.start ,
                     end    : occurrence.end ,
                     allDay : occurrence.allDay ,
+                    // A rule's `startDate` bounds its validity, it is not this
+                    // occurrence's span — an editor writing there would move the
+                    // whole series, which is the very thing the guard refuses.
+                    span   : null ,
                 }) ;
             }
         }
@@ -191,14 +251,12 @@ export const fromSchema = ( source , options = {} ) =>
         return events ;
     }
 
-    const startInstant = parseInstant( source.startDate ) ;
-
-    if ( startInstant === null )
+    if ( span === null )
     {
         return [] ;
     }
 
-    const endInstant = parseInstant( source.endDate ) ;
+    const { end : endInstant , start : startInstant } = span ;
 
     // The absence of a time component is the all-day signal. `startDate` accepts
     // both spellings on the same property, and nothing else distinguishes them.
@@ -209,7 +267,7 @@ export const fromSchema = ( source , options = {} ) =>
         start              : startInstant.ms ,
         end                : endInstant?.ms ?? null ,
         endDateOnly        : endInstant?.dateOnly ?? false ,
-        duration           : parseDuration( source.duration ) ,
+        duration           : parseDuration( source.duration ?? host.duration ) ,
         allDay ,
         allDayEndInclusive ,
         defaultDuration ,

@@ -12,6 +12,12 @@ import { toSchemaPatch }  from '../helpers/schedule/toSchemaPatch' ;
 
 import { AGENDA , getViewWindow , stepViewDate } from '../helpers/schedule/getViewWindow' ;
 
+/** The permission shorthand meaning « everything ». */
+const EDIT = 'edit' ;
+
+/** What applies when nothing is said : a scheduler with no policy forbids nothing. */
+const ALL_PERMISSIONS = Object.freeze({ edit : true , move : true , read : true , remove : true , resize : true }) ;
+
 /**
  * State of a scheduler : the events, the view, and the date being looked at.
  *
@@ -47,9 +53,14 @@ import { AGENDA , getViewWindow , stepViewDate } from '../helpers/schedule/getVi
  * @param {number}   [props.days=7]         - Length of the agenda window.
  * @param {number|string} [props.weekStartsOn] - Force the first day of week ; defaults to the locale.
  *
+ * @param {Function} [props.getEventPermissions] - What a user may do with an event : `'read'` / `'edit'`, or `{ read , edit , move , resize , remove }`.
+ * @param {Function} [props.getStatus]        - Reads the status, for a vocabulary of your own.
+ * @param {Array}    [props.datePairs]        - Where to look for a span — see `helpers/schedule/datePairs`.
+ * @param {Array}    [props.unwrap]           - Properties that may hold the dated object.
+ *
  * @returns {Object} `{ sources , events , window , view , setView , date , setDate ,
- *          today , previous , next , canMove , moveEvent , resizeEvent , updateEvent ,
- *          addEvent , removeEvent , isControlled }`
+ *          today , previous , next , canMove , canResize , permissionsOf , moveEvent ,
+ *          resizeEvent , updateEvent , addEvent , removeEvent , isControlled }`
  *
  * @example
  * ```js
@@ -75,9 +86,13 @@ const useScheduler = ( props = {} ) =>
         onChange ,
 
         schema = false ,
+        datePairs ,
         getEventId ,
+        getEventPermissions ,
         getResourceId ,
         getColor ,
+        getStatus ,
+        unwrap ,
         palette ,
         getColorKey ,
         colorKeys ,
@@ -162,7 +177,7 @@ const useScheduler = ( props = {} ) =>
     const events = useMemo( () =>
     {
         const list = schema
-            ? fromSchemaList( sources , { window , allDayEndInclusive , defaultDuration , getEventId , getResourceId , getColor : resolveColor } )
+            ? fromSchemaList( sources , { window , allDayEndInclusive , datePairs , defaultDuration , getEventId , getResourceId , getStatus , unwrap , getColor : resolveColor } )
             : ( Array.isArray( sources ) ? sources : [] )
                 .map( ( source , index ) => normalizeEvent( source , { allDayEndInclusive , defaultDuration , getEventId , getResourceId , index } ) )
                 .filter( Boolean )
@@ -176,7 +191,7 @@ const useScheduler = ( props = {} ) =>
             .filter( event => event.end > window.start && event.start < window.end )
             .sort( ( a , b ) => a.start - b.start || a.end - b.end ) ;
     }
-    , [ sources , window , schema , allDayEndInclusive , defaultDuration , getEventId , getResourceId , resolveColor ] ) ;
+    , [ sources , window , schema , allDayEndInclusive , datePairs , defaultDuration , getEventId , getResourceId , getStatus , unwrap , resolveColor ] ) ;
 
     // ---- navigation
 
@@ -270,6 +285,55 @@ const useScheduler = ( props = {} ) =>
     } ;
 
     /**
+     * What this user may do with this event.
+     *
+     * One accessor rather than five : rights come from a single question — what
+     * this user may do with this object — and five accessors would ask it five
+     * times. A string is the shorthand for the common case.
+     *
+     * **Refusing to read does not hide the event.** Nothing is filtered out of the
+     * views : an event withheld client-side is still in the payload, so hiding it
+     * here would look like protection while being none. What is not to be shown
+     * is not to be sent.
+     *
+     * @param {Object|string} target - The record, or its id.
+     * @returns {{ edit: boolean, move: boolean, read: boolean, remove: boolean, resize: boolean }}
+     */
+    const permissionsOf = ( target ) =>
+    {
+        if ( typeof getEventPermissions !== 'function' )
+        {
+            return ALL_PERMISSIONS ;
+        }
+
+        const event = resolve( target ) ;
+        const said  = event ? getEventPermissions( event ) : null ;
+
+        if ( said === null || said === undefined )
+        {
+            return ALL_PERMISSIONS ;
+        }
+
+        if ( typeof said === 'string' || typeof said === 'boolean' )
+        {
+            const edit = said === true || said === EDIT ;
+            return { edit , move : edit , read : said !== false , remove : edit , resize : edit } ;
+        }
+
+        // Declaring anything is declaring a policy : what is not granted is not
+        // granted. `edit` is the one that carries the others unless they differ.
+        const edit = said.edit === true ;
+
+        return {
+            edit ,
+            move   : said.move   ?? edit ,
+            read   : said.read   ?? true ,
+            remove : said.remove ?? edit ,
+            resize : said.resize ?? edit ,
+        } ;
+    } ;
+
+    /**
      * Whether a gesture on this event would be accepted.
      *
      * A view asks **before** offering the gesture, because a drag that quietly
@@ -283,7 +347,37 @@ const useScheduler = ( props = {} ) =>
     {
         const event = resolve( target ) ;
 
-        return !!event && !isOccurrence( event ) ;
+        return !!event && !isOccurrence( event ) && permissionsOf( event ).move ;
+    } ;
+
+    /** Whether an edge of this event may be pulled. */
+    const canResize = ( target ) =>
+    {
+        const event = resolve( target ) ;
+
+        return !!event && !isOccurrence( event ) && permissionsOf( event ).resize ;
+    } ;
+
+    /**
+     * Refuses an action the permissions do not grant.
+     *
+     * The gestures already ask before they offer themselves ; this is the second
+     * lock, on the programmatic path — a `moveEvent` called from application code
+     * must not walk in through the back door.
+     */
+    const permits = ( event , key , action ) =>
+    {
+        if ( permissionsOf( event )[ key ] )
+        {
+            return true ;
+        }
+
+        if ( process.env.NODE_ENV === 'development' )
+        {
+            console.warn( `useScheduler: ${ action } was refused on "${ event.id }" — the permissions do not grant "${ key }".` ) ;
+        }
+
+        return false ;
     } ;
 
     const span = ( event ) => ({ start : event.start , end : event.end , resourceId : event.resourceId }) ;
@@ -298,7 +392,7 @@ const useScheduler = ( props = {} ) =>
     {
         const event = resolve( target ) ;
 
-        if ( !guard( event , 'moveEvent' ) )
+        if ( !guard( event , 'moveEvent' ) || !permits( event , 'move' , 'moveEvent' ) )
         {
             return ;
         }
@@ -324,7 +418,7 @@ const useScheduler = ( props = {} ) =>
     {
         const event = resolve( target ) ;
 
-        if ( !guard( event , 'resizeEvent' ) )
+        if ( !guard( event , 'resizeEvent' ) || !permits( event , 'resize' , 'resizeEvent' ) )
         {
             return ;
         }
@@ -358,7 +452,7 @@ const useScheduler = ( props = {} ) =>
     {
         const event = resolve( target ) ;
 
-        if ( !event || !patch )
+        if ( !event || !patch || !permits( event , 'edit' , 'updateEvent' ) )
         {
             return ;
         }
@@ -393,7 +487,7 @@ const useScheduler = ( props = {} ) =>
     {
         const event = resolve( target ) ;
 
-        if ( !event )
+        if ( !event || !permits( event , 'remove' , 'removeEvent' ) )
         {
             return ;
         }
@@ -423,6 +517,8 @@ const useScheduler = ( props = {} ) =>
         previous ,
         next ,
         canMove ,
+        canResize ,
+        permissionsOf ,
         moveEvent ,
         resizeEvent ,
         updateEvent ,

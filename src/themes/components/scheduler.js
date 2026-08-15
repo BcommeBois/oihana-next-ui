@@ -329,6 +329,41 @@ export const SCHEDULER_TIMEGRID_DRAFT = 'pointer-events-none absolute z-30 flex 
 /** A column that answers to a press on its empty space. */
 export const SCHEDULER_TIMEGRID_COLUMN_CREATABLE = 'cursor-cell' ;
 
+/**
+ * The body of the event panel.
+ *
+ * A container again : the panel is a phone-wide sheet as readily as a side
+ * panel, and what decides the row layout is its own width — never the window's.
+ */
+export const SCHEDULER_PANEL = '@container flex flex-col' ;
+
+/**
+ * When the event happens, said in one line.
+ *
+ * Every block of the panel carries its **own** vertical padding rather than
+ * leaning on a gap : the rows are separated by a rule, and a rule wants the same
+ * air above it as below it — which a single gap cannot give it.
+ */
+export const SCHEDULER_PANEL_WHEN = 'flex flex-wrap items-center gap-2 py-2 text-sm font-medium' ;
+
+/** Where a rescheduled event used to sit. */
+export const SCHEDULER_PANEL_PREVIOUS = 'border-t border-base-200 py-2 text-xs text-base-content/60 first-letter:uppercase' ;
+
+/**
+ * One property : its name, and its value.
+ *
+ * Side by side as soon as there is room, and the label column stays **narrow** :
+ * a wide one leaves a canyon between `Location` and `Salle Bleue`, and two things
+ * that far apart stop reading as one line.
+ */
+export const SCHEDULER_PANEL_ROW = 'grid gap-0.5 border-t border-base-200 py-2 @sm:grid-cols-[6.5rem_1fr] @sm:gap-3' ;
+
+/** The name of a property. */
+export const SCHEDULER_PANEL_LABEL = 'text-xs font-semibold uppercase tracking-wide text-base-content/60' ;
+
+/** Its value — free text from a payload, so it has to be allowed to wrap. */
+export const SCHEDULER_PANEL_VALUE = 'text-sm break-words whitespace-pre-line' ;
+
 /** The line saying where now is. */
 export const SCHEDULER_NOW = 'pointer-events-none absolute inset-x-0 z-20 border-t-2 border-error' ;
 

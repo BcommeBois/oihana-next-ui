@@ -31,8 +31,9 @@ import isBetween      from 'dayjs/plugin/isBetween' ;
 import isSameOrAfter  from 'dayjs/plugin/isSameOrAfter' ;
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore' ;
 import isoWeek        from 'dayjs/plugin/isoWeek' ;
-import localeData     from 'dayjs/plugin/localeData' ;
-import minMax         from 'dayjs/plugin/minMax' ;
+import localeData      from 'dayjs/plugin/localeData' ;
+import localizedFormat from 'dayjs/plugin/localizedFormat' ;
+import minMax          from 'dayjs/plugin/minMax' ;
 import weekday        from 'dayjs/plugin/weekday' ;
 
 dayjs.extend( localeData ) ;
@@ -43,5 +44,10 @@ dayjs.extend( isSameOrAfter ) ;
 dayjs.extend( isSameOrBefore ) ;
 dayjs.extend( isoWeek ) ;
 dayjs.extend( minMax ) ;
+
+// `L` `LL` `LLL` `LT` — without it those tokens are not formats, they are the
+// letters themselves, and a date reads « jeudi LL ». They are the only way to
+// print a date in the order a locale actually writes it.
+dayjs.extend( localizedFormat ) ;
 
 export default dayjs ;

@@ -14,6 +14,7 @@ import useScheduler from '@/hooks/useScheduler' ;
 
 import dayjs from '@/helpers/date/configureDayjs' ;
 
+import { bookings } from './bookings' ;
 import { libraryProgram , rooms } from './libraryProgram' ;
 
 /** The week the fixture is written around, so every example opens on something. */
@@ -21,6 +22,16 @@ const ANCHOR = new Date( '2026-08-10T00:00:00' ) ;
 
 /** The accessor the fixture needs : its house types key on `_key`. */
 const getEventId = source => source._key ?? source.id ;
+
+/**
+ * A policy of the plainest kind : the story hour is read-only, the rest is not.
+ *
+ * It gates the gestures as much as the panel — one accessor, because the
+ * question « what may this user do with this object » is asked once. Which is
+ * why the example that carries it is a week : a policy nobody can bump into is
+ * a policy nobody can check.
+ */
+const permissions = event => ( event.source.id === 'heure-du-conte' ? 'read' : 'edit' ) ;
 
 const roomName = ( id ) => rooms.find( room => room.id === id )?.name ?? id ;
 
@@ -35,7 +46,7 @@ const roomName = ( id ) => rooms.find( room => room.id === id )?.name ?? id ;
  */
 const SchedulerAgendaDemo = ( { path = 'demo.scheduler.schedulerAgenda' } ) =>
 {
-    const { basic , controlled , custom , description , emptyDays , mobile , title } = useI18n( path ) ;
+    const { basic , controlled , custom , description , details , emptyDays , mobile , title } = useI18n( path ) ;
 
     return (
         <Container className="flex flex-col gap-8 rounded-box bg-base-200/60 p-3 sm:p-8" maxWidth="max-w-6xl">
@@ -103,6 +114,47 @@ const SchedulerAgendaDemo = ( { path = 'demo.scheduler.schedulerAgenda' } ) =>
                                 ) }
                             </div>
                         ) }
+                    />
+                </div>
+            </section>
+
+            <Divider />
+
+            <section className="flex flex-col gap-3">
+                <h3 className="text-xl font-semibold">{ details?.title }</h3>
+                <p className="text-sm text-base-content/60">{ details?.description }</p>
+
+                <div className="rounded-box bg-base-100 p-2 sm:p-4">
+                    <Scheduler
+                        details
+                        movable
+                        resizable
+                        schema
+                        defaultEvents       = { libraryProgram }
+                        defaultDate         = { ANCHOR }
+                        defaultView         = "week"
+                        getEventId          = { getEventId }
+                        getEventPermissions = { permissions }
+                        height              = "22rem"
+                        scrollTime          = "13:00"
+                    />
+                </div>
+
+                <p className="text-sm text-base-content/60">{ details?.permissions }</p>
+
+                <Divider />
+
+                <p className="text-sm text-base-content/60">{ details?.bookings }</p>
+
+                {/* Four reservations, four different places to keep a date — and one
+                    adapter that finds all four without reading a single `@type`. */}
+                <div className="rounded-box bg-base-100 p-2 sm:p-4">
+                    <Scheduler
+                        details       = {{ placement : 'bottom' }}
+                        schema
+                        defaultEvents = { bookings }
+                        defaultDate   = { ANCHOR }
+                        getEventId    = { getEventId }
                     />
                 </div>
             </section>

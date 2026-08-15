@@ -1,15 +1,18 @@
 'use client' ;
 
+import { useState } from 'react' ;
+
 import useScheduler from '../../hooks/useScheduler' ;
 
 import { AGENDA , DAY , MONTH , TIMELINE , WEEK } from '../../helpers/schedule/getViewWindow' ;
 
 import { getSchedulerClasses } from '../../themes/components/scheduler' ;
 
-import SchedulerAgenda  from './SchedulerAgenda' ;
-import SchedulerMonth    from './SchedulerMonth' ;
-import SchedulerTimeGrid from './SchedulerTimeGrid' ;
-import SchedulerToolbar from './SchedulerToolbar' ;
+import SchedulerAgenda     from './SchedulerAgenda' ;
+import SchedulerEventPanel from './SchedulerEventPanel' ;
+import SchedulerMonth      from './SchedulerMonth' ;
+import SchedulerTimeGrid   from './SchedulerTimeGrid' ;
+import SchedulerToolbar    from './SchedulerToolbar' ;
 
 export { AGENDA , DAY , MONTH , TIMELINE , WEEK } ;
 
@@ -83,7 +86,12 @@ const resolveViews = ( requested ) =>
  * @param {Array} [props.colorKeys] - The keys in the order they take colours, which freezes the mapping.
  * @param {Function} [props.getEventId] - Reads an event's identity. Required when neither `identifier`, `id` nor `url` is the real key.
  * @param {Function} [props.getResourceId] - Reads the timeline row an event belongs to.
- * @param {Function} [props.isEventMovable] - Whether an event may be dragged — a past slot, a cancelled booking, a lock of your own. The recurrence guard applies whatever it answers.
+ * @param {boolean|Object} [props.details=false] - Open a panel when an event is activated. `true` for the defaults, or an object of props forwarded to `SchedulerEventPanel` (`placement`, `fields`, `renderField`, `maxWidth`…).
+ * @param {Function} [props.getEventPermissions] - What a user may do with an event : `'read'` / `'edit'`, or `{ read , edit , move , resize , remove }`. **It does not hide anything** — what is not to be shown is not to be sent.
+ * @param {Function} [props.getStatus] - Reads the status, for a vocabulary of your own — `ReservationStatusType`, for one.
+ * @param {Array} [props.datePairs] - Where to look for a span, for the types that do not use `startDate`. See `helpers/schedule/datePairs`.
+ * @param {Array} [props.unwrap] - Properties that may hold the dated object — `reservationFor` by default.
+ * @param {Function} [props.isEventMovable] - Whether an event may be dragged — a past slot, a cancelled booking, a lock of your own. The recurrence guard and the permissions apply whatever it answers.
  * @param {Function} [props.isEventResizable] - Whether an event's edges may be pulled. Defaults to `isEventMovable`.
  * @param {boolean}  [props.movable=false] - Let an event be dragged to another time. Day and week views.
  * @param {boolean}  [props.resizable=false] - Let an event's edges be pulled. Pointers that hover ; on touch, resizing belongs to the editor.
@@ -157,10 +165,15 @@ const Scheduler =
     getColorKey ,
     creatable = false ,
     createDuration ,
+    datePairs ,
+    details = false ,
     getEventId ,
+    getEventPermissions ,
     getResourceId ,
+    getStatus ,
     isEventMovable ,
     isEventResizable ,
+    unwrap ,
     movable = false ,
     resizable = false ,
     palette ,
@@ -194,14 +207,18 @@ const Scheduler =
         defaultDate ,
         defaultDuration ,
         defaultEvents ,
+        datePairs ,
         defaultView ,
         events ,
         colorKeys ,
         getColor ,
         getColorKey ,
         getEventId ,
+        getEventPermissions ,
         getResourceId ,
+        getStatus ,
         palette ,
+        unwrap ,
         onChange ,
         onDateChange ,
         onViewChange ,
@@ -213,8 +230,27 @@ const Scheduler =
     // Two questions, one answer for the views : the application's own rule, and
     // the one the core never gives up — an occurrence of a recurring rule cannot
     // be written through, so it is never offered as draggable in the first place.
-    const canDrag   = ( event ) => scheduler.canMove( event ) && ( isEventMovable ? isEventMovable( event ) : true ) ;
-    const canStretch = ( event ) => scheduler.canMove( event ) && ( ( isEventResizable ?? isEventMovable ) ? ( isEventResizable ?? isEventMovable )( event ) : true ) ;
+    const canDrag    = ( event ) => scheduler.canMove( event ) && ( isEventMovable ? isEventMovable( event ) : true ) ;
+    const canStretch = ( event ) => scheduler.canResize( event ) && ( ( isEventResizable ?? isEventMovable ) ? ( isEventResizable ?? isEventMovable )( event ) : true ) ;
+
+    // The panel is opened here when `details` asks for it, and by the application
+    // otherwise — `onEventClick` keeps firing either way, so composing one's own
+    // window never means giving up the built-in one's wiring.
+    const [ picked , setPicked ] = useState( null ) ;
+
+    const openDetails = ( event ) =>
+    {
+        onEventClick?.( event ) ;
+
+        if ( details && scheduler.permissionsOf( event ).read )
+        {
+            setPicked( event ) ;
+        }
+    } ;
+
+    // The record is re-read from the current list : an event edited or moved
+    // while its panel is open would otherwise go on showing what it used to be.
+    const shown = picked === null ? null : ( scheduler.events.find( event => event.id === picked.id ) ?? picked ) ;
 
     /**
      * What a drawn range, or a clicked slot, becomes.
@@ -276,7 +312,7 @@ const Scheduler =
                         isEventResizable = { canStretch }
                         movable          = { movable }
                         nowIndicator     = { nowIndicator }
-                        onEventClick     = { onEventClick }
+                        onEventClick     = { openDetails }
                         onEventCreate    = { createEvent }
                         onEventMove      = { scheduler.moveEvent }
                         onEventResize    = { scheduler.resizeEvent }
@@ -297,7 +333,7 @@ const Scheduler =
                         events          = { scheduler.events }
                         maxEventsPerDay = { maxEventsPerDay }
                         onDayClick      = { onDayClick }
-                        onEventClick    = { onEventClick }
+                        onEventClick    = { openDetails }
                         path            = { path }
                         renderEvent     = { renderEvent }
                         weekStartsOn    = { weekStartsOn }
@@ -314,6 +350,16 @@ const Scheduler =
                         window        = { scheduler.window }
                     />
                 ) }
+
+            { details && (
+                <SchedulerEventPanel
+                    event   = { shown }
+                    onClose = { () => setPicked( null ) }
+                    path    = { path }
+                    schema  = { schema }
+                    { ...( details === true ? {} : details ) }
+                />
+            ) }
 
         </div>
     ) ;

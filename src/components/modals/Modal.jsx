@@ -467,7 +467,11 @@ const Modal = ( props ) =>
                                 <button
                                     type       = "button"
                                     aria-label = { closeLabel }
-                                    className  = { cn( "btn btn-md btn-circle btn-ghost" , closeClassName ) }
+                                    // `ms-auto` so the close button holds the end of
+                                    // the row even with no title to push it there —
+                                    // a titled header is unaffected, its `flex-1`
+                                    // title having already done the pushing.
+                                    className  = { cn( "btn btn-md btn-circle btn-ghost ms-auto" , closeClassName ) }
                                     onClick    = { handleCancelClick }
                                     disabled   = { disabled }
                                     title      = { closeLabel }

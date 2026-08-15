@@ -20,7 +20,7 @@ const schedulerAgenda =
         controlled :
         {
             title       : 'Contrôlé, avec le journal des changements' ,
-            description : "L'application tient les événements et reçoit chaque changement. Rien ne les déclenche encore — le déplacement arrive au lot 5 — alors les boutons ci-dessous appellent l'API du hook directement, ce qui est exactement ce que feront les gestes." ,
+            description : "L'application tient les événements et reçoit chaque changement. Les boutons ci-dessous appellent l'API du hook directement — exactement ce que font les gestes de la grille horaire, et ce que fera l'éditeur." ,
             move        : 'Décaler d’une heure' ,
             rename      : 'Renommer' ,
             remove      : 'Supprimer' ,
@@ -38,6 +38,14 @@ const schedulerAgenda =
             title       : 'renderEvent' ,
             description : "Quand la carte par défaut ne suffit pas, l'événement se rend entièrement à la main. La fiche normalisée arrive en premier argument, et `source` y porte l'objet d'origine intact — ici la salle et le @type maison." ,
             room        : 'Salle' ,
+        } ,
+
+        details :
+        {
+            title       : 'La fiche — details' ,
+            description : "Consulter n'est pas modifier, et c'est le cas courant : un rendez-vous se regarde bien plus souvent qu'il ne se change. La fiche s'ouvre au clic sur un événement, au centre de l'écran et en plein écran sous md. Ce qu'elle imprime vient de `fields`, où chaque descripteur porte la propriété qu'il lit — une propriété ajoutée côté serveur devient une ligne ici en une ligne. Une valeur qu'on ne sait pas nommer n'est pas affichée : une ligne vide coûte plus d'attention qu'une ligne absente." ,
+            permissions : "getEventPermissions répond à une seule question — ce que cet utilisateur peut faire de cet objet. Ici l'heure du conte est en lecture seule : sa fiche s'ouvre, mais elle ne se déplace pas et ne montre aucune poignée — les autres, si. Un même accesseur commande donc la fiche et les gestes. Attention : refuser la lecture ne masque rien — ce qui ne doit pas être vu ne doit pas être envoyé, et le tri d'autorité reste côté API." ,
+            bookings    : "Quatre réservations, quatre endroits différents où se trouve la date : dans reservationFor pour le concert, startTime/endTime pour la table, checkinTime/checkoutTime pour la chambre, et pickupTime seul pour la navette. L'adaptateur les trouve toutes les quatre sans lire un seul @type — c'est la liste ordonnée de paires de datePairs qui répond, et elle s'étend pour tes propres sous-types. Ici la fiche s'ouvre en feuille par le bas : c'est la même, avec un placement différent." ,
         } ,
 
         mobile :
@@ -67,7 +75,7 @@ const schedulerAgenda =
         controlled :
         {
             title       : 'Controlled, with the change log' ,
-            description : 'The application holds the events and receives every change. Nothing triggers them yet — dragging lands in lot 5 — so the buttons below call the hook API directly, which is exactly what the gestures will do.' ,
+            description : 'The application holds the events and receives every change. The buttons below call the hook API directly — exactly what the gestures of the time grid do, and what the editor will do.' ,
             move        : 'Shift by one hour' ,
             rename      : 'Rename' ,
             remove      : 'Delete' ,
@@ -85,6 +93,14 @@ const schedulerAgenda =
             title       : 'renderEvent' ,
             description : 'When the default card is not enough, an event is rendered entirely by hand. The normalized record comes first, and its `source` carries the original object untouched — here the room and the house @type.' ,
             room        : 'Room' ,
+        } ,
+
+        details :
+        {
+            title       : 'The panel — details' ,
+            description : 'Consulting is not editing, and it is the common case: a booking is looked at far more often than it is changed. The panel opens on a click, centred, and full screen below md. What it prints comes from `fields`, where each descriptor names the property it reads — a property added server-side becomes a row here in one line. A value it cannot name is not shown: an empty row costs more attention than an absent one.' ,
+            permissions : 'getEventPermissions answers a single question — what this user may do with this object. Here the story hour is read-only: its panel opens, but it does not move and shows no handle — the others do. One accessor drives the panel and the gestures alike. Mind that refusing to read hides nothing: what is not to be seen is not to be sent, and the authoritative filtering stays server-side.' ,
+            bookings    : 'Four reservations, four different places to keep a date: inside reservationFor for the concert, startTime/endTime for the table, checkinTime/checkoutTime for the room, and pickupTime alone for the shuttle. The adapter finds all four without reading a single @type — the ordered pair list of datePairs answers, and it extends to subtypes of your own. Here the panel opens as a bottom sheet: same panel, different placement.' ,
         } ,
 
         mobile :

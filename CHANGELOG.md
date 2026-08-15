@@ -8,6 +8,27 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Components — `scheduler` — reading an event, and who is allowed to**
+
+- **New `SchedulerEventPanel`**, and `details` on `Scheduler` to open it on a click. Consulting is not editing, and it is the common case — a booking is looked at far more often than it is changed — so the panel reads first and says what it knows plainly.
+  - **It is a `Modal`, so it has placements.** `middle` by default and full screen below `md` ; `placement="end"` turns the same panel into a side sheet that leaves the calendar visible, `bottom` into a tray. None of that is this component's code.
+  - **Built in *and* composable.** `details` wires it up, `onEventClick` keeps firing, and the component is exported for a window of your own — with `fields` as a **function of the event** (one set of rows per subtype), `renderField` for one row and `children` for the whole body.
+- **New `getEventPermissions`.** One accessor — `'read'` / `'edit'`, or `{ read , edit , move , resize , remove }` — because rights answer a single question and five accessors would ask it five times. It gates the panel **and the gestures** : a read-only event neither drags nor stretches, and the mutators refuse it too, so application code cannot walk in through the back door. **New `permissionsOf` and `canResize` on `useScheduler`.**
+  - **It hides nothing, deliberately.** Nothing is filtered out of the views : an event withheld client-side is still in the payload, so dropping it here would look like protection while being none. What is not to be shown is not to be sent.
+- **New `helpers/schedule/datePairs` — a `Reservation` becomes readable.** The subtypes disagree on where the span lives, and they disagree on purpose : a table is booked for a `startTime`, a room from a `checkinTime`, a taxi at a `pickupTime` with no end at all, and a flight has no dates of its own because they belong to the flight it points at. So the answer stays structural, like the rest of the adapter — **an ordered list of property pairs, tried in turn, extended by whoever has a subtype of their own**, plus an `unwrap` list for the objects that hold the dated one. Still no `@type` read anywhere.
+  - **`reservationStatus` is read as its own vocabulary**, since `readStatus` would have answered `scheduled` to all of it — including to a cancellation. Only what genuinely maps is mapped : the normalized status decides how a block is *drawn*, not what it means to a business, and a pending booking has no honest third way of being drawn. **New `getStatus`** hands the question over entirely.
+  - The record gained `span` — which properties its dates were read from, and on which object — which is what lets an editor write back in the spelling it read.
+- **`configureDayjs` gains `localizedFormat`.** Without it `LL` and `LLL` are not formats, they are the letters themselves — a date printed as « jeudi LL ». They are also the only way to write a date in the order a locale actually uses, so anything spelling one out needs them.
+- **An event is named by what it points at, when it has no name of its own.** A reservation very often carries none : what has a name is the concert, the inn or the restaurant it links to. The linked object is asked **even when the dates were found on the reservation itself** — precisely the case a lodging booking presents, with its own `checkinTime` and a name that only exists over in `reservationFor`.
+- **No stand-in title.** An event that names itself heads its own panel ; one that does not is better headed by nothing than by the word for nothing.
+- **The event's colour sits beside its name, in the header**, rather than in front of the date. In the body it indented the first line by its own width, and every label under it stopped lining up with anything.
+
+**Components — `Modal` — a header with no title**
+
+- **The close button now holds the end of its row even when there is no title.** It was the only child of a flex row and sat at the *start* of the header, which is the one place a close button never belongs. A titled header is unaffected — its `flex-1` title was already doing the pushing.
+- **A side panel is sized by `width`, never by `maxWidth`** — daisyUI sizes `start` / `end` placements by their content, so the panel supplies a sensible one rather than letting the box follow its own longest line.
+- **New `helpers/schedule/eventFields`.** The hard part of a panel is not its layout, it is **reading a value without knowing what it is** : `location` accepts plain text, a `Place`, a `PostalAddress` or a `VirtualLocation`. A panel printing `[object Object]` over real data has failed at its only job, so everything goes through `formatValue` — and what it cannot name is drawn as nothing rather than as noise. A row with nothing in it costs the reader more than an absent one.
+
 **Components — `scheduler` — stretching and drawing**
 
 - **New `resizable` prop.** A block's edges are pulled from a handle that appears along them. Two rules decide whether a handle is there at all : an edge is only offered **where it is real** — the middle day of a three-day event has no start to pull and the last has no end — and **a card under 28 px shows only its closing handle**, since two eight-pixel strips on a twenty-four pixel card would leave eight pixels to take the block by, giving the resize by taking the move away.

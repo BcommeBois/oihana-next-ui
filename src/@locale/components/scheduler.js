@@ -19,6 +19,24 @@ const scheduler =
         emptyDay : 'Rien de prévu' ,
         continues : 'suite' ,
         more      : 'de plus' ,
+        close     : 'Fermer' ,
+        previously : 'Précédemment prévu le' ,
+        fields :
+        {
+            description : 'Description' ,
+            location    : 'Lieu' ,
+            organizer   : 'Organisateur' ,
+            performer   : 'Intervenant' ,
+            url         : 'Lien' ,
+        } ,
+        statuses :
+        {
+            cancelled   : 'Annulé' ,
+            movedOnline : 'En ligne' ,
+            postponed   : 'Reporté' ,
+            rescheduled : 'Replanifié' ,
+            scheduled   : 'Prévu' ,
+        } ,
         views :
         {
             agenda   : 'Agenda' ,
@@ -39,6 +57,24 @@ const scheduler =
         emptyDay : 'Nothing scheduled' ,
         continues : 'cont.' ,
         more      : 'more' ,
+        close     : 'Close' ,
+        previously : 'Previously scheduled for' ,
+        fields :
+        {
+            description : 'Description' ,
+            location    : 'Location' ,
+            organizer   : 'Organizer' ,
+            performer   : 'Performer' ,
+            url         : 'Link' ,
+        } ,
+        statuses :
+        {
+            cancelled   : 'Cancelled' ,
+            movedOnline : 'Moved online' ,
+            postponed   : 'Postponed' ,
+            rescheduled : 'Rescheduled' ,
+            scheduled   : 'Scheduled' ,
+        } ,
         views :
         {
             agenda   : 'Agenda' ,
