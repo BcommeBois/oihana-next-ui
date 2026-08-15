@@ -232,8 +232,40 @@ export const SCHEDULER_TIMEGRID_DAY_NUMBER = 'text-base font-semibold tabular-nu
 /** Today's number, marked as it is everywhere else. */
 export const SCHEDULER_TIMEGRID_DAY_TODAY = 'inline-flex size-7 items-center justify-center rounded-full bg-primary text-primary-content' ;
 
-/** An event, placed on the axis. */
-export const SCHEDULER_TIMEGRID_EVENT = 'absolute overflow-hidden rounded-field border-s-4 px-1.5 py-0.5 text-xs' ;
+/**
+ * An event, placed on the axis.
+ *
+ * Carries neither padding nor leading : both belong to the block's *mode*, and
+ * a mode class is appended after this one so it wins the cascade.
+ */
+export const SCHEDULER_TIMEGRID_EVENT = 'absolute overflow-hidden rounded-field border-s-4 px-1.5 text-xs' ;
+
+/**
+ * Height, in pixels, a card needs before its title and its span can sit on two
+ * lines : two lines of `text-xs` at `leading-tight` plus the padding.
+ *
+ * Below it the card goes to one line, because **a card too short for what it
+ * prints does not overflow — it cuts a line of text in half**, which is how a
+ * half-hour slot at the default zoom ends up unreadable. The threshold is in
+ * pixels rather than in minutes on purpose : what decides is the room there is,
+ * and the same half hour is comfortable at 96 px an hour.
+ */
+export const TIMEGRID_STACKED_HEIGHT = 34 ;
+
+/** A card with the room for its title over its span. */
+export const SCHEDULER_TIMEGRID_EVENT_STACKED = 'py-0.5 leading-tight' ;
+
+/**
+ * A card that has room for one line : the title, and the start time after it.
+ *
+ * The line is **centred** rather than hung from the top. A stacked card fills its
+ * own height, so where its text starts is where the event starts ; a single line
+ * in a card twice its height only looks dropped in.
+ */
+export const SCHEDULER_TIMEGRID_EVENT_COMPACT = 'flex items-center py-0 leading-none' ;
+
+/** The line itself, inside a compact card : the two texts share a baseline. */
+export const SCHEDULER_TIMEGRID_EVENT_LINE = 'flex w-full min-w-0 items-baseline gap-1' ;
 
 /**
  * An event that answers to a drag.

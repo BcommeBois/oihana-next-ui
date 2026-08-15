@@ -31,14 +31,18 @@ import
     SCHEDULER_TIMEGRID_DAY_NUMBER ,
     SCHEDULER_TIMEGRID_DAY_TODAY ,
     SCHEDULER_TIMEGRID_EVENT ,
+    SCHEDULER_TIMEGRID_EVENT_COMPACT ,
     SCHEDULER_TIMEGRID_EVENT_DRAGGING ,
     SCHEDULER_TIMEGRID_EVENT_GHOST ,
+    SCHEDULER_TIMEGRID_EVENT_LINE ,
     SCHEDULER_TIMEGRID_EVENT_MOVABLE ,
+    SCHEDULER_TIMEGRID_EVENT_STACKED ,
     SCHEDULER_TIMEGRID_GUTTER ,
     SCHEDULER_TIMEGRID_HEAD ,
     SCHEDULER_TIMEGRID_HOUR ,
     SCHEDULER_TIMEGRID_LINE ,
     SCHEDULER_TIMEGRID_LINE_HALF ,
+    TIMEGRID_STACKED_HEIGHT ,
     getSchedulerEventClasses ,
 } from '../../themes/components/scheduler' ;
 
@@ -262,9 +266,14 @@ const SchedulerTimeGrid =
             ) ;
         }
 
+        // Half an hour at the default zoom is twenty-four pixels — less than two
+        // lines of text need. What does not fit is not printed at all, rather than
+        // printed and cut through the middle.
+        const stacked = height >= TIMEGRID_STACKED_HEIGHT ;
+
         const { className : eventClassName , style } = getSchedulerEventClasses
         ({
-            className : SCHEDULER_TIMEGRID_EVENT ,
+            className : `${ SCHEDULER_TIMEGRID_EVENT } ${ stacked ? SCHEDULER_TIMEGRID_EVENT_STACKED : SCHEDULER_TIMEGRID_EVENT_COMPACT }` ,
             color     : event.color ,
             dragging ,
             ghost ,
@@ -281,11 +290,28 @@ const SchedulerTimeGrid =
                 onClick       = { onEventClick ? () => onEventClick( event ) : undefined }
                 onPointerDown = { onPointerDown }
                 style         = {{ ...style , ...position }}
+                title         = { `${ dayjs( segment.start ).format( 'HH:mm' ) } – ${ dayjs( segment.end ).format( 'HH:mm' ) } · ${ event.title }` }
             >
-                <span className="block truncate font-semibold">{ event.title }</span>
-                <span className="block truncate font-mono text-[0.9em] opacity-80">
-                    { dayjs( segment.start ).format( 'HH:mm' ) } – { dayjs( segment.end ).format( 'HH:mm' ) }
-                </span>
+                { stacked
+                    ? (
+                        <>
+                            <span className="block truncate font-semibold">{ event.title }</span>
+                            <span className="block truncate font-mono text-[0.9em] opacity-80">
+                                { dayjs( segment.start ).format( 'HH:mm' ) } – { dayjs( segment.end ).format( 'HH:mm' ) }
+                            </span>
+                        </>
+                    )
+                    : (
+                        <span className={ SCHEDULER_TIMEGRID_EVENT_LINE }>
+                            <span className="truncate font-semibold">{ event.title }</span>
+                            {/* The axis already says where it starts ; the hour is
+                                repeated because a narrow column crops the position
+                                far more readily than the eye admits. */}
+                            <span className="shrink-0 font-mono text-[0.9em] opacity-80">
+                                { dayjs( segment.start ).format( 'HH:mm' ) }
+                            </span>
+                        </span>
+                    ) }
             </button>
         ) ;
     } ;
