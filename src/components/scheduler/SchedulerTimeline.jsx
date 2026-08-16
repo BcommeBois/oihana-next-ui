@@ -37,6 +37,7 @@ import
 } from '../../themes/components/scheduler' ;
 
 import EmptyState from '../EmptyState' ;
+import Tooltip    from '../Tooltip' ;
 
 /** Minutes in a day, the ceiling of every bound here. */
 const DAY_MINUTES = 24 * 60 ;
@@ -96,7 +97,7 @@ const MINUTE = 60 * 1000 ;
  * @param {boolean} [props.showNarrowLabels=true] - Write the title beside a bar too small to hold it, the way a Gantt chart labels a task. Turn it off for a dense plan, where the labels of neighbouring bars would run into one another and say less than the bars alone.
  * @param {number} [props.slotDuration=60] - Minutes between two rules on a one-day axis.
  * @param {number} [props.snapMinutes=15] - Step a dragged edge lands on.
- * @param {boolean|Function} [props.tooltip=true] - What a block says on hover. `false` removes it, a function `( event ) => string` writes it. The browser's own tooltip, not the themed one — a themed one lives in a pseudo-element, and a block clips its own overflow to truncate its title.
+ * @param {boolean|Function} [props.tooltip=true] - What a block says on hover. `false` removes it, a function `( event ) => string` writes it. Themed and floating — the bubble is drawn in a portal, so neither the block's own clipping nor the scrolling area can cut it.
  * @param {{start: number, end: number, days: number}} props.window - The span being shown.
  */
 const SchedulerTimeline =
@@ -264,6 +265,29 @@ const SchedulerTimeline =
     }
 
     /**
+     * What a block says when the pointer rests on it.
+     *
+     * Themed and floating rather than native : `<Tooltip float>` draws the bubble
+     * in a portal, so neither the block's own `overflow-hidden` nor the scrolling
+     * area can cut it — the very reason this was the browser's tooltip until the
+     * floating path existed.
+     */
+    const hint = ( event ) =>
+    {
+        if ( tooltip === false )
+        {
+            return undefined ;
+        }
+
+        if ( typeof tooltip === 'function' )
+        {
+            return tooltip( event ) ;
+        }
+
+        return `${ dayjs( event.start ).format( 'HH:mm' ) } – ${ dayjs( event.end ).format( 'HH:mm' ) } · ${ event.title }` ;
+    } ;
+
+    /**
      * One placed block — a laid-out event, or the preview following the pointer.
      *
      * `lead` and `span` are fractions of the row's height here, where the grid
@@ -328,14 +352,20 @@ const SchedulerTimeline =
             : null ;
 
         return [
-            <button
+            // The tooltip **is** the block rather than a wrapper around it : a
+            // wrapper would be a static element of no size — its absolutely
+            // placed child takes none — and an element of no size is never
+            // hovered.
+            <Tooltip
                 key           = { key }
+                float
+                as            = "button"
+                tip           = { hint( event ) }
                 type          = "button"
                 className     = { eventClassName }
                 onClick       = { onEventClick ? () => onEventClick( event ) : undefined }
                 onPointerDown = { draggable ? ( look ) => drag.start( look , { ...geometry , mode : MOVE }) : undefined }
                 style         = {{ ...style , ...position }}
-                title         = { hint( event ) }
             >
                 { stretchy && (
                     <>
@@ -353,32 +383,9 @@ const SchedulerTimeline =
                 ) }
 
                 { size >= TIMELINE_NARROW && <span className="truncate">{ event.title }</span> }
-            </button> ,
+            </Tooltip> ,
             aside ,
         ] ;
-    } ;
-
-    /**
-     * What a block says when the pointer rests on it.
-     *
-     * The browser's own tooltip rather than the themed one : a themed tooltip is
-     * drawn in a pseudo-element, and a block clips its own overflow to truncate
-     * its title — it would be cut off, and cut off again at the edge of the
-     * scrolling area. Native costs nothing and is never clipped.
-     */
-    const hint = ( event ) =>
-    {
-        if ( tooltip === false )
-        {
-            return undefined ;
-        }
-
-        if ( typeof tooltip === 'function' )
-        {
-            return tooltip( event ) ;
-        }
-
-        return `${ dayjs( event.start ).format( 'HH:mm' ) } – ${ dayjs( event.end ).format( 'HH:mm' ) } · ${ event.title }` ;
     } ;
 
     const nowOffset = now === null ? 0 : scale.offsetOf( now ) ;

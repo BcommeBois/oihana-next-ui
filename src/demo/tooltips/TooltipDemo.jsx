@@ -103,6 +103,52 @@ const TooltipDemo = () =>
 
             <Divider />
 
+            {/* float — the one thing the CSS path cannot do */}
+            <div className="flex flex-col gap-4">
+                <h3 className="text-xl font-semibold">float — inside anything that scrolls</h3>
+                <p className="text-sm text-base-content/70">
+                    DaisyUI draws its tooltip in a pseudo-element of the trigger, so any ancestor
+                    hiding its overflow cuts it off, and near an edge of the window it leaves the
+                    screen rather than flipping. <code>float</code> moves the bubble into a portal
+                    and places it against its trigger. The two boxes below are the same list in the
+                    same overflow — hover a row in each.
+                </p>
+
+                <div className="grid gap-6 lg:grid-cols-2">
+                    { [ false , true ].map( floating => (
+                        <div key={ String( floating ) } className="flex flex-col gap-2">
+                            <p className="font-mono text-xs uppercase text-base-content/50">
+                                float = { String( floating ) }
+                            </p>
+
+                            <div className="h-40 overflow-auto rounded-box border border-base-300 bg-base-100 p-2">
+                                { [ 'Auditorium' , 'Salle Bleue' , 'Atelier' , 'Réserve' , 'Studio' , 'Foyer' ].map( room => (
+                                    <Tooltip
+                                        key       = { room }
+                                        as        = "button"
+                                        className = "btn btn-ghost btn-sm w-full justify-start"
+                                        color     = "primary"
+                                        float     = { floating }
+                                        position  = "top"
+                                        tip       = { `${ room } — open 09:00 to 22:00` }
+                                        type      = "button"
+                                    >
+                                        { room }
+                                    </Tooltip>
+                                ) ) }
+                            </div>
+                        </div>
+                    ) ) }
+                </div>
+
+                <p className="text-sm text-base-content/70">
+                    The floating one also opens on <strong>focus</strong> — tab into the list — and
+                    never on touch, where a tap has somewhere better to go than under a bubble.
+                </p>
+            </div>
+
+            <Divider />
+
             {/* Rich content */}
             <div className="flex flex-col gap-4">
                 <h3 className="text-xl font-semibold">Rich content</h3>

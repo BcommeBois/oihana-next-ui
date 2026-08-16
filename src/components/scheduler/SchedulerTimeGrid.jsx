@@ -54,6 +54,8 @@ import
     getSchedulerEventClasses ,
 } from '../../themes/components/scheduler' ;
 
+import Tooltip from '../Tooltip' ;
+
 import SchedulerEvent from './SchedulerEvent' ;
 
 /** Minutes in a day, the ceiling of every bound here. */
@@ -123,6 +125,7 @@ const DAY_MINUTES = 24 * 60 ;
  * @param {(event: Object, context: Object) => React.ReactNode} [props.renderEvent] - Renders an event, in place of the default block.
  * @param {string} [props.scrollTime='08:00'] - Where the grid lands on mount.
  * @param {number} [props.slotDuration=30] - Minutes between two rules. The hour is drawn stronger than the half.
+ * @param {boolean|Function} [props.tooltip=true] - What a card says on hover. `false` removes it, a function `( event ) => string` writes it. Floating, so neither the card's own clipping nor the scrolling area can cut it.
  * @param {number} [props.snapMinutes=15] - Step a dragged edge lands on. Independent of `slotDuration` : a grid ruled every half hour while a drag lands on the quarter is the usual arrangement.
  * @param {{start: number, end: number, days: number}} props.window - The span being shown.
  */
@@ -151,6 +154,7 @@ const SchedulerTimeGrid =
     scrollTime = '08:00' ,
     slotDuration = 30 ,
     snapMinutes = 15 ,
+    tooltip = true ,
     window ,
     ...rest
 }) =>
@@ -249,6 +253,22 @@ const SchedulerTimeGrid =
 
     const today = dayjs().startOf( 'day' ).valueOf() ;
 
+    /** What a card says when the pointer rests on it. */
+    const hint = ( event , segment ) =>
+    {
+        if ( tooltip === false )
+        {
+            return undefined ;
+        }
+
+        if ( typeof tooltip === 'function' )
+        {
+            return tooltip( event ) ;
+        }
+
+        return `${ dayjs( segment.start ).format( 'HH:mm' ) } – ${ dayjs( segment.end ).format( 'HH:mm' ) } · ${ event.title }` ;
+    } ;
+
     /**
      * One placed block — a laid-out event, or the preview following the pointer.
      *
@@ -343,14 +363,19 @@ const SchedulerTimeGrid =
         }) ;
 
         return (
-            <button
+            // The tooltip **is** the card : a wrapper around an absolutely placed
+            // child has no size of its own, and an element of no size is never
+            // hovered.
+            <Tooltip
                 key           = { key }
+                float
+                as            = "button"
+                tip           = { hint( event , segment ) }
                 type          = "button"
                 className     = { eventClassName }
                 onClick       = { onEventClick ? () => onEventClick( event ) : undefined }
                 onPointerDown = { onPointerDown }
                 style         = {{ ...style , ...position }}
-                title         = { `${ dayjs( segment.start ).format( 'HH:mm' ) } – ${ dayjs( segment.end ).format( 'HH:mm' ) } · ${ event.title }` }
             >
                 { pullStart && handle( RESIZE_START ) }
                 { pullEnd && handle( RESIZE_END ) }
@@ -375,7 +400,7 @@ const SchedulerTimeGrid =
                             </span>
                         </span>
                     ) }
-            </button>
+            </Tooltip>
         ) ;
     } ;
 

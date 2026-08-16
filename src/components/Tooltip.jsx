@@ -4,6 +4,32 @@
  * @module components/Tooltip
  * @see https://daisyui.com/components/tooltip
  *
+ * ### `float` — when the CSS one cannot reach
+ *
+ * DaisyUI draws its tooltip in a pseudo-element of the trigger. That is what
+ * makes it free, and what makes it **clipped by any ancestor hiding its
+ * overflow** — a scrolling list, a table cell, a block truncating its own title
+ * — and blind to the edges of the window, so near one it leaves the screen
+ * rather than flipping. No prop can lift either : they are properties of where
+ * the bubble lives.
+ *
+ * `float` moves it into a portal and positions it against its trigger, flipping
+ * and clamping to whatever room the page leaves. Everything else is unchanged,
+ * and **the CSS path stays the default** — it costs nothing and is right
+ * wherever nothing clips it.
+ *
+ * The floating path also opens on **focus**, not only on hover, and never on
+ * touch : there is no hovering on a touch screen, and a tap has somewhere better
+ * to go than under a bubble.
+ *
+ * @example
+ * ```jsx
+ * // Inside anything that scrolls
+ * <Tooltip tip="Never clipped" float color="primary">
+ *     <button className="btn">Hover me</button>
+ * </Tooltip>
+ * ```
+ *
  * @example
  * ```jsx
  * // Simple tooltip with data-tip
@@ -43,6 +69,8 @@
 
 import getTooltipClassNames from '../themes/components/tooltip' ;
 
+import FloatingTip from './FloatingTip' ;
+
 /**
  * @param {Object} props
  * @param {import('../themes/components/tooltip').TooltipAlignment} [props.align] - Tooltip alignment ('start' | 'center' | 'end').
@@ -55,6 +83,8 @@ import getTooltipClassNames from '../themes/components/tooltip' ;
  * @param {React.Ref} [props.ref] - Forwarded ref.
  * @param {boolean} [props.show=true] - Enable/disable tooltip. When false, renders children only.
  * @param {string} [props.tip] - Tooltip text (uses data-tip attribute).
+ * @param {boolean} [props.float=false] - Draw the bubble as a **portaled element** instead of a pseudo-element. See below.
+ * @param {number} [props.delay=400] - Floating only : milliseconds a pointer must dwell before it opens.
  */
 const Tooltip =
 ({
@@ -63,6 +93,8 @@ const Tooltip =
     children ,
     className ,
     color ,
+    delay ,
+    float = false ,
     open ,
     position ,
     ref ,
@@ -72,6 +104,15 @@ const Tooltip =
 }) =>
 {
     if ( !show ) return children ;
+
+    if ( float )
+    {
+        return (
+            <FloatingTip as={ as } className={ className } color={ color } delay={ delay } ref={ ref } tip={ tip } { ...rest }>
+                { children }
+            </FloatingTip>
+        ) ;
+    }
 
     const Component = as || 'div' ;
 

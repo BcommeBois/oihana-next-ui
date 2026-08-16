@@ -8,6 +8,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Components — `Tooltip` — a bubble no overflow can cut**
+
+- **New `float` prop.** DaisyUI draws its tooltip in a pseudo-element of the trigger : that is what makes it free, and what makes it **clipped by any ancestor hiding its overflow** — a scrolling list, a table cell, a block truncating its own title — and blind to the edges of the window, so near one it leaves the screen rather than flipping. Neither is a prop that was missing ; both are properties of where the bubble lives. `float` moves it into a **portal** and places it against its trigger. **The CSS path stays the default** : it costs nothing and is right wherever nothing clips it.
+  - **It portals into an open `<dialog>` when the trigger is inside one.** A modal dialog paints in the browser's top layer, above every `z-index` there is, so a bubble on the body would be under it — the same reasoning `Popover` already follows.
+  - **Measured, not estimated.** A tooltip's size is its text's, known only once rendered ; guessing it puts the bubble a few pixels off and, near an edge, makes it flip the wrong way. The first pass is invisible, the second is placed.
+  - **The look is daisyUI's, taken from its stylesheet rather than approximated** : `.875rem` on a `1.25` leading, centred, `max-content` width capped at twenty rem, and its own ten-by-four wave for the tail. A rotated diamond beside a daisyUI bubble reads as a different component.
+  - **The fill comes from the theme's variables, not from utility classes.** DaisyUI writes `color: var(--color-neutral-content)` in its stylesheet and never a utility, and for a portaled element that is the sturdier choice : a class has to survive the scanner that generates it and the merge that combines it, a variable is read at paint time and can be dropped by neither.
+- **New `hooks/useHoverIntent`.** A tooltip opening the instant a pointer touches its trigger turns a row of eight blocks into eight bubbles flashing in sequence. The delay belongs on the way **in** only — once a bubble is up, the reader asked for it, and taking it away must feel immediate. **Focus opens it at once** (a reader who tabbed there has already committed) and **touch never does** : there is no hovering on a touch screen, and a tap has somewhere better to go than under a bubble.
+- **New `themes/helpers/placeFloating`**, pure and verified with 7 assertions : preferred side, the flip when it does not fit, the clamp at either edge, a bubble wider than the window, and the case where neither side has room. All of them are what « aligns elegantly depending on where you are in the page » actually amounts to, and none of them is visible in a screenshot.
+- `role="tooltip"` and `aria-describedby`, and the trigger's own handlers are **chained** rather than replaced — a trigger is very often the element that also drags or clicks, and a bubble left hanging over a gesture in progress is the bug that arrangement invites.
+- **The scheduler's cards and blocks now use it**, in the time grid as in the timeline : `tooltip` was the browser's own precisely because the themed one would have been cut off twice.
+
 **Components — `scheduler` — the resource timeline**
 
 - **New `SchedulerTimeline`, and `timeline` joins `builtViews`.** The week grid with its axis pivoted, which was the second decision of the whole family and is now the one that pays : **`layoutOverlaps` comes back unchanged** — what it returned as columns sharing a width becomes lanes sharing a row's height. Two bookings of the same room at the same hour cannot share the width, because the width is the time.

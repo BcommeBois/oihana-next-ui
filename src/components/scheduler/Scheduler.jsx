@@ -396,6 +396,7 @@ const Scheduler =
                         scrollTime       = { scrollTime }
                         slotDuration     = { slotDuration }
                         snapMinutes      = { snapMinutes }
+                        tooltip          = { tooltip }
                         window           = { scheduler.window }
                     />
                 )
