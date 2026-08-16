@@ -8,7 +8,7 @@ const schedulerTimeline =
         day :
         {
             title       : 'Une journée, les heures en abscisse' ,
-            description : "Les gestes des lots 5 et 6 marchent ici sans une ligne de plus : useTimeDrag a gagné une orientation, pas un jumeau. Déplacer une carte vers une autre ligne change sa ressource — et comme aucune propriété schema.org ne dit « ressource », la librairie ne devine pas : elle rapporte la nouvelle ligne dans le descripteur de changement, à l'application d'écrire, ou à setResourceId de dire comment." ,
+            description : "Les gestes des lots 5 et 6 marchent ici sans une ligne de plus : useTimeDrag a gagné une orientation, pas un jumeau. Déplacer une carte vers une autre ligne change sa ressource — et comme aucune propriété schema.org ne dit « ressource », la librairie ne devine pas : elle rapporte la nouvelle ligne dans le descripteur de changement, à l'application d'écrire, ou à setResourceId de dire comment. Survole un bloc : la bulle est celle du thème, portalisée, donc jamais coupée par la zone qui défile — et tooltipColor la met ici en primary, pour tout le composant. Une couleur par événement serait plus jolie et illisible : rien ne garantit qu'un texte se lise sur une couleur libre, alors qu'un jeton et sa paire -content, si." ,
         } ,
 
         week :
@@ -44,7 +44,7 @@ const schedulerTimeline =
         day :
         {
             title       : 'A day, hours across' ,
-            description : 'The gestures of the fifth and sixth lots work here without a line added: useTimeDrag gained an orientation, not a twin. Dragging a card to another row changes its resource — and since no schema.org property means "resource", the library does not guess: it reports the new row in the change descriptor, for the application to write, or for setResourceId to say how.' ,
+            description : 'The gestures of the fifth and sixth lots work here without a line added: useTimeDrag gained an orientation, not a twin. Dragging a card to another row changes its resource — and since no schema.org property means "resource", the library does not guess: it reports the new row in the change descriptor, for the application to write, or for setResourceId to say how. Hover a block: the bubble is the themed one, portaled, so the scrolling area never cuts it — and tooltipColor sets it to primary here, for the whole component. One colour per event would be prettier and unreadable: nothing guarantees a text is legible on a free colour, where a token and its -content pair are exactly that guarantee.' ,
         } ,
 
         week :

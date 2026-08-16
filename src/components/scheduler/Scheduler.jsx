@@ -106,7 +106,8 @@ const resolveViews = ( requested ) =>
  * @param {Function} [props.renderResource] - Timeline : renders a row's head, in place of its name.
  * @param {number}   [props.rowHeight=34] - Timeline : height of one lane. A row of three overlapping bookings is three lanes tall.
  * @param {boolean}  [props.showNarrowLabels=true] - Timeline : write the title beside a bar too small to hold it. Off for a dense plan, where neighbouring labels would run into one another.
- * @param {boolean|Function} [props.tooltip=true] - Timeline : what a block says on hover. `false` removes it, `( event ) => string` writes it.
+ * @param {boolean|Function} [props.tooltip=true] - What a card or block says on hover. `false` removes it, `( event ) => string` writes it.
+ * @param {string} [props.tooltipColor='neutral'] - Fill of that bubble, for the whole scheduler. A daisyUI token — its `-content` pair is the only contrast a theme guarantees.
  * @param {number}   [props.pixelsPerDay=160] - Timeline : zoom of a multi-day axis.
  * @param {number}   [props.timelineDays=1] - Timeline : a day of hours, or a week of days. **The window decides the rest.**
  * @param {number}   [props.maxEventsPerDay=3] - Month view : how many events a cell shows before it counts the rest.
@@ -183,6 +184,7 @@ const Scheduler =
     rowHeight ,
     showNarrowLabels ,
     tooltip ,
+    tooltipColor ,
     pixelsPerDay ,
     timelineDays ,
     details = false ,
@@ -369,6 +371,7 @@ const Scheduler =
                         slotDuration     = { slotDuration }
                         snapMinutes      = { snapMinutes }
                         tooltip          = { tooltip }
+                        tooltipColor     = { tooltipColor }
                         window           = { scheduler.window }
                     />
                 )
@@ -397,6 +400,7 @@ const Scheduler =
                         slotDuration     = { slotDuration }
                         snapMinutes      = { snapMinutes }
                         tooltip          = { tooltip }
+                        tooltipColor     = { tooltipColor }
                         window           = { scheduler.window }
                     />
                 )

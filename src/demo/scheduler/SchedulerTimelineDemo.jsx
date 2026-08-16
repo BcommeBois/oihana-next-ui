@@ -80,6 +80,7 @@ const SchedulerTimelineDemo = ( { path = 'demo.scheduler.schedulerTimeline' } ) 
                         onChange      = { ( _next , report ) => setChange( report ) }
                         palette       = "brand"
                         resources     = { openRooms }
+                        tooltipColor  = "primary"
                         views         = { [ 'timeline' , 'day' , 'week' ] }
                     />
                 </div>

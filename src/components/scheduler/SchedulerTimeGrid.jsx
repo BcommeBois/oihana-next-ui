@@ -125,6 +125,7 @@ const DAY_MINUTES = 24 * 60 ;
  * @param {(event: Object, context: Object) => React.ReactNode} [props.renderEvent] - Renders an event, in place of the default block.
  * @param {string} [props.scrollTime='08:00'] - Where the grid lands on mount.
  * @param {number} [props.slotDuration=30] - Minutes between two rules. The hour is drawn stronger than the half.
+ * @param {string} [props.tooltipColor='neutral'] - Fill of that bubble. **One colour for the whole view, never one per event** : an event's colour is a free CSS value as often as a token, and nothing guarantees a text is legible on it — only a token and its `-content` pair are a contrast the theme promises.
  * @param {boolean|Function} [props.tooltip=true] - What a card says on hover. `false` removes it, a function `( event ) => string` writes it. Floating, so neither the card's own clipping nor the scrolling area can cut it.
  * @param {number} [props.snapMinutes=15] - Step a dragged edge lands on. Independent of `slotDuration` : a grid ruled every half hour while a drag lands on the quarter is the usual arrangement.
  * @param {{start: number, end: number, days: number}} props.window - The span being shown.
@@ -155,6 +156,7 @@ const SchedulerTimeGrid =
     slotDuration = 30 ,
     snapMinutes = 15 ,
     tooltip = true ,
+    tooltipColor = 'neutral' ,
     window ,
     ...rest
 }) =>
@@ -370,6 +372,7 @@ const SchedulerTimeGrid =
                 key           = { key }
                 float
                 as            = "button"
+                color         = { tooltipColor }
                 tip           = { hint( event , segment ) }
                 type          = "button"
                 className     = { eventClassName }

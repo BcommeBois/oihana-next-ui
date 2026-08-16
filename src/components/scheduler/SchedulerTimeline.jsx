@@ -97,6 +97,7 @@ const MINUTE = 60 * 1000 ;
  * @param {boolean} [props.showNarrowLabels=true] - Write the title beside a bar too small to hold it, the way a Gantt chart labels a task. Turn it off for a dense plan, where the labels of neighbouring bars would run into one another and say less than the bars alone.
  * @param {number} [props.slotDuration=60] - Minutes between two rules on a one-day axis.
  * @param {number} [props.snapMinutes=15] - Step a dragged edge lands on.
+ * @param {string} [props.tooltipColor='neutral'] - Fill of that bubble. **One colour for the whole view, never one per event** : an event's colour is a free CSS value as often as a token, and nothing guarantees a text is legible on it — only a token and its `-content` pair are a contrast the theme promises.
  * @param {boolean|Function} [props.tooltip=true] - What a block says on hover. `false` removes it, a function `( event ) => string` writes it. Themed and floating — the bubble is drawn in a portal, so neither the block's own clipping nor the scrolling area can cut it.
  * @param {{start: number, end: number, days: number}} props.window - The span being shown.
  */
@@ -129,6 +130,7 @@ const SchedulerTimeline =
     showNarrowLabels = true ,
     slotDuration = 60 ,
     tooltip = true ,
+    tooltipColor = 'neutral' ,
     snapMinutes = 15 ,
     window ,
     ...rest
@@ -360,6 +362,7 @@ const SchedulerTimeline =
                 key           = { key }
                 float
                 as            = "button"
+                color         = { tooltipColor }
                 tip           = { hint( event ) }
                 type          = "button"
                 className     = { eventClassName }
