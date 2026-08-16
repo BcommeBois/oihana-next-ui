@@ -93,4 +93,56 @@ export const createTimeScale = ( options = {} ) =>
     }) ;
 } ;
 
+/**
+ * A scale over a **span**, rather than over the hours of a day.
+ *
+ * The time grid asks « where in its own day does this instant fall » — every
+ * column is a day and the axis repeats. A resource timeline asks something
+ * simpler and larger : « where in *the window* does this instant fall », the
+ * window being a day of hours or a week of days. One row, one continuous axis,
+ * and no notion of a day at all.
+ *
+ * It answers the same three questions as {@link createTimeScale} and can stand
+ * in for it wherever those are all that is asked — `timeAt` accepts and ignores
+ * the day argument its cousin needs, which is what lets one drag hook drive both.
+ *
+ * @param {Object} options
+ * @param {number} options.start - Instant the axis begins at.
+ * @param {number} options.end   - Instant it ends at.
+ * @param {number} options.size  - Its length, in pixels.
+ * @param {number} [options.snapMinutes=15] - Step a dragged edge lands on.
+ * @returns {import('./timeScale').TimeScale}
+ *
+ * @example
+ * const scale = createSpanScale({ start : monday , end : nextMonday , size : 1400 }) ;
+ * scale.offsetOf( wednesdayNoon ) // → its pixel along the week
+ */
+export const createSpanScale = ( options = {} ) =>
+{
+    const { end , size = 0 , snapMinutes = 15 , start } = options ;
+
+    // A zero-length window would divide by zero and put every event in the same
+    // place ; a minute is the smallest span worth drawing at all.
+    const from = start ;
+    const to   = Math.max( start + MINUTE , end ) ;
+
+    const perMs = size / ( to - from ) ;
+    const step   = Math.max( 1 , snapMinutes ) * MINUTE ;
+
+    return Object.freeze
+    ({
+        dayStart      : 0 ,
+        dayEnd        : 24 * 60 ,
+        pixelsPerHour : perMs * HOUR ,
+        snapMinutes   : Math.max( 1 , snapMinutes ) ,
+        size ,
+        start         : from ,
+        end           : to ,
+        offsetOf : ( ms ) => ( ms - from ) * perMs ,
+        lengthOf : ( a , b ) => Math.max( 0 , ( b - a ) * perMs ) ,
+        timeAt   : ( offset ) => from + offset / perMs ,
+        snap     : ( ms ) => Math.round( ms / step ) * step ,
+    }) ;
+} ;
+
 export default createTimeScale ;

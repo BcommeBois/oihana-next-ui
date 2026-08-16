@@ -12,6 +12,7 @@ import SchedulerAgenda     from './SchedulerAgenda' ;
 import SchedulerEventPanel from './SchedulerEventPanel' ;
 import SchedulerMonth      from './SchedulerMonth' ;
 import SchedulerTimeGrid   from './SchedulerTimeGrid' ;
+import SchedulerTimeline   from './SchedulerTimeline' ;
 import SchedulerToolbar    from './SchedulerToolbar' ;
 
 export { AGENDA , DAY , MONTH , TIMELINE , WEEK } ;
@@ -23,7 +24,7 @@ export { AGENDA , DAY , MONTH , TIMELINE , WEEK } ;
  * cannot put a tab in the switcher that leads nowhere. The list grows as the
  * views land, and nothing an application wrote has to change when it does.
  */
-export const builtViews = [ AGENDA , DAY , WEEK , MONTH ] ;
+export const builtViews = [ AGENDA , DAY , WEEK , MONTH , TIMELINE ] ;
 
 /** Keeps only the views that exist, and says so in development when one does not. */
 const resolveViews = ( requested ) =>
@@ -99,6 +100,15 @@ const resolveViews = ( requested ) =>
  * @param {number}   [props.createDuration=30] - Minutes a plain click on an empty slot stands for.
  * @param {Function} [props.onEventCreate] - Called with `{ start , end }`. **Return an object and it is added** ; return nothing and the creation is yours to make — which is what opening an editor does.
  * @param {number}   [props.snapMinutes=15] - Step a dragged event lands on.
+ * @param {Array}    [props.resources] - Timeline : the rows, in order. Without it they are derived from the events — a first look at a payload, never a plan.
+ * @param {Function} [props.getResourceName] - Timeline : reads a row's label off its declared source.
+ * @param {Function} [props.setResourceId] - Timeline : builds the patch that moves an event to another row. Without it, schema mode reports the change and writes nothing.
+ * @param {Function} [props.renderResource] - Timeline : renders a row's head, in place of its name.
+ * @param {number}   [props.rowHeight=34] - Timeline : height of one lane. A row of three overlapping bookings is three lanes tall.
+ * @param {boolean}  [props.showNarrowLabels=true] - Timeline : write the title beside a bar too small to hold it. Off for a dense plan, where neighbouring labels would run into one another.
+ * @param {boolean|Function} [props.tooltip=true] - Timeline : what a block says on hover. `false` removes it, `( event ) => string` writes it.
+ * @param {number}   [props.pixelsPerDay=160] - Timeline : zoom of a multi-day axis.
+ * @param {number}   [props.timelineDays=1] - Timeline : a day of hours, or a week of days. **The window decides the rest.**
  * @param {number}   [props.maxEventsPerDay=3] - Month view : how many events a cell shows before it counts the rest.
  * @param {number}   [props.dayStart=0] - Time grid : minutes from midnight where the axis begins.
  * @param {number}   [props.dayEnd=1440] - Time grid : minutes from midnight where it ends.
@@ -166,6 +176,15 @@ const Scheduler =
     creatable = false ,
     createDuration ,
     datePairs ,
+    resources ,
+    getResourceName ,
+    setResourceId ,
+    renderResource ,
+    rowHeight ,
+    showNarrowLabels ,
+    tooltip ,
+    pixelsPerDay ,
+    timelineDays ,
     details = false ,
     getEventId ,
     getEventPermissions ,
@@ -209,6 +228,10 @@ const Scheduler =
         defaultEvents ,
         datePairs ,
         defaultView ,
+        resources ,
+        getResourceName ,
+        setResourceId ,
+        timelineDays ,
         events ,
         colorKeys ,
         getColor ,
@@ -316,7 +339,40 @@ const Scheduler =
                 </SchedulerToolbar>
             ) }
 
-            { ( scheduler.view === DAY || scheduler.view === WEEK )
+            { scheduler.view === TIMELINE
+                ? (
+                    <SchedulerTimeline
+                        creatable        = { creatable }
+                        createDuration   = { createDuration }
+                        dayEnd           = { dayEnd }
+                        dayStart         = { dayStart }
+                        emptyState       = { emptyState }
+                        events           = { scheduler.events }
+                        isEventMovable   = { canDrag }
+                        isEventResizable = { canStretch }
+                        movable          = { movable }
+                        nowIndicator     = { nowIndicator }
+                        onEventClick     = { openDetails }
+                        onEventCreate    = { createEvent }
+                        onEventMove      = { scheduler.moveEvent }
+                        onEventResize    = { scheduler.resizeEvent }
+                        path             = { path }
+                        pixelsPerDay     = { pixelsPerDay }
+                        pixelsPerHour    = { pixelsPerHour }
+                        renderEvent      = { renderEvent }
+                        renderResource   = { renderResource }
+                        resizable        = { resizable }
+                        resources        = { scheduler.resources }
+                        rowHeight        = { rowHeight }
+                        scrollTime       = { scrollTime }
+                        showNarrowLabels = { showNarrowLabels }
+                        slotDuration     = { slotDuration }
+                        snapMinutes      = { snapMinutes }
+                        tooltip          = { tooltip }
+                        window           = { scheduler.window }
+                    />
+                )
+                : ( scheduler.view === DAY || scheduler.view === WEEK )
                 ? (
                     <SchedulerTimeGrid
                         creatable        = { creatable }

@@ -386,6 +386,88 @@ export const SCHEDULER_PANEL_SPAN = 'grid gap-3 @sm:grid-cols-2' ;
 /** Said where a value is shown but cannot be changed. */
 export const SCHEDULER_PANEL_NOTE = 'text-xs text-base-content/60' ;
 
+/**
+ * The resource timeline — time across, resources down.
+ *
+ * A container, like every other view : what decides whether the rows breathe is
+ * the component's own width, never the window's.
+ */
+export const SCHEDULER_TIMELINE = '@container flex flex-col overflow-hidden rounded-box border border-base-300' ;
+
+/** The one element that scrolls, in both directions. */
+export const SCHEDULER_TIMELINE_BODY = 'overflow-auto' ;
+
+/** The ruler, above the rows and staying there. */
+export const SCHEDULER_TIMELINE_HEAD = 'sticky top-0 z-30 flex border-b border-base-300 bg-base-100' ;
+
+/**
+ * One mark on that ruler.
+ *
+ * The half-width shift is applied by the view rather than here : a day names a
+ * *span* and belongs in the middle of it, an hour names an instant and belongs
+ * on it — and the very first mark would lose its left half off the edge.
+ */
+export const SCHEDULER_TIMELINE_TICK = 'absolute top-1 whitespace-nowrap font-mono text-xs tabular-nums text-base-content/70' ;
+
+/**
+ * The head of a row : the resource's name.
+ *
+ * Sticky rather than outside the scrolling area — two scrollers kept in step is
+ * a synchronisation nobody wins, and a `sticky` column costs one declaration.
+ */
+export const SCHEDULER_TIMELINE_RESOURCE = 'sticky start-0 z-20 flex w-32 shrink-0 items-center border-e border-base-300 bg-base-100 px-2 @lg:w-44' ;
+
+/** One resource, across the whole axis. */
+export const SCHEDULER_TIMELINE_ROW = 'flex border-b border-base-200 last:border-b-0' ;
+
+/** Where its events are placed. */
+export const SCHEDULER_TIMELINE_TRACK = 'relative shrink-0' ;
+
+/** Height of one lane. A row of three overlapping bookings is three lanes tall. */
+export const TIMELINE_LANE_HEIGHT = 34 ;
+
+/** An event, placed along the axis. */
+export const SCHEDULER_TIMELINE_EVENT = 'absolute flex items-center overflow-hidden rounded-field border-s-4 px-1.5 text-xs leading-none' ;
+
+/**
+ * Width, in pixels, under which a block stops printing anything.
+ *
+ * A week of days makes an hour worth a handful of pixels — arithmetic that is
+ * right and a rendering that is not. Below this, the padding, the radius and the
+ * inline rule are dropped : a legitimate sliver should read as a mark, not as a
+ * broken pill.
+ */
+export const TIMELINE_NARROW = 26 ;
+
+/** A block too short to hold anything but its own colour. */
+export const SCHEDULER_TIMELINE_EVENT_NARROW = 'px-0 rounded-sm border-s-0' ;
+
+/**
+ * The title of a block too narrow to hold it, written beside the bar.
+ *
+ * A sibling rather than a child : the block clips its own overflow, and this has
+ * to escape it. Inert, so it never comes between the reader and the bar it names.
+ */
+export const SCHEDULER_TIMELINE_ASIDE = 'pointer-events-none absolute z-10 flex items-center whitespace-nowrap text-xs leading-none text-base-content/70' ;
+
+/** A grip on one edge of a block. */
+export const SCHEDULER_TIMELINE_RULE = 'pointer-events-none absolute inset-y-0 z-10 w-2 opacity-0 [@media(hover:hover)]:group-hover:pointer-events-auto [@media(hover:hover)]:group-hover:opacity-100' ;
+
+/**
+ * The hours a resource is closed.
+ *
+ * Drawn from what the data says, and **only** from that : a resource declaring
+ * no hours shades nothing. Silence is not a closure, and hatching a whole row
+ * because a payload omitted its opening hours would state something nobody said.
+ */
+export const SCHEDULER_TIMELINE_CLOSED = 'pointer-events-none absolute inset-y-0 bg-base-content/[0.06]' ;
+
+/** The range being drawn on an empty row. */
+export const SCHEDULER_TIMELINE_DRAFT = 'pointer-events-none absolute inset-y-1 z-30 flex items-center overflow-hidden rounded-field border-2 border-dashed border-primary bg-primary/10 text-base-content' ;
+
+/** Now, down the whole grid. */
+export const SCHEDULER_TIMELINE_NOW = 'pointer-events-none absolute inset-y-0 z-20 border-s-2 border-error' ;
+
 /** The line saying where now is. */
 export const SCHEDULER_NOW = 'pointer-events-none absolute inset-x-0 z-20 border-t-2 border-error' ;
 

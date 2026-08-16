@@ -46,6 +46,7 @@ export const views = [ AGENDA , DAY , WEEK , MONTH , TIMELINE ] ;
  * @param {import('dayjs').ConfigType} date - The anchor.
  * @param {Object} [options]
  * @param {number} [options.days=7] - Length of the agenda window ; ignored by every other view.
+ * @param {number} [options.timelineDays=1] - Length of the resource timeline : a day of hours, or a week of days.
  * @param {number|string} [options.weekStartsOn] - Force the first day of week ; defaults to the locale.
  * @returns {ViewWindow}
  *
@@ -53,7 +54,7 @@ export const views = [ AGENDA , DAY , WEEK , MONTH , TIMELINE ] ;
  * getViewWindow( 'week' , new Date() )              // the seven days of the current week
  * getViewWindow( 'agenda' , new Date() , { days : 14 } ) // the next fortnight
  */
-export const getViewWindow = ( view , date , { days = 7 , weekStartsOn } = {} ) =>
+export const getViewWindow = ( view , date , { days = 7 , timelineDays = 1 , weekStartsOn } = {} ) =>
 {
     const anchor = dayjs( date ).startOf( 'day' ) ;
 
@@ -68,8 +69,15 @@ export const getViewWindow = ( view , date , { days = 7 , weekStartsOn } = {} ) 
     switch ( view )
     {
         case DAY :
-        case TIMELINE :
             return span( anchor , 1 ) ;
+
+        // A resource timeline reads a day of hours or a week of days, and it is
+        // the **window** that says which — the same arrangement that lets one
+        // time grid serve Day and Week. `timelineDays` rather than `days`,
+        // because an agenda of a fortnight and a timeline of a day are two
+        // lengths an application sets independently.
+        case TIMELINE :
+            return span( timelineDays > 1 ? startOfWeek( anchor ) : anchor , Math.max( 1 , Math.round( timelineDays ) ) ) ;
 
         case WEEK :
             return span( startOfWeek( anchor ) , 7 ) ;
@@ -100,15 +108,19 @@ export const getViewWindow = ( view , date , { days = 7 , weekStartsOn } = {} ) 
  * @example
  * stepViewDate( 'week' , date , 1 ) // the same weekday, seven days later
  */
-export const stepViewDate = ( view , date , direction , { days = 7 } = {} ) =>
+export const stepViewDate = ( view , date , direction , { days = 7 , timelineDays = 1 } = {} ) =>
 {
     const anchor = dayjs( date ) ;
 
     switch ( view )
     {
         case DAY :
-        case TIMELINE :
             return anchor.add( direction , 'day' ).toDate() ;
+
+        // A timeline steps by its own length : a week of days stepped by one
+        // day would shift the whole grid rather than turn the page.
+        case TIMELINE :
+            return anchor.add( direction * Math.max( 1 , Math.round( timelineDays ) ) , 'day' ).toDate() ;
 
         case WEEK :
             return anchor.add( direction , 'week' ).toDate() ;

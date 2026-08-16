@@ -16,6 +16,12 @@ export const RESIZE_END = 'resize-end' ;
 /** Dragging the opening edge. */
 export const RESIZE_START = 'resize-start' ;
 
+/** Time runs down the screen and the cross axis names days — the time grid. */
+export const VERTICAL = 'vertical' ;
+
+/** Time runs across and the cross axis names resources — the timeline. */
+export const HORIZONTAL = 'horizontal' ;
+
 /**
  * Dragging on a time axis : pixels in, an instant out.
  *
@@ -39,9 +45,17 @@ export const RESIZE_START = 'resize-start' ;
  * | `resize-end` | the closing edge ; the opening one holds |
  * | `create` | one bound, the press having fixed the other |
  *
- * **Only a move changes day.** A resized edge and a drawn range stay in the
- * column they started in : a range that jumped sideways as it grew would be
- * impossible to aim.
+ * **Only a move changes lane.** A resized edge and a drawn range stay in the lane
+ * they started in : a range that jumped sideways as it grew would be impossible
+ * to aim.
+ *
+ * ### One projection, two axes
+ *
+ * A time grid runs time down the screen and names days across it ; a resource
+ * timeline runs time across and names resources down. `orientation` says which,
+ * and everything else follows from the two coordinates it swaps — the hit-test
+ * that finds a lane, the coordinate that carries time, and the edge of the axis
+ * that is its zero. Written as two hooks it would be two of every bug.
  *
  * ### Why nothing is laid out again until the release
  *
@@ -61,82 +75,97 @@ export const RESIZE_START = 'resize-start' ;
  * @module hooks/useTimeDrag
  *
  * @param {Object} props
- * @param {Object} props.axisRef - Ref to the element whose top edge is the zero of the axis.
+ * @param {Object} props.axisRef - Ref to the element whose leading edge is the zero of the time axis — its top when time runs down, its inline start when it runs across.
  * @param {Object} [props.bodyRef] - Ref to the scrolling area, for the edge auto-scroll.
- * @param {Array<number>} props.days - Local midnight of each column, in order.
+ * @param {Array<number>} [props.days] - Local midnight of each column, in order. Vertical only : a timeline has one continuous axis and no days.
+ * @param {number} [props.lanes] - How many rows the cross axis holds. Horizontal only.
+ * @param {'vertical'|'horizontal'} [props.orientation='vertical'] - Which way time runs. Vertical, the cross axis names days ; horizontal, it names resources.
  * @param {number} [props.minDuration] - Shortest span a gesture may produce. Defaults to one snap step.
- * @param {Function} [props.onCreate] - `( { start , end } ) => void`, called once on release.
- * @param {Function} [props.onMove] - `( event , { start , end } ) => void`, called once on release.
- * @param {Function} [props.onResize] - `( event , { start , end } ) => void`, called once on release.
+ * @param {Function} [props.onCreate] - `( { start , end , lane } ) => void`, called once on release.
+ * @param {Function} [props.onMove] - `( event , { start , end , lane } ) => void`, called once on release.
+ * @param {Function} [props.onResize] - `( event , { start , end , lane } ) => void`, called once on release.
  * @param {import('../helpers/schedule/timeScale').TimeScale} props.scale - The conversion in force.
  *
- * @returns {{ columnRef: Function, isDragging: boolean, preview: Object|null, slotAt: Function, start: Function }}
- *          `columnRef( index )` is the ref of a day column, `start( pointerEvent , payload )`
- *          opens a gesture, `preview` is where the drag is right now, and `slotAt`
- *          answers what a plain click landed on.
+ * @returns {{ isDragging: boolean, laneRef: Function, preview: Object|null, slotAt: Function, start: Function }}
+ *          `laneRef( index )` is the ref of a lane — a day column, or a resource
+ *          row ; `start( pointerEvent , payload )` opens a gesture ; `preview` is
+ *          where the drag is right now, in `offset` / `size` along the axis and
+ *          `lead` / `span` across the lane ; `slotAt` answers what a plain click
+ *          landed on.
  *
  * @example
  * ```jsx
  * const drag = useTimeDrag({ axisRef , bodyRef , days , onMove : moveEvent , scale }) ;
  *
- * <div ref={ drag.columnRef( index ) }>
- *     <button onPointerDown={ look => drag.start( look , { mode : MOVE , event , segment , top , height } ) } />
+ * <div ref={ drag.laneRef( index ) }>
+ *     <button onPointerDown={ look => drag.start( look , { mode : MOVE , event , segment , offset , size } ) } />
  * </div>
  * ```
  */
 const useTimeDrag = ( props = {} ) =>
 {
-    const { axisRef , bodyRef , days , minDuration , onCreate , onMove , onResize , scale } = props ;
+    const { axisRef , bodyRef , days , lanes , minDuration , onCreate , onMove , onResize , orientation = VERTICAL , scale } = props ;
+
+    // Which pointer coordinate carries time, and which one names a lane. Every
+    // difference between a time grid and a resource timeline reduces to this.
+    const across = orientation === HORIZONTAL ;
+
+    // The cross axis of a time grid is its days ; of a timeline, its rows. The
+    // hook needs only how many there are, and — vertically — which day each is.
+    const count = across ? ( lanes ?? 0 ) : ( days?.length ?? 0 ) ;
 
     const [ preview , setPreview ] = useState( null ) ;
 
-    // The last column the pointer was over, kept so a gesture wandering outside
-    // the grid holds its day instead of snapping back to the first one.
+    // The last lane the pointer was over, kept so a gesture wandering outside the
+    // grid holds it instead of snapping back to the first one.
     const column = useRef( 0 ) ;
     const grab   = useRef( 0 ) ;
     const anchor = useRef( 0 ) ;
     const nodes  = useRef( [] ) ;
 
-    const columnRef = useMemo( () =>
+    const laneRef = useMemo( () =>
     {
-        const refs = ( days ?? [] ).map( ( _ , index ) => ( node ) => { nodes.current[ index ] = node ; } ) ;
+        const refs = Array.from( { length : count } , ( _ , index ) => ( node ) => { nodes.current[ index ] = node ; } ) ;
 
         return ( index ) => refs[ index ] ;
     }
-    , [ days ] ) ;
+    , [ count ] ) ;
 
     const step    = scale ? scale.snapMinutes * 60 * 1000 : 0 ;
     const minimum = minDuration ?? step ;
 
     /**
-     * The instant at a pointer position, within a given column.
+     * The instant at a pointer position, read along the time axis.
      *
-     * @param {number} clientY - Viewport coordinate.
-     * @param {number} dayIndex - Which column it is read in.
+     * @param {number} along - The viewport coordinate that carries time : `clientY` on a grid, `clientX` on a timeline.
+     * @param {number} lane - Which lane it is read in. A timeline's lanes are rows of one continuous axis, so it changes nothing there ; a grid's are days, and it decides which one.
      * @param {boolean} [floor=false] - Land on the step the position falls *in*, rather than on the nearest one. What a click wants ; a dragged edge wants the nearest.
      * @returns {number|null}
      */
-    const instantAt = useCallback( ( clientY , dayIndex , floor = false ) =>
+    const instantAt = useCallback( ( along , lane , floor = false ) =>
     {
         const axis = axisRef?.current ;
 
-        if ( !axis || !days?.length )
+        if ( !axis || count === 0 )
         {
             return null ;
         }
 
         const rect  = axis.getBoundingClientRect() ;
-        const index = Math.min( Math.max( dayIndex ?? 0 , 0 ) , days.length - 1 ) ;
+        const index = Math.min( Math.max( lane ?? 0 , 0 ) , count - 1 ) ;
 
-        const offset = Math.min( Math.max( 0 , clientY - rect.top ) , scale.size ) ;
-        const raw    = scale.timeAt( offset , days[ index ] ) ;
+        const offset = Math.min( Math.max( 0 , along - ( across ? rect.left : rect.top ) ) , scale.size ) ;
+
+        // A span scale takes and ignores the day ; a day scale needs it. Passing
+        // it either way is what lets one projection serve both axes.
+        const raw = scale.timeAt( offset , across ? null : days[ index ] ) ;
 
         return floor ? Math.floor( raw / step ) * step : scale.snap( raw ) ;
     }
-    , [ axisRef , days , scale , step ] ) ;
+    , [ across , axisRef , count , days , scale , step ] ) ;
 
-    /** What a plain click on an empty column landed on. */
-    const slotAt = useCallback( ( clientY , dayIndex ) => instantAt( clientY , dayIndex , true ) , [ instantAt ] ) ;
+    /** What a plain click on an empty lane landed on. */
+    const slotAt = useCallback( ( along , lane ) => instantAt( along , lane , true ) , [ instantAt ] ) ;
 
     /**
      * Where the gesture would land, given a pointer position.
@@ -148,21 +177,31 @@ const useTimeDrag = ( props = {} ) =>
     {
         const axis = axisRef?.current ;
 
-        if ( !axis || !payload || !days?.length )
+        if ( !axis || !payload || count === 0 )
         {
             return null ;
         }
 
         const { mode } = payload ;
 
-        // Only a move changes day. An edge that jumped columns as it was pulled,
-        // or a range that slid sideways as it grew, could not be aimed at all.
+        // The coordinate that carries time, and the one that names a lane.
+        const along = across ? x : y ;
+
+        // Only a move changes lane — day on a grid, resource on a timeline. An
+        // edge that jumped lanes as it was pulled, or a range that slid sideways
+        // as it grew, could not be aimed at all.
         if ( mode === MOVE )
         {
             const over = nodes.current.findIndex( ( node ) =>
             {
                 const box = node?.getBoundingClientRect() ;
-                return box ? x >= box.left && x < box.right : false ;
+
+                if ( !box )
+                {
+                    return false ;
+                }
+
+                return across ? y >= box.top && y < box.bottom : x >= box.left && x < box.right ;
             } ) ;
 
             if ( over !== -1 )
@@ -171,13 +210,15 @@ const useTimeDrag = ( props = {} ) =>
             }
         }
 
-        const index = Math.min( Math.max( column.current , 0 ) , days.length - 1 ) ;
+        const index = Math.min( Math.max( column.current , 0 ) , count - 1 ) ;
 
-        // The instants the drawn axis begins and ends at, on this day. Every
-        // gesture is held inside them : what falls outside is not on screen, and a
-        // gesture must never push an event where the reader cannot see it land.
-        const from = scale.timeAt( 0 , days[ index ] ) ;
-        const to   = scale.timeAt( scale.size , days[ index ] ) ;
+        const day = across ? null : days[ index ] ;
+
+        // The instants the drawn axis begins and ends at. Every gesture is held
+        // inside them : what falls outside is not on screen, and a gesture must
+        // never push an event where the reader cannot see it land.
+        const from = scale.timeAt( 0 , day ) ;
+        const to   = scale.timeAt( scale.size , day ) ;
 
         const segment = payload.segment ;
 
@@ -188,22 +229,22 @@ const useTimeDrag = ( props = {} ) =>
         {
             const length = segment.end - segment.start ;
 
-            segmentStart = Math.max( from , Math.min( instantAt( y - grab.current , index ) , to - length ) ) ;
+            segmentStart = Math.max( from , Math.min( instantAt( along - grab.current , index ) , to - length ) ) ;
             segmentEnd   = segmentStart + length ;
         }
         else if ( mode === RESIZE_END )
         {
             segmentStart = segment.start ;
-            segmentEnd   = Math.min( to , Math.max( instantAt( y , index ) , segmentStart + minimum ) ) ;
+            segmentEnd   = Math.min( to , Math.max( instantAt( along , index ) , segmentStart + minimum ) ) ;
         }
         else if ( mode === RESIZE_START )
         {
             segmentEnd   = segment.end ;
-            segmentStart = Math.max( from , Math.min( instantAt( y , index ) , segmentEnd - minimum ) ) ;
+            segmentStart = Math.max( from , Math.min( instantAt( along , index ) , segmentEnd - minimum ) ) ;
         }
         else
         {
-            const here = instantAt( y , index ) ;
+            const here = instantAt( along , index ) ;
 
             segmentStart = Math.min( anchor.current , here ) ;
             segmentEnd   = Math.max( anchor.current , here ) ;
@@ -217,13 +258,16 @@ const useTimeDrag = ( props = {} ) =>
             }
         }
 
-        const top    = scale.offsetOf( segmentStart ) ;
-        const bottom = scale.offsetOf( segmentEnd - 1 ) ;
+        const head = scale.offsetOf( segmentStart ) ;
+        const tail = scale.offsetOf( segmentEnd - 1 ) ;
 
         const event = payload.event ;
 
+        // `offset` / `size` run **along** the time axis, `lead` / `span` across
+        // the lane as fractions of its thickness. Naming them after neither `top`
+        // nor `left` is what lets a grid and a timeline read the same preview.
         return {
-            dayIndex : index ,
+            lane     : index ,
             // Both edges are reported against the *event*, not against the piece
             // on screen : a gesture on the Wednesday of a three-day event moves
             // that event, and the segment was only ever how it was drawn.
@@ -231,20 +275,20 @@ const useTimeDrag = ( props = {} ) =>
                      : mode === RESIZE_START ? event.end
                      : event.end + ( segmentEnd - segment.end ) ,
             event ,
-            height   : Math.max( 14 , bottom - top ) ,
             id       : event?.id ,
-            left     : payload.left ?? 0 ,
+            lead     : payload.lead ?? 0 ,
             mode ,
+            offset   : head ,
             segmentEnd ,
             segmentStart ,
+            size     : Math.max( 14 , tail - head ) ,
+            span     : payload.span ?? 1 ,
             start    : mode === CREATE ? segmentStart
                      : mode === RESIZE_END ? event.start
                      : event.start + ( segmentStart - segment.start ) ,
-            top ,
-            width    : payload.width ?? 1 ,
         } ;
     }
-    , [ axisRef , days , instantAt , minimum , scale ] ) ;
+    , [ across , axisRef , count , days , instantAt , minimum , scale ] ) ;
 
     const drag = usePointerDrag
     ({
@@ -269,7 +313,9 @@ const useTimeDrag = ( props = {} ) =>
 
             if ( mode === CREATE )
             {
-                onCreate?.({ end , start }) ;
+                // The lane travels with the range : on a timeline it names the
+                // resource the event is being drawn on, which nothing else knows.
+                onCreate?.({ end , lane : landing.lane , start }) ;
                 return ;
             }
 
@@ -280,7 +326,10 @@ const useTimeDrag = ( props = {} ) =>
                 return ;
             }
 
-            ( mode === MOVE ? onMove : onResize )?.( event , { end , start }) ;
+            // The lane travels with every gesture, not only with a creation : a
+            // move on a timeline changes the resource, and reading it back off
+            // the preview would read a state already being torn down.
+            ( mode === MOVE ? onMove : onResize )?.( event , { end , lane : landing.lane , start }) ;
         } ,
     }) ;
 
@@ -288,7 +337,7 @@ const useTimeDrag = ( props = {} ) =>
      * Opens a gesture.
      *
      * @param {React.PointerEvent} look - The `pointerdown`.
-     * @param {Object} payload - `{ mode , dayIndex }`, plus `{ event , segment , top , height , left , width }` for anything but a creation.
+     * @param {Object} payload - `{ mode , lane }`, plus `{ event , segment , offset , size , lead , span }` for anything but a creation.
      */
     const start = useCallback( ( look , payload ) =>
     {
@@ -299,25 +348,27 @@ const useTimeDrag = ( props = {} ) =>
             return ;
         }
 
-        column.current = payload.dayIndex ?? 0 ;
+        column.current = payload.lane ?? 0 ;
+
+        const rect = axis.getBoundingClientRect() ;
 
         if ( payload.mode === MOVE )
         {
             // Where inside the block it was taken — the whole reason a dragged
             // event does not jump so its start meets the pointer.
-            grab.current = look.clientY - axis.getBoundingClientRect().top - payload.top ;
+            grab.current = ( across ? look.clientX - rect.left : look.clientY - rect.top ) - payload.offset ;
         }
 
         if ( payload.mode === CREATE )
         {
-            anchor.current = instantAt( look.clientY , payload.dayIndex ) ;
+            anchor.current = instantAt( across ? look.clientX : look.clientY , payload.lane ) ;
         }
 
         drag.start( look , payload ) ;
     }
-    , [ axisRef , drag , instantAt ] ) ;
+    , [ across , axisRef , drag , instantAt ] ) ;
 
-    return { columnRef , isDragging : drag.isDragging , preview , slotAt , start } ;
+    return { isDragging : drag.isDragging , laneRef , preview , slotAt , start } ;
 } ;
 
 export default useTimeDrag ;

@@ -11,6 +11,8 @@ import { normalizeEvent , resolveResourceId } from '../helpers/schedule/normaliz
 import { readSchedules }  from '../helpers/schedule/expandSchedule' ;
 import { toSchemaPatch }  from '../helpers/schedule/toSchemaPatch' ;
 
+import { resolveResources } from '../helpers/schedule/resources' ;
+
 import { AGENDA , getViewWindow , stepViewDate } from '../helpers/schedule/getViewWindow' ;
 
 /** The permission shorthand meaning « everything ». */
@@ -52,6 +54,10 @@ const ALL_PERMISSIONS = Object.freeze({ edit : true , move : true , read : true 
  * @param {Date}     [props.date]           - Controlled anchor.
  * @param {Function} [props.onDateChange]   - Called with the new anchor.
  * @param {number}   [props.days=7]         - Length of the agenda window.
+ * @param {number}   [props.timelineDays=1] - Length of the timeline window : a day of hours, or a week of days.
+ * @param {Array}    [props.resources]      - The timeline's rows, in order. Without it they are derived from the events — a first look at a payload, never a plan.
+ * @param {Function} [props.getResourceName] - Reads a row's label off its declared source.
+ * @param {Function} [props.setResourceId]  - Builds the patch that moves an event to another row. Without it, schema mode reports the change and writes nothing.
  * @param {number|string} [props.weekStartsOn] - Force the first day of week ; defaults to the locale.
  *
  * @param {Function} [props.getEventPermissions] - What a user may do with an event : `'read'` / `'edit'`, or `{ read , edit , move , resize , remove }`.
@@ -88,6 +94,9 @@ const useScheduler = ( props = {} ) =>
 
         schema = false ,
         datePairs ,
+        resources ,
+        getResourceName ,
+        setResourceId ,
         getEventId ,
         getEventPermissions ,
         getResourceId ,
@@ -109,6 +118,7 @@ const useScheduler = ( props = {} ) =>
         onDateChange ,
 
         days = 7 ,
+        timelineDays = 1 ,
         weekStartsOn ,
     } = props ;
 
@@ -118,8 +128,8 @@ const useScheduler = ( props = {} ) =>
 
     const window = useMemo
     (
-        () => getViewWindow( view , date , { days , weekStartsOn } ) ,
-        [ view , date , days , weekStartsOn ] ,
+        () => getViewWindow( view , date , { days , timelineDays , weekStartsOn } ) ,
+        [ view , date , days , timelineDays , weekStartsOn ] ,
     ) ;
 
     // ---- palette
@@ -194,11 +204,24 @@ const useScheduler = ( props = {} ) =>
     }
     , [ sources , window , schema , allDayEndInclusive , datePairs , defaultDuration , getEventId , getResourceId , getStatus , unwrap , resolveColor ] ) ;
 
+    /**
+     * The rows a timeline draws.
+     *
+     * Resolved here rather than in the view, because the palette legend and the
+     * timeline ask the same question and would otherwise answer it twice, in two
+     * orders.
+     */
+    const rows = useMemo
+    (
+        () => resolveResources({ events , getResourceName , resources }) ,
+        [ events , getResourceName , resources ] ,
+    ) ;
+
     // ---- navigation
 
     const today    = () => setDate( new Date() ) ;
-    const previous = () => setDate( stepViewDate( view , date , -1 , { days } ) ) ;
-    const next     = () => setDate( stepViewDate( view , date ,  1 , { days } ) ) ;
+    const previous = () => setDate( stepViewDate( view , date , -1 , { days , timelineDays } ) ) ;
+    const next     = () => setDate( stepViewDate( view , date ,  1 , { days , timelineDays } ) ) ;
 
     // ---- mutations
 
@@ -424,11 +447,22 @@ const useScheduler = ( props = {} ) =>
         const start = to.start ?? event.start ;
         const end   = to.end ?? start + ( event.end - event.start ) ;
 
-        commit( event , spanPatch( event , { start , end } ) ,
+        const resourceId = to.resourceId ?? event.resourceId ;
+
+        // **No schema.org property means « resource ».** An accessor read it, and
+        // inverting an accessor is not something a library can guess — so in
+        // schema mode the new row travels in the change descriptor and the
+        // application writes it, unless `setResourceId` says how.
+        const resourcePatch = resourceId === event.resourceId ? null
+            : setResourceId ? setResourceId( event.source , resourceId )
+            : schema ? null
+            : { resourceId } ;
+
+        commit( event , { ...spanPatch( event , { start , end } ) , ...resourcePatch } ,
         {
             type : 'move' ,
             from : span( event ) ,
-            to   : { start , end , resourceId : to.resourceId ?? event.resourceId } ,
+            to   : { start , end , resourceId } ,
         }) ;
     } ;
 
@@ -542,6 +576,7 @@ const useScheduler = ( props = {} ) =>
         next ,
         canMove ,
         canResize ,
+        resources : rows ,
         permissionsOf ,
         moveEvent ,
         resizeEvent ,

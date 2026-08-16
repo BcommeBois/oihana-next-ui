@@ -265,7 +265,9 @@ const SchedulerTimeGrid =
         const draggable = movable && !dragging && ( isEventMovable ? isEventMovable( event ) : true ) ;
         const stretchy  = resizable && !dragging && ( isEventResizable ? isEventResizable( event ) : true ) ;
 
-        const geometry = { dayIndex , event , height , left , segment , top , width } ;
+        // The hook speaks along-the-axis rather than top-and-left : the same
+        // projection has to serve a timeline where those two are swapped.
+        const geometry = { event , lane : dayIndex , lead : left , offset : top , segment , size : height , span : width } ;
 
         // An edge is only offered where it is real : the middle day of a
         // three-day event has no start to pull, and the last has no end.
@@ -471,9 +473,9 @@ const SchedulerTimeGrid =
                             // biome-ignore lint/a11y/useKeyWithClickEvents: same — a column is not the right control to focus
                             <div
                                 key           = { day }
-                                ref           = { drag.columnRef( index ) }
+                                ref           = { drag.laneRef( index ) }
                                 className     = { `${ SCHEDULER_TIMEGRID_COLUMN } ${ weekend ? SCHEDULER_TIMEGRID_COLUMN_WEEKEND : '' } ${ creatable ? SCHEDULER_TIMEGRID_COLUMN_CREATABLE : '' }`.trim() }
-                                onPointerDown = { creatable ? onEmpty( look => drag.start( look , { dayIndex : index , mode : CREATE } ) ) : undefined }
+                                onPointerDown = { creatable ? onEmpty( look => drag.start( look , { lane : index , mode : CREATE } ) ) : undefined }
                                 // A click is a range of its own : the threshold has
                                 // already told it apart from a drawn one, and asking
                                 // for a rectangle to book eleven o'clock would be a
@@ -515,22 +517,22 @@ const SchedulerTimeGrid =
                                     }) ;
                                 } ) }
 
-                                { drag.preview?.dayIndex === index && drag.preview.mode !== CREATE && renderBlock
+                                { drag.preview?.lane === index && drag.preview.mode !== CREATE && renderBlock
                                 ({
                                     dayIndex : index ,
                                     dragging : true ,
                                     event    : drag.preview.event ,
-                                    height   : drag.preview.height ,
-                                    left     : drag.preview.left ,
+                                    height   : drag.preview.size ,
+                                    left     : drag.preview.lead ,
                                     segment  : { end : drag.preview.segmentEnd , start : drag.preview.segmentStart } ,
-                                    top      : drag.preview.top ,
-                                    width    : drag.preview.width ,
+                                    top      : drag.preview.offset ,
+                                    width    : drag.preview.span ,
                                 }) }
 
-                                { drag.preview?.dayIndex === index && drag.preview.mode === CREATE && (
+                                { drag.preview?.lane === index && drag.preview.mode === CREATE && (
                                     <div
                                         className = { SCHEDULER_TIMEGRID_DRAFT }
-                                        style     = {{ height : drag.preview.height , insetInline : 0 , top : drag.preview.top }}
+                                        style     = {{ height : drag.preview.size , insetInline : 0 , top : drag.preview.offset }}
                                     >
                                         <span className="truncate font-mono tabular-nums">
                                             { dayjs( drag.preview.segmentStart ).format( 'HH:mm' ) } – { dayjs( drag.preview.segmentEnd ).format( 'HH:mm' ) }
