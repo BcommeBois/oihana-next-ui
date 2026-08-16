@@ -11,6 +11,12 @@ const schedulerMonth =
             description : "Le sélecteur de vues apparaît enfin : deux vues, et la coquille sait dimensionner leurs fenêtres. Les barres multi-jours perdent leur coin et leur filet au bord de la semaine, pour qu'un séjour à cheval sur un dimanche se lise comme une seule durée sur deux lignes." ,
         } ,
 
+        firstDay :
+        {
+            title       : 'weekStartsOn — le premier jour de la semaine' ,
+            description : "Sans rien passer, c'est la locale qui tranche : lundi en français, dimanche en anglais. weekStartsOn force le choix quand la langue de l'interface ne doit pas décider — un planning d'entreprise qui commence toujours le lundi, par exemple. Un seul réglage, et tout suit : les en-têtes de colonnes, l'ordre des cases, et les six semaines de la grille, qui ne partent plus du même jour. La prop accepte un nombre (0–6) ou un nom de jour. Elle vaut aussi pour la vue Semaine." ,
+        } ,
+
         overflow :
         {
             title       : 'maxEventsPerDay et le « +N de plus »' ,
@@ -41,6 +47,12 @@ const schedulerMonth =
         {
             title       : 'The grid' ,
             description : 'The view switcher finally appears: two views, and the shell already knows how to size their windows. Multi-day bars lose their corner and their rule at the edge of a week, so a stay crossing a Sunday reads as one span over two rows.' ,
+        } ,
+
+        firstDay :
+        {
+            title       : 'weekStartsOn — the first day of the week' ,
+            description : 'Left alone, the locale decides: Monday in French, Sunday in English. weekStartsOn forces the choice where the interface language should not make it — a company planner that always starts on Monday, for one. One setting, and everything follows: the column headers, the order of the cells, and the six weeks of the grid, which no longer begin on the same day. The prop takes a number (0–6) or a day name. It holds for the week view too.' ,
         } ,
 
         overflow :

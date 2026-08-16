@@ -5,6 +5,7 @@ import useValue from './useValue' ;
 import usePalette from './usePalette' ;
 
 import { assignColors }   from '../helpers/schedule/assignColors' ;
+import { isLinkedSpan }   from '../helpers/schedule/datePairs' ;
 import { fromSchemaList } from '../helpers/schedule/fromSchema' ;
 import { normalizeEvent , resolveResourceId } from '../helpers/schedule/normalizeEvent' ;
 import { readSchedules }  from '../helpers/schedule/expandSchedule' ;
@@ -253,7 +254,18 @@ const useScheduler = ( props = {} ) =>
      * is the application's call, and the change descriptor carries the value for it.
      */
     const spanPatch = ( event , { start , end } ) => schema
-        ? toSchemaPatch({ start , end , allDay : event.allDay } , { allDayEndInclusive })
+        ? toSchemaPatch
+        (
+            { start , end , allDay : event.allDay } ,
+            {
+                allDayEndInclusive ,
+                // Spelled the way it was read : a lodging booking keeps
+                // `checkinTime` / `checkoutTime`, and a bare `startDate` written
+                // beside them would leave two legal spans in one object.
+                endProperty   : event.span ? event.span.endProperty : 'endDate' ,
+                startProperty : event.span ? event.span.startProperty : 'startDate' ,
+            } ,
+        )
         : { start : new Date( start ) , end : new Date( end ) } ;
 
     /**
@@ -277,6 +289,18 @@ const useScheduler = ( props = {} ) =>
             if ( process.env.NODE_ENV === 'development' )
             {
                 console.warn( `useScheduler: ${ action } was refused on "${ event.id }" — it is one occurrence of a recurring rule, and writing to it would move the whole series.` ) ;
+            }
+            return false ;
+        }
+
+        // The dates are the linked object's — a reservation does not own the
+        // hours of what it reserves. Rewriting them here would reschedule that
+        // object for everyone else pointing at it.
+        if ( isLinkedSpan( event ) )
+        {
+            if ( process.env.NODE_ENV === 'development' )
+            {
+                console.warn( `useScheduler: ${ action } was refused on "${ event.id }" — its dates belong to the object it points at, not to it.` ) ;
             }
             return false ;
         }

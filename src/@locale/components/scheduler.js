@@ -20,9 +20,26 @@ const scheduler =
         continues : 'suite' ,
         more      : 'de plus' ,
         close     : 'Fermer' ,
+        cancel    : 'Annuler' ,
+        edit      : 'Modifier' ,
+        editTitle : 'Modifier l’événement' ,
+        createTitle : 'Nouvel événement' ,
+        save      : 'Enregistrer' ,
+        delete    : 'Supprimer' ,
+        confirmDelete : 'Confirmer ?' ,
         previously : 'Précédemment prévu le' ,
+        linkedSpan : 'Les dates appartiennent à ce que cet objet réserve : les changer ici les changerait pour tout le monde.' ,
+        errors :
+        {
+            end      : 'La fin doit suivre le début.' ,
+            required : 'Ce champ est requis.' ,
+        } ,
         fields :
         {
+            title       : 'Titre' ,
+            start       : 'Début' ,
+            end         : 'Fin' ,
+            color       : 'Couleur' ,
             description : 'Description' ,
             location    : 'Lieu' ,
             organizer   : 'Organisateur' ,
@@ -58,9 +75,26 @@ const scheduler =
         continues : 'cont.' ,
         more      : 'more' ,
         close     : 'Close' ,
+        cancel    : 'Cancel' ,
+        edit      : 'Edit' ,
+        editTitle : 'Edit event' ,
+        createTitle : 'New event' ,
+        save      : 'Save' ,
+        delete    : 'Delete' ,
+        confirmDelete : 'Confirm?' ,
         previously : 'Previously scheduled for' ,
+        linkedSpan : 'The dates belong to what this object reserves: changing them here would change them for everyone.' ,
+        errors :
+        {
+            end      : 'The end must follow the start.' ,
+            required : 'This field is required.' ,
+        } ,
         fields :
         {
+            title       : 'Title' ,
+            start       : 'Start' ,
+            end         : 'End' ,
+            color       : 'Colour' ,
             description : 'Description' ,
             location    : 'Location' ,
             organizer   : 'Organizer' ,

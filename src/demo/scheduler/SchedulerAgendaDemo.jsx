@@ -9,6 +9,9 @@ import Button    from '@/components/Button' ;
 import Container from '@/display/Container' ;
 import Divider   from '@/components/Divider' ;
 import Scheduler from '@/components/scheduler/Scheduler' ;
+import Select    from '@/components/selects/Select' ;
+
+import { SCHEDULER_PANEL_LABEL , SCHEDULER_PANEL_ROW , SCHEDULER_PANEL_VALUE } from '@/themes/components/scheduler' ;
 
 import useScheduler from '@/hooks/useScheduler' ;
 
@@ -34,6 +37,9 @@ const getEventId = source => source._key ?? source.id ;
 const permissions = event => ( event.source.id === 'heure-du-conte' ? 'read' : 'edit' ) ;
 
 const roomName = ( id ) => rooms.find( room => room.id === id )?.name ?? id ;
+
+/** `location` arrives as a bare reference or as a resolved `Place` ; both name a room. */
+const roomId = ( value ) => ( value && typeof value === 'object' ? value.id : value ) ?? '' ;
 
 /**
  * Agenda demo — the shell, its toolbar and the first view.
@@ -126,7 +132,7 @@ const SchedulerAgendaDemo = ( { path = 'demo.scheduler.schedulerAgenda' } ) =>
 
                 <div className="rounded-box bg-base-100 p-2 sm:p-4">
                     <Scheduler
-                        details
+                        creatable
                         movable
                         resizable
                         schema
@@ -137,9 +143,46 @@ const SchedulerAgendaDemo = ( { path = 'demo.scheduler.schedulerAgenda' } ) =>
                         getEventPermissions = { permissions }
                         height              = "22rem"
                         scrollTime          = "13:00"
+                        // `fields` as a function of the event, and `renderField`
+                        // for the one value a text box would destroy : `location`
+                        // is a `Place`, so it takes a select that writes an object.
+                        details             = {{
+                            deletable : true ,
+                            fields : [
+                                { property : 'description' , type : 'textarea' } ,
+                                // `editable` lifts the object lock : the control
+                                // below hands back a whole `Place`, not a string.
+                                { property : 'location'    , type : 'place' , editable : true } ,
+                                { property : 'color'       , type : 'color' } ,
+                            ] ,
+                            renderField : ( field , { editing , editor , labels } ) => ( field.property !== 'location'
+                                ? undefined
+                                : !editing
+                                // In reading too : the payload keeps a bare
+                                // reference on some entries, and « salle-bleue »
+                                // is an identifier, not a room a reader knows.
+                                ? (
+                                    <div className={ SCHEDULER_PANEL_ROW }>
+                                        <span className={ SCHEDULER_PANEL_LABEL }>{ labels?.fields?.location }</span>
+                                        <span className={ SCHEDULER_PANEL_VALUE }>{ roomName( roomId( field.value ) ) }</span>
+                                    </div>
+                                )
+                                : (
+                                    <Select
+                                        label    = { labels?.fields?.location }
+                                        size     = "sm"
+                                        value    = { roomId( editor.draft.location ) }
+                                        onChange = { look => editor.setValue( 'location' , rooms.find( room => room.id === look.target.value ) ?? '' ) }
+                                    >
+                                        <option value="">—</option>
+                                        { rooms.map( room => <option key={ room.id } value={ room.id }>{ room.name }</option> ) }
+                                    </Select>
+                                ) ) ,
+                        }}
                     />
                 </div>
 
+                <p className="text-sm text-base-content/60">{ details?.editing }</p>
                 <p className="text-sm text-base-content/60">{ details?.permissions }</p>
 
                 <Divider />
@@ -157,6 +200,8 @@ const SchedulerAgendaDemo = ( { path = 'demo.scheduler.schedulerAgenda' } ) =>
                         getEventId    = { getEventId }
                     />
                 </div>
+
+                <p className="text-sm text-base-content/60">{ details?.linked }</p>
             </section>
 
             <Divider />

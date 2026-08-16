@@ -46,6 +46,7 @@ export const libraryProgram =
         '@context'  : 'https://schema.org' ,
         id          : 'concert-rentree' ,
         name        : 'Concert de rentrée' ,
+        description : 'Ouverture de saison par l’orchestre de chambre, suivie d’un verre dans le hall.' ,
         startDate   : '2026-08-14T18:30:00.000Z' ,
         endDate     : '2026-08-14T20:00:00.000Z' ,
         location    : auditorium ,
@@ -56,6 +57,7 @@ export const libraryProgram =
         '@context'  : 'https://schema.org' ,
         id          : 'heure-du-conte' ,
         name        : 'Heure du conte' ,
+        description : 'Lectures à voix haute pour les 4–7 ans, dans le coin tapis.' ,
         startDate   : '2026-08-12T14:00:00.000Z' ,
         duration    : 'PT45M' ,
         location    : 'salle-bleue' ,
@@ -98,6 +100,7 @@ export const libraryProgram =
         _key       : 'ws-initiation' ,
         id         : 'INIT-01' ,
         name       : 'Cycle d’initiation' ,
+        description : 'Six séances pour prendre en main un ordinateur, du clavier à la messagerie.' ,
         byDay      : [ `${ DAY }Tuesday` , `${ DAY }Thursday` ] ,
         startTime  : '18:00' ,
         duration   : 'PT2H' ,
@@ -110,6 +113,7 @@ export const libraryProgram =
         '@context'     : 'https://schema.org' ,
         id             : 'club-lecture' ,
         name           : 'Club de lecture' ,
+        description : 'Un titre par mois, choisi par les participants à la séance précédente.' ,
         eventSchedule  :
         [
             {

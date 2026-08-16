@@ -47,7 +47,9 @@ export const toSchemaDate = ( ms , allDay ) =>
  * @param {boolean} [change.allDay=false] - The event lives in the all-day band.
  * @param {Object} [options]
  * @param {boolean} [options.allDayEndInclusive=true] - Must match what was used to read the payload.
- * @returns {{startDate: string, endDate: string}}
+ * @param {string} [options.startProperty='startDate'] - The property the start was read from.
+ * @param {string|null} [options.endProperty='endDate'] - The property the end was read from ; `null` for the types that name an instant and no end.
+ * @returns {Object} The changed properties, spelled the way they were read.
  *
  * @example
  * // A timed event
@@ -61,7 +63,11 @@ export const toSchemaDate = ( ms , allDay ) =>
  */
 export const toSchemaPatch = ( change , options = {} ) =>
 {
-    const { allDayEndInclusive = true } = options ;
+    // A span is written back **under the properties it was read from**. A lodging
+    // booking keeps `checkinTime` / `checkoutTime` ; writing `startDate` onto it
+    // would leave two spans in the same object, and the reader would then follow
+    // the wrong one — silently, since both are legal.
+    const { allDayEndInclusive = true , endProperty = 'endDate' , startProperty = 'startDate' } = options ;
     const { start , end , allDay = false } = change ?? {} ;
 
     if ( !Number.isFinite( start ) || !Number.isFinite( end ) )
@@ -74,10 +80,16 @@ export const toSchemaPatch = ( change , options = {} ) =>
     // `resolveEnd` did on the way in, so a read-then-write round trip is a no-op.
     const writtenEnd = allDay && allDayEndInclusive ? dayjs( end ).subtract( 1 , 'day' ).valueOf() : end ;
 
-    return {
-        startDate : toSchemaDate( start , allDay ) ,
-        endDate   : toSchemaDate( Math.max( writtenEnd , start ) , allDay ) ,
-    } ;
+    const patch = { [ startProperty ]: toSchemaDate( start , allDay ) } ;
+
+    // A `TaxiReservation` names a pickup and no end : there is no property to
+    // write the end to, and inventing one would invent a vocabulary.
+    if ( endProperty )
+    {
+        patch[ endProperty ] = toSchemaDate( Math.max( writtenEnd , start ) , allDay ) ;
+    }
+
+    return patch ;
 } ;
 
 export default toSchemaPatch ;

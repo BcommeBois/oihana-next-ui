@@ -238,6 +238,11 @@ const Scheduler =
     // window never means giving up the built-in one's wiring.
     const [ picked , setPicked ] = useState( null ) ;
 
+    // A range being drawn into an event : the panel opens on it, in editing, and
+    // the save is what creates. `onEventCreate` still speaks first — returning an
+    // object from it keeps the one-line path of lot 6 intact.
+    const [ drawn , setDrawn ] = useState( null ) ;
+
     const openDetails = ( event ) =>
     {
         onEventClick?.( event ) ;
@@ -246,6 +251,12 @@ const Scheduler =
         {
             setPicked( event ) ;
         }
+    } ;
+
+    const closePanel = () =>
+    {
+        setPicked( null ) ;
+        setDrawn( null ) ;
     } ;
 
     // The record is re-read from the current list : an event edited or moved
@@ -263,20 +274,26 @@ const Scheduler =
      */
     const createEvent = ( range ) =>
     {
-        if ( typeof onEventCreate !== 'function' )
+        const created = typeof onEventCreate === 'function' ? onEventCreate( range ) : undefined ;
+
+        if ( created !== null && created !== undefined && typeof created === 'object' )
         {
-            if ( process.env.NODE_ENV === 'development' )
-            {
-                console.warn( 'Scheduler: `creatable` is set but there is no `onEventCreate`, so a drawn range has nowhere to go.' ) ;
-            }
+            scheduler.addEvent( created ) ;
             return ;
         }
 
-        const created = onEventCreate( range ) ;
-
-        if ( created !== null && typeof created === 'object' )
+        // Nothing came back and there is a panel to fill : the range becomes a
+        // form rather than an event, which is the honest answer to « the
+        // application will make this one itself ».
+        if ( details )
         {
-            scheduler.addEvent( created ) ;
+            setDrawn( range ) ;
+            return ;
+        }
+
+        if ( process.env.NODE_ENV === 'development' )
+        {
+            console.warn( 'Scheduler: a range was drawn, but `onEventCreate` returned nothing and `details` is off — so it has nowhere to go.' ) ;
         }
     } ;
 
@@ -353,10 +370,16 @@ const Scheduler =
 
             { details && (
                 <SchedulerEventPanel
-                    event   = { shown }
-                    onClose = { () => setPicked( null ) }
-                    path    = { path }
-                    schema  = { schema }
+                    defaultMode = { drawn ? 'edit' : 'read' }
+                    deletable   = { shown ? scheduler.permissionsOf( shown ).remove : false }
+                    editable    = { shown ? scheduler.permissionsOf( shown ).edit : true }
+                    event       = { shown }
+                    onClose     = { closePanel }
+                    onCommit    = { ( patch , { isNew } ) => ( isNew ? scheduler.addEvent( patch ) : scheduler.updateEvent( shown , patch ) ) }
+                    onDelete    = { record => scheduler.removeEvent( record ) }
+                    path        = { path }
+                    range       = { drawn }
+                    schema      = { schema }
                     { ...( details === true ? {} : details ) }
                 />
             ) }

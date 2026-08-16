@@ -24,7 +24,7 @@ const getEventId = source => source._key ?? source.id ;
  */
 const SchedulerMonthDemo = ( { path = 'demo.scheduler.schedulerMonth' } ) =>
 {
-    const { basic , description , narrow , overflow , popover , title } = useI18n( path ) ;
+    const { basic , description , firstDay , narrow , overflow , popover , title } = useI18n( path ) ;
 
     const [ picked , setPicked ] = useState( null ) ;
 
@@ -48,6 +48,35 @@ const SchedulerMonthDemo = ( { path = 'demo.scheduler.schedulerMonth' } ) =>
                         defaultView   = "month"
                         getEventId    = { getEventId }
                     />
+                </div>
+            </section>
+
+            <Divider />
+
+            <section className="flex flex-col gap-3">
+                <h3 className="text-xl font-semibold">{ firstDay?.title }</h3>
+                <p className="text-sm text-base-content/60">{ firstDay?.description }</p>
+
+                {/* The same month twice, and the only difference declared is where
+                    the week begins — the columns, the headers and the six-week
+                    span all follow from it. */}
+                <div className="grid gap-4 xl:grid-cols-2">
+                    { [ 'sunday' , 'monday' ].map( first => (
+                        <div key={ first } className="flex flex-col gap-2">
+                            <p className="font-mono text-xs uppercase text-base-content/50">weekStartsOn = &quot;{ first }&quot;</p>
+                            <div className="rounded-box bg-base-100 p-2">
+                                <Scheduler
+                                    schema
+                                    toolbar       = { false }
+                                    defaultEvents = { libraryProgram }
+                                    defaultDate   = { ANCHOR }
+                                    defaultView   = "month"
+                                    getEventId    = { getEventId }
+                                    weekStartsOn  = { first }
+                                />
+                            </div>
+                        </div>
+                    ) ) }
                 </div>
             </section>
 

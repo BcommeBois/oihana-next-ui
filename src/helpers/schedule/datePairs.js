@@ -144,4 +144,20 @@ export const readSpan = ( source , options = {} ) =>
     return null ;
 } ;
 
+/**
+ * Whether an event's dates belong to another object than the event itself.
+ *
+ * A reservation that points at a concert has no times of its own : the times are
+ * the concert's. Moving them would reschedule the concert **for everyone who
+ * booked it**, which is why a gesture and an editor both refuse — the refusal is
+ * a reading of the vocabulary, not a shortcoming.
+ *
+ * One predicate, on purpose : the day a case genuinely needs the nested write, it
+ * is an option here rather than a rewrite everywhere.
+ *
+ * @param {Object} event - A normalized record.
+ * @returns {boolean}
+ */
+export const isLinkedSpan = ( event ) => !!event?.span && event.span.host !== event.source ;
+
 export default readSpan ;

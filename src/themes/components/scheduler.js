@@ -344,10 +344,10 @@ export const SCHEDULER_PANEL = '@container flex flex-col' ;
  * leaning on a gap : the rows are separated by a rule, and a rule wants the same
  * air above it as below it — which a single gap cannot give it.
  */
-export const SCHEDULER_PANEL_WHEN = 'flex flex-wrap items-center gap-2 py-2 text-sm font-medium' ;
+export const SCHEDULER_PANEL_WHEN = 'flex flex-wrap items-center gap-2 py-3 text-sm font-medium' ;
 
 /** Where a rescheduled event used to sit. */
-export const SCHEDULER_PANEL_PREVIOUS = 'border-t border-base-200 py-2 text-xs text-base-content/60 first-letter:uppercase' ;
+export const SCHEDULER_PANEL_PREVIOUS = 'border-t border-base-200 py-3 text-xs text-base-content/60 first-letter:uppercase' ;
 
 /**
  * One property : its name, and its value.
@@ -355,14 +355,36 @@ export const SCHEDULER_PANEL_PREVIOUS = 'border-t border-base-200 py-2 text-xs t
  * Side by side as soon as there is room, and the label column stays **narrow** :
  * a wide one leaves a canyon between `Location` and `Salle Bleue`, and two things
  * that far apart stop reading as one line.
+ *
+ * The vertical padding is what makes a list of rules read as a list rather than
+ * as a stack of cramped bands — a value pressed against the rule above it reads
+ * as belonging to the row before.
  */
-export const SCHEDULER_PANEL_ROW = 'grid gap-0.5 border-t border-base-200 py-2 @sm:grid-cols-[6.5rem_1fr] @sm:gap-3' ;
+export const SCHEDULER_PANEL_ROW = 'grid gap-0.5 border-t border-base-200 py-3 @sm:grid-cols-[6.5rem_1fr] @sm:gap-3' ;
 
 /** The name of a property. */
 export const SCHEDULER_PANEL_LABEL = 'text-xs font-semibold uppercase tracking-wide text-base-content/60' ;
 
 /** Its value — free text from a payload, so it has to be allowed to wrap. */
 export const SCHEDULER_PANEL_VALUE = 'text-sm break-words whitespace-pre-line' ;
+
+/** The theme's colours, offered before any other. */
+export const SCHEDULER_PANEL_SWATCHES = 'flex flex-wrap gap-1.5' ;
+
+/** One of them. */
+export const SCHEDULER_PANEL_SWATCH = 'size-6 rounded-field border border-base-300' ;
+
+/** The one in force. */
+export const SCHEDULER_PANEL_SWATCH_ON = 'ring-2 ring-base-content/50 ring-offset-1 ring-offset-base-100' ;
+
+/** The editing form — its rows breathe like the reading ones. */
+export const SCHEDULER_PANEL_FORM = 'flex flex-col gap-3 py-1' ;
+
+/** The two ends of a span, side by side once there is room for them. */
+export const SCHEDULER_PANEL_SPAN = 'grid gap-3 @sm:grid-cols-2' ;
+
+/** Said where a value is shown but cannot be changed. */
+export const SCHEDULER_PANEL_NOTE = 'text-xs text-base-content/60' ;
 
 /** The line saying where now is. */
 export const SCHEDULER_NOW = 'pointer-events-none absolute inset-x-0 z-20 border-t-2 border-error' ;
@@ -413,6 +435,53 @@ export const colors = Object.keys( colorMap ) ;
 
 /** Used when an event names no color of its own — visible on a `base-100` surface. */
 export const DEFAULT_EVENT_COLOR = 'bg-base-200 border-s-base-content/40 text-base-content' ;
+
+/**
+ * The same tokens at full strength, for the dots that stand in for a whole event.
+ *
+ * {@link colorMap} washes its fill to 20 % because text has to stay legible on
+ * top of it. A dot carries no text : it *is* the colour, and at six pixels a 20 %
+ * wash is indistinguishable from grey — which is exactly how an event that had
+ * named a colour ended up looking as though it had not.
+ *
+ * @safelist bg-primary bg-secondary bg-accent bg-info bg-success bg-warning bg-error bg-neutral
+ */
+export const dotMap =
+{
+    primary   : 'bg-primary' ,
+    secondary : 'bg-secondary' ,
+    accent    : 'bg-accent' ,
+    info      : 'bg-info' ,
+    success   : 'bg-success' ,
+    warning   : 'bg-warning' ,
+    error     : 'bg-error' ,
+    neutral   : 'bg-neutral' ,
+} ;
+
+/**
+ * Resolves a color into what a dot needs : a class, or an inline fill.
+ *
+ * @param {string} [color] - A token from {@link colors}, or any CSS color.
+ * @returns {{ className: string, style: Object|undefined }}
+ *
+ * @example
+ * resolveDotColor( 'info' )      // → { className : 'bg-info' , style : undefined }
+ * resolveDotColor( '#7B1E3A' )   // → { className : '' , style : { backgroundColor : '#7B1E3A' } }
+ */
+export const resolveDotColor = ( color ) =>
+{
+    if ( !color )
+    {
+        return { className : 'bg-base-content/40' , style : undefined } ;
+    }
+
+    if ( color in dotMap )
+    {
+        return { className : dotMap[ color ] , style : undefined } ;
+    }
+
+    return { className : '' , style : { backgroundColor : color } } ;
+} ;
 
 /**
  * Resolves an event color into classes, or into an inline style when it is not a

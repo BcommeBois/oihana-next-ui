@@ -26,24 +26,25 @@ import
     SCHEDULER_MONTH_WEEKDAYS ,
     getMonthCellClasses ,
     getMonthDayNumberClasses ,
-    resolveEventColor ,
+    resolveDotColor ,
 } from '../../themes/components/scheduler' ;
 
 import Popover from '../Popover' ;
 
 import SchedulerEvent from './SchedulerEvent' ;
 
-/** The dot standing in for a chip carries the event's colour and nothing else. */
+/**
+ * The dot standing in for a chip carries the event's colour and nothing else.
+ *
+ * At full strength : the 20 % wash a card needs behind its text is, on six
+ * pixels, indistinguishable from grey — which made an event that had named a
+ * colour look as though it had not.
+ */
 const Dot = ( { event } ) =>
 {
-    const { definition , style } = resolveEventColor( event.color ) ;
+    const { className , style } = resolveDotColor( event.color ) ;
 
-    return (
-        <span
-            className = { `${ SCHEDULER_MONTH_DOT } ${ Object.keys( definition ).join( ' ' ) }` }
-            style     = { style ? { backgroundColor : style.borderInlineStartColor } : undefined }
-        />
-    ) ;
+    return <span className={ `${ SCHEDULER_MONTH_DOT } ${ className }` } style={ style } /> ;
 } ;
 
 /**
