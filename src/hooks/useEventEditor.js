@@ -47,7 +47,7 @@ const titleProperty = ( schema ) => ( schema ? 'name' : 'title' ) ;
  * @param {Object} [props.event] - The record being edited. Absent for a creation.
  * @param {Array|Function} [props.fields] - Descriptors, or a function of the event.
  * @param {boolean} [props.schema=false] - The source is JSON-LD.
- * @param {{start: number, end: number}} [props.range] - The span a creation starts from.
+ * @param {{start: number, end: number, allDay: boolean}} [props.range] - The span a creation starts from.
  * @param {boolean} [props.allDayEndInclusive=true] - Must match how the payload was read.
  * @param {Function} [props.onCommit] - `( patch , { event , isNew } ) => void|Promise`.
  * @param {Function} [props.validate] - `( draft ) => ({ [key]: message }) | null`, for the rules only an application knows.
@@ -85,7 +85,9 @@ const useEventEditor = ( props = {} ) =>
     {
         const values =
         {
-            allDay : event?.allDay ?? false ,
+            // A range may say it covers whole days — what a month cell draws, since
+            // a month has no hours to draw with.
+            allDay : event?.allDay ?? range?.allDay ?? false ,
             end    : event?.end ?? range?.end ?? null ,
             start  : event?.start ?? range?.start ?? null ,
             title  : event?.title ?? '' ,
@@ -239,7 +241,10 @@ const useEventEditor = ( props = {} ) =>
                             startProperty : event?.span ? event.span.startProperty : 'startDate' ,
                         } ,
                     )
-                    : { end : new Date( draft.end ) , start : new Date( draft.start ) } ,
+                    // The plain shape carries the flag itself : without it, ticking
+                    // « all day » moved the bounds and said nothing about what they
+                    // now meant, and the record came back timed.
+                    : { allDay : draft.allDay , end : new Date( draft.end ) , start : new Date( draft.start ) } ,
             ) ;
         }
 

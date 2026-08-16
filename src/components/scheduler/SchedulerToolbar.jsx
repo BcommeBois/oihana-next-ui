@@ -20,12 +20,21 @@ import Tabs   from '../tabs/Tabs' ;
  * The view switcher **disappears when there is only one view**. A tab bar with a
  * single tab states nothing and takes a row of vertical space to do it.
  *
+ * ### Why creating has a button here at all
+ *
+ * Drawing a range on a grid is a pointer gesture, and three of the five views
+ * cannot offer it — an agenda has no axis, a month has no hours. It is also the
+ * one gesture a keyboard has no honest equivalent for : a focusable empty column
+ * would be seven tab stops a week, each of them guessing an hour. **Creating is a
+ * command**, so it is a control, in the one place every view shares.
+ *
  * @module components/scheduler/SchedulerToolbar
  *
  * @param {Object} props
  * @param {string} [props.className] - Extra classes for the toolbar.
  * @param {import('dayjs').ConfigType} [props.date] - The anchor, used to name a month.
  * @param {React.ReactNode} [props.children] - Extra controls, placed after the view switcher.
+ * @param {() => void} [props.onCreate] - Called when the create command is used. Its absence removes the button.
  * @param {() => void} props.onNext - Move one period forward.
  * @param {() => void} props.onPrevious - Move one period back.
  * @param {() => void} props.onToday - Come back to today.
@@ -40,6 +49,7 @@ const SchedulerToolbar =
     className ,
     children ,
     date ,
+    onCreate ,
     onNext ,
     onPrevious ,
     onToday ,
@@ -87,17 +97,27 @@ const SchedulerToolbar =
 
             <span className={ SCHEDULER_PERIOD }>{ period }</span>
 
-            { items.length > 1 && (
-                <div className="ms-auto overflow-x-auto">
-                    <Tabs
-                        ariaLabel = { period }
-                        className = "inline-flex"
-                        items     = { items }
-                        onChange  = { onViewChange }
-                        size      = { { xs : 'sm' , md : 'md' } }
-                        style     = "box"
-                        value     = { view }
-                    />
+            { ( items.length > 1 || onCreate ) && (
+                <div className="ms-auto flex items-center gap-2">
+                    { items.length > 1 && (
+                        <div className="overflow-x-auto">
+                            <Tabs
+                                ariaLabel = { period }
+                                className = "inline-flex"
+                                items     = { items }
+                                onChange  = { onViewChange }
+                                size      = { { xs : 'sm' , md : 'md' } }
+                                style     = "box"
+                                value     = { view }
+                            />
+                        </div>
+                    ) }
+
+                    { onCreate && (
+                        <Button color="primary" onClick={ onCreate } size="sm">
+                            { labels?.create }
+                        </Button>
+                    ) }
                 </div>
             ) }
 

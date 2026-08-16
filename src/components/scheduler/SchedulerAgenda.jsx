@@ -18,6 +18,7 @@ import
     getSchedulerEventClasses ,
     SCHEDULER_AGENDA_TIME ,
     SCHEDULER_EVENT_CONTINUES ,
+    SCHEDULER_EVENT_INTERACTIVE ,
 } from '../../themes/components/scheduler' ;
 
 import EmptyState from '../EmptyState' ;
@@ -42,12 +43,22 @@ import EmptyState from '../EmptyState' ;
  * of « nothing scheduled » is noise. When the **whole** period is empty, one
  * {@link module:components/EmptyState} says so instead of nothing at all.
  *
+ * ### It is the view a phone gets, so it is the one that must open things
+ *
+ * The gestures of the other views — pulling an edge, drawing a range — are
+ * pointer affordances, and this view has none of them by design. What it owes
+ * instead is the plain one : **a row opens the event**. Without it there is no
+ * way at all to reach a booking on a phone, since the agenda is what a phone is
+ * shown. A card becomes a `<button>` where something listens, and stays a
+ * paragraph where nothing does.
+ *
  * @module components/scheduler/SchedulerAgenda
  *
  * @param {Object} props
  * @param {string} [props.className] - Extra classes for the list.
  * @param {Array} props.events - The normalized records to show.
  * @param {React.ReactNode} [props.emptyState] - Replaces the default empty state.
+ * @param {(event: Object) => void} [props.onEventClick] - Called with a record when a row is activated. Its absence leaves the rows inert, which is what a list nobody wired should be.
  * @param {string} [props.path='components.scheduler'] - i18n path the labels are read from.
  * @param {(event: Object, context: Object) => React.ReactNode} [props.renderEvent] - Renders an event ; receives the record and `{ segment , labels }`.
  * @param {boolean} [props.showEmptyDays=false] - Keep a row for a day with nothing on it.
@@ -58,6 +69,7 @@ const SchedulerAgenda =
     className ,
     events ,
     emptyState ,
+    onEventClick ,
     path = 'components.scheduler' ,
     renderEvent ,
     showEmptyDays = false ,
@@ -145,10 +157,25 @@ const SchedulerAgenda =
 
                         const { className : eventClassName , style } = getSchedulerEventClasses
                         ({
-                            color  : event.color ,
-                            past   : event.end <= Date.now() ,
-                            status : event.status ,
+                            className : onEventClick ? SCHEDULER_EVENT_INTERACTIVE : undefined ,
+                            color     : event.color ,
+                            past      : event.end <= Date.now() ,
+                            status    : event.status ,
                         }) ;
+
+                        // Spans rather than paragraphs : the very same content has to
+                        // sit inside a `<button>`, which only takes phrasing.
+                        const card = (
+                            <>
+                                <span className="block truncate font-semibold">{ event.title }</span>
+
+                                { ( segment.continuesBefore || segment.continuesAfter ) && (
+                                    <span className={ `block text-xs ${ SCHEDULER_EVENT_CONTINUES }` }>
+                                        { labels?.continues }
+                                    </span>
+                                ) }
+                            </>
+                        ) ;
 
                         return (
                             <div key={ `${ event.id }-${ segment.day }` } className={ getAgendaRowClasses() }>
@@ -170,15 +197,22 @@ const SchedulerAgenda =
                                         ) }
                                 </time>
 
-                                <div className={ eventClassName } style={ style }>
-                                    <p className="truncate font-semibold">{ event.title }</p>
-
-                                    { ( segment.continuesBefore || segment.continuesAfter ) && (
-                                        <p className={ `text-xs ${ SCHEDULER_EVENT_CONTINUES }` }>
-                                            { labels?.continues }
-                                        </p>
+                                { onEventClick
+                                    ? (
+                                        <button
+                                            type      = "button"
+                                            className = { eventClassName }
+                                            style     = { style }
+                                            onClick   = { () => onEventClick( event ) }
+                                        >
+                                            { card }
+                                        </button>
+                                    )
+                                    : (
+                                        <div className={ eventClassName } style={ style }>
+                                            { card }
+                                        </div>
                                     ) }
-                                </div>
 
                             </div>
                         ) ;

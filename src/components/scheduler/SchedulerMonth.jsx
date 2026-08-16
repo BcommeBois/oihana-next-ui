@@ -29,9 +29,13 @@ import
     resolveDotColor ,
 } from '../../themes/components/scheduler' ;
 
+import Button  from '../Button' ;
 import Popover from '../Popover' ;
 
 import SchedulerEvent from './SchedulerEvent' ;
+
+/** Milliseconds in a day — the exclusive end of an all-day span. */
+const DAY = 24 * 60 * 60 * 1000 ;
 
 /**
  * The dot standing in for a chip carries the event's colour and nothing else.
@@ -67,14 +71,28 @@ const Dot = ( { event } ) =>
  * is a better target for a finger than an eight-pixel « +2 more », and it spares
  * the reader a grid of seven forty-pixel columns.
  *
+ * ### Creating happens in the day, not on the cell
+ *
+ * A cell opens its day — that is what a tap on a month grid means, and a day
+ * carrying three bookings has to be readable before anything is added to it. So
+ * the offer to create sits **in the day panel**, where it is a real target for a
+ * thumb and where it reaches the keyboard for free. Making an empty cell create
+ * directly and a busy one open would be two gestures wearing one costume.
+ *
+ * A month has no hours, so what it creates is **an all-day event on that day**.
+ * Inventing nine in the morning would be a decision this view has no grounds for ;
+ * the form that opens next is where an hour is chosen.
+ *
  * @module components/scheduler/SchedulerMonth
  *
  * @param {Object} props
  * @param {string} [props.className] - Extra classes for the grid.
+ * @param {boolean} [props.creatable=false] - Offer to add an event to the day being looked at.
  * @param {import('dayjs').ConfigType} [props.date] - The anchor, used to tell the month's days from its neighbours'.
  * @param {Array} props.events - The normalized records to place.
  * @param {number} [props.maxEventsPerDay=3] - How many rails a cell shows before it counts instead. Computed rather than measured : measuring costs a render pass and gets the first one wrong.
  * @param {(day: number) => void} [props.onDayClick] - Called with the day, when a cell is activated.
+ * @param {(range: Object) => void} [props.onEventCreate] - Called with `{ start , end , allDay }` covering the day, when the day panel's create is used.
  * @param {(event: Object) => void} [props.onEventClick] - Called with a record, when a chip is activated.
  * @param {string} [props.path='components.scheduler'] - i18n path the labels are read from.
  * @param {(event: Object, context: Object) => React.ReactNode} [props.renderEvent] - Renders an event in the day popover.
@@ -84,11 +102,13 @@ const Dot = ( { event } ) =>
 const SchedulerMonth =
 ({
     className ,
+    creatable = false ,
     date ,
     events ,
     maxEventsPerDay = 3 ,
     onDayClick ,
     onEventClick ,
+    onEventCreate ,
     path = 'components.scheduler' ,
     renderEvent ,
     weekStartsOn ,
@@ -136,6 +156,21 @@ const SchedulerMonth =
         recalculate() ;
         setOpenDay( day ) ;
         onDayClick?.( day ) ;
+    } ;
+
+    /**
+     * Turns the day being read into a range to fill in.
+     *
+     * The panel closes first : what comes next is a modal, and a full-screen
+     * popover left open behind one is a second layer nobody asked for.
+     */
+    const create = () =>
+    {
+        const day = openDay ;
+
+        setOpenDay( null ) ;
+
+        onEventCreate?.({ allDay : true , end : day + DAY , start : day }) ;
     } ;
 
     return (
@@ -242,6 +277,15 @@ const SchedulerMonth =
                                 ) ) }
                             </ul>
                         ) }
+
+                    {/* Under what the day already holds : one reads a day before
+                        adding to it, and the last thing on screen is the closest
+                        thing to a thumb. */}
+                    { creatable && (
+                        <Button className="mt-1 w-full" color="primary" onClick={ create } size="sm">
+                            { labels?.create }
+                        </Button>
+                    ) }
                 </div>
             </Popover>
 

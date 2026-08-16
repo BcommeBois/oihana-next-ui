@@ -45,6 +45,14 @@ export const HORIZONTAL = 'horizontal' ;
  * | `resize-end` | the closing edge ; the opening one holds |
  * | `create` | one bound, the press having fixed the other |
  *
+ * **A creation that never left its step is a click.** A finger has no other way
+ * of pointing at an empty slot than to press on it, and a press that dwells is
+ * what a long press is made of — so the gesture ripens into a drag without the
+ * finger having asked for one. Treated as a drawn range it would produce a
+ * one-step event where the very same tap on a mouse produces `createDuration`.
+ * So it is given the slot it fell in and the length a click is worth, which is
+ * exactly what the lane's own `onClick` does with a pointer that never travelled.
+ *
  * **Only a move changes lane.** A resized edge and a drawn range stay in the lane
  * they started in : a range that jumped sideways as it grew would be impossible
  * to aim.
@@ -77,6 +85,7 @@ export const HORIZONTAL = 'horizontal' ;
  * @param {Object} props
  * @param {Object} props.axisRef - Ref to the element whose leading edge is the zero of the time axis — its top when time runs down, its inline start when it runs across.
  * @param {Object} [props.bodyRef] - Ref to the scrolling area, for the edge auto-scroll.
+ * @param {number} [props.createDuration] - Minutes a creation that never travelled stands for. Defaults to one snap step ; pass the view's own so a tap and a click agree.
  * @param {Array<number>} [props.days] - Local midnight of each column, in order. Vertical only : a timeline has one continuous axis and no days.
  * @param {number} [props.lanes] - How many rows the cross axis holds. Horizontal only.
  * @param {'vertical'|'horizontal'} [props.orientation='vertical'] - Which way time runs. Vertical, the cross axis names days ; horizontal, it names resources.
@@ -104,7 +113,7 @@ export const HORIZONTAL = 'horizontal' ;
  */
 const useTimeDrag = ( props = {} ) =>
 {
-    const { axisRef , bodyRef , days , lanes , minDuration , onCreate , onMove , onResize , orientation = VERTICAL , scale } = props ;
+    const { axisRef , bodyRef , createDuration , days , lanes , minDuration , onCreate , onMove , onResize , orientation = VERTICAL , scale } = props ;
 
     // Which pointer coordinate carries time, and which one names a lane. Every
     // difference between a time grid and a resource timeline reduces to this.
@@ -123,6 +132,10 @@ const useTimeDrag = ( props = {} ) =>
     const anchor = useRef( 0 ) ;
     const nodes  = useRef( [] ) ;
 
+    // Where a creation was pressed, floored to the step it fell in — what the
+    // gesture becomes if the pointer never leaves that step.
+    const slot = useRef( 0 ) ;
+
     const laneRef = useMemo( () =>
     {
         const refs = Array.from( { length : count } , ( _ , index ) => ( node ) => { nodes.current[ index ] = node ; } ) ;
@@ -133,6 +146,10 @@ const useTimeDrag = ( props = {} ) =>
 
     const step    = scale ? scale.snapMinutes * 60 * 1000 : 0 ;
     const minimum = minDuration ?? step ;
+
+    // What a press worth a click stands for. Without a view saying otherwise it
+    // is one step, which is what a range drawn in a flick already gets.
+    const clickSpan = createDuration ? createDuration * 60 * 1000 : minimum ;
 
     /**
      * The instant at a pointer position, read along the time axis.
@@ -246,15 +263,27 @@ const useTimeDrag = ( props = {} ) =>
         {
             const here = instantAt( along , index ) ;
 
-            segmentStart = Math.min( anchor.current , here ) ;
-            segmentEnd   = Math.max( anchor.current , here ) ;
-
-            // A range drawn in one flick is a real intent, not a mistake : it is
-            // given the shortest length the grid accepts rather than refused.
-            if ( segmentEnd - segmentStart < minimum )
+            if ( here === anchor.current )
             {
-                segmentEnd   = Math.min( to , segmentStart + minimum ) ;
-                segmentStart = Math.max( from , segmentEnd - minimum ) ;
+                // Nothing was drawn : the pointer never left the step it landed
+                // in. That is a click — and a click points at a **slot**, so it
+                // takes the step it fell in and the length a click is worth,
+                // rather than the nearest step and one snap of it.
+                segmentStart = Math.max( from , Math.min( slot.current , to - clickSpan ) ) ;
+                segmentEnd   = segmentStart + clickSpan ;
+            }
+            else
+            {
+                segmentStart = Math.min( anchor.current , here ) ;
+                segmentEnd   = Math.max( anchor.current , here ) ;
+
+                // A range drawn in one flick is a real intent, not a mistake : it
+                // is given the shortest length the grid accepts rather than refused.
+                if ( segmentEnd - segmentStart < minimum )
+                {
+                    segmentEnd   = Math.min( to , segmentStart + minimum ) ;
+                    segmentStart = Math.max( from , segmentEnd - minimum ) ;
+                }
             }
         }
 
@@ -288,7 +317,7 @@ const useTimeDrag = ( props = {} ) =>
                      : event.start + ( segmentStart - segment.start ) ,
         } ;
     }
-    , [ across , axisRef , count , days , instantAt , minimum , scale ] ) ;
+    , [ across , axisRef , clickSpan , count , days , instantAt , minimum , scale ] ) ;
 
     const drag = usePointerDrag
     ({
@@ -361,7 +390,10 @@ const useTimeDrag = ( props = {} ) =>
 
         if ( payload.mode === CREATE )
         {
-            anchor.current = instantAt( across ? look.clientX : look.clientY , payload.lane ) ;
+            const at = across ? look.clientX : look.clientY ;
+
+            anchor.current = instantAt( at , payload.lane ) ;
+            slot.current   = instantAt( at , payload.lane , true ) ;
         }
 
         drag.start( look , payload ) ;

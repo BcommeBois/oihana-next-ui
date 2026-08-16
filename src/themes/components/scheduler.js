@@ -80,6 +80,16 @@ export const SCHEDULER_AGENDA_TIME = 'w-full shrink-0 ps-1 text-start @md:w-16 @
  */
 export const SCHEDULER_EVENT = 'flex-1 min-w-0 rounded-field border border-base-300 border-s-4 px-3 py-2' ;
 
+/**
+ * An event card that opens something.
+ *
+ * A `<button>` centres its text and shows no hand ; a card that reads as a
+ * paragraph and answers as a control has to say so. It is added **only** where
+ * something listens — an agenda nobody wired stays a list, and a list is not a
+ * row of dead buttons.
+ */
+export const SCHEDULER_EVENT_INTERACTIVE = 'w-full text-start cursor-pointer hover:border-base-content/30' ;
+
 /** The same event, once it is over. */
 export const SCHEDULER_EVENT_PAST = 'opacity-75' ;
 

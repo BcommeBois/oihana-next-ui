@@ -215,6 +215,7 @@ const SchedulerTimeGrid =
     ({
         axisRef ,
         bodyRef ,
+        createDuration ,
         days ,
         onCreate : onEventCreate ,
         onMove   : onEventMove ,

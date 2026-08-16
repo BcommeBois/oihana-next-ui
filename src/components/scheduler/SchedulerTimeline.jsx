@@ -234,6 +234,7 @@ const SchedulerTimeline =
     ({
         axisRef ,
         bodyRef ,
+        createDuration ,
         lanes       : rows.length ,
         onCreate    : ({ end , lane , start }) => onEventCreate?.({ end , resourceId : rows[ lane ]?.id ?? null , start }) ,
         onMove      : ( event , to ) => onEventMove?.( event , { end : to.end , resourceId : rows[ to.lane ]?.id ?? event.resourceId , start : to.start }) ,

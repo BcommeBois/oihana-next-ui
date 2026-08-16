@@ -39,12 +39,16 @@ const stamp = value => ( value === null || value === undefined ? '—' : dayjs( 
  */
 const SchedulerWeekDemo = ( { path = 'demo.scheduler.schedulerWeek' } ) =>
 {
-    const { day , description , move , narrow , overlap , title , week , zoom } = useI18n( path ) ;
+    const { day , description , move , narrow , overlap , title , touch , week , zoom } = useI18n( path ) ;
 
     const [ picked , setPicked ] = useState( null ) ;
 
     const [ events , setEvents ] = useState( desk ) ;
     const [ change , setChange ] = useState( null ) ;
+
+    // The touch demo writes into a list of its own : the same fixture, edited
+    // through the panel rather than through the gestures above it.
+    const [ pocket , setPocket ] = useState( desk ) ;
 
     return (
         <Container className="flex flex-col gap-8 rounded-box bg-base-200/60 p-3 sm:p-8" maxWidth="max-w-6xl">
@@ -209,6 +213,40 @@ const SchedulerWeekDemo = ( { path = 'demo.scheduler.schedulerWeek' } ) =>
                         </div>
                     ) ) }
                 </div>
+            </section>
+
+            <Divider />
+
+            <section className="flex flex-col gap-3">
+                <h3 className="text-xl font-semibold">{ touch?.title }</h3>
+                <p className="text-sm text-base-content/60">{ touch?.description }</p>
+
+                {/* A phone, and the three views a finger actually meets : the agenda
+                    it opens on, the grid it taps a slot in, the month it fills a day
+                    in. Everything below is reachable without a hover. */}
+                <div className="mt-2 flex justify-center">
+                    <div className="mockup-phone w-full max-w-[380px]">
+                        <div className="mockup-phone-camera" />
+                        <div className="mockup-phone-display bg-base-100 text-base-content">
+                            <div className="h-full overflow-y-auto px-2 pb-8 pt-16">
+                                <Scheduler
+                                    interactive
+                                    defaultDate = { ANCHOR }
+                                    events      = { pocket }
+                                    height      = "18rem"
+                                    onChange    = { next => setPocket( next ) }
+                                    views       = { [ 'agenda' , 'week' , 'month' ] }
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <p className="text-sm text-base-content/60">{ touch?.open }</p>
+                <p className="text-sm text-base-content/60">{ touch?.create }</p>
+                <p className="text-sm text-base-content/60">{ touch?.resize }</p>
+                <p className="text-sm text-base-content/60">{ touch?.month }</p>
+                <p className="text-sm text-base-content/60">{ touch?.command }</p>
             </section>
 
             <Divider />

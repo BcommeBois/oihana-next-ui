@@ -3,7 +3,10 @@
 import Button    from '@/components/Button' ;
 import Container from '@/display/Container' ;
 import Divider   from '@/components/Divider' ;
+import Modal     from '@/components/modals/Modal' ;
 import Tooltip   from '@/components/Tooltip' ;
+
+import useModal from '@/components/modals/hooks/useModal' ;
 
 /**
  * Tooltip showcase — positions, the new start/center/end alignments, colours,
@@ -11,6 +14,8 @@ import Tooltip   from '@/components/Tooltip' ;
  */
 const TooltipDemo = () =>
 {
+    const { modalRef , open } = useModal() ;
+
     return (
         <Container className="flex flex-col gap-8 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-7xl">
 
@@ -145,6 +150,42 @@ const TooltipDemo = () =>
                     The floating one also opens on <strong>focus</strong> — tab into the list — and
                     never on touch, where a tap has somewhere better to go than under a bubble.
                 </p>
+            </div>
+
+            <Divider />
+
+            {/* float inside a <dialog> — the top layer beats every z-index */}
+            <div className="flex flex-col gap-4">
+                <h3 className="text-xl font-semibold">float — inside a modal</h3>
+                <p className="text-sm text-base-content/70">
+                    A modal <code>&lt;dialog&gt;</code> paints in the browser's <strong>top
+                    layer</strong>, above everything a <code>z-index</code> can reach. A bubble
+                    portaled to the body would therefore be drawn <em>under</em> the modal it
+                    belongs to, so a floating tooltip whose trigger is inside an open dialog
+                    portals into that dialog instead — the same reasoning <code>Popover</code>
+                    already follows.
+                </p>
+
+                <div>
+                    <Button color="primary" onClick={ open }>Open a modal</Button>
+                </div>
+
+                <Modal ref={ modalRef } title="Inside the top layer" agree="Close" showDisagree={ false }>
+                    <div className="flex flex-wrap items-center gap-4 py-2">
+                        <Tooltip float tip="Portaled into this dialog" position="top" color="primary">
+                            <button className="btn" type="button">float</button>
+                        </Tooltip>
+
+                        <Tooltip tip="Drawn by the CSS path" position="top" color="primary">
+                            <button className="btn" type="button">css</button>
+                        </Tooltip>
+                    </div>
+
+                    <p className="text-sm text-base-content/70">
+                        Both are readable here — the modal clips nothing. Put the same pair in a
+                        scrolling panel inside the dialog and only the floating one survives.
+                    </p>
+                </Modal>
             </div>
 
             <Divider />

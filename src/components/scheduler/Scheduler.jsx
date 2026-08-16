@@ -2,6 +2,8 @@
 
 import { useState } from 'react' ;
 
+import dayjs from '../../helpers/date/configureDayjs' ;
+
 import useScheduler from '../../hooks/useScheduler' ;
 
 import { AGENDA , DAY , MONTH , TIMELINE , WEEK } from '../../helpers/schedule/getViewWindow' ;
@@ -68,6 +70,16 @@ const resolveViews = ( requested ) =>
  * expected to carry `id` / `start` / `end` directly. Either way, **`onChange`
  * hands back objects in the shape they came in.**
  *
+ * ### One prop for « the reader may change this »
+ *
+ * `interactive` turns on the four things that answer to that sentence : moving,
+ * stretching, creating and the panel. The four rather than three — without the
+ * panel, `resizable` promises a finger a gesture it cannot make, since the
+ * handles are eight pixels of hover and a phone has neither. Each of the four
+ * still wins when it is passed on its own, so `interactive` with
+ * `resizable={ false }` is a calendar one may move things around in but not
+ * stretch.
+ *
  * @module components/scheduler/Scheduler
  *
  * @param {Object} props
@@ -87,18 +99,20 @@ const resolveViews = ( requested ) =>
  * @param {Array} [props.colorKeys] - The keys in the order they take colours, which freezes the mapping.
  * @param {Function} [props.getEventId] - Reads an event's identity. Required when neither `identifier`, `id` nor `url` is the real key.
  * @param {Function} [props.getResourceId] - Reads the timeline row an event belongs to.
- * @param {boolean|Object} [props.details=false] - Open a panel when an event is activated. `true` for the defaults, or an object of props forwarded to `SchedulerEventPanel` (`placement`, `fields`, `renderField`, `maxWidth`…).
+ * @param {boolean|Object} [props.details] - Open a panel when an event is activated. `true` for the defaults, or an object of props forwarded to `SchedulerEventPanel` (`placement`, `fields`, `renderField`, `maxWidth`…). Defaults to `interactive`.
+ * @param {boolean} [props.interactive=false] - Let the reader change things : turns on `movable`, `resizable`, `creatable` and `details` at once. Any of the four passed explicitly wins over it.
  * @param {Function} [props.getEventPermissions] - What a user may do with an event : `'read'` / `'edit'`, or `{ read , edit , move , resize , remove }`. **It does not hide anything** — what is not to be shown is not to be sent.
  * @param {Function} [props.getStatus] - Reads the status, for a vocabulary of your own — `ReservationStatusType`, for one.
  * @param {Array} [props.datePairs] - Where to look for a span, for the types that do not use `startDate`. See `helpers/schedule/datePairs`.
  * @param {Array} [props.unwrap] - Properties that may hold the dated object — `reservationFor` by default.
  * @param {Function} [props.isEventMovable] - Whether an event may be dragged — a past slot, a cancelled booking, a lock of your own. The recurrence guard and the permissions apply whatever it answers.
  * @param {Function} [props.isEventResizable] - Whether an event's edges may be pulled. Defaults to `isEventMovable`.
- * @param {boolean}  [props.movable=false] - Let an event be dragged to another time. Day and week views.
- * @param {boolean}  [props.resizable=false] - Let an event's edges be pulled. Pointers that hover ; on touch, resizing belongs to the editor.
- * @param {boolean}  [props.creatable=false] - Let a range be drawn, or clicked, on an empty slot.
- * @param {number}   [props.createDuration=30] - Minutes a plain click on an empty slot stands for.
- * @param {Function} [props.onEventCreate] - Called with `{ start , end }`. **Return an object and it is added** ; return nothing and the creation is yours to make — which is what opening an editor does.
+ * @param {boolean}  [props.movable] - Let an event be dragged to another time. Day, week and timeline views. Defaults to `interactive`.
+ * @param {boolean}  [props.resizable] - Let an event's edges be pulled. Pointers that hover ; on touch, the end is corrected in the panel. Defaults to `interactive`.
+ * @param {boolean}  [props.creatable] - Let a range be drawn on an empty slot, a slot be tapped, a day be filled in, and a create command sit in the toolbar. Defaults to `interactive`.
+ * @param {number}   [props.createDuration=30] - Minutes a plain click on an empty slot stands for. A tap that dwells long enough to become a gesture and never travels counts as one.
+ * @param {boolean}  [props.showCreateButton=true] - Keep the create command in the toolbar when `creatable`. Off for an application placing its own — `toolbarOptions` and `useScheduler` are how.
+ * @param {Function} [props.onEventCreate] - Called with `{ start , end }`, plus `allDay` from a month and `resourceId` from a timeline. **Return an object and it is added** ; return nothing and the creation is yours to make — which is what opening an editor does.
  * @param {number}   [props.snapMinutes=15] - Step a dragged event lands on.
  * @param {Array}    [props.resources] - Timeline : the rows, in order. Without it they are derived from the events — a first look at a payload, never a plan.
  * @param {Function} [props.getResourceName] - Timeline : reads a row's label off its declared source.
@@ -151,6 +165,16 @@ const resolveViews = ( requested ) =>
  *     days     = { 14 }
  * />
  * ```
+ *
+ * @example A calendar one may change, on a pointer as on a finger
+ * ```jsx
+ * <Scheduler
+ *     interactive
+ *     defaultEvents = { events }
+ *     defaultView   = "week"
+ *     onChange      = { ( next , change ) => api.save( change ) }
+ * />
+ * ```
  */
 const Scheduler =
 ({
@@ -174,8 +198,8 @@ const Scheduler =
     colorKeys ,
     getColor ,
     getColorKey ,
-    creatable = false ,
-    createDuration ,
+    creatable ,
+    createDuration = 30 ,
     datePairs ,
     resources ,
     getResourceName ,
@@ -187,16 +211,18 @@ const Scheduler =
     tooltipColor ,
     pixelsPerDay ,
     timelineDays ,
-    details = false ,
+    details ,
     getEventId ,
     getEventPermissions ,
     getResourceId ,
     getStatus ,
+    interactive = false ,
     isEventMovable ,
     isEventResizable ,
     unwrap ,
-    movable = false ,
-    resizable = false ,
+    movable ,
+    resizable ,
+    showCreateButton = true ,
     palette ,
     maxEventsPerDay = 3 ,
     onChange ,
@@ -219,6 +245,14 @@ const Scheduler =
 }) =>
 {
     const offered = resolveViews( views ) ;
+
+    // `interactive` is a default, never an override : a calendar one may move
+    // things around in but not stretch is a legitimate thing to ask for, and it
+    // is `interactive` with `resizable={ false }`.
+    const mayCreate = creatable ?? interactive ;
+    const mayMove   = movable   ?? interactive ;
+    const mayResize = resizable ?? interactive ;
+    const panel     = details   ?? interactive ;
 
     const scheduler = useScheduler
     ({
@@ -272,7 +306,7 @@ const Scheduler =
     {
         onEventClick?.( event ) ;
 
-        if ( details && scheduler.permissionsOf( event ).read )
+        if ( panel && scheduler.permissionsOf( event ).read )
         {
             setPicked( event ) ;
         }
@@ -310,7 +344,7 @@ const Scheduler =
         // Nothing came back and there is a panel to fill : the range becomes a
         // form rather than an event, which is the honest answer to « the
         // application will make this one itself ».
-        if ( details )
+        if ( panel )
         {
             setDrawn( range ) ;
             return ;
@@ -322,12 +356,29 @@ const Scheduler =
         }
     } ;
 
+    /**
+     * Creating without a pointer to point with.
+     *
+     * The command has no slot under a finger to read, so it takes **the next
+     * whole hour, on the day being looked at** — near enough to be a starting
+     * point, and handed straight to a form that can correct it. The clock is read
+     * in the handler and never during a render : reading it while rendering is a
+     * hydration mismatch on every load, which is the lesson `useNow` carries.
+     */
+    const createCommand = () =>
+    {
+        const at = dayjs( scheduler.date ).startOf( 'day' ).add( dayjs().hour() + 1 , 'hour' ) ;
+
+        createEvent({ end : at.add( createDuration , 'minute' ).valueOf() , start : at.valueOf() }) ;
+    } ;
+
     return (
         <div className={ getSchedulerClasses({ className }) } { ...rest }>
 
             { toolbar && (
                 <SchedulerToolbar
                     date         = { scheduler.date }
+                    onCreate     = { mayCreate && showCreateButton ? createCommand : undefined }
                     onNext       = { scheduler.next }
                     onPrevious   = { scheduler.previous }
                     onToday      = { scheduler.today }
@@ -344,7 +395,7 @@ const Scheduler =
             { scheduler.view === TIMELINE
                 ? (
                     <SchedulerTimeline
-                        creatable        = { creatable }
+                        creatable        = { mayCreate }
                         createDuration   = { createDuration }
                         dayEnd           = { dayEnd }
                         dayStart         = { dayStart }
@@ -352,7 +403,7 @@ const Scheduler =
                         events           = { scheduler.events }
                         isEventMovable   = { canDrag }
                         isEventResizable = { canStretch }
-                        movable          = { movable }
+                        movable          = { mayMove }
                         nowIndicator     = { nowIndicator }
                         onEventClick     = { openDetails }
                         onEventCreate    = { createEvent }
@@ -363,7 +414,7 @@ const Scheduler =
                         pixelsPerHour    = { pixelsPerHour }
                         renderEvent      = { renderEvent }
                         renderResource   = { renderResource }
-                        resizable        = { resizable }
+                        resizable        = { mayResize }
                         resources        = { scheduler.resources }
                         rowHeight        = { rowHeight }
                         scrollTime       = { scrollTime }
@@ -378,7 +429,7 @@ const Scheduler =
                 : ( scheduler.view === DAY || scheduler.view === WEEK )
                 ? (
                     <SchedulerTimeGrid
-                        creatable        = { creatable }
+                        creatable        = { mayCreate }
                         createDuration   = { createDuration }
                         dayEnd           = { dayEnd }
                         dayStart         = { dayStart }
@@ -386,7 +437,7 @@ const Scheduler =
                         height           = { height }
                         isEventMovable   = { canDrag }
                         isEventResizable = { canStretch }
-                        movable          = { movable }
+                        movable          = { mayMove }
                         nowIndicator     = { nowIndicator }
                         onEventClick     = { openDetails }
                         onEventCreate    = { createEvent }
@@ -395,7 +446,7 @@ const Scheduler =
                         path             = { path }
                         pixelsPerHour    = { pixelsPerHour }
                         renderEvent      = { renderEvent }
-                        resizable        = { resizable }
+                        resizable        = { mayResize }
                         scrollTime       = { scrollTime }
                         slotDuration     = { slotDuration }
                         snapMinutes      = { snapMinutes }
@@ -407,11 +458,13 @@ const Scheduler =
                 : scheduler.view === MONTH
                 ? (
                     <SchedulerMonth
+                        creatable       = { mayCreate }
                         date            = { scheduler.date }
                         events          = { scheduler.events }
                         maxEventsPerDay = { maxEventsPerDay }
                         onDayClick      = { onDayClick }
                         onEventClick    = { openDetails }
+                        onEventCreate   = { createEvent }
                         path            = { path }
                         renderEvent     = { renderEvent }
                         weekStartsOn    = { weekStartsOn }
@@ -422,6 +475,10 @@ const Scheduler =
                     <SchedulerAgenda
                         emptyState    = { emptyState }
                         events        = { scheduler.events }
+                        // A row is a control only where something listens. The
+                        // agenda is what a phone is shown, so this is the whole of
+                        // its reach : no axis to draw on, no edge to pull.
+                        onEventClick  = { ( onEventClick || panel ) ? openDetails : undefined }
                         path          = { path }
                         renderEvent   = { renderEvent }
                         showEmptyDays = { showEmptyDays }
@@ -429,7 +486,7 @@ const Scheduler =
                     />
                 ) }
 
-            { details && (
+            { panel && (
                 <SchedulerEventPanel
                     defaultMode = { drawn ? 'edit' : 'read' }
                     deletable   = { shown ? scheduler.permissionsOf( shown ).remove : false }
@@ -441,7 +498,7 @@ const Scheduler =
                     path        = { path }
                     range       = { drawn }
                     schema      = { schema }
-                    { ...( details === true ? {} : details ) }
+                    { ...( panel === true ? {} : panel ) }
                 />
             ) }
 
