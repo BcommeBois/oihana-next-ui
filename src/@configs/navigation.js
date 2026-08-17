@@ -37,6 +37,7 @@ import { TbListDetails          as AgendaIcon         } from "react-icons/tb";
 import { TbBraces               as SchemaIcon         } from "react-icons/tb";
 import { TbCalendarWeek         as WeekIcon           } from "react-icons/tb";
 import { TbChartGridDots        as TimelineIcon       } from "react-icons/tb";
+import { TbCalendarPlus         as SlotsIcon          } from "react-icons/tb";
 import { TbChartHistogram       as ChartIcon          } from "react-icons/tb";
 import { TbChartDonut           as ChartCircularIcon  } from "react-icons/tb";
 import { TbChartGridDots        as ChartGridIcon      } from "react-icons/tb";
@@ -137,6 +138,7 @@ const navigation =
                     { id : 'schedulerWeek'   , type : LINK  , Icon : WeekIcon      , path  : '/lab/schedulerWeek'  } ,
                     { id : 'schedulerMonth'  , type : LINK  , Icon : SchedulerIcon , path  : '/lab/schedulerMonth' } ,
                     { id : 'schedulerTimeline' , type : LINK , Icon : TimelineIcon  , path  : '/lab/schedulerTimeline' } ,
+                    { id : 'schedulerSlots'  , type : LINK  , Icon : SlotsIcon     , path  : '/lab/schedulerSlots' } ,
                     { id : 'schedulerModel'  , type : LINK  , Icon : SchemaIcon    , path  : '/lab/schedulerModel' } ,
                 ]
             } ,

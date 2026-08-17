@@ -5,6 +5,7 @@ import metrics        from './metrics'
 import scheduler      from './scheduler'
 import schedulerModel from './schedulerModel'
 import schedulerMonth from './schedulerMonth'
+import schedulerSlots from './schedulerSlots'
 import schedulerTimeline from './schedulerTimeline'
 import schedulerWeek  from './schedulerWeek'
 
@@ -17,6 +18,7 @@ const lab =
     scheduler      ,
     schedulerModel ,
     schedulerMonth ,
+    schedulerSlots ,
     schedulerTimeline ,
     schedulerWeek ,
 };

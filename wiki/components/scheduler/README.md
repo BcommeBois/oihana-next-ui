@@ -13,6 +13,8 @@ import SchedulerTimeline   from 'oihana-next-ui/components/scheduler/SchedulerTi
 import SchedulerEvent      from 'oihana-next-ui/components/scheduler/SchedulerEvent'
 import SchedulerEventPanel from 'oihana-next-ui/components/scheduler/SchedulerEventPanel'
 import SchedulerEventField from 'oihana-next-ui/components/scheduler/SchedulerEventField'
+import SlotPicker          from 'oihana-next-ui/components/scheduler/SlotPicker'
+import SlotPickerPanel     from 'oihana-next-ui/components/scheduler/SlotPickerPanel'
 ```
 
 Most applications only ever name the first one. `<Scheduler>` owns the events, the view and
@@ -56,6 +58,40 @@ when there is only one view left to switch to.
 `day` and `week` are **the same component** : the window says whether there is one column or
 seven, and nothing else differs. So are a timeline of hours and a timeline of days —
 `timelineDays` decides, and the scale follows.
+
+## Booking, which is the other question
+
+`SlotPicker` is the one component here that does not place what is scheduled. It reads the
+same two things — the hours something is open, and what already sits in them — and answers
+with **the gaps**. Booking an appointment is not editing an event : there is nothing to edit
+yet, and the whole problem is finding where the new thing may go.
+
+```jsx
+<SlotPicker resources={ rooms } busy={ bookings } duration={ 30 } buffer={ 10 } onChange={ book } />
+```
+
+Three things to know before the first payload goes in.
+
+**`busy` is taken as given, and that is where the filtering belongs.** A cancelled booking
+still blocks until you drop it — and, the one that surprises everybody, **an all-day entry
+blocks the whole day**, all-day meaning midnight to midnight. An exhibition running a week,
+handed over as an occupation, empties the picker for that week. It is a correct answer to a
+badly-posed question : an exhibition in the hall does not stop a room being booked at two.
+Whether either really holds a slot is a business rule, not arithmetic.
+
+**Silence is not an opening.** A resource declaring no hours offers no slots. The timeline
+shades the complement of what is declared and therefore shades nothing when nothing is said ;
+offering an appointment needs the opposite, a *positive* statement — without one, three in
+the morning is bookable. `defaultAvailability` says « nine to six » once, for whatever stayed
+silent.
+
+**The shell changes the contract.** Inline, a chosen slot is reported at once. In
+`SlotPickerPanel` there is nothing else on screen, so the selection is a **draft** until the
+footer confirms it : a window booking on the first tap would punish a mis-tap, and one that
+only highlighted would leave a reader unable to tell whether anything had happened.
+
+Like everything else here, it **reports and does not book** : `onChange` hands back
+`{ start , end , resourceId? }`, and the reservation is the application's to make.
 
 ## Two shapes on the wire
 
@@ -356,6 +392,7 @@ file is the reference** ; this is only the map.
 | `timeScale` | `createTimeScale` — minutes of a day, repeated per column ; `createSpanScale` — one continuous axis over a window. Both answer `offsetOf`, `timeAt`, `snap` |
 | `resources` | Declared rows, their order, the orphan row, and `groupByResource` |
 | `openingHours` | `OpeningHoursSpecification` read as it stands : `openRangesOf`, `closedRangesOf`, and merging of touching rules |
+| `computeFreeSlots` | The gaps rather than the occupations — with `computeFreeSlotsByResource` for « the first room free at two ». The clock is a parameter, never read inside |
 | `describeEvent` | What an event says out loud : `describeSpan`, `describeEvent`, `describeDay`, and `fill` for the announcement templates |
 | `eventFields` | What a panel prints, and `formatValue`, which turns a `Place`, an agent or an enumeration member into text rather than `[object Object]` |
 | `assignColors` | A stable colour per key — **sorted before indexing**, so the mapping depends on the key set and not on the visible window |
@@ -380,7 +417,8 @@ file is the reference** ; this is only the map.
 
 - The live demos : `/lab/scheduler` (agenda, panel, permissions, reservations),
   `/lab/schedulerWeek` (grid, gestures, keyboard, touch), `/lab/schedulerMonth`,
-  `/lab/schedulerTimeline`, `/lab/schedulerModel` (the adapter, on raw payloads).
+  `/lab/schedulerTimeline`, `/lab/schedulerSlots` (free slots),
+  `/lab/schedulerModel` (the adapter, on raw payloads).
 - [**schema.org, on the wire**](schema-org.md) — the data model, its traps, and extending it.
 - The sources : [`src/components/scheduler`](../../../src/components/scheduler),
   [`src/helpers/schedule`](../../../src/helpers/schedule) and

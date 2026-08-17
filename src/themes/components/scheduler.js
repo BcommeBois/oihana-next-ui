@@ -837,4 +837,85 @@ export const getMonthDayNumberClasses = ({ outside , today } = {} ) => cn
     } ,
 ) ;
 
+/* ── SlotPicker ──────────────────────────────────────────────────────────── */
+
+/** Root of the picker. A container, like every view of the family. */
+export const SLOTPICKER = '@container flex flex-col gap-3 w-full' ;
+
+/**
+ * The two halves : a month, and the slots of the day it points at.
+ *
+ * Side by side once the component is wide enough to hold both, stacked below —
+ * and it is the **component's** width that decides, never the window's. A picker
+ * in a booking column on a desktop wants the stacked layout for the same reason
+ * a phone does.
+ */
+export const SLOTPICKER_BODY = 'flex flex-col gap-4 @2xl:flex-row @2xl:items-start' ;
+
+/**
+ * The calendar side.
+ *
+ * **No width of its own.** `Calendar` is an `inline-flex` of square day cells —
+ * `btn btn-sm btn-square`, shared with the seven date inputs — so it already
+ * knows how wide a month is. Imposing a column wider than that leaves a band of
+ * nothing between the month and the rule beside it.
+ *
+ * Stacked, it is **centred** rather than stretched : those cells are squares by
+ * design, and pulling a seven-column grid across a phone would leave each of
+ * them sitting at the left of its column, ragged. Centring is what a fixed-width
+ * block does honestly in a wider space.
+ */
+export const SLOTPICKER_CALENDAR = 'flex w-full shrink-0 justify-center @2xl:block @2xl:w-auto' ;
+
+/** The slots side, separated by a rule only when it sits beside the month. */
+export const SLOTPICKER_PANE = 'min-w-0 flex-1 @2xl:border-s @2xl:border-base-300 @2xl:ps-4' ;
+
+/** The line saying which day is being looked at, and how much is free in it. */
+export const SLOTPICKER_HEAD = 'flex flex-wrap items-baseline justify-between gap-2 pb-2' ;
+
+/** The day itself. */
+export const SLOTPICKER_DAY = 'font-semibold first-letter:uppercase' ;
+
+/** How many slots there are — the answer before the reader counts them. */
+export const SLOTPICKER_COUNT = 'text-sm text-base-content/60' ;
+
+/** One group of slots : a half-day, or a resource. */
+export const SLOTPICKER_GROUP = 'flex flex-col gap-1.5' ;
+
+/** Its heading. */
+export const SLOTPICKER_GROUP_LABEL = 'text-xs font-semibold uppercase tracking-wide text-base-content/60' ;
+
+/** The groups, one under another. */
+export const SLOTPICKER_GROUPS = 'flex flex-col gap-4' ;
+
+/**
+ * The slots themselves.
+ *
+ * A grid that fills rather than a flex row : times are all the same width, so
+ * they line up in columns and the eye runs down them. `minmax` keeps a target a
+ * thumb can hit at any width.
+ */
+export const SLOTPICKER_GRID = 'grid gap-1.5 grid-cols-[repeat(auto-fill,minmax(5rem,1fr))]' ;
+
+/** One free slot. `rounded-field`, like every other control of the theme. */
+export const SLOTPICKER_SLOT = `rounded-field border border-base-300 px-2 py-2 text-center font-mono text-sm tabular-nums transition-colors hover:border-primary hover:text-primary ${ SCHEDULER_FOCUS }` ;
+
+/** The one that was chosen. */
+export const SLOTPICKER_SLOT_ON = 'border-primary bg-primary font-semibold text-primary-content hover:text-primary-content' ;
+
+/**
+ * Generates the className of a slot.
+ *
+ * @param {Object} [props]
+ * @param {string} [props.className] - ClassName to append.
+ * @param {boolean} [props.selected] - The slot is the chosen one.
+ * @returns {string}
+ */
+export const getSlotClasses = ({ className , selected } = {} ) => cn
+(
+    SLOTPICKER_SLOT ,
+    { ...selected && { [ SLOTPICKER_SLOT_ON ] : true } } ,
+    className ,
+) ;
+
 export default getSchedulerClasses ;

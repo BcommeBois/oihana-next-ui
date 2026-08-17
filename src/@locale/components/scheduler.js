@@ -36,6 +36,17 @@ const scheduler =
             event  : 'événement' ,
             events : 'événements' ,
         } ,
+        slots :
+        {
+            title     : 'Choisir un créneau' ,
+            available : 'libres' ,
+            empty     : 'Aucun créneau ce jour-là.' ,
+            none      : 'Complet' ,
+            morning   : 'Matin' ,
+            afternoon : 'Après-midi' ,
+            prompt    : 'Choisissez un créneau.' ,
+            confirm   : 'Valider' ,
+        } ,
         announce :
         {
             created  : '{event} créé' ,
@@ -105,6 +116,17 @@ const scheduler =
         {
             event  : 'event' ,
             events : 'events' ,
+        } ,
+        slots :
+        {
+            title     : 'Pick a slot' ,
+            available : 'free' ,
+            empty     : 'Nothing free that day.' ,
+            none      : 'Fully booked' ,
+            morning   : 'Morning' ,
+            afternoon : 'Afternoon' ,
+            prompt    : 'Pick a slot.' ,
+            confirm   : 'Confirm' ,
         } ,
         announce :
         {
