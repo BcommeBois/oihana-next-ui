@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Wiki — `components/scheduler`, the group's guide**
+
+- **New [`wiki/components/scheduler/README.md`](wiki/components/scheduler/README.md)** — what the group is, what it is deliberately **not** (`Calendar` and the seven date inputs *choose a date* ; the six `Sortable*` and `Kanban` *reorder a list*, and what a scheduler drags is a coordinate, not a rank), which view answers which question, the seven rules that hold across it — each of which cost a defect to learn — four recipes, and a gesture table saying for every action what a **mouse**, a **finger** and a **keyboard** each do, which no JSDoc gives in one glance.
+- **New [`wiki/components/scheduler/schema-org.md`](wiki/components/scheduler/schema-org.md)** — the page one opens while wiring an API. The single idea the whole adapter rests on (**it reads properties, never `@type`**, which is what makes a house subtype work undeclared), identity, and the four traps of the vocabulary : a bare `Date` **is** the all-day signal and its end is inclusive where a date-time's is exclusive ; a `Schedule` bounds its *validity* with `startDate` and gives its occurrences' *hours* with `startTime`, two axes constantly conflated ; a `Reservation` carries no dates at all and its subtypes disagree on where they live ; and a span must be written back under the properties it was read from. Ends on how to extend it for a type of your own — the short answer being that there is nothing to declare.
+- **The accessibility section says what is refused, and why** : no `role="grid"`, no arrow navigation between blocks or month cells, no keyboard move for an all-day chip, no touch handle. Half-kept promises are worse for a screen reader than absent ones, and a guide that lists only what works is how they get made.
+- **Both pages inventory the pure half** — twenty `helpers/schedule` modules and six hooks, one line each — which nothing listed until now, though it is the part usable with no component at all. Still **no props tables** anywhere : the JSDoc is the reference, and a copy diverges within two commits.
+- The wiki index and the root `README.md` follow ; the index's convention gains the case a second page beside a group's guide is legitimate — a subject that would otherwise swallow it — as against a page per component, which would only be the JSDoc copied.
+
 **Components — `scheduler` — the keyboard, and saying out loud what a screen shows**
 
 - **The focus is visible.** Every event in every view has been a `<button>` for several lots and **not one of them showed where the focus was** — tabbing through a week was a walk in the dark. One outline for the family, taken from `barList`'s, and drawn **inside** a placed block : an outline offset outwards lands on the card next to it, so on a busy day the ring of the focused block reads as a border of its neighbour.
