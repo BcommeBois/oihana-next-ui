@@ -9,6 +9,8 @@ import useEventEditor from '../../hooks/useEventEditor' ;
 
 import dayjs from '../../helpers/date/configureDayjs' ;
 
+import { describeSpan } from '../../helpers/schedule/describeEvent' ;
+
 import
 {
     SCHEDULER_PANEL ,
@@ -46,36 +48,6 @@ const SIDE = [ 'start' , 'end' ] ;
 
 /** How long a delete button stays armed before it forgets it was asked. */
 const CONFIRM_DELAY = 4000 ;
-
-/**
- * Says when an event happens, the way one would say it out loud.
- *
- * @param {Object} event
- * @param {string} lang
- * @param {Object} labels
- * @returns {string}
- */
-const formatSpan = ( event , lang , labels ) =>
-{
-    const from = dayjs( event.start ).locale( lang ) ;
-
-    // An all-day span ends at the following midnight, which is not a day anybody
-    // would name : the last day covered is the one before it.
-    const to = dayjs( event.allDay ? event.end - 1 : event.end ).locale( lang ) ;
-
-    const sameDay = from.isSame( to , 'day' ) ;
-
-    if ( event.allDay )
-    {
-        return sameDay
-            ? `${ from.format( 'dddd LL' ) } · ${ labels?.allDay ?? '' }`.trim()
-            : `${ from.format( 'LL' ) } – ${ to.format( 'LL' ) }` ;
-    }
-
-    return sameDay
-        ? `${ from.format( 'dddd LL' ) } · ${ from.format( 'HH:mm' ) } – ${ to.format( 'HH:mm' ) }`
-        : `${ from.format( 'LLL' ) } – ${ to.format( 'LLL' ) }` ;
-} ;
 
 /**
  * The panel where an event is read, and — when allowed — changed.
@@ -431,7 +403,7 @@ const SchedulerEventPanel =
                     <div className={ SCHEDULER_PANEL }>
 
                         <div className={ SCHEDULER_PANEL_WHEN }>
-                            <span className="first-letter:uppercase">{ formatSpan( event , lang , labels ) }</span>
+                            <span className="first-letter:uppercase">{ describeSpan( event , { labels , lang } ) }</span>
 
                             { status && (
                                 <Badge color={ STATUS_COLOR[ status ] } size="sm">

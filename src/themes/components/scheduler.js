@@ -17,6 +17,15 @@ export const SCHEDULER = 'flex flex-col gap-3 w-full' ;
 /** Navigation and view switching, above the view. */
 export const SCHEDULER_TOOLBAR = 'flex flex-wrap items-center gap-2' ;
 
+/**
+ * Where a change is said out loud, and nowhere seen.
+ *
+ * A block that moves is an answer to a sighted reader and to nobody else : the
+ * focus has not gone anywhere, so a screen reader has no reason to say a word.
+ * This is the one place in the family that exists for what cannot be looked at.
+ */
+export const SCHEDULER_LIVE = 'sr-only' ;
+
 /** The label naming the span being looked at. */
 export const SCHEDULER_PERIOD = 'text-lg font-semibold first-letter:uppercase' ;
 
@@ -81,6 +90,29 @@ export const SCHEDULER_AGENDA_TIME = 'w-full shrink-0 ps-1 text-start @md:w-16 @
 export const SCHEDULER_EVENT = 'flex-1 min-w-0 rounded-field border border-base-300 border-s-4 px-3 py-2' ;
 
 /**
+ * The focus ring of the family, from `barList`'s.
+ *
+ * Every event in every view has been a `<button>` for several lots and none of
+ * them showed where the focus was — which makes tabbing through a week a walk in
+ * the dark. One outline, everywhere, so a reader crossing an agenda, a month and
+ * a grid is following the same mark.
+ *
+ * @safelist focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-content/40
+ */
+export const SCHEDULER_FOCUS = 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-content/40' ;
+
+/**
+ * The same ring, drawn **inside** the element.
+ *
+ * A placed block touches its neighbours : an outline offset outwards is drawn
+ * over the card beside it, and on a busy day the ring of the focused block reads
+ * as a border of the one next to it. Inside, it belongs to what it marks.
+ *
+ * @safelist focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-base-content/40
+ */
+export const SCHEDULER_FOCUS_INSET = 'focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-base-content/40' ;
+
+/**
  * An event card that opens something.
  *
  * A `<button>` centres its text and shows no hand ; a card that reads as a
@@ -88,7 +120,7 @@ export const SCHEDULER_EVENT = 'flex-1 min-w-0 rounded-field border border-base-
  * something listens — an agenda nobody wired stays a list, and a list is not a
  * row of dead buttons.
  */
-export const SCHEDULER_EVENT_INTERACTIVE = 'w-full text-start cursor-pointer hover:border-base-content/30' ;
+export const SCHEDULER_EVENT_INTERACTIVE = `w-full text-start cursor-pointer hover:border-base-content/30 ${ SCHEDULER_FOCUS }` ;
 
 /** The same event, once it is over. */
 export const SCHEDULER_EVENT_PAST = 'opacity-75' ;
@@ -248,7 +280,7 @@ export const SCHEDULER_TIMEGRID_DAY_TODAY = 'inline-flex size-7 items-center jus
  * Carries neither padding nor leading : both belong to the block's *mode*, and
  * a mode class is appended after this one so it wins the cascade.
  */
-export const SCHEDULER_TIMEGRID_EVENT = 'absolute overflow-hidden rounded-field border-s-4 px-1.5 text-xs' ;
+export const SCHEDULER_TIMEGRID_EVENT = `absolute overflow-hidden rounded-field border-s-4 px-1.5 text-xs ${ SCHEDULER_FOCUS_INSET }` ;
 
 /**
  * Height, in pixels, a card needs before its title and its span can sit on two
@@ -437,7 +469,7 @@ export const SCHEDULER_TIMELINE_TRACK = 'relative shrink-0' ;
 export const TIMELINE_LANE_HEIGHT = 34 ;
 
 /** An event, placed along the axis. */
-export const SCHEDULER_TIMELINE_EVENT = 'absolute flex items-center overflow-hidden rounded-field border-s-4 px-1.5 text-xs leading-none' ;
+export const SCHEDULER_TIMELINE_EVENT = `absolute flex items-center overflow-hidden rounded-field border-s-4 px-1.5 text-xs leading-none ${ SCHEDULER_FOCUS_INSET }` ;
 
 /**
  * Width, in pixels, under which a block stops printing anything.
@@ -747,6 +779,9 @@ export const getSchedulerChipClasses = ({ className , color , continuesBefore , 
         (
             SCHEDULER_EVENT_CHIP ,
             chipSizeMap[ size ] ?? chipSizeMap.sm ,
+            // Placed on a rail beside its neighbours, like a block : inside.
+            // A chip that is not a control never matches `focus-visible` anyway.
+            SCHEDULER_FOCUS_INSET ,
             {
                 ...definition ,
                 // A bar cut at a row edge loses the corner and the rule on that side,
@@ -775,6 +810,9 @@ export const getSchedulerChipClasses = ({ className , color , continuesBefore , 
 export const getMonthCellClasses = ({ className , outside , today } = {} ) => cn
 (
     SCHEDULER_MONTH_CELL ,
+    // A cell fills its share of the grid, edge to edge : an outline drawn outside
+    // it lands on its neighbours.
+    SCHEDULER_FOCUS_INSET ,
     {
         ...outside && { [ SCHEDULER_MONTH_CELL_OUTSIDE ] : true } ,
         ...today && { [ SCHEDULER_MONTH_CELL_TODAY ] : true } ,

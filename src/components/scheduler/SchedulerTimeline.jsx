@@ -12,6 +12,7 @@ import dayjs from '../../helpers/date/configureDayjs' ;
 import { atTimeOfDay }     from '../../helpers/schedule/parseInstant' ;
 import { closedRangesOf }  from '../../helpers/schedule/openingHours' ;
 import { createSpanScale } from '../../helpers/schedule/timeScale' ;
+import { describeEvent , describeSpan } from '../../helpers/schedule/describeEvent' ;
 import { groupByResource } from '../../helpers/schedule/resources' ;
 import { layoutOverlaps }  from '../../helpers/schedule/layoutOverlaps' ;
 
@@ -70,7 +71,9 @@ const MINUTE = 60 * 1000 ;
  * @module components/scheduler/SchedulerTimeline
  *
  * @param {Object} props
+ * @param {string} [props.ariaLabel] - Names the region — the period being looked at.
  * @param {string} [props.className] - Extra classes for the root.
+ * @param {(text: string) => void} [props.onAnnounce] - Called with what a screen reader should hear — a keyboard step, an abandoned adjustment.
  * @param {boolean} [props.creatable=false] - Let a range be drawn, or clicked, on an empty row.
  * @param {number} [props.createDuration=30] - Minutes a plain click stands for.
  * @param {number} [props.dayEnd=1440] - Minutes from midnight where a one-day axis ends.
@@ -103,6 +106,7 @@ const MINUTE = 60 * 1000 ;
  */
 const SchedulerTimeline =
 ({
+    ariaLabel ,
     className ,
     creatable = false ,
     createDuration = 30 ,
@@ -114,6 +118,7 @@ const SchedulerTimeline =
     isEventResizable ,
     movable = false ,
     nowIndicator = true ,
+    onAnnounce ,
     onEventClick ,
     onEventCreate ,
     onEventMove ,
@@ -236,6 +241,15 @@ const SchedulerTimeline =
         bodyRef ,
         createDuration ,
         lanes       : rows.length ,
+        // What an arrow key changed. **The row is named every time**, not only when
+        // it changes : a lane on a timeline is a resource, and moving between two
+        // of them leaves the hours untouched — an announcement of the span alone
+        // would be the same sentence twice, which a screen reader reads once.
+        onAdjust    : ( next ) => onAnnounce?.( next === null
+            ? labels?.announce?.reverted
+            : [ describeSpan( { end : next.segmentEnd , start : next.segmentStart } , { labels , lang } ) , rows[ next.lane ]?.name ]
+                .filter( Boolean )
+                .join( ' · ' ) ) ,
         onCreate    : ({ end , lane , start }) => onEventCreate?.({ end , resourceId : rows[ lane ]?.id ?? null , start }) ,
         onMove      : ( event , to ) => onEventMove?.( event , { end : to.end , resourceId : rows[ to.lane ]?.id ?? event.resourceId , start : to.start }) ,
         onResize    : ( event , to ) => onEventResize?.( event , { end : to.end , start : to.start }) ,
@@ -366,10 +380,25 @@ const SchedulerTimeline =
                 color         = { tooltipColor }
                 tip           = { hint( event ) }
                 type          = "button"
+                // Under twenty-six pixels a block prints nothing at all : without
+                // this it is a button with no name whatsoever.
+                aria-label    = { describeEvent( event , { labels , lang } ) }
+                aria-hidden   = { dragging ? 'true' : undefined }
                 className     = { eventClassName }
                 onClick       = { onEventClick ? () => onEventClick( event ) : undefined }
+                onKeyDown     = { ( draggable || stretchy ) && !dragging
+                    ? ( look ) =>
+                    {
+                        if ( drag.adjust( look , { ...geometry , movable : draggable , resizable : stretchy } ) )
+                        {
+                            look.preventDefault() ;
+                            look.stopPropagation() ;
+                        }
+                    }
+                    : undefined }
                 onPointerDown = { draggable ? ( look ) => drag.start( look , { ...geometry , mode : MOVE }) : undefined }
                 style         = {{ ...style , ...position }}
+                tabIndex      = { dragging ? -1 : undefined }
             >
                 { stretchy && (
                     <>
@@ -396,7 +425,14 @@ const SchedulerTimeline =
     const showNow   = nowIndicator && now !== null && nowOffset >= 0 && nowOffset <= scale.size ;
 
     return (
-        <div className={ `${ SCHEDULER_TIMELINE } ${ className ?? '' }`.trim() } { ...rest }>
+        // A named region, and no `role="grid"` : see the same refusal in the time
+        // grid. Rows are groups ; what is focusable inside them says what it is.
+        <div
+            className = { `${ SCHEDULER_TIMELINE } ${ className ?? '' }`.trim() }
+            // Name and role together, or neither : see the time grid.
+            { ...( ariaLabel ? { 'aria-label' : ariaLabel , role : 'region' } : {} ) }
+            { ...rest }
+        >
 
             <div ref={ bodyRef } className={ SCHEDULER_TIMELINE_BODY }>
 
@@ -411,7 +447,9 @@ const SchedulerTimeline =
                         {/* The ruler *is* the axis : its inline start is the zero
                             every row measures from, and every track below shares
                             that edge by construction. */}
-                        <div ref={ axisRef } className="relative h-7" style={{ width : scale.size }}>
+                        {/* A row of hours or of dates, and every block already says
+                            its own : read out, the ruler is a wall of numbers. */}
+                        <div ref={ axisRef } aria-hidden="true" className="relative h-7" style={{ width : scale.size }}>
                             { ticks.map( tick => (
                                 <span
                                     key       = { tick.key }
@@ -442,15 +480,23 @@ const SchedulerTimeline =
                             } ;
 
                             return (
-                                <div key={ resource.id } className={ SCHEDULER_TIMELINE_ROW } style={{ height : lanes * rowHeight }}>
+                                // biome-ignore lint/a11y/useSemanticElements: a `<fieldset>` is a form control ; this is a named group of blocks
+                                <div
+                                    key        = { resource.id }
+                                    aria-label = { resource.name }
+                                    className  = { SCHEDULER_TIMELINE_ROW }
+                                    role       = "group"
+                                    style      = {{ height : lanes * rowHeight }}
+                                >
 
                                     <div className={ SCHEDULER_TIMELINE_RESOURCE }>
                                         { renderResource ? renderResource( resource ) : <span className="truncate text-sm font-medium">{ resource.name }</span> }
                                     </div>
 
-                                    {/* The keyboard answer to « create » is a command, not a focusable
-                                        row — see the same refusal in the time grid. */}
-                                    {/* biome-ignore lint/a11y/noStaticElementInteractions: pointer affordance only ; the keyboard path arrives with the finishing lot */}
+                                    {/* The keyboard answer to « create » is a command in the
+                                        toolbar, not a focusable row — see the same refusal in
+                                        the time grid. */}
+                                    {/* biome-ignore lint/a11y/noStaticElementInteractions: pointer affordance only ; the keyboard path is the toolbar's create command */}
                                     {/* biome-ignore lint/a11y/useKeyWithClickEvents: same — a row is not the right control to focus */}
                                     <div
                                         ref           = { drag.laneRef( index ) }
@@ -502,6 +548,7 @@ const SchedulerTimeline =
 
                                         { drag.preview?.lane === index && drag.preview.mode === CREATE && (
                                             <div
+                                                aria-hidden = "true"
                                                 className = { SCHEDULER_TIMELINE_DRAFT }
                                                 style     = {{ insetInlineStart : drag.preview.offset , width : Math.max( 8 , drag.preview.size ) }}
                                             >
@@ -516,7 +563,7 @@ const SchedulerTimeline =
                         } ) }
 
                         { showNow && (
-                            <div className={ SCHEDULER_TIMELINE_NOW } style={{ insetInlineStart : nowOffset }} />
+                            <div aria-hidden="true" className={ SCHEDULER_TIMELINE_NOW } style={{ insetInlineStart : nowOffset }} />
                         ) }
 
                     </div>

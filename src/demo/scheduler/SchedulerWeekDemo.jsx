@@ -39,7 +39,7 @@ const stamp = value => ( value === null || value === undefined ? '—' : dayjs( 
  */
 const SchedulerWeekDemo = ( { path = 'demo.scheduler.schedulerWeek' } ) =>
 {
-    const { day , description , move , narrow , overlap , title , touch , week , zoom } = useI18n( path ) ;
+    const { day , description , keyboard , move , narrow , overlap , title , touch , week , zoom } = useI18n( path ) ;
 
     const [ picked , setPicked ] = useState( null ) ;
 
@@ -213,6 +213,42 @@ const SchedulerWeekDemo = ( { path = 'demo.scheduler.schedulerWeek' } ) =>
                         </div>
                     ) ) }
                 </div>
+            </section>
+
+            <Divider />
+
+            <section className="flex flex-col gap-3">
+                <h3 className="text-xl font-semibold">{ keyboard?.title }</h3>
+                <p className="text-sm text-base-content/60">{ keyboard?.description }</p>
+
+                {/* No grid of its own : the keys are exercised on the one above,
+                    where the three gestures already are. A second grid would be a
+                    second place for a defect to hide. */}
+                <div className="rounded-box bg-base-100 p-2 sm:p-4">
+                    <table className="table table-sm">
+                        <caption className="pb-2 text-start text-sm font-semibold">{ keyboard?.keys }</caption>
+                        <tbody>
+                            { [
+                                { keys : [ '↑' , '↓' ] , label : keyboard?.move } ,
+                                { keys : [ '←' , '→' ] , label : keyboard?.lane } ,
+                                { keys : [ 'Maj' , '↑' , '↓' ] , label : keyboard?.resize } ,
+                                { keys : [ 'Enter' ] , label : keyboard?.commit } ,
+                                { keys : [ 'Esc' ] , label : keyboard?.revert } ,
+                            ].map( row => (
+                                <tr key={ row.label }>
+                                    <td className="w-40 whitespace-nowrap">
+                                        { row.keys.map( key => <kbd key={ key } className="kbd kbd-sm me-1">{ key }</kbd> ) }
+                                    </td>
+                                    <td className="text-sm text-base-content/70">{ row.label }</td>
+                                </tr>
+                            ) ) }
+                        </tbody>
+                    </table>
+                </div>
+
+                <p className="text-sm text-base-content/60">{ keyboard?.adjust }</p>
+                <p className="text-sm text-base-content/60">{ keyboard?.announce }</p>
+                <p className="text-sm text-base-content/60">{ keyboard?.refusal }</p>
             </section>
 
             <Divider />

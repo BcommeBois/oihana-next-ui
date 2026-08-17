@@ -1,6 +1,11 @@
 'use client' ;
 
+import useI18n from '../../contexts/locale/useI18n' ;
+import useLang from '../../contexts/lang/useLang' ;
+
 import dayjs from '../../helpers/date/configureDayjs' ;
+
+import { describeEvent } from '../../helpers/schedule/describeEvent' ;
 
 import { getSchedulerChipClasses } from '../../themes/components/scheduler' ;
 
@@ -24,6 +29,7 @@ import { getSchedulerChipClasses } from '../../themes/components/scheduler' ;
  * @param {boolean} [props.continuesBefore=false] - The event started before that row.
  * @param {import('../../helpers/schedule/normalizeEvent').ScheduleEvent} props.event - The record to draw.
  * @param {(event: Object) => void} [props.onSelect] - Called with the record when the chip is activated.
+ * @param {string} [props.path='components.scheduler'] - i18n path the labels are read from.
  * @param {'sm'|'md'} [props.size='sm'] - `sm` for a month cell, `md` for a list — the day popover, where the cell's size is simply too small to read.
  * @param {boolean} [props.showTime=true] - Prefix the title with the start time. Ignored for an all-day event, and by a bar continuing from the previous row — where the time shown would not be the one the event starts at.
  */
@@ -34,11 +40,15 @@ const SchedulerEvent =
     continuesBefore = false ,
     event ,
     onSelect ,
+    path = 'components.scheduler' ,
     size = 'sm' ,
     showTime = true ,
     ...rest
 }) =>
 {
+    const { lang } = useLang() ;
+    const labels   = useI18n( path ) ;
+
     if ( !event )
     {
         return null ;
@@ -82,6 +92,10 @@ const SchedulerEvent =
     return (
         <button
             type      = "button"
+            // A chip prints a title and, when it fits, an hour. Read out, that is
+            // half an event : the day and the end are what a bar crossing a week
+            // is actually about.
+            aria-label = { describeEvent( event , { labels , lang , segment : { continuesAfter , continuesBefore , end : event.end , start : event.start } } ) }
             className = { chipClassName }
             style     = { style }
             onClick   = { () => onSelect( event ) }

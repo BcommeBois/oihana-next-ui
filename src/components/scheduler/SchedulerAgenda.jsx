@@ -7,7 +7,8 @@ import useLang from '../../contexts/lang/useLang' ;
 
 import dayjs from '../../helpers/date/configureDayjs' ;
 
-import { expandToDays } from '../../helpers/schedule/expandToDays' ;
+import { describeEvent } from '../../helpers/schedule/describeEvent' ;
+import { expandToDays }  from '../../helpers/schedule/expandToDays' ;
 
 import
 {
@@ -201,6 +202,11 @@ const SchedulerAgenda =
                                     ? (
                                         <button
                                             type      = "button"
+                                            // The hour lives in the gutter beside
+                                            // the card, so the button alone says
+                                            // nothing about when — which is most of
+                                            // what an agenda row is.
+                                            aria-label = { describeEvent( event , { labels , lang , segment } ) }
                                             className = { eventClassName }
                                             style     = { style }
                                             onClick   = { () => onEventClick( event ) }

@@ -2,13 +2,18 @@
 
 import { useState } from 'react' ;
 
+import useI18n from '../../contexts/locale/useI18n' ;
+import useLang from '../../contexts/lang/useLang' ;
+
 import dayjs from '../../helpers/date/configureDayjs' ;
 
 import useScheduler from '../../hooks/useScheduler' ;
 
 import { AGENDA , DAY , MONTH , TIMELINE , WEEK } from '../../helpers/schedule/getViewWindow' ;
+import { describeSpan , fill } from '../../helpers/schedule/describeEvent' ;
+import { formatPeriod } from '../../helpers/schedule/formatPeriod' ;
 
-import { getSchedulerClasses } from '../../themes/components/scheduler' ;
+import { SCHEDULER_LIVE , getSchedulerClasses } from '../../themes/components/scheduler' ;
 
 import SchedulerAgenda     from './SchedulerAgenda' ;
 import SchedulerEventPanel from './SchedulerEventPanel' ;
@@ -254,6 +259,19 @@ const Scheduler =
     const mayResize = resizable ?? interactive ;
     const panel     = details   ?? interactive ;
 
+    const { lang } = useLang() ;
+    const labels   = useI18n( path ) ;
+
+    /**
+     * What a screen reader hears, and a screen shows nothing of.
+     *
+     * A moved block is an answer to whoever can look at it. The focus has not
+     * gone anywhere, so nothing is announced on its own — and an `aria-label`
+     * that changes under a focus already there is not reliably read either. So
+     * every committed change, and every keyboard step, is written here.
+     */
+    const [ message , setMessage ] = useState( '' ) ;
+
     const scheduler = useScheduler
     ({
         allDayEndInclusive ,
@@ -285,6 +303,41 @@ const Scheduler =
         view ,
         weekStartsOn ,
     }) ;
+
+    /**
+     * Writes one of the locale's sentences into the live region.
+     *
+     * @param {string} verb - `moved` | `resized` | `created` | `deleted`.
+     * @param {string} title - What was acted on.
+     * @param {Object} [span] - Where it landed, when that is the news.
+     */
+    const announce = ( verb , title , span ) =>
+    {
+        if ( !title )
+        {
+            return ;
+        }
+
+        setMessage( fill( labels?.announce?.[ verb ] , {
+            event : title ,
+            when  : span ? describeSpan( span , { labels , lang } ) : '' ,
+        }) ) ;
+    } ;
+
+    // The gestures report through these rather than straight into the hook : a
+    // change is announced **once it has been made**, whichever of the pointer,
+    // the keyboard or the form made it.
+    const moveEvent = ( event , to ) =>
+    {
+        scheduler.moveEvent( event , to ) ;
+        announce( 'moved' , event?.title , { allDay : event?.allDay , end : to.end , start : to.start }) ;
+    } ;
+
+    const resizeEvent = ( event , to ) =>
+    {
+        scheduler.resizeEvent( event , to ) ;
+        announce( 'resized' , event?.title , { allDay : event?.allDay , end : to.end , start : to.start }) ;
+    } ;
 
     // Two questions, one answer for the views : the application's own rule, and
     // the one the core never gives up — an occurrence of a recurring rule cannot
@@ -372,8 +425,16 @@ const Scheduler =
         createEvent({ end : at.add( createDuration , 'minute' ).valueOf() , start : at.valueOf() }) ;
     } ;
 
+    // The same sentence the toolbar prints, handed to the view so its region has
+    // a name — « the week of 10 August » rather than « region ».
+    const period = formatPeriod( scheduler.window , { date : scheduler.date , lang , view : scheduler.view } ) ;
+
     return (
         <div className={ getSchedulerClasses({ className }) } { ...rest }>
+
+            {/* Never seen, and the only thing a reader who cannot look at the
+                grid is told when something moves on it. */}
+            <p aria-live="polite" className={ SCHEDULER_LIVE }>{ message }</p>
 
             { toolbar && (
                 <SchedulerToolbar
@@ -395,6 +456,7 @@ const Scheduler =
             { scheduler.view === TIMELINE
                 ? (
                     <SchedulerTimeline
+                        ariaLabel        = { period }
                         creatable        = { mayCreate }
                         createDuration   = { createDuration }
                         dayEnd           = { dayEnd }
@@ -405,10 +467,11 @@ const Scheduler =
                         isEventResizable = { canStretch }
                         movable          = { mayMove }
                         nowIndicator     = { nowIndicator }
+                        onAnnounce       = { setMessage }
                         onEventClick     = { openDetails }
                         onEventCreate    = { createEvent }
-                        onEventMove      = { scheduler.moveEvent }
-                        onEventResize    = { scheduler.resizeEvent }
+                        onEventMove      = { moveEvent }
+                        onEventResize    = { resizeEvent }
                         path             = { path }
                         pixelsPerDay     = { pixelsPerDay }
                         pixelsPerHour    = { pixelsPerHour }
@@ -429,6 +492,7 @@ const Scheduler =
                 : ( scheduler.view === DAY || scheduler.view === WEEK )
                 ? (
                     <SchedulerTimeGrid
+                        ariaLabel        = { period }
                         creatable        = { mayCreate }
                         createDuration   = { createDuration }
                         dayEnd           = { dayEnd }
@@ -439,10 +503,11 @@ const Scheduler =
                         isEventResizable = { canStretch }
                         movable          = { mayMove }
                         nowIndicator     = { nowIndicator }
+                        onAnnounce       = { setMessage }
                         onEventClick     = { openDetails }
                         onEventCreate    = { createEvent }
-                        onEventMove      = { scheduler.moveEvent }
-                        onEventResize    = { scheduler.resizeEvent }
+                        onEventMove      = { moveEvent }
+                        onEventResize    = { resizeEvent }
                         path             = { path }
                         pixelsPerHour    = { pixelsPerHour }
                         renderEvent      = { renderEvent }
@@ -493,8 +558,26 @@ const Scheduler =
                     editable    = { shown ? scheduler.permissionsOf( shown ).edit : true }
                     event       = { shown }
                     onClose     = { closePanel }
-                    onCommit    = { ( patch , { isNew } ) => ( isNew ? scheduler.addEvent( patch ) : scheduler.updateEvent( shown , patch ) ) }
-                    onDelete    = { record => scheduler.removeEvent( record ) }
+                    onCommit    = { ( patch , { isNew } ) =>
+                    {
+                        if ( !isNew )
+                        {
+                            scheduler.updateEvent( shown , patch ) ;
+                            return ;
+                        }
+
+                        scheduler.addEvent( patch ) ;
+
+                        // The new record does not exist yet — its identity is the
+                        // application's to give — so the name comes from the patch,
+                        // spelled the way the patch was.
+                        announce( 'created' , patch.name ?? patch.title ) ;
+                    } }
+                    onDelete    = { ( record ) =>
+                    {
+                        scheduler.removeEvent( record ) ;
+                        announce( 'deleted' , record?.title ) ;
+                    } }
                     path        = { path }
                     range       = { drawn }
                     schema      = { schema }

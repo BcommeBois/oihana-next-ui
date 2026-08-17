@@ -11,6 +11,7 @@ import dayjs from '../../helpers/date/configureDayjs' ;
 
 import { atTimeOfDay }     from '../../helpers/schedule/parseInstant' ;
 import { createTimeScale } from '../../helpers/schedule/timeScale' ;
+import { describeEvent , describeSpan } from '../../helpers/schedule/describeEvent' ;
 import { expandToDays }    from '../../helpers/schedule/expandToDays' ;
 import { layoutBars }      from '../../helpers/schedule/layoutBars' ;
 import { layoutOverlaps }  from '../../helpers/schedule/layoutOverlaps' ;
@@ -100,9 +101,23 @@ const DAY_MINUTES = 24 * 60 ;
  * on touch, both belong to the editor. The all-day band stays read-only whatever
  * the device — it moves by the day, which is a different projection.
  *
+ * ### What a keyboard can do here, and what it is told
+ *
+ * A block is a button, so it is reached by tabbing and opened by `Enter`. On one
+ * that may be moved, the arrows shift it by a snap step, `Maj` and an arrow pull
+ * its closing edge, the arrows across the axis change its day — and **nothing is
+ * written before `Enter`**, `Escape` putting it back. Each step is announced,
+ * since an arrow that moves something invisible has told the reader nothing.
+ *
+ * The grid claims **no `role="grid"`** : that role promises navigation from cell
+ * to cell, and a promise an interface does not keep is worse for a screen reader
+ * than no promise at all. It is a labelled region of labelled groups holding
+ * buttons that say what they are.
+ *
  * @module components/scheduler/SchedulerTimeGrid
  *
  * @param {Object} props
+ * @param {string} [props.ariaLabel] - Names the region — the period being looked at. `Scheduler` passes the one its toolbar prints.
  * @param {string} [props.className] - Extra classes for the grid.
  * @param {boolean} [props.creatable=false] - Let a range be drawn, or clicked, on an empty column.
  * @param {number} [props.createDuration=30] - Minutes a plain click on an empty column stands for.
@@ -115,6 +130,7 @@ const DAY_MINUTES = 24 * 60 ;
  * @param {number} [props.maxAllDayRails=2] - Rails the all-day band shows before it counts instead ; a week of leave should not push the hours off screen.
  * @param {boolean} [props.movable=false] - Let a block be dragged to another time.
  * @param {boolean} [props.nowIndicator=true] - Draw the line across today.
+ * @param {(text: string) => void} [props.onAnnounce] - Called with what a screen reader should hear — a keyboard step, an abandoned adjustment. `Scheduler` wires it to its live region.
  * @param {(event: Object) => void} [props.onEventClick] - Called with a record, when an event is activated.
  * @param {(range: Object) => void} [props.onEventCreate] - Called with `{ start , end }` when a range is drawn or a slot clicked.
  * @param {(event: Object, to: Object) => void} [props.onEventMove] - Called once on release, with `{ start , end }`.
@@ -132,6 +148,7 @@ const DAY_MINUTES = 24 * 60 ;
  */
 const SchedulerTimeGrid =
 ({
+    ariaLabel ,
     className ,
     creatable = false ,
     createDuration = 30 ,
@@ -144,6 +161,7 @@ const SchedulerTimeGrid =
     maxAllDayRails = 2 ,
     movable = false ,
     nowIndicator = true ,
+    onAnnounce ,
     onEventClick ,
     onEventCreate ,
     onEventMove ,
@@ -221,6 +239,13 @@ const SchedulerTimeGrid =
         onMove   : onEventMove ,
         onResize : onEventResize ,
         scale ,
+
+        // A step of an arrow key moves a rectangle nobody may be able to see. The
+        // span is what it changed, so the span is what is said — the whole
+        // sentence would repeat the title on every press.
+        onAdjust : ( next ) => onAnnounce?.( next === null
+            ? labels?.announce?.reverted
+            : describeSpan( { end : next.segmentEnd , start : next.segmentStart } , { labels , lang } ) ) ,
     }) ;
 
     // Twenty-four hour marks, plus the half-hour rules when they are asked for.
@@ -309,6 +334,22 @@ const SchedulerTimeGrid =
             ? ( look ) => drag.start( look , { ...geometry , mode : MOVE } )
             : undefined ;
 
+        // The arrows only belong to a block something may actually be done to :
+        // anywhere else the key goes on scrolling the grid, which is what it is
+        // for.
+        const onKeyDown = ( draggable || stretchy ) && !dragging
+            ? ( look ) =>
+            {
+                if ( drag.adjust( look , { ...geometry , movable : draggable , resizable : stretchy } ) )
+                {
+                    // Taken : the page must not scroll under a block that just
+                    // moved, and `Enter` must not also open the panel.
+                    look.preventDefault() ;
+                    look.stopPropagation() ;
+                }
+            }
+            : undefined ;
+
         /** A strip along one edge. It takes the press before the block does. */
         const handle = ( mode ) => (
             <span
@@ -335,9 +376,12 @@ const SchedulerTimeGrid =
                 // grid's, so they stay on the wrapper it already had — handles
                 // included, since asking for `resizable` should not mean writing
                 // one's own edges.
+                //
+                // biome-ignore lint/a11y/noStaticElementInteractions: a positioning shell around someone else's markup ; giving it a role would rename whatever they put inside
                 <div
                     key           = { key }
                     className     = { `absolute ${ states }`.replace( /\s+/g , ' ' ).trim() }
+                    onKeyDown     = { onKeyDown }
                     onPointerDown = { onPointerDown }
                     style         = { position }
                 >
@@ -376,10 +420,20 @@ const SchedulerTimeGrid =
                 color         = { tooltipColor }
                 tip           = { hint( event , segment ) }
                 type          = "button"
+                // What is printed is a title and a start ; what is read out has
+                // to be the whole thing — the end, the day and a cancellation
+                // included. Same sentence for both, so they cannot diverge.
+                aria-label    = { describeEvent( event , { labels , lang , segment } ) }
+                // The preview is an echo of the block being adjusted : the reader
+                // is already on the original, and a second stop announcing the
+                // same event twice is noise.
+                aria-hidden   = { dragging ? 'true' : undefined }
                 className     = { eventClassName }
                 onClick       = { onEventClick ? () => onEventClick( event ) : undefined }
+                onKeyDown     = { onKeyDown }
                 onPointerDown = { onPointerDown }
                 style         = {{ ...style , ...position }}
+                tabIndex      = { dragging ? -1 : undefined }
             >
                 { pullStart && handle( RESIZE_START ) }
                 { pullEnd && handle( RESIZE_END ) }
@@ -415,7 +469,17 @@ const SchedulerTimeGrid =
     const showNow   = nowIndicator && nowColumn !== -1 && nowOffset >= 0 && nowOffset <= scale.size ;
 
     return (
-        <div className={ `${ SCHEDULER_TIMEGRID } ${ className ?? '' }`.trim() } { ...rest }>
+        // A named region rather than a grid : `role="grid"` promises navigation
+        // from cell to cell, and a promise an interface does not keep is worse
+        // than none. A landmark says « the week of 10 August is here », which is
+        // what a reader arriving on the page actually needs.
+        <div
+            className = { `${ SCHEDULER_TIMEGRID } ${ className ?? '' }`.trim() }
+            // The two travel together or not at all : a landmark with no name is
+            // one more « region » in a list of them, which helps nobody.
+            { ...( ariaLabel ? { 'aria-label' : ariaLabel , role : 'region' } : {} ) }
+            { ...rest }
+        >
 
             <div className={ SCHEDULER_TIMEGRID_HEAD }>
                 <div className="w-14 shrink-0 border-e border-base-300" />
@@ -448,6 +512,7 @@ const SchedulerTimeGrid =
                                 continuesAfter  = { bar.continuesAfter }
                                 continuesBefore = { bar.continuesBefore }
                                 event           = { bar.event }
+                                path            = { path }
                                 onSelect        = { onEventClick }
                                 style           = {{ gridColumn : `${ bar.column + 1 } / span ${ bar.span }` , gridRow : bar.rail + 1 }}
                             />
@@ -458,7 +523,10 @@ const SchedulerTimeGrid =
 
             <div ref={ bodyRef } className={ SCHEDULER_TIMEGRID_BODY } style={{ height }}>
 
-                <div className={ SCHEDULER_TIMEGRID_GUTTER } style={{ height : scale.size }}>
+                {/* Twenty-four numbers down the side, and every block already says
+                    its own hours : read out, this is a wall between the reader and
+                    what they came for. */}
+                <div aria-hidden="true" className={ SCHEDULER_TIMEGRID_GUTTER } style={{ height : scale.size }}>
                     { marks.filter( mark => mark.hour ).map( mark => (
                         <span key={ mark.minute } className={ SCHEDULER_TIMEGRID_HOUR } style={{ top : mark.offset }}>
                             { dayjs().startOf( 'day' ).add( mark.minute , 'minute' ).format( 'HH:mm' ) }
@@ -495,14 +563,18 @@ const SchedulerTimeGrid =
                         return (
                             // The keyboard answer to « create » is not a focusable
                             // column — seven tab stops a week that would have to
-                            // invent an hour out of nowhere. It is a command, and it
-                            // arrives with the editor. Claiming it here would be a
-                            // lie the TR3 keyboard attempt already taught us to avoid.
-                            // biome-ignore lint/a11y/noStaticElementInteractions: pointer affordance only ; the keyboard path is a command, at lot 9
+                            // invent an hour out of nowhere. It is a **command**,
+                            // and it lives in the toolbar. Claiming it here would be
+                            // the lie the TR3 keyboard attempt taught us to avoid.
                             // biome-ignore lint/a11y/useKeyWithClickEvents: same — a column is not the right control to focus
+                            // biome-ignore lint/a11y/useSemanticElements: a `<fieldset>` is a form control with its own layout ; this is a named group of blocks
                             <div
                                 key           = { day }
                                 ref           = { drag.laneRef( index ) }
+                                // Named, so a reader landing on a block knows which
+                                // day they are in without counting columns.
+                                aria-label    = { dayjs( day ).locale( lang ).format( 'dddd LL' ) }
+                                role          = "group"
                                 className     = { `${ SCHEDULER_TIMEGRID_COLUMN } ${ weekend ? SCHEDULER_TIMEGRID_COLUMN_WEEKEND : '' } ${ creatable ? SCHEDULER_TIMEGRID_COLUMN_CREATABLE : '' }`.trim() }
                                 onPointerDown = { creatable ? onEmpty( look => drag.start( look , { lane : index , mode : CREATE } ) ) : undefined }
                                 // A click is a range of its own : the threshold has
@@ -560,6 +632,7 @@ const SchedulerTimeGrid =
 
                                 { drag.preview?.lane === index && drag.preview.mode === CREATE && (
                                     <div
+                                        aria-hidden = "true"
                                         className = { SCHEDULER_TIMEGRID_DRAFT }
                                         style     = {{ height : drag.preview.size , insetInline : 0 , top : drag.preview.offset }}
                                     >
@@ -570,7 +643,7 @@ const SchedulerTimeGrid =
                                 ) }
 
                                 { showNow && index === nowColumn && (
-                                    <div className={ SCHEDULER_NOW } style={{ top : nowOffset }}>
+                                    <div aria-hidden="true" className={ SCHEDULER_NOW } style={{ top : nowOffset }}>
                                         <span className={ SCHEDULER_NOW_DOT } />
                                     </div>
                                 ) }

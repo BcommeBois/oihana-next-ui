@@ -10,6 +10,7 @@ import useDropdownPosition from '../../themes/hooks/useDropdownPosition' ;
 import dayjs from '../../helpers/date/configureDayjs' ;
 
 import { getWeekdayLabels } from '../../helpers/date/getMonthMatrix' ;
+import { describeDay } from '../../helpers/schedule/describeEvent' ;
 import { eventsOfDay , layoutBars } from '../../helpers/schedule/layoutBars' ;
 
 import
@@ -198,6 +199,10 @@ const SchedulerMonth =
                                 <button
                                     key       = { day }
                                     type      = "button"
+                                    // A cell prints a number. « 12 » is not a date,
+                                    // and says nothing of what is inside — which is
+                                    // the only reason one would open it.
+                                    aria-label = { describeDay( day , dots.length , { labels , lang } ) }
                                     className = { getMonthCellClasses({ outside , today : day === today }) }
                                     onClick   = { look => open( look.currentTarget , day ) }
                                 >
@@ -232,6 +237,7 @@ const SchedulerMonth =
                                 continuesAfter  = { bar.continuesAfter }
                                 continuesBefore = { bar.continuesBefore }
                                 event           = { bar.event }
+                                path            = { path }
                                 onSelect        = { onEventClick }
                                 style           = {{ gridColumn : `${ bar.column + 1 } / span ${ bar.span }` , gridRow : bar.rail + 1 }}
                             />
@@ -269,6 +275,7 @@ const SchedulerMonth =
                                                 <SchedulerEvent
                                                     className = "w-full"
                                                     event     = { event }
+                                                    path      = { path }
                                                     onSelect  = { onEventClick }
                                                     size      = "md"
                                                 />

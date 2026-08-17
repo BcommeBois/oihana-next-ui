@@ -31,6 +31,19 @@ const scheduler =
         confirmDelete : 'Confirmer ?' ,
         previously : 'Précédemment prévu le' ,
         linkedSpan : 'Les dates appartiennent à ce que cet objet réserve : les changer ici les changerait pour tout le monde.' ,
+        a11y :
+        {
+            event  : 'événement' ,
+            events : 'événements' ,
+        } ,
+        announce :
+        {
+            created  : '{event} créé' ,
+            deleted  : '{event} supprimé' ,
+            moved    : '{event} déplacé — {when}' ,
+            resized  : '{event} redimensionné — {when}' ,
+            reverted : 'Remis en place.' ,
+        } ,
         errors :
         {
             end      : 'La fin doit suivre le début.' ,
@@ -88,6 +101,19 @@ const scheduler =
         confirmDelete : 'Confirm?' ,
         previously : 'Previously scheduled for' ,
         linkedSpan : 'The dates belong to what this object reserves: changing them here would change them for everyone.' ,
+        a11y :
+        {
+            event  : 'event' ,
+            events : 'events' ,
+        } ,
+        announce :
+        {
+            created  : '{event} created' ,
+            deleted  : '{event} deleted' ,
+            moved    : '{event} moved to {when}' ,
+            resized  : '{event} resized — {when}' ,
+            reverted : 'Put back.' ,
+        } ,
         errors :
         {
             end      : 'The end must follow the start.' ,

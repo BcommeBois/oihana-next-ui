@@ -39,6 +39,21 @@ const schedulerWeek =
             description : "Le zoom et le pas de la grille sont deux réglages distincts — comme le sont le pas de la grille et l'aimant du glisser. Ici : 32 px/h avec un trait à l'heure, puis 64 px/h avec un trait au quart d'heure." ,
         } ,
 
+        keyboard :
+        {
+            title       : 'Au clavier' ,
+            description : "Tabuler amène sur chaque bloc — ce sont des boutons depuis le début, ils ont enfin un anneau de focus et une étiquette qui dit l'événement en entier : le titre, le jour, les deux bornes, et l'état quand il y en a un. Entrée ouvre la fiche." ,
+            adjust      : "Sur un bloc déplaçable, les flèches font le reste. Rien n'est écrit avant Entrée : les flèches construisent un aperçu — l'original reste en place, grisé — et Échap le remet. Une touche qui écrirait ferait dix enregistrements pour traverser une matinée." ,
+            announce    : "Chaque pas est annoncé dans une région live invisible, ainsi que chaque changement commis, y compris à la souris. Sans ça, une flèche déplace quelque chose que personne n'entend bouger." ,
+            refusal     : "Ce qui n'est pas fait est dit : pas de navigation aux flèches d'un bloc à l'autre ni d'une case de mois à l'autre. Ce serait le contrat de role=\"grid\", que le composant ne revendique pas — une promesse non tenue vaut moins que pas de promesse." ,
+            keys        : 'Les touches' ,
+            move        : "Déplacer d'un pas (snapMinutes)" ,
+            lane        : 'Changer de jour' ,
+            resize      : 'Tirer le bord de fin' ,
+            commit      : 'Valider' ,
+            revert      : 'Remettre en place' ,
+        } ,
+
         touch :
         {
             title       : 'Au doigt — interactive' ,
@@ -94,6 +109,21 @@ const schedulerWeek =
         {
             title       : 'pixelsPerHour and slotDuration' ,
             description : 'The zoom and the grid step are two settings, as the grid step and the drag snap are. Here: 32 px/h ruled at the hour, then 64 px/h ruled at the quarter.' ,
+        } ,
+
+        keyboard :
+        {
+            title       : 'On a keyboard' ,
+            description : 'Tabbing reaches every block — they have been buttons all along, and they finally have a focus ring and a label saying the whole event: the title, the day, both bounds, and the status when there is one. Enter opens the panel.' ,
+            adjust      : 'On a movable block the arrows do the rest. Nothing is written before Enter: the arrows build a preview — the original stays where it is, greyed — and Escape puts it back. A key that committed would make ten writes out of crossing a morning.' ,
+            announce    : 'Every step is announced in an invisible live region, and so is every committed change, the mouse ones included. Without it, an arrow moves something nobody hears move.' ,
+            refusal     : 'What is not done is said: no arrow navigation from block to block, nor from month cell to month cell. That is the contract of role="grid", which this component does not claim — a promise not kept is worth less than no promise.' ,
+            keys        : 'The keys' ,
+            move        : 'Shift by one step (snapMinutes)' ,
+            lane        : 'Change day' ,
+            resize      : 'Pull the closing edge' ,
+            commit      : 'Commit' ,
+            revert      : 'Put back' ,
         } ,
 
         touch :

@@ -90,17 +90,26 @@ export const HORIZONTAL = 'horizontal' ;
  * @param {number} [props.lanes] - How many rows the cross axis holds. Horizontal only.
  * @param {'vertical'|'horizontal'} [props.orientation='vertical'] - Which way time runs. Vertical, the cross axis names days ; horizontal, it names resources.
  * @param {number} [props.minDuration] - Shortest span a gesture may produce. Defaults to one snap step.
+ * @param {Function} [props.onAdjust] - `( preview|null ) => void`, called on every keyboard step and with `null` when one is abandoned. Where an announcement belongs.
  * @param {Function} [props.onCreate] - `( { start , end , lane } ) => void`, called once on release.
  * @param {Function} [props.onMove] - `( event , { start , end , lane } ) => void`, called once on release.
  * @param {Function} [props.onResize] - `( event , { start , end , lane } ) => void`, called once on release.
  * @param {import('../helpers/schedule/timeScale').TimeScale} props.scale - The conversion in force.
  *
- * @returns {{ isDragging: boolean, laneRef: Function, preview: Object|null, slotAt: Function, start: Function }}
+ * ### The keyboard drives the same preview
+ *
+ * `adjust( keyEvent , payload )` is the arrow-key half : the same span, the same
+ * clamps, the same commit, written through the same `preview`. A view therefore
+ * draws one thing and never learns which of the two put it there — and the two
+ * cannot drift apart, which two previews would have done by the second fix.
+ *
+ * @returns {{ adjust: Function, isDragging: boolean, laneRef: Function, preview: Object|null, slotAt: Function, start: Function }}
  *          `laneRef( index )` is the ref of a lane — a day column, or a resource
- *          row ; `start( pointerEvent , payload )` opens a gesture ; `preview` is
- *          where the drag is right now, in `offset` / `size` along the axis and
- *          `lead` / `span` across the lane ; `slotAt` answers what a plain click
- *          landed on.
+ *          row ; `start( pointerEvent , payload )` opens a gesture ;
+ *          `adjust( keyEvent , payload )` is its keyboard equivalent and answers
+ *          whether it took the key ; `preview` is where the drag is right now, in
+ *          `offset` / `size` along the axis and `lead` / `span` across the lane ;
+ *          `slotAt` answers what a plain click landed on.
  *
  * @example
  * ```jsx
@@ -113,7 +122,7 @@ export const HORIZONTAL = 'horizontal' ;
  */
 const useTimeDrag = ( props = {} ) =>
 {
-    const { axisRef , bodyRef , createDuration , days , lanes , minDuration , onCreate , onMove , onResize , orientation = VERTICAL , scale } = props ;
+    const { axisRef , bodyRef , createDuration , days , lanes , minDuration , onAdjust , onCreate , onMove , onResize , orientation = VERTICAL , scale } = props ;
 
     // Which pointer coordinate carries time, and which one names a lane. Every
     // difference between a time grid and a resource timeline reduces to this.
@@ -124,6 +133,11 @@ const useTimeDrag = ( props = {} ) =>
     const count = across ? ( lanes ?? 0 ) : ( days?.length ?? 0 ) ;
 
     const [ preview , setPreview ] = useState( null ) ;
+
+    // Where the keyboard has got to. It has the same shape as a pointer preview
+    // and is read through the same property, so a view draws one thing and never
+    // learns which of the two put it there.
+    const [ pending , setPending ] = useState( null ) ;
 
     // The last lane the pointer was over, kept so a gesture wandering outside the
     // grid holds it instead of snapping back to the first one.
@@ -183,6 +197,44 @@ const useTimeDrag = ( props = {} ) =>
 
     /** What a plain click on an empty lane landed on. */
     const slotAt = useCallback( ( along , lane ) => instantAt( along , lane , true ) , [ instantAt ] ) ;
+
+    /**
+     * Turns a decided span into the preview a view draws.
+     *
+     * `offset` / `size` run **along** the time axis, `lead` / `span` across the
+     * lane as fractions of its thickness. Naming them after neither `top` nor
+     * `left` is what lets a grid and a timeline read the same preview.
+     *
+     * Shared by the pointer and the keyboard on purpose : two builders would be
+     * two placements to keep in step, and a preview that is not exactly what will
+     * be committed is the class of bug nobody reports and everybody feels.
+     *
+     * @param {Object} landing - `{ end , event , lane , lead , mode , segmentEnd , segmentStart , span , start }`.
+     * @returns {Object}
+     */
+    const place = useCallback( ( landing ) =>
+    {
+        const { end , event , lane , lead , mode , segmentEnd , segmentStart , span , start } = landing ;
+
+        const head = scale.offsetOf( segmentStart ) ;
+        const tail = scale.offsetOf( segmentEnd - 1 ) ;
+
+        return {
+            end ,
+            event ,
+            id     : event?.id ,
+            lane ,
+            lead   : lead ?? 0 ,
+            mode ,
+            offset : head ,
+            segmentEnd ,
+            segmentStart ,
+            size   : Math.max( 14 , tail - head ) ,
+            span   : span ?? 1 ,
+            start ,
+        } ;
+    }
+    , [ scale ] ) ;
 
     /**
      * Where the gesture would land, given a pointer position.
@@ -287,37 +339,29 @@ const useTimeDrag = ( props = {} ) =>
             }
         }
 
-        const head = scale.offsetOf( segmentStart ) ;
-        const tail = scale.offsetOf( segmentEnd - 1 ) ;
-
         const event = payload.event ;
 
-        // `offset` / `size` run **along** the time axis, `lead` / `span` across
-        // the lane as fractions of its thickness. Naming them after neither `top`
-        // nor `left` is what lets a grid and a timeline read the same preview.
-        return {
-            lane     : index ,
+        return place
+        ({
             // Both edges are reported against the *event*, not against the piece
             // on screen : a gesture on the Wednesday of a three-day event moves
             // that event, and the segment was only ever how it was drawn.
-            end      : mode === CREATE ? segmentEnd
-                     : mode === RESIZE_START ? event.end
-                     : event.end + ( segmentEnd - segment.end ) ,
+            end   : mode === CREATE ? segmentEnd
+                  : mode === RESIZE_START ? event.end
+                  : event.end + ( segmentEnd - segment.end ) ,
             event ,
-            id       : event?.id ,
-            lead     : payload.lead ?? 0 ,
+            lane  : index ,
+            lead  : payload.lead ,
             mode ,
-            offset   : head ,
             segmentEnd ,
             segmentStart ,
-            size     : Math.max( 14 , tail - head ) ,
-            span     : payload.span ?? 1 ,
-            start    : mode === CREATE ? segmentStart
-                     : mode === RESIZE_END ? event.start
-                     : event.start + ( segmentStart - segment.start ) ,
-        } ;
+            span  : payload.span ,
+            start : mode === CREATE ? segmentStart
+                  : mode === RESIZE_END ? event.start
+                  : event.start + ( segmentStart - segment.start ) ,
+        }) ;
     }
-    , [ across , axisRef , clickSpan , count , days , instantAt , minimum , scale ] ) ;
+    , [ across , axisRef , clickSpan , count , days , instantAt , minimum , place , scale ] ) ;
 
     const drag = usePointerDrag
     ({
@@ -363,6 +407,175 @@ const useTimeDrag = ( props = {} ) =>
     }) ;
 
     /**
+     * The keyboard's half of the same gesture.
+     *
+     * Called from a focused block's `onKeyDown`. It answers `true` when it took
+     * the key, so the caller can stop the page from scrolling under it — and
+     * `false` when it did not, which is how `Enter` goes on opening the panel
+     * whenever there is nothing waiting to be committed.
+     *
+     * **Nothing is written before `Enter`.** A key that committed would send one
+     * change per press : crossing a morning would be ten writes, ten round trips
+     * and ten chances for one of them to fail halfway. So arrows build a preview,
+     * `Enter` commits it once and `Escape` drops it — the very contract the drag
+     * already has.
+     *
+     * The arrows follow **the layout, not the indexes** : in a right-to-left
+     * reading the column on the right is the earlier one, and someone looking at
+     * the screen presses towards what they can see.
+     *
+     * @param {React.KeyboardEvent} look - The `keydown`.
+     * @param {Object} payload - `{ event , lane , segment , lead , span , movable , resizable }`.
+     * @returns {boolean} Whether the key was used.
+     */
+    const adjust = useCallback( ( look , payload ) =>
+    {
+        const axis = axisRef?.current ;
+
+        if ( !axis || !payload?.event || !payload?.segment || count === 0 )
+        {
+            return false ;
+        }
+
+        const { event , segment } = payload ;
+
+        // A pending adjustment belongs to one event : focus moving elsewhere
+        // leaves it be rather than letting another block inherit it.
+        const held = pending && pending.id === event.id ? pending : null ;
+
+        if ( look.key === 'Escape' )
+        {
+            if ( !held )
+            {
+                return false ;
+            }
+
+            setPending( null ) ;
+            onAdjust?.( null ) ;
+
+            return true ;
+        }
+
+        if ( look.key === 'Enter' || look.key === ' ' )
+        {
+            if ( !held )
+            {
+                return false ;
+            }
+
+            setPending( null ) ;
+
+            // Same rule as a release : a gesture that ends where it began is not
+            // a change, and reporting it would have an application save what it
+            // already had.
+            if ( held.start !== event.start || held.end !== event.end || held.lane !== payload.lane )
+            {
+                ( held.mode === MOVE ? onMove : onResize )?.( event , { end : held.end , lane : held.lane , start : held.start }) ;
+            }
+
+            return true ;
+        }
+
+        const rtl = getComputedStyle( axis ).direction === 'rtl' ;
+
+        const later   = rtl ? 'ArrowLeft'  : 'ArrowRight' ;
+        const earlier = rtl ? 'ArrowRight' : 'ArrowLeft' ;
+
+        const timeKeys = across ? { [ earlier ] : -1 , [ later ] : 1 } : { ArrowUp : -1 , ArrowDown : 1 } ;
+        const laneKeys = across ? { ArrowUp : -1 , ArrowDown : 1 } : { [ earlier ] : -1 , [ later ] : 1 } ;
+
+        const onTime = timeKeys[ look.key ] ;
+        const onLane = laneKeys[ look.key ] ;
+
+        if ( onTime === undefined && onLane === undefined )
+        {
+            return false ;
+        }
+
+        // Shift stretches, everything else moves — and each answers to its own
+        // permission, exactly as the pointer handles do.
+        const stretching = onTime !== undefined && look.shiftKey ;
+
+        if ( stretching ? !payload.resizable : !payload.movable )
+        {
+            return false ;
+        }
+
+        let lane         = held ? held.lane : payload.lane ;
+        let segmentStart = held ? held.segmentStart : segment.start ;
+        let segmentEnd   = held ? held.segmentEnd : segment.end ;
+
+        if ( onLane !== undefined )
+        {
+            const next = Math.min( Math.max( lane + onLane , 0 ) , count - 1 ) ;
+
+            // Already against the edge : the key is still ours, or the page would
+            // scroll out from under a block that did not move.
+            if ( next === lane )
+            {
+                return true ;
+            }
+
+            // On a grid a lane is a day, so the piece travels with it ; on a
+            // timeline it is a resource, and the hours do not move.
+            if ( !across )
+            {
+                const shift = days[ next ] - days[ lane ] ;
+
+                segmentStart += shift ;
+                segmentEnd   += shift ;
+            }
+
+            lane = next ;
+        }
+        else
+        {
+            const day  = across ? null : days[ lane ] ;
+            const from = scale.timeAt( 0 , day ) ;
+            const to   = scale.timeAt( scale.size , day ) ;
+
+            const delta = onTime * step ;
+
+            if ( stretching )
+            {
+                segmentEnd = Math.min( to , Math.max( segmentEnd + delta , segmentStart + minimum ) ) ;
+            }
+            else
+            {
+                const length = segmentEnd - segmentStart ;
+
+                segmentStart = Math.max( from , Math.min( segmentStart + delta , to - length ) ) ;
+                segmentEnd   = segmentStart + length ;
+            }
+        }
+
+        const startShift = segmentStart - segment.start ;
+        const endShift   = segmentEnd - segment.end ;
+
+        const next = place
+        ({
+            end   : event.end + endShift ,
+            event ,
+            lane ,
+            lead  : payload.lead ,
+            // Which of the two verbs this is, read off the result rather than
+            // declared : both edges travelling together is a move, and anything
+            // else is the closing one being pulled.
+            mode  : startShift === endShift ? MOVE : RESIZE_END ,
+            segmentEnd ,
+            segmentStart ,
+            span  : payload.span ,
+            start : event.start + startShift ,
+        }) ;
+
+        setPending( next ) ;
+        onAdjust?.( next ) ;
+
+        return true ;
+    }
+    , [ across , axisRef , count , days , minimum , onAdjust , onMove , onResize , pending , place , scale , step ] ) ;
+
+    /**
      * Opens a gesture.
      *
      * @param {React.PointerEvent} look - The `pointerdown`.
@@ -376,6 +589,10 @@ const useTimeDrag = ( props = {} ) =>
         {
             return ;
         }
+
+        // A pointer takes over from a keyboard : two previews for one event would
+        // be two answers to « where is this going ».
+        setPending( null ) ;
 
         column.current = payload.lane ?? 0 ;
 
@@ -400,7 +617,9 @@ const useTimeDrag = ( props = {} ) =>
     }
     , [ across , axisRef , drag , instantAt ] ) ;
 
-    return { isDragging : drag.isDragging , laneRef , preview , slotAt , start } ;
+    // One property for two drivers : a view draws where the thing is going, and
+    // never has to know whether a pointer or a keyboard put it there.
+    return { adjust , isDragging : drag.isDragging , laneRef , preview : preview ?? pending , slotAt , start } ;
 } ;
 
 export default useTimeDrag ;
