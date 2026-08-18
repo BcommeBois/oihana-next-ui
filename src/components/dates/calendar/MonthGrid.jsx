@@ -2,6 +2,8 @@ import { useMemo } from 'react' ;
 
 import { getMonthMatrix , getWeekdayLabels } from '../../../helpers/date/getMonthMatrix' ;
 
+import { CALENDAR_WEEK } from '../../../themes/components/calendar' ;
+
 import Header   from './Header' ;
 import Weekdays from './Weekdays' ;
 import Day      from './Day' ;
@@ -56,7 +58,9 @@ const MonthGrid =
     const days     = weeks.flat() ;
 
     return (
-        <div className="flex flex-col gap-1">
+        // `flex-1 min-w-0` so two months share whatever width they are given
+        // instead of the first one taking it and the second overflowing.
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
             <Header
                 month       = { month }
                 lang        = { lang }
@@ -71,7 +75,7 @@ const MonthGrid =
                 onYearClick  = { onYearClick }
             />
             <Weekdays labels={ weekdays } />
-            <div className="grid grid-cols-7 gap-0.5" onMouseLeave={ onLeave }>
+            <div className={ CALENDAR_WEEK } onMouseLeave={ onLeave }>
                 { days.map( ( day ) => (
                     <Day
                         key     = { day.valueOf() }

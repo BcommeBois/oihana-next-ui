@@ -8,7 +8,7 @@ import useBreakpoint from '../../themes/hooks/useBreakpoint' ;
 
 import dayjs from '../../helpers/date/configureDayjs' ;
 
-import getCalendarClasses from '../../themes/components/calendar' ;
+import getCalendarClasses , { CALENDAR_CELL_MAX , CALENDAR_CELL_MIN } from '../../themes/components/calendar' ;
 
 import { getRangeShortcuts , getSingleShortcuts } from '../../helpers/date/shortcuts' ;
 import createDisabledModel from '../../helpers/date/createDisabledModel' ;
@@ -31,6 +31,21 @@ const MONTHS_VIEW = 'months' ;
 const YEARS_VIEW  = 'years' ;
 
 /**
+ * A cell bound as CSS can read it.
+ *
+ * A bare number is pixels — the unit anybody reaches for first — and anything
+ * else is passed through untouched, so `'3rem'`, `'2.5em'` or a calculation of
+ * one's own all work. `undefined` means « keep the theme's ».
+ *
+ * @param {number|string} [value]
+ * @returns {string|undefined}
+ */
+const toLength = ( value ) =>
+    ( value === undefined || value === null || value === '' ? undefined
+    : typeof value === 'number' ? `${ value }px`
+    : String( value ) ) ;
+
+/**
  * Calendar — a self-contained, dayjs-based month calendar. Single date or date
  * range, one or two months. Locale-aware via {@link useLang}
  * (month / weekday names + first day of week), controlled or uncontrolled via
@@ -43,6 +58,8 @@ const YEARS_VIEW  = 'years' ;
  *
  * @param {Object} props
  * @param {boolean} [props.allowDisabledInRange=false] - Allow a selected range to span blocked days (by default a range stops before the first blocked day).
+ * @param {number|string} [props.cellMax] - How large a day cell may become when there is room. A number is pixels. **Set it to `cellMin` and the month stops growing altogether** — which is how this is turned off, rather than with a second prop. Defaults to the theme's, half again the floor.
+ * @param {number|string} [props.cellMin] - How small a day cell may become. Defaults to the theme's, which is what a `btn-sm btn-square` measures — the value that keeps a calendar in a popover exactly as it was.
  * @param {boolean} [props.clearable=false] - Re-clicking the selected day (single) or a range endpoint clears the selection; `Escape` also clears.
  * @param {string} [props.className] - Extra classes for the panel.
  * @param {Date} [props.defaultMonth] - Month shown on first render when there is no value (quick navigation start).
@@ -79,6 +96,8 @@ const YEARS_VIEW  = 'years' ;
 const Calendar =
 ({
     allowDisabledInRange = false ,
+    cellMax ,
+    cellMin ,
     className ,
     clearable = false ,
     defaultMonth ,
@@ -348,14 +367,31 @@ const Calendar =
     const nextPageDisabled = maxYear !== null && yearPageStart + 12 > maxYear ;
 
     return (
-        <div className={ getCalendarClasses({ className }) } onKeyDown={ handleKeyDown } { ...rest }>
-            <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
+        // The two bounds travel as **CSS variables on the root**, never as
+        // generated classes : a class carrying a computed length would have to
+        // survive the scanner that emits it, and a value coming from a prop never
+        // does. A variable is read at paint time and cannot be missed — the same
+        // reasoning `Aura` follows for its duration.
+        <div
+            className = { getCalendarClasses({ className }) }
+            onKeyDown = { handleKeyDown }
+            { ...rest }
+            style     = {{
+                '--cal-cell-max' : toLength( cellMax ) ?? CALENDAR_CELL_MAX ,
+                '--cal-cell-min' : toLength( cellMin ) ?? CALENDAR_CELL_MIN ,
+                ...rest.style ,
+            }}
+        >
+            <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:gap-4">
 
                 { shortcutItems.length > 0 && (
                     <Shortcuts items={ shortcutItems } onSelect={ applyShortcut } activeId={ activeShortcutId } />
                 )}
 
-                <div className="flex flex-col gap-4 sm:flex-row">
+                {/* Wider apart than the 1rem two content-sized months used to need :
+                    now that each one fills its half, the space between them is all
+                    that tells the eye where one month ends and the next begins. */}
+                <div className="flex min-w-0 flex-1 flex-col gap-4 sm:flex-row sm:gap-8">
                     { monthsArr.map( ( month , i ) =>
                     {
                         if ( pickerIndex === i && pickerKind === MONTHS_VIEW )

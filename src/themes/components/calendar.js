@@ -12,8 +12,55 @@ import cn from '../helpers/cn' ;
 
 import { BLACKOUT , isStructuralReason } from '../../helpers/date/disabledReasons' ;
 
-/** Base classes for the calendar panel. */
-export const CALENDAR = 'inline-flex flex-col gap-1 select-none' ;
+/**
+ * The floor of a day cell — **measured, not chosen**.
+ *
+ * `.btn-sm` sets `--size: calc(var(--size-field) * 8)` and `.btn-square` makes
+ * that the width too, so this expression *is* what a day cell measures today.
+ * Written as the calculation rather than as `2rem` so it keeps following the
+ * theme : a theme with a larger `--size-field` gets larger cells, exactly as it
+ * already gets larger buttons.
+ *
+ * It is what guarantees the non-regression. Where no width is imposed — the
+ * `w-fit` panel of a picker's popover — the grid falls back to its intrinsic
+ * size, which is seven of these, which is the calendar as it has always looked.
+ */
+export const CALENDAR_CELL_MIN = 'calc(var(--size-field, 0.25rem) * 8)' ;
+
+/**
+ * The ceiling, and the only number here that is a judgement call.
+ *
+ * A cell that grew without limit would make a month in a wide card as tall as
+ * it is wide — nine hundred pixels of calendar. So it fills, then stops, then
+ * centres. Half again the floor is enough to fill a phone comfortably without
+ * the grid ever looking inflated.
+ *
+ * **Setting it to the floor turns the whole thing off**, which is why there is
+ * no second prop to do that.
+ */
+export const CALENDAR_CELL_MAX = 'calc(var(--size-field, 0.25rem) * 12)' ;
+
+/**
+ * Base classes for the calendar panel.
+ *
+ * `flex w-full` rather than `inline-flex` : a panel that shrink-wraps can never
+ * be given a width, and that was the whole reason a month could not fill the
+ * space it was put in. It costs nothing where nothing imposes a width, since
+ * the grid inside still reports its own intrinsic size.
+ */
+export const CALENDAR = 'flex w-full flex-col gap-1 select-none' ;
+
+/**
+ * A row of seven — the weekday header and every week.
+ *
+ * `minmax()` is the whole mechanism : the **min** is what the track reports when
+ * it is asked how wide it wants to be, so a popover that sizes to its content
+ * gets exactly today's calendar ; the **max** is where growth stops when there
+ * *is* room to grow, and `justify-center` places the grid in what is left.
+ *
+ * @safelist grid-cols-[repeat(7,minmax(var(--cal-cell-min),var(--cal-cell-max)))]
+ */
+export const CALENDAR_WEEK = 'grid justify-center gap-0.5 grid-cols-[repeat(7,minmax(var(--cal-cell-min),var(--cal-cell-max)))]' ;
 
 /**
  * Generates the className for the {@link module:components/dates/Calendar} panel.
@@ -44,8 +91,16 @@ const getCalendarClasses =
     className ,
 ) ;
 
-/** Base classes for a day cell (colour/style is added per modifier — see below). */
-export const CALENDAR_DAY = 'btn btn-sm btn-square rounded-field font-normal' ;
+/**
+ * Base classes for a day cell (colour/style is added per modifier — see below).
+ *
+ * `btn-square` is gone : it fixes width **and** height in pixels, which is what
+ * kept a month from ever filling anything. The cell now takes its column and
+ * stays square by ratio — `h-auto` because `.btn` sets a height of its own, and
+ * `px-0` because `.btn` sets a padding-inline that would make it wider than it
+ * is tall.
+ */
+export const CALENDAR_DAY = 'btn btn-sm h-auto w-full max-w-[var(--cal-cell-max)] aspect-square px-0 rounded-field font-normal' ;
 
 /**
  * Generates the className for a single day cell.

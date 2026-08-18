@@ -50,7 +50,9 @@ const MonthsGrid =
     ) ;
 
     return (
-        <div className="flex w-full flex-col gap-2 sm:w-60">
+        // No width of its own : it replaces the day grid inside the same panel, and a
+        // fixed one made that panel shrink the moment the picker opened.
+        <div className="flex min-w-0 w-full flex-1 flex-col gap-2">
             <div className="flex items-center justify-between gap-2 pb-1">
                 <button type="button" className="btn btn-ghost btn-sm btn-square" aria-label="Previous year" disabled={ prevDisabled } onClick={ onPrevYear }>
                     <PrevIcon className="size-5" />

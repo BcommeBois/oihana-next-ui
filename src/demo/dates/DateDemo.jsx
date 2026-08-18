@@ -6,6 +6,8 @@ import Container from '@/display/Container' ;
 import Divider   from '@/components/Divider' ;
 
 import Calendar from '@/components/dates/Calendar' ;
+
+import { CALENDAR_CELL_MIN } from '@/themes/components/calendar' ;
 import InputDatePicker from '@/components/inputs/InputDatePicker' ;
 import InputDateRangePicker from '@/components/inputs/InputDateRangePicker' ;
 import InputDateTimePicker from '@/components/inputs/InputDateTimePicker' ;
@@ -560,6 +562,61 @@ const DateDemo = () =>
                 Selected : <span className="font-mono">{ pickDateTime || '—' }</span>
                 { dtObject && <span className="opacity-60"> · { dtObject.toString() }</span> }
             </p>
+
+            <Divider />
+
+            {/* ---------------------------------------------------------------- Width */}
+
+            <h2 className="text-3xl font-bold">Width — a month that fills what it is given</h2>
+            <p className="text-sm opacity-70 -mt-4">
+                A day cell is no longer a fixed square : the seven columns are
+                <span className="font-mono"> minmax( cellMin , cellMax ) </span>, so a month
+                <strong> grows into the width it is given, stops at its ceiling, and centres </strong>
+                in whatever is left. Where nothing imposes a width — inside a picker's popover, which
+                sizes itself to its content — the columns fall back to their floor and the calendar is
+                exactly what it has always been.
+            </p>
+
+            <p className="text-sm opacity-70 -mt-2">
+                <strong>Drag the handle</strong> at the bottom-right corner of the box below.
+            </p>
+
+            <div className="w-fit max-w-full resize-x overflow-auto rounded-box border border-dashed border-base-300 bg-base-100 p-4">
+                <Calendar value={ date } onChange={ setDate } />
+            </div>
+
+            <p className="text-sm opacity-70 -mt-2">
+                Three boxes of the same width, and the only difference is the ceiling. The last one has
+                it set to the floor, which is how the whole behaviour is turned off — one prop, no
+                second switch to remember.
+            </p>
+
+            <div className="grid gap-6 lg:grid-cols-3">
+                { [
+                    { note : 'default ceiling' , props : {} } ,
+                    { note : 'cellMax={ 64 } — roomier' , props : { cellMax : 64 } } ,
+                    { note : 'cellMax={ CALENDAR_CELL_MIN } — off' , props : { cellMax : CALENDAR_CELL_MIN } } ,
+                ].map( ( item ) => (
+                    <div key={ item.note } className="flex flex-col gap-2">
+                        <p className="font-mono text-xs uppercase opacity-50">{ item.note }</p>
+                        <div className="rounded-box border border-base-300 bg-base-100 p-4">
+                            <Calendar value={ date } onChange={ setDate } { ...item.props } />
+                        </div>
+                    </div>
+                ) ) }
+            </div>
+
+            <p className="text-sm opacity-70 -mt-2">
+                The quick month and year grids follow the same width, and two months share it — open the
+                header of a wide calendar, or set <span className="font-mono">months={ 2 }</span>, and the
+                panel must not jump.
+            </p>
+
+            {/* Two months want the whole width : halving the page was what made the
+                pair look cramped, not the layout itself. */}
+            <div className="rounded-box border border-base-300 bg-base-100 p-4 sm:p-6">
+                <Calendar months={ 2 } mode="range" value={ range } onChange={ setRange } />
+            </div>
 
         </Container>
     ) ;

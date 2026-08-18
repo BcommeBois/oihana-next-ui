@@ -1,5 +1,10 @@
+import { CALENDAR_WEEK } from '../../../themes/components/calendar' ;
+
 /**
  * The localised weekday header row of the calendar.
+ *
+ * It shares the week grid with the days rather than repeating `grid-cols-7` :
+ * seven labels that do not sit over their seven columns are worse than none.
  *
  * @module components/dates/calendar/Weekdays
  *
@@ -8,7 +13,7 @@
  */
 const Weekdays = ({ labels }) =>
 (
-    <div className="grid grid-cols-7 gap-0.5 pb-1">
+    <div className={ `${ CALENDAR_WEEK } pb-1` }>
         { labels.map( ( label , index ) => (
             <span
                 key       = { index }

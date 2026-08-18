@@ -8,6 +8,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Components — `Calendar` — a month that fills what it is given**
+
+- **A day cell is no longer a fixed square.** `btn-square` sets width *and* height in pixels, so a month shrink-wrapped and could never be given a width : put in a wide card it sat against the left edge, and the `SlotPicker` built last week had to centre it as a consolation. The seven columns are now `minmax( var(--cal-cell-min) , var(--cal-cell-max) )` and the cell takes its column, square by ratio.
+- **The floor is measured, not chosen.** `.btn-sm` sets `--size: calc( var(--size-field) * 8 )` and `.btn-square` makes that the width, so the floor is written as that same calculation rather than as `2rem` — it keeps following the theme, exactly as `rounded-field` does. **It is what guarantees the non-regression** : where nothing imposes a width — the `w-fit` panel of a picker's popover — a `minmax()` track reports its min, so the grid falls back to seven of these and the calendar is pixel-for-pixel what it always was. The three pickers were not touched.
+- **New `cellMax` and `cellMin`**, carried as **CSS variables on the root rather than as generated classes** : a class holding a computed length has to survive the scanner that emits it, and a value coming from a prop never does — the reasoning `Aura` already follows for its duration. A number is pixels ; anything else passes through.
+  - **Setting `cellMax` to the floor stops the month growing**, which is how the behaviour is turned off. One prop, two uses, and no second switch to explain — a boolean would have been wrong anyway, since the `SlotPicker` wants the month fluid *when it is stacked* and natural beside its slots, which is a container query and not a flag.
+- **Three things had to follow, and none of them is optional** — they are defects the change itself creates. The **quick month and year grids** lose their fixed `sm:w-60`, which would have made the panel shrink the moment the header was clicked and jump back on picking ; **two months share the width** they are given rather than the first taking it ; and the cell drops `.btn`'s own `height` and `padding-inline`, without which it comes out wider than it is tall.
+- **Two months sit further apart.** One rem was enough between two content-sized months ; now that each fills its half, the space between them is all that tells the eye where one ends and the next begins.
+- `/lab/dates` gains a **Width** section : a box to drag wider, the same month at three ceilings including the one that switches it off, and the two-month case at full width.
+
 **Components — `scheduler` — what is *free*, which is a different question**
 
 - **New `helpers/schedule/computeFreeSlots`**, pure, verified with 27 assertions. Every other module of this family reads what is scheduled and places it ; this one reads the same two things — the hours something is open, and what already sits in them — and answers with the gaps. **Booking an appointment is not editing an event** : there is nothing to edit yet, and the whole problem is finding where the new thing may go.
