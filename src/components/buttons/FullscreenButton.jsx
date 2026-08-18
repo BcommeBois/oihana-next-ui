@@ -33,10 +33,12 @@ import Button from '../Button' ;
  * @param {Object} props
  * @param {import('../../themes/components/button').ButtonColorValue} [props.color] - Button color.
  * @param {import('../../themes/components/button').ButtonSize} [props.size='lg'] - Button size.
+ * @param {string} [props.path='components.buttons.fullscreen'] - i18n path the accessible name is read from. A swap of two icons has no text, so this is the only thing naming it.
  * @param {*} [props.rest] - Additional Button props.
  */
 const FullscreenButton =
 ({
+    path  = 'components.buttons.fullscreen' ,
     shape = 'square' ,
     size  = 'md' ,
     style = 'ghost' ,
@@ -52,7 +54,11 @@ const FullscreenButton =
     const swapItemClassName = cn( SWAP_ITEM , 'fill-current' , iconSize , '[&>svg]:size-full' ) ;
 
     return (
+        // Two icons and no text : without a name of its own it is announced as
+        // « button » and nothing else. `Button` turns the locale's `title` into
+        // the `aria-label` ; all this component owes is the path to it.
         <Button
+            path     = { path }
             shape    = { shape }
             showIcon = { false }
             size     = { size }

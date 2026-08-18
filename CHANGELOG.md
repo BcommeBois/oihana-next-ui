@@ -8,6 +8,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Accessibility — every icon-only button now says what it is**
+
+- **A sweep of all 103 buttons in `src/components` and `src/display`**, comments and JSDoc excluded. Most carry their name as visible text and needed nothing ; `Button` has emitted `aria-label={ title ?? i18n.title }` all along, so the mechanism was never missing — what was missing was a handful of components never filling it.
+- **`FullscreenButton` and `ThemeButton` had no accessible name at all.** Two swaps of two icons with no text : announced as « button », full stop. Each now carries a default `path` — `components.buttons.fullscreen` and `.theme` — on the very pattern the eleven existing button locales already use. The theme toggle says what it **does** rather than what it will become : « Basculer le thème » is true in both directions, where « switch to dark » would be wrong for the frame before the theme is known, and a name that changes under a focus is one a screen reader may read twice.
+- **`Alert`'s close cross** gets a name too, with `closeLabel` and `path` to override it — `Modal` and `Popover` had theirs, the alert did not. The glyph is `aria-hidden`, and the label goes on both `aria-label` and `title` : one for a screen reader, the other for a pointer.
+- **A `DockItem` hiding its label** rendered its icon alone. The label it was already given is now read out when it is not printed — and left alone when it is, since a name repeating the text beside it is said twice.
+- **`DisplayDropDown`'s trigger** had a native `title` only, which is a fallback name rather than a stated one. It now carries both.
+- **The JSDoc examples of `Button` and `ListRow` taught the defect** — `<Button icon={ MdSearch } shape="circle" />` with nothing naming it is what gets copied. They name their buttons now, and the one that is icon-only says why.
+- **No development-time warning was added**, deliberately : the convention that a concrete button ships a default `path` is already followed nine times out of nine — `LessButton`, `MoreButton` and the seven built on `MotionButton` all carry theirs, which reaches `Button` through the wrappers untouched. `InputButton` and `MotionButton` are generic bases and stay unnamed on purpose : their name belongs one level up, where the button knows what it does.
+
 **Components — `Calendar` — a month that fills what it is given**
 
 - **A day cell is no longer a fixed square.** `btn-square` sets width *and* height in pixels, so a month shrink-wrapped and could never be given a width : put in a wide card it sat against the left edge, and the `SlotPicker` built last week had to centre it as a consolation. The seven columns are now `minmax( var(--cal-cell-min) , var(--cal-cell-max) )` and the cell takes its column, square by ratio.

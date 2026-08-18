@@ -45,6 +45,7 @@ import Button from '../Button' ;
  * @param {import('../../themes/components/button').ButtonShape} [props.shape='square'] - Button shape.
  * @param {import('../../themes/components/button').ButtonSize}  [props.size='md'] - Button size.
  * @param {import('../../themes/components/button').ButtonStyle} [props.style='ghost'] - Button style.
+ * @param {string}  [props.path='components.buttons.theme'] - i18n path the accessible name is read from. A swap of two icons has no text of its own.
  * @param {*}       [props.rest] - Additional props forwarded to Button.
  *
  * @returns {React.ReactElement}
@@ -52,6 +53,7 @@ import Button from '../Button' ;
 const ThemeButton =
 ({
     className ,
+    path  = 'components.buttons.theme' ,
     shape = 'square' ,
     size  = 'md' ,
     style = 'ghost' ,
@@ -82,8 +84,13 @@ const ThemeButton =
     ) ;
 
     return (
+        // A sun and a moon, and no text. The name says what the control **does**
+        // rather than what it will become : « switch to dark » would be wrong for
+        // the frame before the theme is known, and a name that changes under a
+        // focus is one a screen reader may read twice.
         <Button
             className = { className }
+            path      = { path }
             shape     = { shape }
             showIcon  = { false }
             size      = { size }

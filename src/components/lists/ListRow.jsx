@@ -43,8 +43,8 @@ import Checkbox from '../../components/checkboxes/Checkbox' ;
  *         </div>
  *     }
  *     actions={[
- *         <Button key="play" size="sm" icon={PlayIcon} />,
- *         <Button key="like" size="sm" icon={HeartIcon} />
+ *         <Button key="play" size="sm" icon={PlayIcon} title="Play" />,
+ *         <Button key="like" size="sm" icon={HeartIcon} title="Like" />
  *     ]}
  * />
  *

@@ -19,13 +19,14 @@
  * <Button icon={MdDelete} path="actions.delete" color="error" style="outline" />
  *
  * // Active state with different color
- * <Button icon={MdStar} active activeColor="warning" color="neutral" />
+ * <Button icon={MdStar} active activeColor="warning" color="neutral" title="Favourite" />
  *
  * // Disabled
  * <Button path="actions.submit" color="primary" disabled />
  *
  * // Circle icon button
- * <Button icon={MdSearch} shape="circle" size="sm" />
+ * // Icon only : `title` becomes the aria-label, and without it the button has no name
+ * <Button icon={MdSearch} shape="circle" size="sm" title="Search" />
  *
  * // As link
  * <Button as="a" href="/home" color="primary">Home</Button>

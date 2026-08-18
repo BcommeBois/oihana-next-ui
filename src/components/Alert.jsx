@@ -2,6 +2,8 @@
 
 import { MdCheckCircle, MdClose, MdErrorOutline, MdInfo, MdNotifications, MdWarning } from 'react-icons/md' ;
 
+import useI18n             from '../contexts/locale/useI18n' ;
+import NO_LOCALE           from '../contexts/locale/noLocale' ;
 import cn                  from '../themes/helpers/cn' ;
 import getAlertClassNames  from '../themes/components/alert' ;
 import getButtonClassNames from '../themes/components/button' ;
@@ -15,6 +17,8 @@ import { ERROR, INFO, SUCCESS, WARNING } from '../themes/colors' ;
  * Alert notification component with DaisyUI styling.
  *
  * @param {Object} props
+ * @param {string} [props.closeLabel] - Name of the close cross. Defaults to the i18n `close` key read at `path`.
+ * @param {string} [props.path='components.alert'] - i18n path the labels are read from.
  * @param {import('react').ReactNode} props.children - Alert content
  * @param {string} [props.className] - Container class name
  * @param {string} [props.contentClassName] - Inner content class name
@@ -33,6 +37,7 @@ const Alert =
 ({
     children ,
     className ,
+    closeLabel ,
     contentClassName ,
     html = false ,
     level ,
@@ -46,6 +51,7 @@ const Alert =
     WarningIcon= MdWarning ,
     Icon             = MdNotifications ,
     option ,
+    path            = 'components.alert' ,
     showCloseButton = true ,
     showIcon        = true ,
 
@@ -55,6 +61,10 @@ const Alert =
 }) =>
 {
     // Icon mapping logic
+    const { close : closeFromI18n = 'Close' } = useI18n( path , NO_LOCALE , false ) ;
+
+    const closeText = closeLabel ?? closeFromI18n ;
+
     const iconMap = {
         [ ERROR   ] : ErrorIcon ,
         [ INFO    ] : InfoIcon ,
@@ -86,7 +96,7 @@ const Alert =
         />
     ) ;
 
-    const content        = notEmpty( children ) && html ? parseHtml( children ) : children ;
+    const content = notEmpty( children ) && html ? parseHtml( children ) : children ;
     const contentElement = content && (
         <div className={ cn( 'flex-1 min-w-0 font-medium' , contentClassName ) }>
             { content }
@@ -95,7 +105,10 @@ const Alert =
 
     const optionElement = option ?? (
         showCloseButton && onClose && (
+            // A cross and nothing else : both the name a screen reader reads and
+            // the tooltip a pointer gets, as `Modal` and `Popover` already do.
             <button
+                aria-label = { closeText }
                 className = { getButtonClassNames({
                     beforeClassName : 'shrink-0' ,
                     color           : level ,
@@ -104,9 +117,11 @@ const Alert =
                     style           : 'ghost' , // A ghost button usually reads better here
                 })}
                 onClick   = { onClose }
+                title     = { closeText }
                 type      = "button"
             >
                 <CloseIcon
+                    aria-hidden = "true"
                     className = { getTextClassNames({
                         beforeClassName : 'size-5' ,
                         color           : contentColor ,

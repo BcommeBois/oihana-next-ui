@@ -58,6 +58,12 @@ const DockItem =
 
     const text = label ?? children ;
 
+    // Hidden, the label is still the only thing naming the control : an item
+    // showing nothing but its icon is announced as « button » otherwise. Read out
+    // when it is not printed, and left alone when it is — a name repeating the
+    // text beside it is said twice.
+    const hiddenName = !showLabel && typeof text === 'string' ? text : undefined ;
+
     const content = (
         <>
             { icon }
@@ -72,9 +78,11 @@ const DockItem =
         return (
             <NextLink
                 aria-current = { resolvedActive ? 'page' : undefined }
+                aria-label   = { hiddenName }
                 className    = { classes }
                 href         = { href }
                 onClick      = { ( e ) => handleClick( e , onClick ) }
+                title        = { hiddenName }
                 { ...rest }
             >
                 { content }
@@ -86,8 +94,10 @@ const DockItem =
         <button
             type         = "button"
             aria-current = { resolvedActive ? 'page' : undefined }
+            aria-label   = { hiddenName }
             className    = { classes }
             onClick      = { onClick }
+            title        = { hiddenName }
             { ...rest }
         >
             { content }

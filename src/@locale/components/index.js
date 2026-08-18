@@ -1,3 +1,4 @@
+import alert      from './alert'
 import buttons    from './buttons'
 import dropdowns  from './dropdowns'
 import input      from './input'
@@ -10,6 +11,7 @@ import splitPanel from './splitPanel'
 
 const components =
 {
+    alert ,
     buttons ,
     dropdowns,
     input ,

@@ -260,6 +260,7 @@ const DisplayDropDown =
         >
             <button
                 type      = "button"
+                aria-label = { current.label }
                 className = "btn btn-ghost btn-square btn-sm"
                 title     = { current.label }
                 onClick   = { toggle }
