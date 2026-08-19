@@ -1,6 +1,7 @@
 'use client' ;
 
-import Grid from '@/components/layouts/Grid' ;
+import Grid     from '@/components/layouts/Grid' ;
+import GridItem from '@/components/layouts/GridItem' ;
 
 const GridBox = ({ children, className = '' }) => (
     <div className={ `bg-secondary/20 border-2 border-secondary rounded-lg p-4 text-center font-semibold ${className}` }>
@@ -233,11 +234,11 @@ const GridDemo = () =>
                             gap       = {4}
                             padding   = {6}
                         >
-                            <GridBox className="bg-info/20 border-info">Header</GridBox>
-                            <GridBox className="bg-accent/20 border-accent col-span-2">Main Content</GridBox>
-                            <GridBox className="bg-warning/20 border-warning">Sidebar</GridBox>
-                            <GridBox className="bg-success/20 border-success col-span-2">Article</GridBox>
-                            <GridBox className="bg-info/20 border-info col-span-3">Footer</GridBox>
+                            <GridItem><GridBox className="bg-info/20 border-info">Header</GridBox></GridItem>
+                            <GridItem colSpan={2}><GridBox className="bg-accent/20 border-accent">Main Content</GridBox></GridItem>
+                            <GridItem><GridBox className="bg-warning/20 border-warning">Sidebar</GridBox></GridItem>
+                            <GridItem colSpan={2}><GridBox className="bg-success/20 border-success">Article</GridBox></GridItem>
+                            <GridItem colSpan="full"><GridBox className="bg-info/20 border-info">Footer</GridBox></GridItem>
                         </Grid>
                     </div>
                 </div>

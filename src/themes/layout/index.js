@@ -26,6 +26,12 @@ export { default as getGridCols     } from './gridCols' ;
 export { default as getGridFlow     } from './gridFlow' ;
 export { default as getGridRows     } from './gridRows' ;
 
+// Grid item
+export { default as getColSpan  } from './colSpan' ;
+export { default as getColStart } from './colStart' ;
+export { default as getRowSpan  } from './rowSpan' ;
+export { default as getRowStart } from './rowStart' ;
+
 // Alignment
 export { default as getAlignContent   } from './alignContent' ;
 export { default as getAlignItems     } from './alignItems' ;
@@ -38,9 +44,10 @@ export { default as getPlaceItems     } from './placeItems' ;
 export { default as getPlaceSelf      } from './placeSelf' ;
 
 // Class names generators
-export { default as getFlexClassNames   } from './getFlexClassNames' ;
-export { default as getGridClassNames   } from './getGridClassNames' ;
-export { default as getLayoutClassNames } from './getLayoutClassNames' ;
-export { default as getTableClassNames  } from './getTableClassNames' ;
+export { default as getFlexClassNames     } from './getFlexClassNames' ;
+export { default as getGridClassNames     } from './getGridClassNames' ;
+export { default as getGridItemClassNames } from './getGridItemClassNames' ;
+export { default as getLayoutClassNames   } from './getLayoutClassNames' ;
+export { default as getTableClassNames    } from './getTableClassNames' ;
 
 export { default } from './getLayoutClassNames' ;
