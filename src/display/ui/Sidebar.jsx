@@ -13,14 +13,6 @@ import useConfig  from '../../contexts/config/useConfig' ;
 import cn from '../../themes/helpers/cn' ;
 
 /**
- * @typedef {Object} LogoConfig
- * @property {boolean} [show] - Whether to display the logo.
- * @property {string} light - Light mode logo source.
- * @property {string} [dark] - Dark mode logo source.
- * @property {string} [className] - CSS classes for logo container (default: 'size-24').
- */
-
-/**
  * @typedef {Object} NavigationConfig
  * @property {boolean} [show] - Whether to display the navigation.
  * @property {string} [className] - CSS classes for Navigation component.
@@ -30,10 +22,6 @@ import cn from '../../themes/helpers/cn' ;
  * @typedef {Object} VersionConfig
  * @property {boolean} [show] - Whether to display the version footer.
  * @property {string} [className] - CSS classes for version footer.
- */
-
-/**
- * @typedef {LogoConfig | React.ComponentType<{className?: string}>} LogoProp
  */
 
 /**
@@ -49,19 +37,15 @@ import cn from '../../themes/helpers/cn' ;
  * @param {Object} props
  * @param {string} [props.className] - Additional class names.
  * @param {string} [props.configPath='ui.sidebar'] - Config context path.
- * @param {string} [props.homePath='/'] - Home route for logo link.
- * @param {LogoProp} [props.logo] - Logo configuration object or component.
  * @param {NavigationConfig} [props.navigation] - Navigation configuration.
  * @param {Function} [props.onAction] - Called on route change (closes mobile drawer).
  * @param {SwipeConfig} [props.swipe] - Swipe gesture configuration.
+ * @param {VersionConfig} [props.version] - Version footer configuration.
  *
  * @example
  * ```jsx
- * // Hide logo and version
- * <Sidebar
- *     logo={{ show: false }}
- *     version={{ show: false }}
- * />
+ * // Hide the version footer — the logo is configured at `ui.logo`, which Logo reads itself
+ * <Sidebar version={{ show: false }} />
  * ```
  *
  * @example
@@ -80,19 +64,17 @@ const Sidebar =
 ({
      configPath = 'ui.sidebar' ,
      className : classNameProp ,
-     homePath : homePathProp = '/' ,
      navigation : navigationProp ,
-     logo : logoProp ,
      swipe : swipeProp ,
+     version : versionProp ,
      onAction ,
  }) =>
 {
     const {
-        homePath   = homePathProp,
         className  = classNameProp,
-        logo       = logoProp,
         navigation = navigationProp,
         swipe      = swipeProp,
+        version    = versionProp,
     }
     = useConfig( configPath ) ?? {} ;
 
@@ -153,13 +135,23 @@ const Sidebar =
         className : navigationClassName ,
         show      : showNavigation ,
     }
-    = navigation ;
+    = navigation ?? {} ;
+
+    const {
+        className : versionClassName ,
+        show      : showVersion = true ,
+    }
+    = version ?? {} ;
 
     const navigationElement = showNavigation && (
         <Navigation
             className = { cn( 'p-1 touch-pan-y' , navigationClassName ) }
             onAction  = { onAction }
         />
+    )
+
+    const versionElement = showVersion && (
+        <Version className={ versionClassName } />
     )
 
     return (
@@ -171,7 +163,7 @@ const Sidebar =
                 { navigationElement }
             </div>
 
-            <Version />
+            { versionElement }
 
         </aside>
     ) ;

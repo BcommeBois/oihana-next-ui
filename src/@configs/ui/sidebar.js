@@ -1,16 +1,4 @@
 /**
- * @typedef {Object} LogoConfig
- * @property {boolean} [show=true] - Whether to display the logo.
- * @property {string} light - Light mode logo source.
- * @property {string} [dark] - Dark mode logo source.
- * @property {string} [className] - CSS classes for logo container (default: 'size-24').
- */
-
-/**
- * @typedef {LogoConfig | React.ComponentType<{className?: string}>} LogoProp
- */
-
-/**
  * @typedef {Object} NavigationConfig
  * @property {boolean} [show=true] - Whether to display the navigation.
  * @property {string} [className] - CSS classes for Navigation component (default: 'p-1').
@@ -23,18 +11,17 @@
  */
 
 /**
- * @typedef {import('@/themes/sizing/sizes').FixedSize} FixedSize
- */
-
-/**
+ * Settings the {@link module:display/ui/Sidebar} reads from `ui.sidebar`.
+ *
+ * The surface — background, width, pattern, shadow — is expressed in `className`
+ * rather than as named properties, which is how `navbar` and `splashScreen` do it
+ * too. There is one way to say it, and it is a Tailwind class.
+ *
  * @typedef {Object} SidebarConfig
- * @property {string} [backgroundColor] - DaisyUI base color name.
- * @property {string} [backgroundPattern] - Background pattern effect name.
- * @property {LogoProp} [logo] - Logo configuration or component.
+ * @property {string} [className] - Classes for the sidebar element itself.
  * @property {NavigationConfig} [navigation] - Navigation configuration.
- * @property {string} [shadow] - Box shadow size.
+ * @property {SwipeConfig} [swipe] - Swipe-to-close gesture configuration.
  * @property {VersionConfig} [version] - Version footer configuration.
- * @property {FixedSize} [width] - Sidebar width using Tailwind spacing scale.
  */
 
 /**
