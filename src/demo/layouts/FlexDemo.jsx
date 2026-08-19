@@ -165,6 +165,77 @@ const FlexDemo = () =>
             </div>
         </div>
 
+        {/* Shadow & Background Pattern */}
+        <div className="card bg-base-200 shadow-xl">
+            <div className="card-body">
+                <h2 className="card-title text-2xl mb-4">Shadow &amp; Background Pattern</h2>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Shadow scale */}
+                    <div className="flex flex-col gap-3">
+                        <h3 className="text-sm font-semibold opacity-70 uppercase">Shadow</h3>
+                        <div className="flex flex-wrap gap-6 bg-base-300 rounded-lg p-6">
+                            {
+                                [ 'sm' , 'md' , 'lg' , 'xl' ].map( value => (
+                                    <Flex
+                                        key            = { value }
+                                        alignItems     = "center"
+                                        className      = "bg-base-100 rounded-lg size-20 font-mono text-sm"
+                                        justifyContent = "center"
+                                        shadow         = { value }
+                                    >
+                                        { value }
+                                    </Flex>
+                                ) )
+                            }
+                        </div>
+                    </div>
+
+                    {/* Shadow on hover */}
+                    <div className="flex flex-col gap-3">
+                        <h3 className="text-sm font-semibold opacity-70 uppercase">Shadow on hover</h3>
+                        <div className="flex flex-wrap gap-6 bg-base-300 rounded-lg p-6">
+                            <Flex
+                                alignItems     = "center"
+                                className      = "bg-base-100 rounded-lg size-20 text-center text-xs transition-shadow"
+                                justifyContent = "center"
+                                shadow         = { { value : 'sm' , hover : '2xl' } }
+                            >
+                                hover me
+                            </Flex>
+                        </div>
+                    </div>
+
+                    {/* Background pattern */}
+                    <div className="flex flex-col gap-3">
+                        <h3 className="text-sm font-semibold opacity-70 uppercase">Background pattern</h3>
+                        <Flex
+                            backgroundPattern = "topography"
+                            className         = "bg-base-100 rounded-lg"
+                            gap               = {3}
+                            padding           = {6}
+                        >
+                            <DemoBox>A</DemoBox>
+                            <DemoBox>B</DemoBox>
+                        </Flex>
+                    </div>
+
+                    {/* Pattern with its own base color */}
+                    <div className="flex flex-col gap-3">
+                        <h3 className="text-sm font-semibold opacity-70 uppercase">Pattern + base color</h3>
+                        <Flex
+                            backgroundPattern = { { pattern : 'waves' , baseColor : 'primary' } }
+                            className         = "bg-base-100 rounded-lg"
+                            gap               = {3}
+                            padding           = {6}
+                        >
+                            <DemoBox>A</DemoBox>
+                            <DemoBox>B</DemoBox>
+                        </Flex>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         {/* Custom Component */}
         <div className="card bg-base-200 shadow-xl">
             <div className="card-body">

@@ -8,11 +8,10 @@ import getFlexClassNames from '../../themes/layout/getFlexClassNames' ;
  * @param {'start'|'end'|'center'|'between'|'around'|'evenly'|'stretch'} [props.alignContent] - Align content along cross axis
  * @param {'start'|'end'|'center'|'baseline'|'stretch'} [props.alignItems] - Align items along cross axis
  * @param {string} [props.backgroundColor] - Background color utility class
- * @param {string} [props.backgroundPattern] - Background pattern utility class
+ * @param {string|Object} [props.backgroundPattern] - Background pattern name, or { pattern , baseColor , color , withColor }
  * @param {React.ReactNode} [props.children] - Child elements
  * @param {string} [props.className] - Additional class names
  * @param {'row'|'row-reverse'|'col'|'col-reverse'} [props.direction] - Flex direction
- * @param {string|number} [props.elevation] - Shadow/elevation level
  * @param {number|string} [props.gap] - Gap between items (all directions)
  * @param {number|string} [props.gapX] - Horizontal gap between items
  * @param {number|string} [props.gapY] - Vertical gap between items
@@ -40,6 +39,7 @@ import getFlexClassNames from '../../themes/layout/getFlexClassNames' ;
  * @param {string} [props.placeContent] - Place content (align + justify shorthand)
  * @param {string} [props.placeItems] - Place items (align + justify shorthand)
  * @param {'static'|'relative'|'absolute'|'fixed'|'sticky'} [props.position] - Position utility
+ * @param {'none'|'2xs'|'xs'|'sm'|'md'|'lg'|'xl'|'2xl'|true} [props.shadow] - Box shadow depth
  * @param {string|number} [props.size] - Size (width and height)
  * @param {string|number} [props.width] - Width utility
  * @param {boolean|'wrap'|'wrap-reverse'|'nowrap'} [props.wrap] - Flex wrap behavior
@@ -101,7 +101,6 @@ const Flex =
     children ,
     className ,
     direction ,
-    elevation ,
     gap ,
     gapX ,
     gapY ,
@@ -129,6 +128,7 @@ const Flex =
     placeContent ,
     placeItems ,
     position ,
+    shadow ,
     size ,
     width ,
     wrap ,
@@ -147,7 +147,6 @@ const Flex =
         backgroundPattern ,
         className ,
         direction ,
-        elevation ,
         gap ,
         gapX ,
         gapY ,
@@ -175,6 +174,7 @@ const Flex =
         placeContent ,
         placeItems ,
         position ,
+        shadow ,
         size ,
         width ,
         wrap ,

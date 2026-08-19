@@ -10,11 +10,10 @@ import getGridClassNames from '../../themes/layout/getGridClassNames' ;
  * @param {string} [props.autoCols] - Grid auto-columns template
  * @param {string} [props.autoRows] - Grid auto-rows template
  * @param {string} [props.backgroundColor] - Background color utility class
- * @param {string} [props.backgroundPattern] - Background pattern utility class
+ * @param {string|Object} [props.backgroundPattern] - Background pattern name, or { pattern , baseColor , color , withColor }
  * @param {React.ReactNode} [props.children] - Child elements
  * @param {string} [props.className] - Additional class names
  * @param {number|string} [props.cols] - Number of columns or template
- * @param {string|number} [props.elevation] - Shadow/elevation level
  * @param {'row'|'col'|'dense'|'row-dense'|'col-dense'} [props.flow] - Grid flow direction
  * @param {number|string} [props.gap] - Gap between items (all directions)
  * @param {number|string} [props.gapX] - Horizontal gap between items
@@ -44,6 +43,7 @@ import getGridClassNames from '../../themes/layout/getGridClassNames' ;
  * @param {string} [props.placeItems] - Place items (align + justify shorthand)
  * @param {'static'|'relative'|'absolute'|'fixed'|'sticky'} [props.position] - Position utility
  * @param {number|string} [props.rows] - Number of rows or template
+ * @param {'none'|'2xs'|'xs'|'sm'|'md'|'lg'|'xl'|'2xl'|true} [props.shadow] - Box shadow depth
  * @param {string|number} [props.size] - Size (width and height)
  * @param {string|number} [props.width] - Width utility
  * @param {React.Ref<HTMLElement>} [props.ref] - Forwarded ref
@@ -110,7 +110,6 @@ const Grid =
     children ,
     className ,
     cols ,
-    elevation ,
     flow ,
     gap ,
     gapX ,
@@ -140,6 +139,7 @@ const Grid =
     placeItems ,
     position ,
     rows ,
+    shadow ,
     size ,
     width ,
 
@@ -158,7 +158,6 @@ const Grid =
         backgroundPattern ,
         className ,
         cols ,
-        elevation ,
         flow ,
         gap ,
         gapX ,
@@ -188,6 +187,7 @@ const Grid =
         placeItems ,
         position ,
         rows ,
+        shadow ,
         size ,
         width ,
     }) ;

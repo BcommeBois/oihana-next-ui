@@ -12,12 +12,11 @@ import resolveColumnCount from '../../themes/helpers/resolveColumnCount' ;
  * @param {Object} props
  * @param {React.ElementType} [props.as='div'] - HTML element or component to render
  * @param {string} [props.backgroundColor] - Background color utility class
- * @param {string} [props.backgroundPattern] - Background pattern utility class
+ * @param {string|Object} [props.backgroundPattern] - Background pattern name, or { pattern , baseColor , color , withColor }
  * @param {React.ReactNode} [props.children] - Child elements to distribute across columns
  * @param {string} [props.className] - Additional class names for the container
  * @param {string} [props.columnClassName] - Additional class names for each column
  * @param {number|Object} [props.columns={ xs: 2, md: 3, xxl: 4 }] - Number of columns or responsive object
- * @param {string|number} [props.elevation] - Shadow/elevation level
  * @param {number|string|Object} [props.gap=4] - Gap between columns and items
  * @param {number|string|Object} [props.gapX] - Horizontal gap between columns
  * @param {number|string|Object} [props.gapY] - Vertical gap between items in columns
@@ -39,6 +38,7 @@ import resolveColumnCount from '../../themes/helpers/resolveColumnCount' ;
  * @param {string|number|Object} [props.paddingTop] - Top padding
  * @param {string|number|Object} [props.paddingX] - Horizontal padding
  * @param {string|number|Object} [props.paddingY] - Vertical padding
+ * @param {'none'|'2xs'|'xs'|'sm'|'md'|'lg'|'xl'|'2xl'|true} [props.shadow] - Box shadow depth
  * @param {string|number|Object} [props.width] - Width utility
  * @param {React.Ref<HTMLElement>} [props.ref] - Forwarded ref
  * @param {Object} [props.rest] - Additional props forwarded to the Grid component
@@ -96,7 +96,6 @@ const Masonry =
     className ,
     columnClassName ,
     columns = { xs: 2, md: 3, xxl: 4 } ,
-    elevation ,
     gap = 4 ,
     gapX ,
     gapY ,
@@ -118,6 +117,7 @@ const Masonry =
     paddingTop ,
     paddingX ,
     paddingY ,
+    shadow ,
     width ,
 
     ref ,
@@ -170,7 +170,6 @@ const Masonry =
             backgroundPattern = { backgroundPattern }
             className         = { className }
             cols              = { columns }
-            elevation         = { elevation }
             gap               = { gap }
             gapX              = { gapX }
             gapY              = { gapY }
@@ -193,6 +192,7 @@ const Masonry =
             paddingX          = { paddingX }
             paddingY          = { paddingY }
             ref               = { ref }
+            shadow            = { shadow }
             width             = { width }
             { ...rest }
         >

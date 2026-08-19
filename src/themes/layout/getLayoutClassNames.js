@@ -34,6 +34,10 @@ import getBackgroundColor from '../colors/backgroundColor' ;
 import getBorderColor     from '../colors/borderColor' ;
 import getTextColor       from '../colors/textColor' ;
 
+// Effects
+import getBackgroundPattern from '../effects/backgroundPattern' ;
+import { getShadow }        from '../effects/shadow' ;
+
 // Borders
 import getBorderRadius from '../border/borderRadius' ;
 import getBorderStyle  from '../border/borderStyle' ;
@@ -94,6 +98,9 @@ import getWidth     from '../sizing/width' ;
  * @property {import('../colors/backgroundColor').BackgroundColor} [backgroundColor]
  * @property {import('../colors/borderColor').BorderColor} [borderColor]
  * @property {import('../colors/textColor').TextColor} [textColor]
+ *
+ * @property {import('../effects/backgroundPattern').BackgroundPattern|Object} [backgroundPattern]
+ * @property {import('../effects/shadow').ShadowValue} [shadow]
  *
  * @property {import('../borders/borderRadius').BorderRadiusSize} [borderRadius]
  * @property {import('../borders/borderStyle').BorderStyleValue} [borderStyle]
@@ -185,6 +192,10 @@ export const getLayoutClassNames =
     borderColor ,
     textColor ,
 
+    // Effects
+    backgroundPattern ,
+    shadow ,
+
     // Borders
     borderRadius ,
     borderStyle ,
@@ -237,6 +248,12 @@ export const getLayoutClassNames =
 = {} ) => cn
 (
     beforeClassName ,
+
+    // A pattern resolves to a class string, not to a class definition, so it travels
+    // as its own argument. Placed before the definitions so an explicit textColor
+    // still wins over the tint the pattern picks by default.
+    applyIfDefined( getBackgroundPattern , backgroundPattern ) ,
+
     {
         ...before ,
 
@@ -292,6 +309,9 @@ export const getLayoutClassNames =
         ...applyIfDefined( getBackgroundColor , backgroundColor ) ,
         ...applyIfDefined( getBorderColor     , borderColor     ) ,
         ...applyIfDefined( getTextColor       , textColor       ) ,
+
+        // Effects
+        ...applyIfDefined( getShadow , shadow ) ,
 
         ...after ,
     } ,

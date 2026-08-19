@@ -220,6 +220,78 @@ const GridDemo = () =>
             </div>
         </div>
 
+        {/* Shadow & Background Pattern */}
+        <div className="card bg-base-200 shadow-xl">
+            <div className="card-body">
+                <h2 className="card-title text-2xl mb-4">Shadow &amp; Background Pattern</h2>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Shadow scale */}
+                    <div className="flex flex-col gap-3">
+                        <h3 className="text-sm font-semibold opacity-70 uppercase">Shadow</h3>
+                        <Grid className="bg-base-300 rounded-lg" cols={4} gap={4} padding={6}>
+                            {
+                                [ 'sm' , 'md' , 'lg' , 'xl' ].map( value => (
+                                    <Grid
+                                        key        = { value }
+                                        className  = "bg-base-100 rounded-lg h-20 font-mono text-sm"
+                                        placeItems = "center"
+                                        shadow     = { value }
+                                    >
+                                        { value }
+                                    </Grid>
+                                ) )
+                            }
+                        </Grid>
+                    </div>
+
+                    {/* Shadow on hover */}
+                    <div className="flex flex-col gap-3">
+                        <h3 className="text-sm font-semibold opacity-70 uppercase">Shadow on hover</h3>
+                        <Grid className="bg-base-300 rounded-lg" cols={2} gap={4} padding={6}>
+                            <Grid
+                                className  = "bg-base-100 rounded-lg h-20 text-center text-xs transition-shadow"
+                                placeItems = "center"
+                                shadow     = { { value : 'sm' , hover : '2xl' } }
+                            >
+                                hover me
+                            </Grid>
+                        </Grid>
+                    </div>
+
+                    {/* Background pattern */}
+                    <div className="flex flex-col gap-3">
+                        <h3 className="text-sm font-semibold opacity-70 uppercase">Background pattern</h3>
+                        <Grid
+                            backgroundPattern = "circuit-board"
+                            className         = "bg-base-100 rounded-lg"
+                            cols              = {2}
+                            gap               = {4}
+                            padding           = {6}
+                        >
+                            <GridBox>A</GridBox>
+                            <GridBox>B</GridBox>
+                        </Grid>
+                    </div>
+
+                    {/* Pattern and shadow together */}
+                    <div className="flex flex-col gap-3">
+                        <h3 className="text-sm font-semibold opacity-70 uppercase">Pattern + shadow</h3>
+                        <Grid
+                            backgroundPattern = { { pattern : 'hexagons' , baseColor : 'secondary' } }
+                            className         = "bg-base-100 rounded-lg"
+                            cols              = {2}
+                            gap               = {4}
+                            padding           = {6}
+                            shadow            = "xl"
+                        >
+                            <GridBox>A</GridBox>
+                            <GridBox>B</GridBox>
+                        </Grid>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         {/* Custom Component */}
         <div className="card bg-base-200 shadow-xl">
             <div className="card-body">

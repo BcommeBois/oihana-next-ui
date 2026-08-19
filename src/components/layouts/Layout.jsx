@@ -26,7 +26,7 @@ export const displays = [ FLEX , GRID , MASONRY , NONE ] ;
  * @param {string} [props.autoCols] - Grid auto-columns template (Grid only)
  * @param {string} [props.autoRows] - Grid auto-rows template (Grid only)
  * @param {string} [props.backgroundColor] - Background color utility class
- * @param {string} [props.backgroundPattern] - Background pattern utility class
+ * @param {string|Object} [props.backgroundPattern] - Background pattern name, or { pattern , baseColor , color , withColor }
  * @param {React.ReactNode} [props.children] - Child elements
  * @param {string} [props.className] - Additional class names
  * @param {string} [props.columnClassName] - Additional class names for each column (Masonry only)
@@ -34,7 +34,6 @@ export const displays = [ FLEX , GRID , MASONRY , NONE ] ;
  * @param {number|string|Object} [props.cols] - Grid columns (Grid only)
  * @param {'row'|'row-reverse'|'col'|'col-reverse'} [props.direction] - Flex direction (Flex only)
  * @param {'flex'|'grid'|'masonry'|'none'} [props.display='flex'] - Layout display mode
- * @param {string|number} [props.elevation] - Shadow/elevation level
  * @param {'row'|'col'|'dense'|'row-dense'|'col-dense'} [props.flow] - Grid flow direction (Grid only)
  * @param {number|string|Object} [props.gap] - Gap between items (all directions)
  * @param {number|string|Object} [props.gapX] - Horizontal gap between items
@@ -64,6 +63,7 @@ export const displays = [ FLEX , GRID , MASONRY , NONE ] ;
  * @param {string} [props.placeItems] - Place items (align + justify shorthand)
  * @param {'static'|'relative'|'absolute'|'fixed'|'sticky'} [props.position] - Position utility
  * @param {number|string|Object} [props.rows] - Grid rows (Grid only)
+ * @param {'none'|'2xs'|'xs'|'sm'|'md'|'lg'|'xl'|'2xl'|true} [props.shadow] - Box shadow depth
  * @param {string|number|Object} [props.size] - Size (width and height)
  * @param {string|number|Object} [props.width] - Width utility
  * @param {boolean|'wrap'|'wrap-reverse'|'nowrap'} [props.wrap] - Flex wrap behavior (Flex only)
@@ -150,7 +150,6 @@ const Layout =
     columns ,
     direction ,
     display = FLEX ,
-    elevation ,
     flow ,
     gap ,
     gapX ,
@@ -180,6 +179,7 @@ const Layout =
     placeItems ,
     position ,
     rows ,
+    shadow ,
     size ,
     width ,
     wrap ,
@@ -196,7 +196,6 @@ const Layout =
         backgroundColor ,
         backgroundPattern ,
         className ,
-        elevation ,
         gap ,
         gapX ,
         gapY ,
@@ -220,6 +219,7 @@ const Layout =
         paddingX ,
         paddingY ,
         ref ,
+        shadow ,
         size ,
         width ,
     } ;
