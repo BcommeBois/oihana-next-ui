@@ -113,11 +113,11 @@ const Navbar =
 
             <div className={ cn(  NAVBAR_END , 'gap-1 mx-2' ) }>
 
-                <FullscreenButton />
+                <FullscreenButton tooltipAlign="end" tooltipPosition="bottom" />
 
-                <LangDropDown/>
+                <LangDropDown tooltipAlign="end" tooltipPosition="bottom" />
 
-                <ThemeButton />
+                <ThemeButton tooltipAlign="end" tooltipPosition="bottom" />
 
                 { right }
 

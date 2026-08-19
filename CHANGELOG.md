@@ -8,6 +8,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Navbar — the tooltips of the top bar stop leaving the window**
+
+- **A bar pinned to the top of the window opens its tooltips upwards, into nothing.** The fullscreen and theme buttons carried a name from the accessibility sweep, and a name in a bubble that renders off-screen is a name nobody reads. They open **downwards** now, and **end-aligned** : `tooltip-end` cancels the centring transform and pins the bubble's inline-end edge to the trigger's, so it grows leftwards from a control that already sits at the end of the bar and cannot run past the edge. The property is logical, not physical — in RTL it flips to the other side, which stays right for a button that flips with it.
+- **It is set where the buttons are placed, not inside them.** Neither button is inherently a top-right button — they are used in the lab pages too, where opening downwards-and-left would be arbitrary. Placement is a fact about the surrounding bar, so it is stated in `Navbar`.
+- **`LangDropDown`, between the two, gets the same line although it never showed the defect** : its `tooltipPosition` already defaulted to `bottom`, which is why it never opened upwards — but its alignment was centred and free to overflow to the right. The three now state the rule together, rather than one of them quietly relying on a default the others do not share.
+- **The floating tooltip was not needed.** `Tooltip` has a portaled path written precisely because the daisyUI bubble is blind to the edges of the window ; pinning the end edge of a bubble to a trigger already at the end edge removes the question instead of computing an answer to it, and it costs no portal.
+
 **Effects — a pattern no longer tints what sits on top of it**
 
 - **The tint moves from the element to the pseudo-element the pattern is actually painted on.** `getPatternColor` returned `text-base-content/20` ; it returns `after:text-base-content/20`. The plugin fills a `::after` with `background-color: currentColor` and masks it with the SVG, so that colour was only ever there to feed `currentColor` — but it sat on the element, where `color` is inherited, and **every child came out at the opacity of the pattern**. At `/20` that is very nearly invisible, which is how it was found : a demo cell with two lines of perfectly ordinary text that could not be read.
