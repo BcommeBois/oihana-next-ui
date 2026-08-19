@@ -229,9 +229,8 @@ const GridItemDemo = () =>
                     not a class written by hand.
                 </p>
                 <p className="opacity-70 mb-4">
-                    A pattern tints the element to feed the <code className="text-xs">currentColor</code> its mask is
-                    painted with, and that tint is inherited : text put in a patterned cell without a colour of its own
-                    comes out at the opacity of the pattern. The two cells below state theirs.
+                    The tint a pattern needs is scoped to the pseudo-element it is painted on, so the two textured
+                    cells below hold ordinary, readable text without stating a colour of their own.
                 </p>
                 <Grid className="bg-base-300 rounded-lg p-4" cols={4} gap={4}>
                     <GridItem
@@ -248,14 +247,14 @@ const GridItemDemo = () =>
                         className         = "bg-base-100 rounded-lg p-4"
                         colSpan           = {2}
                     >
-                        <span className="text-base-content text-xs">backgroundPattern topography</span>
+                        <span className="text-xs">backgroundPattern topography</span>
                     </GridItem>
                     <GridItem
                         backgroundPattern = { { pattern : 'hexagons' , baseColor : 'primary' } }
                         className         = "bg-base-100 rounded-lg p-4"
                         shadow            = "sm"
                     >
-                        <span className="text-base-content text-xs">hexagons, primary</span>
+                        <span className="text-xs">hexagons, primary</span>
                     </GridItem>
                     <GridItem className="bg-base-100 rounded-lg p-4" shadow="xl">
                         <span className="text-xs">shadow xl</span>

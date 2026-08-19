@@ -268,8 +268,8 @@ const GridDemo = () =>
                             gap               = {4}
                             padding           = {6}
                         >
-                            <GridBox className="text-base-content">A</GridBox>
-                            <GridBox className="text-base-content">B</GridBox>
+                            <GridBox>A</GridBox>
+                            <GridBox>B</GridBox>
                         </Grid>
                     </div>
 
@@ -284,8 +284,8 @@ const GridDemo = () =>
                             padding           = {6}
                             shadow            = "xl"
                         >
-                            <GridBox className="text-base-content">A</GridBox>
-                            <GridBox className="text-base-content">B</GridBox>
+                            <GridBox>A</GridBox>
+                            <GridBox>B</GridBox>
                         </Grid>
                     </div>
                 </div>

@@ -198,42 +198,50 @@ export const getPatternOpacity = name =>
 /**
  * Generates the default color class for a pattern.
  *
+ * The class targets the `::after` the pattern is painted on, not the element : the
+ * plugin fills that pseudo-element with `currentColor`, and `after:text-*` is what
+ * `currentColor` resolves against there. **The element's own colour is left alone, so
+ * nothing inside a patterned container inherits the tint** — which a plain `text-*`
+ * here would hand to every child, at the opacity of the pattern.
+ *
+ * The two rules never meet : the plugin sets `background-color`, this sets `color`.
+ *
  * @param {BackgroundPattern} name - Pattern name.
  * @param {string} [baseColor='base-content'] - Base color name.
- * @returns {string} Color class with opacity.
+ * @returns {string} Color class with opacity, scoped to the pattern's pseudo-element.
  *
  * @example
  * ```js
  * getPatternColor( 'topography' ) ;
- * // → 'text-base-content/20'
+ * // → 'after:text-base-content/20'
  *
  * getPatternColor( 'architect' ) ;
- * // → 'text-base-content/40'
+ * // → 'after:text-base-content/40'
  *
  * getPatternColor( 'topography' , 'primary' ) ;
- * // → 'text-primary/20'
+ * // → 'after:text-primary/20'
  * ```
  */
 export const getPatternColor = ( name , baseColor = 'base-content' ) =>
 {
     const opacity = getPatternOpacity( name ) ;
 
-    return `text-${ baseColor }/${ opacity }` ;
+    return `after:text-${ baseColor }/${ opacity }` ;
 } ;
 
 /**
  * Generates a background pattern className expression.
  *
- * The pattern is painted on an `::after` in `background-color: currentColor`, so the
- * colour class returned here sits on the element itself — and is therefore **inherited
- * by everything inside it**. Content placed in a patterned container must state its own
- * text colour, or it comes out at the opacity of the pattern.
+ * The tint is scoped to the pattern's own `::after`, so content placed in a patterned
+ * container keeps its colour. A `color` given here must be scoped the same way — write
+ * `after:text-base-300/20`, not `text-base-300/20`, or the tint lands on the element
+ * and every child inherits it.
  *
  * @param {BackgroundPattern | Object} props - Pattern name or options object.
  * @param {string} [props.baseColor='base-content'] - Base color for default pattern color.
  * @param {string} [props.beforeClassName] - ClassName to prepend.
  * @param {string} [props.className] - ClassName to append.
- * @param {string} [props.color] - Custom color classes (replaces default).
+ * @param {string} [props.color] - Custom color classes, scoped to `after:` (replaces default).
  * @param {BackgroundPattern} [props.pattern] - Pattern name.
  * @param {boolean} [props.withColor=true] - Include color classes.
  *
@@ -243,15 +251,15 @@ export const getPatternColor = ( name , baseColor = 'base-content' ) =>
  * ```js
  * // Simple usage with default color
  * getBackgroundPattern( 'topography' ) ;
- * // → 'text-base-content/20 pattern-topography'
+ * // → 'after:text-base-content/20 pattern-topography'
  *
  * // Custom base color
  * getBackgroundPattern( { pattern: 'topography' , baseColor: 'primary' } ) ;
- * // → 'text-primary/20 pattern-topography'
+ * // → 'after:text-primary/20 pattern-topography'
  *
  * // Custom color (full control)
- * getBackgroundPattern( { pattern: 'topography' , color: 'text-base-300/20' } ) ;
- * // → 'text-base-300/20 pattern-topography'
+ * getBackgroundPattern( { pattern: 'topography' , color: 'after:text-base-300/20' } ) ;
+ * // → 'after:text-base-300/20 pattern-topography'
  *
  * // Without color (manual control)
  * getBackgroundPattern( { pattern: 'topography' , withColor: false } ) ;
@@ -263,7 +271,7 @@ export const getPatternColor = ( name , baseColor = 'base-content' ) =>
  *     baseColor: 'secondary' ,
  *     className: 'rounded-xl'
  * } ) ;
- * // → 'text-secondary/40 pattern-architect rounded-xl'
+ * // → 'after:text-secondary/40 pattern-architect rounded-xl'
  * ```
  */
 const getBackgroundPattern = props =>
@@ -431,4 +439,28 @@ pattern-yyy
 pattern-zebra
 pattern-zig-zag
 pattern-zig-zag-2
+*/
+
+/* Tailwindcss safe list — pattern tints
+
+   The colour is generated from a base name and one of three opacities, so it never
+   appears literally in a source file and the scanner would emit none of it. Listed
+   here in full, the way themes/effects/shadow.js lists its own.
+
+   after:text-base-content/10  after:text-base-content/20  after:text-base-content/40
+   after:text-base-100/10  after:text-base-100/20  after:text-base-100/40
+   after:text-base-200/10  after:text-base-200/20  after:text-base-200/40
+   after:text-base-300/10  after:text-base-300/20  after:text-base-300/40
+   after:text-primary/10  after:text-primary/20  after:text-primary/40
+   after:text-primary-content/10  after:text-primary-content/20  after:text-primary-content/40
+   after:text-secondary/10  after:text-secondary/20  after:text-secondary/40
+   after:text-secondary-content/10  after:text-secondary-content/20  after:text-secondary-content/40
+   after:text-accent/10  after:text-accent/20  after:text-accent/40
+   after:text-accent-content/10  after:text-accent-content/20  after:text-accent-content/40
+   after:text-neutral/10  after:text-neutral/20  after:text-neutral/40
+   after:text-neutral-content/10  after:text-neutral-content/20  after:text-neutral-content/40
+   after:text-info/10  after:text-info/20  after:text-info/40
+   after:text-success/10  after:text-success/20  after:text-success/40
+   after:text-warning/10  after:text-warning/20  after:text-warning/40
+   after:text-error/10  after:text-error/20  after:text-error/40
 */

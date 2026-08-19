@@ -214,8 +214,8 @@ const FlexDemo = () =>
                             gap               = {3}
                             padding           = {6}
                         >
-                            <DemoBox className="text-base-content">A</DemoBox>
-                            <DemoBox className="text-base-content">B</DemoBox>
+                            <DemoBox>A</DemoBox>
+                            <DemoBox>B</DemoBox>
                         </Flex>
                     </div>
 
@@ -228,8 +228,8 @@ const FlexDemo = () =>
                             gap               = {3}
                             padding           = {6}
                         >
-                            <DemoBox className="text-base-content">A</DemoBox>
-                            <DemoBox className="text-base-content">B</DemoBox>
+                            <DemoBox>A</DemoBox>
+                            <DemoBox>B</DemoBox>
                         </Flex>
                     </div>
                 </div>

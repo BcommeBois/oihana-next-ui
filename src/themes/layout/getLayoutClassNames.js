@@ -250,8 +250,8 @@ export const getLayoutClassNames =
     beforeClassName ,
 
     // A pattern resolves to a class string, not to a class definition, so it travels
-    // as its own argument. Placed before the definitions so an explicit textColor
-    // still wins over the tint the pattern picks by default.
+    // as its own argument. Its tint is scoped to the pattern's own pseudo-element, so
+    // it never competes with textColor.
     applyIfDefined( getBackgroundPattern , backgroundPattern ) ,
 
     {
