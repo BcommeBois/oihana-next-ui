@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.13.0] — 2026-08-19
+
 **Application — the three spellings of one workaround are gone**
 
 - **Five places wrote a pattern by hand and then repaired what it broke, each in its own dialect** : `text-base-content/10 *:text-base-content` in the sidebar, `**:text-base-content` in the navbar — every descendant, not merely the direct children — `text-base-content/20! *:text-base-content!` in the splash screen with two `!important`, and `*:text-base-content` beside `pattern-topography` on the home page and in the JSDoc example that copies it. Three spellings, one problem : the tint a pattern needs was landing on the element, and the content was inheriting it. They now say `after:text-base-300/20` and nothing else, the same way the generator does since patterns started tinting their own pseudo-element.
