@@ -30,7 +30,7 @@
  *     const [ currentLang , setCurrentLang ] = useState( "fr" );
  *
  *     return (
- *         <Page full className="justify-center gap-8 *:text-base-content pattern-topography text-base-300/20">
+ *         <Page full className="justify-center gap-8 pattern-topography after:text-base-300/20">
  *
  *             <FlagMenu
  *                 lang={ currentLang }

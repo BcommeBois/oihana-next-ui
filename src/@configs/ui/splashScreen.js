@@ -2,7 +2,7 @@ import version from '../../version';
 
 const splashScreen =
 {
-    className       : 'pattern-lines-diagonal-right text-base-content/20! *:text-base-content!' ,
+    className       : 'pattern-lines-diagonal-right after:text-base-content/20' ,
     footer          : process.env.NEXT_PUBLIC_APP_AUTHOR ,
     footerClassName : 'font-mono text-sm font-medium',
     header          : process.env.NEXT_PUBLIC_APP_SHORT_TITLE + ' - ' + version ,

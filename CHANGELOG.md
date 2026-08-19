@@ -8,6 +8,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Application — the three spellings of one workaround are gone**
+
+- **Five places wrote a pattern by hand and then repaired what it broke, each in its own dialect** : `text-base-content/10 *:text-base-content` in the sidebar, `**:text-base-content` in the navbar — every descendant, not merely the direct children — `text-base-content/20! *:text-base-content!` in the splash screen with two `!important`, and `*:text-base-content` beside `pattern-topography` on the home page and in the JSDoc example that copies it. Three spellings, one problem : the tint a pattern needs was landing on the element, and the content was inheriting it. They now say `after:text-base-300/20` and nothing else, the same way the generator does since patterns started tinting their own pseudo-element.
+- **The `!important` in the splash screen made no sense until the `<body>` was read.** Nothing in `SplashScreen` competes for a text colour — its root gets `cn( 'flex grow flex-col min-h-screen' , className )` and no more. The fight came from one floor up : `<body>` carries `*:text-base-content`, which lands on the splash root, and two `text-*` utilities of equal specificity are settled by stylesheet order. The `!` was buying that order. Once the tint moves to `after:`, the two utilities no longer touch the same property and the `!` has nothing left to win — **its removal is the clearest signal the conversion took**.
+- **The `<body>` keeps its `*:text-base-content`, deliberately.** It carries no pattern, so nothing here makes it removable, and a rule whose purpose is not established is not a rule to delete on the way past. It is named here so the next reader starts where this one finished.
+- **The navbar is the one to look at twice.** `**:` forced *every* descendant to `base-content`, including any that asked for another colour and lost the tie. Dropping it can give those colours back — an improvement, and still a visible change.
+
 **Navbar — the tooltips of the top bar stop leaving the window**
 
 - **A bar pinned to the top of the window opens its tooltips upwards, into nothing.** The fullscreen and theme buttons carried a name from the accessibility sweep, and a name in a bubble that renders off-screen is a name nobody reads. They open **downwards** now, and **end-aligned** : `tooltip-end` cancels the centring transform and pins the bubble's inline-end edge to the trigger's, so it grows leftwards from a control that already sits at the end of the bar and cannot run past the edge. The property is logical, not physical — in RTL it flips to the other side, which stays right for a button that flips with it.

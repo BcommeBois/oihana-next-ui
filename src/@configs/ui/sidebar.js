@@ -29,7 +29,7 @@
  */
 const sidebar =
 {
-    className : 'bg-base-200 w-8/12 lg:w-68 lg:max-w-none pattern-lines-diagonal-right text-base-content/10 *:text-base-content' ,
+    className : 'bg-base-200 w-8/12 lg:w-68 lg:max-w-none pattern-lines-diagonal-right after:text-base-content/10' ,
     navigation :
     {
         show : true ,
