@@ -224,6 +224,11 @@ export const getPatternColor = ( name , baseColor = 'base-content' ) =>
 /**
  * Generates a background pattern className expression.
  *
+ * The pattern is painted on an `::after` in `background-color: currentColor`, so the
+ * colour class returned here sits on the element itself — and is therefore **inherited
+ * by everything inside it**. Content placed in a patterned container must state its own
+ * text colour, or it comes out at the opacity of the pattern.
+ *
  * @param {BackgroundPattern | Object} props - Pattern name or options object.
  * @param {string} [props.baseColor='base-content'] - Base color for default pattern color.
  * @param {string} [props.beforeClassName] - ClassName to prepend.

@@ -218,6 +218,56 @@ const GridItemDemo = () =>
             </div>
         </div>
 
+        {/* Surface */}
+        <div className="card bg-base-200 shadow-xl">
+            <div className="card-body">
+                <h2 className="card-title text-2xl mb-4">Shadow &amp; background pattern, per cell</h2>
+                <p className="opacity-70 mb-4">
+                    A container carries these two for all of its children at once. On a cell they say something else :
+                    <em> this tile</em> is raised, <em>that one</em> is textured. It is what turns a flat bento into one
+                    with a lead tile — and the lift on hover costs a <code className="text-xs">{'{ value , hover }'}</code> object,
+                    not a class written by hand.
+                </p>
+                <p className="opacity-70 mb-4">
+                    A pattern tints the element to feed the <code className="text-xs">currentColor</code> its mask is
+                    painted with, and that tint is inherited : text put in a patterned cell without a colour of its own
+                    comes out at the opacity of the pattern. The two cells below state theirs.
+                </p>
+                <Grid className="bg-base-300 rounded-lg p-4" cols={4} gap={4}>
+                    <GridItem
+                        className = "bg-base-100 rounded-lg p-4 h-32 transition-shadow"
+                        colSpan   = {2}
+                        rowSpan   = {2}
+                        shadow    = { { value : 'md' , hover : '2xl' } }
+                    >
+                        <span className="font-semibold">lead tile</span>
+                        <span className="block text-xs opacity-70">shadow md, 2xl on hover</span>
+                    </GridItem>
+                    <GridItem
+                        backgroundPattern = "topography"
+                        className         = "bg-base-100 rounded-lg p-4"
+                        colSpan           = {2}
+                    >
+                        <span className="text-base-content text-xs">backgroundPattern topography</span>
+                    </GridItem>
+                    <GridItem
+                        backgroundPattern = { { pattern : 'hexagons' , baseColor : 'primary' } }
+                        className         = "bg-base-100 rounded-lg p-4"
+                        shadow            = "sm"
+                    >
+                        <span className="text-base-content text-xs">hexagons, primary</span>
+                    </GridItem>
+                    <GridItem className="bg-base-100 rounded-lg p-4" shadow="xl">
+                        <span className="text-xs">shadow xl</span>
+                    </GridItem>
+                </Grid>
+                <p className="text-sm opacity-70 mt-4">
+                    Both properties come from <code className="text-xs">getLayoutClassNames</code>, so a cell reaches them
+                    on exactly the terms a <code className="text-xs">Grid</code> or a <code className="text-xs">Flex</code> does.
+                </p>
+            </div>
+        </div>
+
         {/* Props Reference */}
         <div className="flex flex-col gap-4">
             <h3 className="text-xl font-semibold border-b-2 border-primary pb-2">
@@ -293,6 +343,16 @@ const GridItemDemo = () =>
                             <td><code className="text-xs">backgroundColor / borderColor / borderRadius</code></td>
                             <td>string</td>
                             <td>Surface utilities</td>
+                        </tr>
+                        <tr>
+                            <td><code className="text-xs">backgroundPattern</code></td>
+                            <td>string | object</td>
+                            <td>Pattern name, or <code className="text-xs">{'{ pattern , baseColor , color , withColor }'}</code></td>
+                        </tr>
+                        <tr>
+                            <td><code className="text-xs">shadow</code></td>
+                            <td>string | true | object</td>
+                            <td>Box shadow depth — accepts <code className="text-xs">{'{ value , hover }'}</code> like every pseudo-class property</td>
                         </tr>
                         <tr>
                             <td><code className="text-xs">overflow / position / zIndex</code></td>

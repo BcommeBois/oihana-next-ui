@@ -33,6 +33,7 @@ import getGridItemClassNames from '../../themes/layout/getGridItemClassNames' ;
  * @param {'auto'|'start'|'end'|'center'|'stretch'|'baseline'} [props.alignSelf] - Align this cell along the block axis
  * @param {React.ElementType} [props.as='div'] - HTML element or component to render
  * @param {string} [props.backgroundColor] - Background color utility class
+ * @param {string|Object} [props.backgroundPattern] - Background pattern name, or { pattern , baseColor , color , withColor }
  * @param {string} [props.borderColor] - Border color utility class
  * @param {string|number} [props.borderRadius] - Border radius utility
  * @param {React.ReactNode} [props.children] - Cell content
@@ -70,6 +71,7 @@ import getGridItemClassNames from '../../themes/layout/getGridItemClassNames' ;
  * @param {React.Ref<HTMLElement>} [props.ref] - Forwarded ref
  * @param {import('../../themes/layout/rowSpan').RowSpanValue} [props.rowSpan] - Rows the cell covers — `1`–`6`, `'full'`, `'auto'`
  * @param {import('../../themes/layout/rowStart').RowStartValue} [props.rowStart] - Grid line the cell starts at — `1`–`7`, `'auto'`
+ * @param {'none'|'2xs'|'xs'|'sm'|'md'|'lg'|'xl'|'2xl'|true} [props.shadow] - Box shadow depth
  * @param {string|number} [props.size] - Size (width and height)
  * @param {string|number} [props.width] - Width utility
  * @param {string|number} [props.zIndex] - Z-index utility
@@ -109,6 +111,7 @@ const GridItem =
     alignSelf ,
     as ,
     backgroundColor ,
+    backgroundPattern ,
     borderColor ,
     borderRadius ,
     children ,
@@ -145,6 +148,7 @@ const GridItem =
     position ,
     rowSpan ,
     rowStart ,
+    shadow ,
     size ,
     width ,
     zIndex ,
@@ -158,6 +162,7 @@ const GridItem =
     {
         alignSelf ,
         backgroundColor ,
+        backgroundPattern ,
         borderColor ,
         borderRadius ,
         className ,
@@ -193,6 +198,7 @@ const GridItem =
         position ,
         rowSpan ,
         rowStart ,
+        shadow ,
         size ,
         width ,
         zIndex ,
