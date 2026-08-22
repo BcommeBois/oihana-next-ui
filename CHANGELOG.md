@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Application — the `<body>` stops repainting its own children**
+
+- **`*:text-base-content` is gone from the root layout, and nothing replaces it.** It did not colour `<body>` and let the page inherit : it compiled to `.\*\:text-base-content > *` and **imposed** the colour on every direct child as a declaration of that child's own. It had been there since the first commit, with no reason on record.
+- **DaisyUI already colours the document, one level higher.** Its base layer ships `:root,[data-theme]{background-color:var(--root-bg);color:var(--color-base-content)}`, and the plugin is configured with `root: ":root"`. `<html>` is therefore already `base-content` and the whole tree inherits it — `<body>`, its direct children, and every portal with them, since CSS inheritance follows the DOM and not the React tree.
+- **From there the rule could only be a duplicate or a defect, never a gain.** A child asking for no colour already inherited the same value ; a child asking for its own met a declaration of equal specificity on the same property, settled by stylesheet order — and Tailwind v4 emits variant utilities *after* plain ones, so the `<body>` won. That is what cost `SplashScreen` two `!important` before 0.13.0 : the `!` was buying order, not specificity. **The symptom was removed then, the cause only now.**
+- **The blast radius was always one level deep.** Only the direct children of `<body>` were ever concerned — the splash overlay, the dashboard root, and whatever portals onto `document.body` (`Popover`, `Modal`, `SidePanel`, `InputColor`, toasts). None of them sets a text colour on its portaled root today, so this is expected to change nothing on screen. That is the point : a trap is removed, not a behaviour.
+- **The neighbouring `bg-base-100` is deliberately kept.** DaisyUI gives `:root` the same `--root-bg`, but a background is painted rather than inherited, and a `<body>` that paints nothing lets the one behind it show through — which the scroll gutter and the overscroll bounce can make visible. That is demonstrable, not deducible, so it was left alone.
+
 **Tooltips — a disabled flag stops talking**
 
 - **`FlagItem` showed its tooltip over a flag that could not be clicked.** Its `Tooltip` was given `show={ showTooltip }` and never looked at `disabled`, so hovering a disabled flag still opened the bubble. It now reads `show={ showTooltip && !disabled }`, the wording already in place in `Button`, `LinkButton` and `MenuLink`.

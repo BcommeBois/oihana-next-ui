@@ -95,7 +95,7 @@ export default async function RootLayout ( { children } )
         </head>
 
         <body
-            className="flex flex-col min-h-screen w-full overflow-x-hidden bg-base-100 *:text-base-content"
+            className="flex flex-col min-h-screen w-full overflow-x-hidden bg-base-100"
             suppressHydrationWarning
         >
             <Application initialLang={ initialLang }>
