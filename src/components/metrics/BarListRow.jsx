@@ -37,7 +37,10 @@ import Link from '../links/Link' ;
  * @param {string} props.name - The row label.
  * @param {Function} [props.onSelect] - Click handler. Turns the row into a button when there is no `href`.
  * @param {React.Ref} [props.ref] - Forwarded to the row.
+ * @param {boolean} [props.reveal=false] - The bar is growing in : keep the transition even without `animated`.
+ * @param {number} [props.revealDelay] - Milliseconds this bar waits before it starts growing.
  * @param {import('../../themes/components/barList').BarListSize|Object} [props.size='md'] - Row height, scalar or per breakpoint.
+ * @param {boolean} [props.still=false] - The bar is being pinned back to nothing : it must not transition.
  * @param {React.ReactNode} [props.value] - The formatted value.
  * @param {string} [props.valueClassName] - Additional classes on the value cell.
  * @param {number} [props.width=0] - Bar width, as a percentage of the track.
@@ -55,7 +58,10 @@ const BarListRow =
     name ,
     onSelect ,
     ref ,
+    reveal = false ,
+    revealDelay ,
     size ,
+    still = false ,
     value ,
     valueClassName ,
     width = 0 ,
@@ -69,6 +75,8 @@ const BarListRow =
         className : barClassName ,
         color ,
         interactive ,
+        reveal ,
+        still ,
     }) ;
 
     const trackProps =
@@ -79,7 +87,18 @@ const BarListRow =
 
     const content = (
         <>
-            <span aria-hidden="true" className={ barClasses } style={{ ...style , width : `${ width }%` }} />
+            <span
+                aria-hidden = "true"
+                className   = { barClasses }
+                style       =
+                {{
+                    ...style ,
+                    width : `${ width }%` ,
+                    // Inline rather than a `delay-*` class : built from an index, it would
+                    // never appear literally in a source file and Tailwind would not emit it.
+                    ...revealDelay ? { transitionDelay : `${ revealDelay }ms` } : null ,
+                }}
+            />
 
             <span className={ getBarListLabelClasses({ className : labelClassName }) }>
                 { icon ? <span aria-hidden="true" className="flex shrink-0 items-center">{ icon }</span> : null }

@@ -1,6 +1,10 @@
 'use client' ;
 
-import { getBarListClasses } from '../../themes/components/barList' ;
+import { useEffect , useState } from 'react' ;
+
+import { useMedia } from 'react-use' ;
+
+import { BAR_LIST_BAR_DURATION , getBarListClasses } from '../../themes/components/barList' ;
 
 import BarListRow from './BarListRow' ;
 import EmptyState from '../EmptyState' ;
@@ -18,6 +22,14 @@ const DEFAULT_SKELETON_ROWS = 5 ;
 // long-tailed distribution renders as nothing at all and reads as missing data.
 const MIN_WIDTH = 2 ;
 
+// The three moments of an entrance. `ZERO` is the frame the bars are pinned at nothing —
+// a width has to be painted before it can be transitioned from. `GROW` is the run itself,
+// and the only moment the per-row delay exists. `DONE` is the resting state, and it is
+// also where a list that never reveals anything sits from the start.
+const ZERO = 'zero' ;
+const GROW = 'grow' ;
+const DONE = 'done' ;
+
 /**
  * A ranked list of values, each drawn as a bar as wide as its share — top pages, top
  * referrers, top error codes. The everyday shape of an analytics panel.
@@ -31,6 +43,22 @@ const MIN_WIDTH = 2 ;
  * list is a ranking ; pass `'none'` to keep the order the data came in.
  *
  * **Rows can be links or buttons, never both.** See {@link module:components/metrics/BarListRow}.
+ *
+ * ### `reveal` — the bars grow in, one after the other
+ *
+ * Off by default. Turned on, every bar starts at nothing and grows to its width, each row
+ * leaving `revealStagger` milliseconds after the one above it. It is the transition
+ * `animated` already uses, started from zero — the two describe the same movement at two
+ * different moments, and cost the same nothing.
+ *
+ * **When it runs** : on mount, whenever `loading` falls back to `false` — the shape of an
+ * API call, and the reason no prop has to be wired for one — and whenever `revealKey`
+ * changes, which is the manual replay. A change of `data` alone does **not** replay it :
+ * a parent writing `data={ items.map( … ) }` builds a new array on every render, and a
+ * list that restarted on identity would never stop. Rows are keyed on `key ?? name`, so
+ * re-sorting an unchanged list does not replay it either.
+ *
+ * Ignored under `prefers-reduced-motion`, like every other animation in the library.
  *
  * @module components/metrics/BarList
  *
@@ -47,6 +75,9 @@ const MIN_WIDTH = 2 ;
  * @param {number} [props.max] - Value the bars are scaled against. Defaults to the largest value.
  * @param {Function} [props.onSelect] - Row click handler : `( item ) => void`.
  * @param {React.Ref} [props.ref] - Forwarded to the list.
+ * @param {boolean} [props.reveal=false] - Grow the bars in, one row after the other. See above.
+ * @param {*} [props.revealKey] - Change this value to replay the entrance.
+ * @param {number} [props.revealStagger=60] - Milliseconds between two rows.
  * @param {string} [props.rowClassName] - Additional classes on every row.
  * @param {boolean} [props.showPercentage=false] - Append each value's share of the total, in a muted span.
  * @param {import('../../themes/components/barList').BarListSize|Object} [props.size='md'] - Row height, scalar or per breakpoint.
@@ -81,6 +112,14 @@ const MIN_WIDTH = 2 ;
  * <BarList data={ thisWeek } max={ 1000 } />
  * <BarList data={ lastWeek } max={ 1000 } />
  * ```
+ *
+ * @example Bars growing in, replayed on demand
+ * ```jsx
+ * const [ replay , setReplay ] = useState( 0 ) ;
+ *
+ * <BarList data={ pages } loading={ isFetching } reveal revealKey={ replay } />
+ * <Button onClick={ () => setReplay( count => count + 1 ) }>Replay</Button>
+ * ```
  */
 const BarList =
 ({
@@ -96,6 +135,9 @@ const BarList =
     max ,
     onSelect ,
     ref ,
+    reveal = false ,
+    revealKey ,
+    revealStagger = 60 ,
     rowClassName ,
     showPercentage = false ,
     size ,
@@ -105,6 +147,54 @@ const BarList =
     ...rest
 }) =>
 {
+    // The prop asks, the system decides : `prefers-reduced-motion` wins here as it does in
+    // every chart of the library.
+    const reduceMotion = useMedia( '(prefers-reduced-motion: reduce)' , false ) ;
+    const revealing    = reveal && !reduceMotion ;
+
+    // What identifies one entrance. A load that just finished and a new `revealKey` are the
+    // two ways to ask for another ; `revealing` is in there so that turning the effect on
+    // plays it rather than waiting for the next occasion.
+    const pass = `${ revealKey ?? '' }|${ loading }|${ revealing }` ;
+
+    const [ current , setCurrent ] = useState( pass ) ;
+    const [ phase   , setPhase   ] = useState( revealing ? ZERO : DONE ) ;
+
+    if ( current !== pass )
+    {
+        // Setting state while rendering is React's own way of deriving state from props,
+        // and the only one that pins the bars back to zero **in the same commit** : an
+        // effect would let the browser paint them at full width first, and the entrance
+        // would start from the end.
+        setCurrent( pass ) ;
+        setPhase( revealing ? ZERO : DONE ) ;
+    }
+
+    useEffect( () =>
+    {
+        if ( phase !== ZERO || loading ) return ;
+
+        // One frame at zero, painted, before the real widths are handed over — a transition
+        // needs a value to leave.
+        const frame = requestAnimationFrame( () => setPhase( GROW ) ) ;
+
+        return () => cancelAnimationFrame( frame ) ;
+    }
+    , [ loading , phase ] ) ;
+
+    useEffect( () =>
+    {
+        if ( phase !== GROW ) return ;
+
+        // The delay belongs to the entrance and to nothing else : left in place, it would
+        // stagger every later value change too, which is nonsense for a refresh.
+        const last  = Math.max( data.length - 1 , 0 ) * revealStagger ;
+        const timer = setTimeout( () => setPhase( DONE ) , last + BAR_LIST_BAR_DURATION ) ;
+
+        return () => clearTimeout( timer ) ;
+    }
+    , [ data.length , phase , revealStagger ] ) ;
+
     if ( loading )
     {
         // The placeholders keep the row count the data will have, so the panel does not
@@ -163,7 +253,10 @@ const BarList =
                         key          = { item.key ?? item.name ?? `row-${ index }` }
                         name         = { item.name }
                         onSelect     = { onSelect ? () => onSelect( item ) : undefined }
+                        reveal       = { phase === GROW }
+                        revealDelay  = { phase === GROW ? index * revealStagger : undefined }
                         size         = { size }
+                        still        = { phase === ZERO }
                         value        = {
                             <>
                                 { valueFormatter( item.value ) }
@@ -173,7 +266,7 @@ const BarList =
                             </>
                         }
                         valueClassName = { valueClassName }
-                        width          = { width }
+                        width          = { phase === ZERO ? 0 : width }
                     />
                 ) ;
             } ) }

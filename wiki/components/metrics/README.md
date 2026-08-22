@@ -209,6 +209,13 @@ One interactive element per row, at most : `href` makes it a link, `onSelect` ma
 button when there is no `href`, and a row with neither stays inert. `loading` shows as many
 skeleton rows as the data will have, so the panel does not jump when the query lands.
 
+`reveal` grows the bars in from nothing, one row after the next, `revealStagger`
+milliseconds apart — off by default. It plays on mount, whenever `loading` falls back to
+`false`, and whenever `revealKey` changes ; those last two are the whole replay mechanism,
+one automatic and one manual. A change of `data` alone deliberately does **not** replay it :
+a parent writing `data={ items.map( … ) }` builds a new array on every render, and a list
+that restarted on identity would never stop. Ignored under `prefers-reduced-motion`.
+
 ## Accessibility
 
 The part no screenshot shows, and the reason these are components rather than snippets.

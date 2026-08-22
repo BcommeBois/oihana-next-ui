@@ -8,6 +8,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Metrics — the bars of a `BarList` can grow in, one after the other**
+
+- **`reveal` starts every bar at nothing and lets it grow to its width**, each row leaving `revealStagger` milliseconds (60 by default) after the one above it. Off unless asked for. It is not a new animation : it is the `transition-[width]` `animated` already used, started from zero — the two describe the same movement at two different moments, and the second costs what the first cost, which is nothing.
+- **No animation library was pulled in, and `StaggerList` could not be reused.** The existing motion helper wraps each child in a `motion.div`, and a `BarList` is a **subgrid** — the `<ol>` sets the columns, each `<li>` inherits them through `grid-cols-subgrid`. An intervening `div` becomes the grid item in the `<li>`'s place, the columns fall out of alignment, and `<div>` is not a valid child of `<ol>` either. The pattern was reused, the component could not be.
+- **Two triggers, one automatic and one manual.** `loading` falling back to `false` replays the entrance — that is the shape of an API call, and it means nothing has to be wired for the common case. `revealKey` replays it whenever its value changes, for everything that never raises a loading flag. Mounting the list plays it too, being a first appearance.
+- **A change of `data` deliberately does *not* replay it.** A parent writing `data={ items.map( … ) }` builds a new array on every render, so a list restarting on identity would never stop. Rows are keyed on `key ?? name`, so re-sorting an unchanged list stays still as well.
+- **The frame that pins the bars back to nothing is the one frame they must not animate.** On a first appearance there is no previous width and nothing can transition, but on a replay the bars are already full : reset with the transition in place, they ease *down* to zero — staggered — while the next frame is already asking them to grow, and two contradictory transitions fight over the same property. The reset is therefore instantaneous, `animated` included, which is what `still` says in `getBarListBar`.
+- **The per-row delay is an inline style, not a `delay-*` class.** Built from an index, such a class never appears literally in a source file, and Tailwind v4 — which scans source text — would never emit it. The same trap as the pattern safelist, met from the other side.
+- **The delay is dropped once the entrance is over**, at `stagger × (rows - 1) + 500 ms`. Left in place it would stagger every later value change too, which is nonsense for a refresh : a reveal is an arrival, an update is not.
+- **Ignored under `prefers-reduced-motion`**, through the `useMedia` the charts already use.
+
 **Application — the `<body>` stops repainting its own children**
 
 - **`*:text-base-content` is gone from the root layout, and nothing replaces it.** It did not colour `<body>` and let the page inherit : it compiled to `.\*\:text-base-content > *` and **imposed** the colour on every direct child as a declaration of that child's own. It had been there since the first commit, with no reason on record.

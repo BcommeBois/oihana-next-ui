@@ -56,6 +56,14 @@ const barList =
             hint        : 'Élargis la plage de dates pour voir des résultats.' ,
         } ,
 
+        reveal :
+        {
+            title       : 'Entrée progressive des barres' ,
+            description : "reveal fait pousser chaque barre depuis zéro, avec revealStagger millisecondes de décalage d'une ligne à l'autre. Elle rejoue au montage, quand loading retombe à false — la forme d'un appel API — et à chaque changement de revealKey. Un simple changement de données ne la rejoue pas. Ignorée si le système demande moins d'animations." ,
+            replay      : "Rejouer" ,
+            refetch     : "Recharger (simule un appel API)" ,
+        } ,
+
         errors :
         {
             title : 'Erreurs les plus fréquentes' ,
@@ -115,6 +123,14 @@ const barList =
             description : 'loading shows as many skeletons as the data will have rows, so the panel does not jump when it lands. An empty list falls back to EmptyState.' ,
             empty       : 'No visit over the period' ,
             hint        : 'Widen the date range to see results.' ,
+        } ,
+
+        reveal :
+        {
+            title       : 'Bars growing in' ,
+            description : 'reveal grows every bar from nothing, each row leaving revealStagger milliseconds after the one above it. It plays on mount, whenever loading falls back to false — the shape of an API call — and whenever revealKey changes. A change of data alone does not replay it. Ignored when the system asks for less motion.' ,
+            replay      : 'Replay' ,
+            refetch     : 'Refetch (fakes an API call)' ,
         } ,
 
         errors :

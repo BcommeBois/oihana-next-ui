@@ -7,6 +7,7 @@ import format from 'vegas-js-core/src/strings/fastformat' ;
 import useI18n from '@/contexts/locale/useI18n' ;
 
 import BarList   from '@/components/metrics/BarList' ;
+import Button    from '@/components/Button' ;
 import Container from '@/display/Container' ;
 import Divider   from '@/components/Divider' ;
 
@@ -51,9 +52,19 @@ const t = ( pattern , ...args ) => pattern ? format( pattern , ...args ) : undef
  */
 const BarListDemo = ( { path = 'demo.metrics.barList' } ) =>
 {
-    const { colors , description , errors , formatter , interactive , scale , simple , sizes , states , title } = useI18n( path ) ;
+    const { colors , description , errors , formatter , interactive , reveal , scale , simple , sizes , states , title } = useI18n( path ) ;
 
     const [ selected , setSelected ] = useState( null ) ;
+
+    // The two ways an entrance is asked for : a value that changes, and a load that ends.
+    const [ replay  , setReplay  ] = useState( 0 ) ;
+    const [ loading , setLoading ] = useState( false ) ;
+
+    const refetch = () =>
+    {
+        setLoading( true ) ;
+        setTimeout( () => setLoading( false ) , 900 ) ;
+    } ;
 
     const pagesWithIcons = PAGES.map( item => ({ ...item , icon : <PageIcon /> }) ) ;
 
@@ -159,6 +170,28 @@ const BarListDemo = ( { path = 'demo.metrics.barList' } ) =>
                         emptyLabel = { states?.empty }
                         emptyProps = { { description : states?.hint } }
                     />
+                </div>
+            </Section>
+
+            <Divider />
+
+            <Section title={ reveal?.title } description={ reveal?.description }>
+                <div className="flex flex-col gap-6">
+                    <BarList
+                        data          = { PAGES }
+                        loading       = { loading }
+                        reveal
+                        revealKey     = { replay }
+                        showPercentage
+                    />
+                    <div className="flex flex-wrap gap-3">
+                        <Button color="primary" onClick={ () => setReplay( count => count + 1 ) }>
+                            { reveal?.replay }
+                        </Button>
+                        <Button disabled={ loading } onClick={ refetch } style="outline">
+                            { reveal?.refetch }
+                        </Button>
+                    </div>
                 </div>
             </Section>
 

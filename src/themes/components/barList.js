@@ -84,6 +84,18 @@ export const BAR_LIST_BAR   = 'absolute inset-y-0 left-0 rounded-sm opacity-25' 
 export const BAR_LIST_LABEL = 'relative flex min-w-0 items-center gap-2 px-2 text-sm' ;
 export const BAR_LIST_VALUE = 'flex items-center justify-end text-sm tabular-nums text-base-content' ;
 
+// The one transition the bar ever runs, whether it is easing to a new value or growing in
+// from nothing. Its duration is duplicated below as a number because JavaScript has to know
+// when the entrance is over ; the class has to stay a literal for Tailwind to emit it.
+export const BAR_LIST_BAR_TRANSITION = 'transition-[width] duration-500 ease-out' ;
+
+/**
+ * How long a bar takes to reach its width, in milliseconds.
+ * Keep in step with the `duration-500` of {@link BAR_LIST_BAR_TRANSITION}.
+ * @type {number}
+ */
+export const BAR_LIST_BAR_DURATION = 500 ;
+
 /**
  * Generates the list className expression.
  *
@@ -213,6 +225,8 @@ export const getBarListTrackClasses =
  * @param {string} [props.className] - ClassName to append.
  * @param {string} [props.color] - A DaisyUI colour token, or any CSS colour.
  * @param {boolean} [props.interactive=false] - Whether the row responds to a click.
+ * @param {boolean} [props.reveal=false] - Whether the bar is growing in : needs the same transition as `animated`.
+ * @param {boolean} [props.still=false] - Whether the bar is being pinned back to nothing : no transition at all.
  *
  * @returns {{ className : string , style : Object | undefined }} The bar className and style.
  *
@@ -231,6 +245,8 @@ export const getBarListBar =
     className ,
     color ,
     interactive = false ,
+    reveal = false ,
+    still = false ,
 } = {} ) =>
 {
     const { definition , style } = resolveBarColor( color ) ;
@@ -245,7 +261,10 @@ export const getBarListBar =
 
                 ...definition ,
 
-                ...animated === true && { 'transition-[width] duration-500 ease-out' : true } ,
+                // `still` is the one frame an entrance pins the bars back to nothing. It has
+                // to be instantaneous : animated, the reset would race the growth that
+                // follows it, and the bar would be seen shrinking away instead of arriving.
+                ...( reveal === true || ( animated === true && still !== true ) ) && { [ BAR_LIST_BAR_TRANSITION ] : true } ,
 
                 ...interactive === true && { 'group-hover:opacity-40' : true } ,
 
