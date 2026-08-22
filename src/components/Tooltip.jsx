@@ -82,6 +82,8 @@ import FloatingTip from './FloatingTip' ;
  * @param {import('../themes/components/tooltip').TooltipPosition} [props.position] - Tooltip placement.
  * @param {React.Ref} [props.ref] - Forwarded ref.
  * @param {boolean} [props.show=true] - Enable/disable tooltip. When false, renders children only.
+ *   A disabled trigger has to pass its state here : the bubble opens on the wrapper, and a
+ *   disabled control takes no pointer events to stop the hover from reaching it.
  * @param {string} [props.tip] - Tooltip text (uses data-tip attribute).
  * @param {boolean} [props.float=false] - Draw the bubble as a **portaled element** instead of a pseudo-element. See below.
  * @param {number} [props.delay=400] - Floating only : milliseconds a pointer must dwell before it opens.

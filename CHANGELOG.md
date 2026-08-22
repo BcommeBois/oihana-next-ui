@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Tooltips — a disabled flag stops talking**
+
+- **`FlagItem` showed its tooltip over a flag that could not be clicked.** Its `Tooltip` was given `show={ showTooltip }` and never looked at `disabled`, so hovering a disabled flag still opened the bubble. It now reads `show={ showTooltip && !disabled }`, the wording already in place in `Button`, `LinkButton` and `MenuLink`.
+- **The bubble opens on the wrapper, which is why a disabled trigger cannot stop it.** DaisyUI's rule is `.tooltip:hover`, and `.tooltip` is the element *around* the control ; meanwhile `.btn:is(:disabled,[disabled],[aria-disabled=true])` takes `pointer-events: none`, so the pointer passes straight through the button and lands on the very wrapper that opens the tooltip. Disabling a control therefore does not quiet its bubble — **it hands the hover to it**. `FlagItem` put `pointer-events-none` on its own `<a>` as well, which made the path certain rather than incidental.
+- **`FlagMenu` inherited the defect wholesale**, since it passes its `disabled` down to every flag : a language menu switched off kept naming each of its languages under the cursor.
+- **The rest of the library was audited and holds.** `Button`, `LinkButton`, `MenuLink` and `InputTime` already pass their state to `show`, and `LangDropDown` is closed by `hasMultiple`. `InputAction` is silent too, but for another reason worth writing down : its `tooltip` classes sit **on the disabled `<button>` itself**, which `pointer-events: none` makes unhoverable — there is no wrapper to catch what the button refuses.
+- **No new prop was added.** A `disabled` on `Tooltip` would only be `show` negated and spelled differently ; the rule is stated in the JSDoc of `show` instead, where the next caller wrapping a disabled trigger will meet it.
+
 ## [0.13.0] — 2026-08-19
 
 **Application — the three spellings of one workaround are gone**

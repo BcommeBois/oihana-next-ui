@@ -94,6 +94,31 @@ const TooltipDemo = () =>
 
             <Divider />
 
+            {/* A disabled trigger says nothing */}
+            <div className="flex flex-col gap-4">
+                <h3 className="text-xl font-semibold">Disabled triggers</h3>
+                <p className="text-sm text-base-content/70">
+                    DaisyUI opens the bubble on <code>.tooltip:hover</code> — on the wrapper, not on
+                    the trigger — and a disabled <code>.btn</code> takes no pointer events, so the
+                    hover lands on the wrapper and the bubble opens over a button that cannot be
+                    clicked. The wrappers (Button, LinkButton, MenuLink, FlagItem, InputTime) pass
+                    their disabled state to <code>show</code>; a bare Tooltip has to be told.
+                </p>
+                <div className="flex flex-wrap items-center gap-12 p-6">
+                    <Tooltip tip="Still talking" position="top">
+                        <button className="btn" disabled>Bare Tooltip</button>
+                    </Tooltip>
+                    <Tooltip tip="Never seen" position="top" show={ false }>
+                        <button className="btn" disabled>{ 'show={ !disabled }' }</button>
+                    </Tooltip>
+                    <Button color="primary" disabled tooltip="Never seen" tooltipPosition="top">
+                        Button
+                    </Button>
+                </div>
+            </div>
+
+            <Divider />
+
             {/* Colours */}
             <div className="flex flex-col gap-4">
                 <h3 className="text-xl font-semibold">Colours</h3>

@@ -19,7 +19,7 @@ import { BOTTOM } from '../../themes/enums/positions' ;
  * @param {string} props.lang - Language code.
  * @param {Function} [props.onClick] - Click handler.
  * @param {boolean} [props.showIndicator] - Show indicator dot.
- * @param {boolean} [props.showTooltip=true] - Show tooltip.
+ * @param {boolean} [props.showTooltip=true] - Show tooltip. A disabled item never shows one.
  * @param {string} [props.tooltip] - Tooltip text (defaults to lang).
  * @param {import('../../themes/components/tooltip').TooltipAlignment} [props.tooltipAlign] - Tooltip alignment ('start' | 'center' | 'end').
  * @param {string} [props.tooltipClassName] - Tooltip classes.
@@ -77,7 +77,7 @@ const FlagItem =
             color={ tooltipColor }
             tip={ tooltip ?? lang }
             position={ tooltipPosition }
-            show={ showTooltip }
+            show={ showTooltip && !disabled }
         >
             { content }
         </Tooltip>
