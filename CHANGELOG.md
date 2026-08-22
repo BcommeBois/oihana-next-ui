@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.14.0] — 2026-08-22
+
 **Metrics — the bars of a `BarList` can grow in, one after the other**
 
 - **`reveal` starts every bar at nothing and lets it grow to its width**, each row leaving `revealStagger` milliseconds (60 by default) after the one above it. Off unless asked for. It is not a new animation : it is the `transition-[width]` `animated` already used, started from zero — the two describe the same movement at two different moments, and the second costs what the first cost, which is nothing.
