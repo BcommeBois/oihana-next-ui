@@ -58,6 +58,10 @@ const DONE = 'done' ;
  * list that restarted on identity would never stop. Rows are keyed on `key ?? name`, so
  * re-sorting an unchanged list does not replay it either.
  *
+ * `revealFade` adds a fade of the whole row — label and value included — to the bar growing
+ * under them. Off by default : the bar is the data, and a value column that fades on every
+ * arrival draws the eye to the numbers rather than to the shape they make.
+ *
  * Ignored under `prefers-reduced-motion`, like every other animation in the library.
  *
  * @module components/metrics/BarList
@@ -76,6 +80,7 @@ const DONE = 'done' ;
  * @param {Function} [props.onSelect] - Row click handler : `( item ) => void`.
  * @param {React.Ref} [props.ref] - Forwarded to the list.
  * @param {boolean} [props.reveal=false] - Grow the bars in, one row after the other. See above.
+ * @param {boolean} [props.revealFade=false] - Fade each row in as its bar grows, rather than growing the bar alone.
  * @param {*} [props.revealKey] - Change this value to replay the entrance.
  * @param {number} [props.revealStagger=60] - Milliseconds between two rows.
  * @param {string} [props.rowClassName] - Additional classes on every row.
@@ -136,6 +141,7 @@ const BarList =
     onSelect ,
     ref ,
     reveal = false ,
+    revealFade = false ,
     revealKey ,
     revealStagger = 60 ,
     rowClassName ,
@@ -153,9 +159,10 @@ const BarList =
     const revealing    = reveal && !reduceMotion ;
 
     // What identifies one entrance. A load that just finished and a new `revealKey` are the
-    // two ways to ask for another ; `revealing` is in there so that turning the effect on
-    // plays it rather than waiting for the next occasion.
-    const pass = `${ revealKey ?? '' }|${ loading }|${ revealing }` ;
+    // two ways to ask for another ; `revealing` and `revealFade` are in there so that
+    // changing what the entrance looks like plays it, rather than waiting for the next
+    // occasion to show what was asked for.
+    const pass = `${ revealKey ?? '' }|${ loading }|${ revealing }|${ revealFade }` ;
 
     const [ current , setCurrent ] = useState( pass ) ;
     const [ phase   , setPhase   ] = useState( revealing ? ZERO : DONE ) ;
@@ -248,6 +255,7 @@ const BarList =
                         className    = { rowClassName }
                         color        = { item.color ?? color }
                         external     = { item.external }
+                        fade         = { revealFade }
                         href         = { item.href }
                         icon         = { item.icon }
                         key          = { item.key ?? item.name ?? `row-${ index }` }

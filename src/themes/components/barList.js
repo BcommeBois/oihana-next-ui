@@ -96,6 +96,10 @@ export const BAR_LIST_BAR_TRANSITION = 'transition-[width] duration-500 ease-out
  */
 export const BAR_LIST_BAR_DURATION = 500 ;
 
+// The row's own entrance, when `revealFade` asks for one : the label and the value fade in
+// while the bar grows under them. Same duration as the bar, so the row arrives as one thing.
+export const BAR_LIST_ROW_TRANSITION = 'transition-opacity duration-500 ease-out' ;
+
 /**
  * Generates the list className expression.
  *
@@ -138,7 +142,9 @@ export const getBarListClasses =
  * @param {Object} [props.before] - Class definitions to prepend.
  * @param {string} [props.beforeClassName] - ClassName to prepend.
  * @param {string} [props.className] - ClassName to append.
+ * @param {boolean} [props.reveal=false] - Whether the row is fading in.
  * @param {BarListSize | ResponsiveBarListSize} [props.size='md'] - Row height, scalar or per breakpoint.
+ * @param {boolean} [props.still=false] - Whether the row is being held hidden : no transition at all.
  *
  * @returns {string} The row className expression.
  *
@@ -154,7 +160,9 @@ export const getBarListRowClasses =
     before ,
     beforeClassName ,
     className ,
+    reveal = false ,
     size = MD ,
+    still = false ,
 } = {} ) => cn
 (
     beforeClassName ,
@@ -163,6 +171,11 @@ export const getBarListRowClasses =
         ...before ,
 
         ...getBarListRowHeight( size ) ,
+
+        // Same discipline as the bar : the frame that hides the row is instantaneous, and
+        // only the frame that brings it back carries a transition.
+        ...still === true  && { 'opacity-0' : true } ,
+        ...reveal === true && { [ `opacity-100 ${ BAR_LIST_ROW_TRANSITION }` ] : true } ,
 
         ...after ,
     } ,

@@ -216,6 +216,10 @@ one automatic and one manual. A change of `data` alone deliberately does **not**
 a parent writing `data={ items.map( … ) }` builds a new array on every render, and a list
 that restarted on identity would never stop. Ignored under `prefers-reduced-motion`.
 
+`revealFade` adds a fade of the whole row to the bar growing under it — off by default,
+since the bar is the data and a value column that fades on every arrival pulls the eye to
+the numbers rather than to the shape they make.
+
 ## Accessibility
 
 The part no screenshot shows, and the reason these are components rather than snippets.

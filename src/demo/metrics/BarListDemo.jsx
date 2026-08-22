@@ -59,6 +59,7 @@ const BarListDemo = ( { path = 'demo.metrics.barList' } ) =>
     // The two ways an entrance is asked for : a value that changes, and a load that ends.
     const [ replay  , setReplay  ] = useState( 0 ) ;
     const [ loading , setLoading ] = useState( false ) ;
+    const [ fade    , setFade    ] = useState( false ) ;
 
     const refetch = () =>
     {
@@ -181,6 +182,7 @@ const BarListDemo = ( { path = 'demo.metrics.barList' } ) =>
                         data          = { PAGES }
                         loading       = { loading }
                         reveal
+                        revealFade    = { fade }
                         revealKey     = { replay }
                         showPercentage
                     />
@@ -190,6 +192,14 @@ const BarListDemo = ( { path = 'demo.metrics.barList' } ) =>
                         </Button>
                         <Button disabled={ loading } onClick={ refetch } style="outline">
                             { reveal?.refetch }
+                        </Button>
+                        <Button
+                            active      = { fade }
+                            activeColor = "secondary"
+                            onClick     = { () => setFade( value => !value ) }
+                            style       = "outline"
+                        >
+                            { reveal?.fade }
                         </Button>
                     </div>
                 </div>

@@ -62,6 +62,7 @@ const barList =
             description : "reveal fait pousser chaque barre depuis zéro, avec revealStagger millisecondes de décalage d'une ligne à l'autre. Elle rejoue au montage, quand loading retombe à false — la forme d'un appel API — et à chaque changement de revealKey. Un simple changement de données ne la rejoue pas. Ignorée si le système demande moins d'animations." ,
             replay      : "Rejouer" ,
             refetch     : "Recharger (simule un appel API)" ,
+            fade        : "Avec fondu de la ligne" ,
         } ,
 
         errors :
@@ -131,6 +132,7 @@ const barList =
             description : 'reveal grows every bar from nothing, each row leaving revealStagger milliseconds after the one above it. It plays on mount, whenever loading falls back to false — the shape of an API call — and whenever revealKey changes. A change of data alone does not replay it. Ignored when the system asks for less motion.' ,
             replay      : 'Replay' ,
             refetch     : 'Refetch (fakes an API call)' ,
+            fade        : 'With a row fade' ,
         } ,
 
         errors :

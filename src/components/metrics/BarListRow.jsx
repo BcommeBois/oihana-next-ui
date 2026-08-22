@@ -31,6 +31,7 @@ import Link from '../links/Link' ;
  * @param {string} [props.className] - Additional classes on the row.
  * @param {string} [props.color] - Bar colour : a DaisyUI token, or any CSS colour.
  * @param {boolean} [props.external=false] - Open `href` in a new tab through a plain anchor rather than a `Link`.
+ * @param {boolean} [props.fade=false] - Fade the whole row in alongside the bar, rather than growing the bar alone.
  * @param {string} [props.href] - Destination. Turns the row into a link.
  * @param {React.ReactNode} [props.icon] - Decorative node shown before the name.
  * @param {string} [props.labelClassName] - Additional classes on the label.
@@ -52,6 +53,7 @@ const BarListRow =
     className ,
     color ,
     external = false ,
+    fade = false ,
     href ,
     icon ,
     labelClassName ,
@@ -126,8 +128,20 @@ const BarListRow =
         track = <div { ...trackProps }>{ content }</div> ;
     }
 
+    const rowClasses = getBarListRowClasses({
+        className ,
+        reveal : fade && reveal ,
+        size ,
+        still  : fade && still ,
+    }) ;
+
+    // The row leaves at the same moment as its own bar, so the two read as one arrival.
+    const rowStyle = fade && revealDelay
+        ? { ...rest.style , transitionDelay : `${ revealDelay }ms` }
+        : rest.style ;
+
     return (
-        <li className={ getBarListRowClasses({ className , size }) } ref={ ref } { ...rest }>
+        <li className={ rowClasses } ref={ ref } { ...rest } style={ rowStyle }>
             { track }
             <span className={ getBarListValueClasses({ className : valueClassName }) }>{ value }</span>
         </li>
