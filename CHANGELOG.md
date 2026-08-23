@@ -8,7 +8,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
-**Charts — the legend leaves the SVG** *(lots 1 to 3 of 4 — all twelve charts)*
+**Charts — the legend leaves the SVG** *(the chantier, in four lots — all twelve charts)*
+
+*Lot 4 — what the move made dead, removed.*
+
+- **`themes/charts/legends` is gone.** Its presets translated a position into a dozen nivo fields — `anchor`, `direction`, `translateX/Y`, `itemWidth`, `symbolShape` — and nothing reads them any more. `resolveLegend` is the one piece that outlived them, the `legend` prop still taking the same four shapes it always did, and it moved into `themes/charts/legendItems` beside the builders that use it. **The module no longer exists at `oihana-next-ui/themes/charts/legends`** ; nothing in the library imported it but its own margin builders, and the guide had not been written yet to name it.
+- **`LEGEND_SPACE` went with it, and so did the three legend branches of the margin builders.** `getChartMargin`, `getRadialMargin` and `getGridMargin` no longer take a `legend` at all. They took a band of 52 px out of the plot under the chart, or 132 beside it, before anyone knew how long the text would be — and that band had been hiding three placement defects, all of which surfaced and were fixed in the second lot.
+- **`getChartLayout` and `useChartLayout` resolve a margin and axes, and no longer a legend.** Their `legend` and `continuousLegend` parameters are gone with the `legends` they returned. What is left is genuinely coupled : an axis derives its title offset from the resolved margin, which was always the reason the two were computed in one pass.
+- **`AXIS_LEGEND_SPACE` stays, and is not the same thing** — it is the room an axis *title* needs, which no legend ever paid for.
+
+*Lots 1 to 3 — the mechanism, and the twelve charts.*
 
 *Lot 3 — the three quantitative charts, and the `MetricScale` they needed : `HeatMapChart`, `CalendarChart`, `TimeRangeChart`.*
 

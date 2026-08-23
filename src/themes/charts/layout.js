@@ -1,20 +1,22 @@
 /**
- * Chart layout — margin, legends and axes resolved together.
+ * Chart layout — margin and axes resolved together.
  *
- * These three are not three neighbouring concerns, they are **dependent** :
- * the legend is placed from the resolved margin, and each axis derives its
- * title offset from it too. That dependency is why they always appeared
- * together in every chart, and why they belong in one place.
+ * The two are dependent : each axis derives its title offset from the
+ * resolved margin. That dependency is why they always appeared together in
+ * every chart, and why they belong in one place.
  *
  * Grouping them also keeps the three margin strategies from leaking into
  * the components : a chart declares *what kind of thing it is* and gets the
  * right one, instead of importing the matching builder itself.
  *
+ * **The legend used to be resolved here too**, and it no longer is : it is
+ * drawn in HTML by `ChartFrame` from what `useChartLegend` builds, so it is
+ * neither placed from the margin nor taken out of it.
+ *
  * @module themes/charts/layout
  */
 
 import { getChartAxis }                       from './axes' ;
-import { getChartLegends , getContinuousLegends } from './legends' ;
 import { getChartMargin , getGridMargin , getRadialMargin } from './margins' ;
 
 /**
@@ -42,7 +44,7 @@ export const GRID = 'grid' ;
 export const chartKinds = [ CARTESIAN , RADIAL , GRID ] ;
 
 /**
- * Resolves a chart's margin, legends and axes in one pass.
+ * Resolves a chart's margin and axes in one pass.
  *
  * **Axes are shown by default.** An omitted `xAxis` yields a plain axis with
  * ticks rather than no axis at all — matching nivo's own default, and what
@@ -50,9 +52,7 @@ export const chartKinds = [ CARTESIAN , RADIAL , GRID ] ;
  * with `xAxis={ false }` or `xAxis={{ hide : true }}`.
  *
  * @param {Object} [props]
- * @param {boolean} [props.continuousLegend=false] - Build a gradient-bar legend instead of a list of swatches.
  * @param {string} [props.kind='cartesian'] - `'cartesian'`, `'radial'` or `'grid'`.
- * @param {boolean|string|Object} [props.legend] - The `legend` prop.
  * @param {Object} [props.margin] - Explicit margin overrides, merged last.
  * @param {boolean} [props.outsideLabels=false] - Radial only — labels drawn outside the plotted shape.
  * @param {boolean} [props.weekdayLabels=false] - Grid only — spelled-out weekday names down the left.
@@ -61,17 +61,15 @@ export const chartKinds = [ CARTESIAN , RADIAL , GRID ] ;
  * @param {string} [props.xScaleType] - Scale type ; `'time'` selects the localized tick formatter.
  * @param {Object|boolean} [props.yAxis] - The y axis config.
  *
- * @returns {{margin:Object,legends:Object[]|undefined,axisBottom:Object|null,axisTop:Object|null,axisLeft:Object|null}} The resolved layout.
+ * @returns {{margin:Object,axisBottom:Object|null,axisTop:Object|null,axisLeft:Object|null}} The resolved layout.
  *
  * @example
  * ```js
- * getChartLayout( { kind : 'cartesian' , xAxis : { legend : 'country' } , legend : 'bottom' } ) ;
+ * getChartLayout( { kind : 'cartesian' , xAxis : { legend : 'country' } } ) ;
  * ```
  */
 export const getChartLayout = ( {
-    continuousLegend = false ,
     kind = CARTESIAN ,
-    legend ,
     margin ,
     outsideLabels = false ,
     weekdayLabels = false ,
@@ -85,27 +83,21 @@ export const getChartLayout = ( {
 
     if ( kind === RADIAL )
     {
-        resolvedMargin = getRadialMargin( { outsideLabels , legend , margin } ) ;
+        resolvedMargin = getRadialMargin( { outsideLabels , margin } ) ;
     }
     else if ( kind === GRID )
     {
-        resolvedMargin = getGridMargin( { weekdayLabels , xAxis , yAxis , legend , margin } ) ;
+        resolvedMargin = getGridMargin( { weekdayLabels , xAxis , yAxis , margin } ) ;
     }
     else
     {
-        resolvedMargin = getChartMargin( { xAxis , yAxis , legend , margin } ) ;
+        resolvedMargin = getChartMargin( { xAxis , yAxis , margin } ) ;
     }
-
-    const legends = ( continuousLegend ? getContinuousLegends : getChartLegends )
-    ({
-        legend ,
-        margin : resolvedMargin ,
-    }) ;
 
     // Nothing to draw an axis on.
     if ( kind === RADIAL )
     {
-        return { margin : resolvedMargin , legends , axisBottom : null , axisTop : null , axisLeft : null } ;
+        return { margin : resolvedMargin , axisBottom : null , axisTop : null , axisLeft : null } ;
     }
 
     const axisX = getChartAxis
@@ -120,7 +112,6 @@ export const getChartLayout = ( {
 
     return {
         margin     : resolvedMargin ,
-        legends ,
         axisBottom : xAxisPosition === 'bottom' ? axisX : null ,
         axisTop    : xAxisPosition === 'top'    ? axisX : null ,
         axisLeft ,

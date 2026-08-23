@@ -19,6 +19,38 @@
  */
 
 /**
+ * Normalizes the `legend` prop into `{ position , ...overrides }`, or `null`
+ * when the legend is disabled.
+ *
+ * The `legend` prop has always taken these four shapes, and it kept them when
+ * the legend left the SVG — only the fields of the object changed hands, from
+ * nivo's `itemWidth` / `symbolShape` to ours. This normalization is all that
+ * survived `themes/charts/legends`, whose presets had no reader left.
+ *
+ * @param {boolean|string|Object} [legend] - `false`, `true`, a position, or a config object.
+ * @returns {Object|null} The normalized config.
+ */
+export const resolveLegend = ( legend ) =>
+{
+    if ( legend === false || legend === undefined || legend === null )
+    {
+        return null ;
+    }
+
+    if ( legend === true )
+    {
+        return { position : 'bottom' } ;
+    }
+
+    if ( typeof legend === 'string' )
+    {
+        return { position : legend } ;
+    }
+
+    return { position : 'bottom' , ...legend } ;
+} ;
+
+/**
  * Reads a nivo-style accessor — a field name or a function.
  *
  * @param {Object} datum - The datum to read.

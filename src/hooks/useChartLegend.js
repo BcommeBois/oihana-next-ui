@@ -8,8 +8,7 @@
 
 import { useMemo } from 'react' ;
 
-import { getLegendItems } from '../themes/charts/legendItems' ;
-import { resolveLegend }  from '../themes/charts/legends' ;
+import { getLegendItems , resolveLegend } from '../themes/charts/legendItems' ;
 
 /**
  * React hook returning the legend `ChartFrame` should draw, or `null`.

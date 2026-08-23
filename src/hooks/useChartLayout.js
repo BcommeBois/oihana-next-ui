@@ -1,7 +1,7 @@
 'use client' ;
 
 /**
- * Resolves a chart's margin, legends and axes.
+ * Resolves a chart's margin and axes.
  *
  * @module hooks/useChartLayout
  */
@@ -11,17 +11,18 @@ import { useMemo } from 'react' ;
 import { CARTESIAN , getChartLayout } from '../themes/charts/layout' ;
 
 /**
- * React hook returning a chart's margin, legends and axes.
+ * React hook returning a chart's margin and axes.
  *
- * The three are resolved together because they depend on each other — the
- * legend is placed from the resolved margin, and each axis derives its title
- * offset from it. Computing them separately meant repeating the same four
- * memos in every chart and re-deriving the coupling by hand.
+ * The two are resolved together because each axis derives its title offset
+ * from the resolved margin. Computing them separately meant repeating the
+ * same memos in every chart and re-deriving the coupling by hand.
+ *
+ * The legend is not among them : `useChartLegend` builds it and `ChartFrame`
+ * draws it in HTML, so it is neither placed from the margin nor taken out of
+ * it.
  *
  * @param {Object} [props] - See {@link getChartLayout} for every option.
- * @param {boolean} [props.continuousLegend=false] - Gradient-bar legend instead of a list of swatches.
  * @param {string} [props.kind='cartesian'] - `'cartesian'`, `'radial'` or `'grid'`.
- * @param {boolean|string|Object} [props.legend] - The `legend` prop.
  * @param {Object} [props.margin] - Explicit margin overrides.
  * @param {boolean} [props.outsideLabels=false] - Radial only — labels outside the plotted shape.
  * @param {boolean} [props.weekdayLabels=false] - Grid only — spelled-out weekday names.
@@ -30,21 +31,19 @@ import { CARTESIAN , getChartLayout } from '../themes/charts/layout' ;
  * @param {string} [props.xScaleType] - Scale type ; `'time'` selects the localized tick formatter.
  * @param {Object|boolean} [props.yAxis] - The y axis config.
  *
- * @returns {{margin:Object,legends:Object[]|undefined,axisBottom:Object|null,axisTop:Object|null,axisLeft:Object|null}} The resolved layout.
+ * @returns {{margin:Object,axisBottom:Object|null,axisTop:Object|null,axisLeft:Object|null}} The resolved layout.
  *
  * @example
  * ```jsx
- * const { margin , legends , axisBottom , axisLeft } = useChartLayout
+ * const { margin , axisBottom , axisLeft } = useChartLayout
  * ({
- *     kind  : 'cartesian' ,
- *     legend , margin , xAxis , yAxis ,
+ *     kind : 'cartesian' ,
+ *     margin , xAxis , yAxis ,
  * }) ;
  * ```
  */
 const useChartLayout = ( {
-    continuousLegend = false ,
     kind = CARTESIAN ,
-    legend ,
     margin ,
     outsideLabels = false ,
     weekdayLabels = false ,
@@ -56,9 +55,7 @@ const useChartLayout = ( {
 (
     () => getChartLayout
     ({
-        continuousLegend ,
         kind ,
-        legend ,
         margin ,
         outsideLabels ,
         weekdayLabels ,
@@ -68,9 +65,7 @@ const useChartLayout = ( {
         yAxis ,
     }) ,
     [
-        continuousLegend ,
         kind ,
-        legend ,
         margin ,
         outsideLabels ,
         weekdayLabels ,

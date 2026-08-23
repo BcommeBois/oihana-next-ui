@@ -2,7 +2,7 @@
  * Automatic chart margins.
  *
  * nivo requires explicit margins, and a chart whose margin does not account
- * for its axis titles, rotated ticks or legend simply clips them. Left to
+ * for its axis titles or its rotated ticks simply clips them. Left to
  * the caller this becomes a hardcoded `margin={{ top : 40 , right : 80 ,
  * bottom : 80 , left : 80 }}` repeated on every chart and re-tuned by hand
  * whenever anything changes.
@@ -11,13 +11,17 @@
  * explicit `margin` prop stays available as an escape hatch — it is merged
  * on top, so `margin={{ left : 90 }}` overrides only the left side.
  *
+ * **Nothing here reserves room for a legend any more.** It used to : a band
+ * of 52 px under the chart, or 132 beside it, taken out of the plot before
+ * anyone knew how long the text would be. The legend is drawn in HTML under
+ * the frame now, so the plot keeps that room — and the three placement
+ * defects that band had been hiding came out with it.
+ *
  * @module themes/charts/margins
  */
 
-import { LEGEND_SPACE , resolveLegend } from './legends' ;
-
 /**
- * Margin before any axis, title or legend is taken into account.
+ * Margin before any axis or title is taken into account.
  * @type {Object.<string,number>}
  */
 export const BASE_MARGIN = { top : 16 , right : 24 , bottom : 36 , left : 48 } ;
@@ -41,23 +45,22 @@ export const TICK_ROTATION_SPACE = 22 ;
 export const AXIS_TICKS_SPACE = { bottom : 24 , left : 34 } ;
 
 /**
- * Computes the chart margin from its axes and legend.
+ * Computes the chart margin from its axes.
  *
  * @param {Object} [props]
  * @param {Object} [props.xAxis] - Bottom axis config — `{ legend , tickRotation , hide }`.
  * @param {Object} [props.yAxis] - Left axis config — `{ legend , hide }`.
- * @param {boolean|string|Object} [props.legend] - The `legend` prop.
  * @param {Object} [props.margin] - Explicit overrides, merged last.
  *
  * @returns {{top:number,right:number,bottom:number,left:number}} The resolved margin.
  *
  * @example
  * ```js
- * getChartMargin( { xAxis : { legend : 'country' } , legend : 'bottom' } ) ;
- * // → { top : 16 , right : 24 , bottom : 112 , left : 48 }
+ * getChartMargin( { xAxis : { legend : 'country' } } ) ;
+ * // → { top : 16 , right : 24 , bottom : 60 , left : 48 }
  * ```
  */
-export const getChartMargin = ( { xAxis , yAxis , legend , margin } = {} ) =>
+export const getChartMargin = ( { xAxis , yAxis , margin } = {} ) =>
 {
     const result = { ...BASE_MARGIN } ;
 
@@ -87,14 +90,6 @@ export const getChartMargin = ( { xAxis , yAxis , legend , margin } = {} ) =>
         result.left += AXIS_LEGEND_SPACE ;
     }
 
-    const resolvedLegend = resolveLegend( legend ) ;
-
-    if ( resolvedLegend )
-    {
-        const side = resolvedLegend.position ?? 'bottom' ;
-        result[ side ] = ( result[ side ] ?? 0 ) + ( LEGEND_SPACE[ side ] ?? LEGEND_SPACE.bottom ) ;
-    }
-
     // Never let a reclaimed side collapse to nothing — marks would touch the edge.
     result.top    = Math.max( result.top    , 8 ) ;
     result.right  = Math.max( result.right  , 8 ) ;
@@ -105,7 +100,7 @@ export const getChartMargin = ( { xAxis , yAxis , legend , margin } = {} ) =>
 } ;
 
 /**
- * Margin for an axisless chart, before labels and legend.
+ * Margin for an axisless chart, before its labels.
  * @type {Object.<string,number>}
  */
 export const RADIAL_BASE_MARGIN = { top : 16 , right : 16 , bottom : 16 , left : 16 } ;
@@ -146,13 +141,12 @@ export const ARC_LINK_LABELS_HEIGHT = 24 ;
  * bar, radar, waffle.
  *
  * `getChartMargin` reasons about axis titles and ticks, which these do not
- * have : what eats into the box here is the labels drawn outside the shape
- * and the legend. Too small a margin does not clip a label, it shrinks the
- * plotted shape, which is easy to miss.
+ * have : what eats into the box here is the labels drawn outside the shape.
+ * Too small a margin does not clip a label, it shrinks the plotted shape,
+ * which is easy to miss.
  *
  * @param {Object} [props]
  * @param {boolean} [props.outsideLabels=false] - Whether labels are drawn outside the plotted shape.
- * @param {boolean|string|Object} [props.legend] - The `legend` prop.
  * @param {Object} [props.margin] - Explicit overrides, merged last.
  *
  * @returns {{top:number,right:number,bottom:number,left:number}} The resolved margin.
@@ -163,7 +157,7 @@ export const ARC_LINK_LABELS_HEIGHT = 24 ;
  * // → { top : 40 , right : 72 , bottom : 40 , left : 72 }
  * ```
  */
-export const getRadialMargin = ( { outsideLabels = false , legend , margin } = {} ) =>
+export const getRadialMargin = ( { outsideLabels = false , margin } = {} ) =>
 {
     const result = { ...RADIAL_BASE_MARGIN } ;
 
@@ -175,19 +169,11 @@ export const getRadialMargin = ( { outsideLabels = false , legend , margin } = {
         result.left   += ARC_LINK_LABELS_SPACE ;
     }
 
-    const resolvedLegend = resolveLegend( legend ) ;
-
-    if ( resolvedLegend )
-    {
-        const side = resolvedLegend.position ?? 'bottom' ;
-        result[ side ] = ( result[ side ] ?? 0 ) + ( LEGEND_SPACE[ side ] ?? LEGEND_SPACE.bottom ) ;
-    }
-
     return { ...result , ...margin } ;
 } ;
 
 /**
- * Margin for a grid chart, before axes and legend.
+ * Margin for a grid chart, before its axes.
  * @type {Object.<string,number>}
  */
 export const GRID_MARGIN = { top : 34 , right : 16 , bottom : 16 , left : 42 } ;
@@ -214,7 +200,6 @@ export const WEEKDAY_LABELS_SPACE = 86 ;
  * @param {boolean} [props.weekdayLabels=false] - Whether spelled-out weekday names are drawn on the left.
  * @param {Object} [props.xAxis] - Top axis config — `{ legend , tickRotation }`.
  * @param {Object} [props.yAxis] - Left axis config — `{ legend }`.
- * @param {boolean|string|Object} [props.legend] - The `legend` prop.
  * @param {Object} [props.margin] - Explicit overrides, merged last.
  *
  * @returns {{top:number,right:number,bottom:number,left:number}} The resolved margin.
@@ -225,7 +210,7 @@ export const WEEKDAY_LABELS_SPACE = 86 ;
  * // → { top : 34 , right : 16 , bottom : 16 , left : 86 }
  * ```
  */
-export const getGridMargin = ( { weekdayLabels = false , xAxis , yAxis , legend , margin } = {} ) =>
+export const getGridMargin = ( { weekdayLabels = false , xAxis , yAxis , margin } = {} ) =>
 {
     const result = { ...GRID_MARGIN } ;
 
@@ -248,14 +233,6 @@ export const getGridMargin = ( { weekdayLabels = false , xAxis , yAxis , legend 
     if ( yAxis?.legend )
     {
         result.left += AXIS_LEGEND_SPACE ;
-    }
-
-    const resolvedLegend = resolveLegend( legend ) ;
-
-    if ( resolvedLegend )
-    {
-        const side = resolvedLegend.position ?? 'bottom' ;
-        result[ side ] = ( result[ side ] ?? 0 ) + ( LEGEND_SPACE[ side ] ?? LEGEND_SPACE.bottom ) ;
     }
 
     return { ...result , ...margin } ;
