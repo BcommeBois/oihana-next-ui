@@ -10,8 +10,40 @@ import isChartDataEmpty from '../../helpers/charts/isChartDataEmpty' ;
 
 import cn from '../../themes/helpers/cn' ;
 
+import MetricLegend from '../metrics/MetricLegend' ;
+
 import EmptyState from '../EmptyState' ;
 import Skeleton   from '../Skeleton' ;
+
+/**
+ * How the frame lays itself out around its legend.
+ *
+ * Written as four literal pairs rather than composed from the position :
+ * Tailwind v4 scans source text, and a class built from a variable never
+ * appears in it. The chart box takes `min-w-0` beside a legend so a long
+ * name cannot push it out of the row.
+ *
+ * @type {Object.<string,{ frame : string , legend : string }>}
+ */
+const LEGEND_LAYOUT =
+{
+    bottom : { frame : 'flex w-full flex-col gap-3'          , legend : 'justify-center' } ,
+    top    : { frame : 'flex w-full flex-col gap-3'          , legend : 'justify-center' } ,
+    right  : { frame : 'flex w-full flex-row items-center gap-4' , legend : '' } ,
+    left   : { frame : 'flex w-full flex-row items-center gap-4' , legend : '' } ,
+} ;
+
+/**
+ * The positions that put the legend beside the chart rather than under it.
+ * @type {string[]}
+ */
+const SIDE_POSITIONS = [ 'left' , 'right' ] ;
+
+/**
+ * The positions that put the legend before the chart in reading order.
+ * @type {string[]}
+ */
+const LEADING_POSITIONS = [ 'top' , 'left' ] ;
 
 /**
  * Gives a chart the explicit box it needs, and owns its empty and loading
@@ -40,6 +72,11 @@ import Skeleton   from '../Skeleton' ;
  * attributes go on this wrapper instead, which makes them uniform and
  * independent of what each package happens to implement.
  *
+ * **The legend is drawn here, in HTML, and deliberately outside that role.**
+ * `role="img"` collapses everything under it into one labelled image, so a
+ * legend placed inside would be unreadable to a screen reader — which is what
+ * nivo's in-SVG legend was. Out here it is an ordinary list, read as text.
+ *
  * `role="img"` hides the SVG internals from assistive technology, which is
  * what you want : hundreds of unlabelled paths are noise, and `ariaLabel`
  * is the readable summary that replaces them. It suits these charts because
@@ -66,6 +103,7 @@ import Skeleton   from '../Skeleton' ;
  * @param {Object} [props.emptyProps] - Spread onto the default `EmptyState` — `icon`, `description`, `actions`, `announce`, `size`… Ignored when `emptyState` replaces it. **Only reachable on `ChartFrame` itself**: the fourteen chart wrappers forward `emptyLabel` and `emptyState` only, so from a chart a rich empty state goes through `emptyState={ <EmptyState … /> }`.
  * @param {React.ReactNode} [props.emptyState] - Replaces the default empty state entirely.
  * @param {number|string} [props.height=400] - Height in px, or any CSS length.
+ * @param {Object} [props.legend] - The legend to draw, as resolved by `useChartLegend`. `null` or omitted draws none, and the frame then renders exactly as it did before it could.
  * @param {boolean} [props.loading=false] - Show a skeleton instead of the chart.
  *
  * @example
@@ -97,6 +135,7 @@ const ChartFrame =
     emptyProps ,
     emptyState ,
     height = 400 ,
+    legend ,
     loading = false ,
     ...rest
 }) =>
@@ -142,32 +181,76 @@ const ChartFrame =
     // nothing readable is being hidden, and `aria-busy` needs a role to sit on.
     const describesChart = loading || !isEmpty ;
 
-    const frameClassName = cn( 'w-full' , className ) ;
+    // An empty frame names nothing, so it carries no legend either — the entries
+    // would still be there when `empty` is forced over data the frame cannot read,
+    // as `MarimekkoChart` does with an incomplete accessor.
+    const drawnLegend = isEmpty ? null : legend ;
+
+    const beside  = SIDE_POSITIONS.includes( drawnLegend?.position ) ;
+    const leading = LEADING_POSITIONS.includes( drawnLegend?.position ) ;
+
+    // Standing alone the box owns the width ; beside a legend the row owns it and
+    // the box takes what is left, `min-w-0` keeping a long name from pushing it out.
+    const frameClassName = cn( beside ? 'min-w-0 flex-1' : 'w-full' , className ) ;
 
     // Two branches rather than a computed `role` : written as a literal, the role can
     // still be checked against the ARIA attributes by static analysis, which is what
     // caught the `aria-busy` / `aria-label` mismatch a conditional had introduced here.
+    let box ;
+
     if ( !describesChart )
     {
-        return (
+        box = (
             <div className={ frameClassName } style={ style } { ...rest }>
                 { content }
             </div>
         ) ;
     }
+    else
+    {
+        box = (
+            <div
+                aria-busy        = { loading || undefined }
+                aria-describedby = { ariaDescribedBy }
+                aria-label       = { ariaLabelledBy ? undefined : ariaLabel }
+                aria-labelledby  = { ariaLabelledBy }
+                className        = { frameClassName }
+                role             = "img"
+                style            = { style }
+                { ...rest }
+            >
+                { content }
+            </div>
+        ) ;
+    }
 
+    // No legend, no wrapper : the frame renders exactly what it rendered before it
+    // could carry one, which is what keeps the remaining charts untouched.
+    if ( !drawnLegend )
+    {
+        return box ;
+    }
+
+    const layout = LEGEND_LAYOUT[ drawnLegend.position ] ?? LEGEND_LAYOUT.bottom ;
+
+    const list = (
+        <MetricLegend
+            className      = { cn( layout.legend , drawnLegend.className ) }
+            items          = { drawnLegend.items }
+            marker         = { drawnLegend.marker }
+            orientation    = { drawnLegend.orientation ?? ( beside ? 'vertical' : undefined ) }
+            size           = { drawnLegend.size }
+            valueFormatter = { drawnLegend.valueFormatter }
+        />
+    ) ;
+
+    // Placed in reading order rather than flipped with `flex-*-reverse` : a screen
+    // reader follows the DOM, not the painted layout.
     return (
-        <div
-            aria-busy        = { loading || undefined }
-            aria-describedby = { ariaDescribedBy }
-            aria-label       = { ariaLabelledBy ? undefined : ariaLabel }
-            aria-labelledby  = { ariaLabelledBy }
-            className        = { frameClassName }
-            role             = "img"
-            style            = { style }
-            { ...rest }
-        >
-            { content }
+        <div className={ layout.frame }>
+            { leading ? list : null }
+            { box }
+            { leading ? null : list }
         </div>
     ) ;
 } ;

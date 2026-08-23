@@ -101,7 +101,6 @@ const GridChartsDemo = () =>
                     total     = { 100 }
                     palette   = { palette }
                     height    = { 460 }
-                    legend    = "right"
                 />
             </Section>
 
@@ -176,7 +175,7 @@ const GridChartsDemo = () =>
             <Divider />
 
             <Section
-                title       = "HeatMap — sans valeurs, légende à droite"
+                title       = "HeatMap — sans valeurs"
                 description = "labels=false quand la grille devient dense : la couleur suffit et les chiffres deviennent du bruit."
             >
                 <HeatMapChart
@@ -185,7 +184,6 @@ const GridChartsDemo = () =>
                     palette   = { palette }
                     height    = { 420 }
                     labels    = { false }
-                    legend    = "right"
                 />
             </Section>
 

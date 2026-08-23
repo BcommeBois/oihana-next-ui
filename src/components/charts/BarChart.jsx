@@ -13,10 +13,12 @@ import { ResponsiveBar , ResponsiveBarCanvas } from '@nivo/bar' ;
 import { useMedia } from 'react-use' ;
 
 import useChartLayout  from '../../hooks/useChartLayout' ;
+import useChartLegend  from '../../hooks/useChartLegend' ;
 import usePalette from '../../hooks/usePalette' ;
 import useChartTheme   from '../../hooks/useChartTheme' ;
 
 import { CARTESIAN } from '../../themes/charts/layout' ;
+import { sumBy }     from '../../themes/charts/legendItems' ;
 import { NIVO }      from '../../themes/charts/palettes' ;
 
 import ChartFrame   from './ChartFrame' ;
@@ -72,7 +74,7 @@ const inferKeys = ( data , indexBy ) =>
  * @param {string} [props.indexBy='id'] - Field holding the index value.
  * @param {string[]} [props.keys] - Series keys ; inferred from the first datum when omitted.
  * @param {string} [props.layout='vertical'] - `'vertical'` or `'horizontal'`.
- * @param {boolean|string|Object} [props.legend='bottom'] - `false`, a position, or a nivo legend override.
+ * @param {boolean|string|Object} [props.legend='bottom'] - `false`, a position — `'bottom'`, `'top'`, `'right'`, `'left'` — or `{ position , values , valueFormatter , marker , orientation , size , className , items }`.
  * @param {boolean} [props.loading=false] - Show a skeleton instead of the chart.
  * @param {Object} [props.margin] - Explicit margin overrides, merged over the computed one.
  * @param {Object} [props.nivoProps] - Escape hatch — spread last onto the nivo component.
@@ -139,13 +141,29 @@ const BarChart =
 
     const reduceMotion = useMedia( '(prefers-reduced-motion: reduce)' , false ) ;
 
-    const { margin : resolvedMargin , legends , axisBottom , axisLeft } = useChartLayout
+    // The legend is drawn in HTML under the frame, so nothing is reserved for it
+    // in the margin any more and the plot gets that room back.
+    const { margin : resolvedMargin , axisBottom , axisLeft } = useChartLayout
     ({
         kind    : CARTESIAN ,
-        legend ,
         margin ,
         xAxis ,
         yAxis ,
+    }) ;
+
+    // A key spans every index, so its legend value is its total.
+    const legendValues = useMemo
+    (
+        () => resolvedKeys.map( key => sumBy( data , key ) ) ,
+        [ resolvedKeys , data ] ,
+    ) ;
+
+    const legendProps = useChartLegend
+    ({
+        colors ,
+        legend ,
+        names  : resolvedKeys ,
+        values : legendValues ,
     }) ;
 
     const tooltip = useCallback
@@ -174,6 +192,7 @@ const BarChart =
             emptyLabel      = { emptyLabel }
             emptyState      = { emptyState }
             height          = { height }
+            legend          = { legendProps }
             loading         = { loading }
         >
             <Component
@@ -193,7 +212,6 @@ const BarChart =
                 labelSkipWidth     = { 20 }
                 labelTextColor     = {{ from : 'color' , modifiers : [ [ 'darker' , 1.8 ] ] }}
                 layout             = { layout }
-                legends            = { legends }
                 margin             = { resolvedMargin }
                 padding            = { 0.25 }
                 theme              = { theme }

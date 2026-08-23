@@ -118,7 +118,6 @@ const CircularChartsDemo = () =>
                     height        = { 480 }
                     innerRadius   = { 0 }
                     arcLinkLabels = { false }
-                    legend        = "right"
                 />
             </Section>
 
@@ -169,7 +168,6 @@ const CircularChartsDemo = () =>
                     palette   = { palette }
                     height    = { 520 }
                     gridShape = "linear"
-                    legend    = "right"
                 />
             </Section>
 
@@ -230,7 +228,6 @@ const CircularChartsDemo = () =>
                     innerRadius = { 0.2 }
                     valueSteps  = { 4 }
                     radialAxis  = {{ ticksPosition : 'before' }}
-                    legend      = "right"
                 />
             </Section>
 

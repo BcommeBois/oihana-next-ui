@@ -13,12 +13,15 @@ import { ResponsiveLine , ResponsiveLineCanvas } from '@nivo/line' ;
 import { useMedia } from 'react-use' ;
 
 import useChartLayout  from '../../hooks/useChartLayout' ;
+import useChartLegend  from '../../hooks/useChartLegend' ;
 import usePalette from '../../hooks/usePalette' ;
 import useChartTheme   from '../../hooks/useChartTheme' ;
 
 import { formatTimeTick } from '../../themes/charts/axes' ;
 import { CARTESIAN }      from '../../themes/charts/layout' ;
 import { NIVO }           from '../../themes/charts/palettes' ;
+
+import { LINE } from '../../themes/components/metricLegend' ;
 
 import ChartFrame   from './ChartFrame' ;
 import ChartTooltip from './ChartTooltip' ;
@@ -118,7 +121,7 @@ const formatTooltipX = ( value ) => ( value instanceof Date ? formatTimeTick( va
  * @param {boolean} [props.enableArea=false] - Fill the area below each line.
  * @param {boolean} [props.enablePoints=true] - Draw the data points.
  * @param {number|string} [props.height=400] - Frame height.
- * @param {boolean|string|Object} [props.legend='bottom'] - `false`, a position, or a nivo legend override.
+ * @param {boolean|string|Object} [props.legend='bottom'] - `false`, a position — `'bottom'`, `'top'`, `'right'`, `'left'` — or `{ position , values , valueFormatter , marker , orientation , size , className , items }`. Marked with a stroke rather than a dot : a curve is legended by a line.
  * @param {boolean} [props.loading=false] - Show a skeleton instead of the chart.
  * @param {Object} [props.margin] - Explicit margin overrides, merged over the computed one.
  * @param {Object} [props.nivoProps] - Escape hatch — spread last onto the nivo component.
@@ -189,14 +192,28 @@ const LineChart =
     const resolvedXScale = useMemo( () => resolveXScale( xScale , data ) , [ xScale , data ] ) ;
     const resolvedYScale = useMemo( () => resolveYScale( yScale , stacked ) , [ yScale , stacked ] ) ;
 
-    const { margin : resolvedMargin , legends , axisBottom , axisLeft } = useChartLayout
+    // The legend is drawn in HTML under the frame, so nothing is reserved for it
+    // in the margin any more and the plot gets that room back.
+    const { margin : resolvedMargin , axisBottom , axisLeft } = useChartLayout
     ({
         kind       : CARTESIAN ,
-        legend ,
         margin ,
         xAxis ,
         xScaleType : resolvedXScale?.type ,
         yAxis ,
+    }) ;
+
+    const legendNames = useMemo( () => data?.map( serie => serie?.id ) , [ data ] ) ;
+
+    // No `values` : a serie here is a curve, and the sum of its `y` over an x axis
+    // is not a total of anything. A caller who has one passes `legend.values` as a
+    // function.
+    const legendProps = useChartLegend
+    ({
+        colors ,
+        legend ,
+        marker : LINE ,
+        names  : legendNames ,
     }) ;
 
     const tooltip = useCallback
@@ -225,6 +242,7 @@ const LineChart =
             emptyLabel      = { emptyLabel }
             emptyState      = { emptyState }
             height          = { height }
+            legend          = { legendProps }
             loading         = { loading }
         >
             <Component
@@ -238,7 +256,6 @@ const LineChart =
                 data              = { data }
                 enableArea        = { enableArea }
                 enablePoints      = { enablePoints }
-                legends           = { legends }
                 margin            = { resolvedMargin }
                 pointBorderColor  = {{ from : 'series.color' }}
                 pointBorderWidth  = { 2 }

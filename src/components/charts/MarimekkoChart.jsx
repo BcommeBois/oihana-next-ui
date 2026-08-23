@@ -6,7 +6,7 @@
  * @module components/charts/MarimekkoChart
  */
 
-import { useCallback } from 'react' ;
+import { useCallback , useMemo } from 'react' ;
 
 import { ResponsiveMarimekko } from '@nivo/marimekko' ;
 
@@ -15,10 +15,12 @@ import { useMedia } from 'react-use' ;
 import isMarimekkoDataValid from '../../helpers/charts/isMarimekkoDataValid' ;
 
 import useChartLayout  from '../../hooks/useChartLayout' ;
+import useChartLegend  from '../../hooks/useChartLegend' ;
 import usePalette from '../../hooks/usePalette' ;
 import useChartTheme   from '../../hooks/useChartTheme' ;
 
 import { CARTESIAN } from '../../themes/charts/layout' ;
+import { sumBy }     from '../../themes/charts/legendItems' ;
 import { NIVO }      from '../../themes/charts/palettes' ;
 
 import ChartFrame   from './ChartFrame' ;
@@ -57,7 +59,7 @@ import ChartTooltip from './ChartTooltip' ;
  * @param {string|Function} props.id - Accessor naming each bar.
  * @param {number} [props.innerPadding=0] - Gap between slices of a bar.
  * @param {string} [props.layout='vertical'] - `'vertical'` or `'horizontal'`.
- * @param {boolean|string|Object} [props.legend='bottom'] - `false`, a position, or a nivo legend override.
+ * @param {boolean|string|Object} [props.legend='bottom'] - `false`, a position — `'bottom'`, `'top'`, `'right'`, `'left'` — or `{ position , values , valueFormatter , marker , orientation , size , className , items }`.
  * @param {boolean} [props.loading=false] - Show a skeleton instead of the chart.
  * @param {Object} [props.margin] - Explicit margin overrides, merged over the computed one.
  * @param {Object} [props.nivoProps] - Escape hatch — spread last onto the nivo component.
@@ -133,13 +135,36 @@ const MarimekkoChart =
         ) ;
     }
 
-    const { margin : resolvedMargin , legends , axisBottom , axisLeft } = useChartLayout
+    // The legend is drawn in HTML under the frame, so nothing is reserved for it
+    // in the margin any more and the plot gets that room back.
+    const { margin : resolvedMargin , axisBottom , axisLeft } = useChartLayout
     ({
         kind    : CARTESIAN ,
-        legend ,
         margin ,
         xAxis ,
         yAxis ,
+    }) ;
+
+    // A dimension is an accessor read on every bar, so its legend value is the
+    // total of that slice across them.
+    const legendValues = useMemo
+    (
+        () => dimensions?.map( dimension => sumBy( data , dimension?.value ) ) ,
+        [ dimensions , data ] ,
+    ) ;
+
+    const legendNames = useMemo
+    (
+        () => dimensions?.map( dimension => dimension?.id ) ,
+        [ dimensions ] ,
+    ) ;
+
+    const legendProps = useChartLegend
+    ({
+        colors ,
+        legend ,
+        names  : legendNames ,
+        values : legendValues ,
     }) ;
 
     // The bar carries both its own slice and the datum it belongs to.
@@ -168,6 +193,7 @@ const MarimekkoChart =
             emptyLabel      = { emptyLabel }
             emptyState      = { emptyState }
             height          = { height }
+            legend          = { legendProps }
             loading         = { loading }
         >
             <ResponsiveMarimekko
@@ -184,7 +210,6 @@ const MarimekkoChart =
                 id           = { id }
                 innerPadding = { innerPadding }
                 layout       = { layout }
-                legends      = { legends }
                 margin       = { resolvedMargin }
                 offset       = { offset }
                 outerPadding = { outerPadding }

@@ -9,11 +9,23 @@ import MarimekkoChart from '@/components/charts/MarimekkoChart' ;
 import Button     from '@/components/Button' ;
 import Divider    from '@/components/Divider' ;
 import EmptyState from '@/components/EmptyState' ;
+import Select     from '@/components/selects/Select' ;
 
 import { MdBarChart as NoChartIcon , MdRefresh as RefreshIcon } from 'react-icons/md' ;
 
 import PalettePicker from '@/demo/PalettePicker' ;
 import Section       from './Section' ;
+
+// Where the legend can go. `'none'` is the picker's word for `legend={ false }`,
+// which is a boolean and cannot be the value of an <option>.
+const LEGEND_CHOICES =
+[
+    { value : 'bottom' , label : 'bottom — le défaut' } ,
+    { value : 'top'    , label : 'top' } ,
+    { value : 'right'  , label : 'right — en colonne à côté' } ,
+    { value : 'left'   , label : 'left — en colonne à côté' } ,
+    { value : 'none'   , label : 'aucune' } ,
+] ;
 
 const TRANSPORT = [ 'plane' , 'helicopter' , 'boat' , 'train' , 'subway' , 'bus' , 'car' , 'moto' , 'bicycle' ] ;
 
@@ -96,6 +108,8 @@ const CartesianChartsDemo = () =>
     const [ palette , setPalette ] = useState( 'nivo' ) ;
     const [ loading , setLoading ] = useState( false ) ;
 
+    const [ legendPosition , setLegendPosition ] = useState( 'bottom' ) ;
+
     return (
         <div className="flex flex-col gap-8">
 
@@ -105,14 +119,26 @@ const CartesianChartsDemo = () =>
 
             <Section
                 title       = "Line"
-                description = "5 séries, axe catégoriel, légende à droite."
+                description = "5 séries, axe catégoriel. La légende est en HTML sous le graphe, marquée d'un trait plutôt que d'une pastille : une courbe se légende par un trait. Le sélecteur essaie les quatre placements — la bibliothèque les offre tous et n'en choisit aucun à la place de l'application, y compris de façon responsive."
             >
+                <Select
+                    className = "max-w-xs"
+                    label     = "Placement de la légende"
+                    size      = "sm"
+                    value     = { legendPosition }
+                    onChange  = { ( event ) => setLegendPosition( event.target.value ) }
+                >
+                    { LEGEND_CHOICES.map( choice => (
+                        <option key={ choice.value } value={ choice.value }>{ choice.label }</option>
+                    ) ) }
+                </Select>
+
                 <LineChart
                     ariaLabel = "Nombre de trajets par mode de transport, pour cinq pays"
                     data      = { LINE_DATA }
                     palette   = { palette }
                     height    = { 420 }
-                    legend    = "right"
+                    legend    = { legendPosition === 'none' ? false : legendPosition }
                     xAxis     = {{ legend : 'transportation' }}
                     yAxis     = {{ legend : 'count' }}
                 />
@@ -160,7 +186,7 @@ const CartesianChartsDemo = () =>
 
             <Section
                 title       = "StackBar"
-                description = "6 séries empilées — la limite de lisibilité de la palette 'brand'."
+                description = "6 séries empilées — la limite de lisibilité de la palette 'brand'. legend={{ values : true }} imprime le total de chaque série à côté de son nom : sur un empilement c'est bien une somme, et elle est éteinte par défaut parce qu'elle ne veut pas dire la même chose d'un graphe à l'autre."
             >
                 <BarChart
                     ariaLabel = "Répartition des ventes par type de plat et par pays"
@@ -170,7 +196,7 @@ const CartesianChartsDemo = () =>
                     palette   = { palette }
                     stacked
                     height    = { 460 }
-                    legend    = "right"
+                    legend    = {{ values : true }}
                     xAxis     = {{ legend : 'country' }}
                     yAxis     = {{ legend : 'food' }}
                 />
@@ -228,7 +254,6 @@ const CartesianChartsDemo = () =>
                     offset     = "expand"
                     palette    = { palette }
                     height     = { 420 }
-                    legend     = "right"
                     xAxis      = {{ legend : 'répondants' }}
                 />
             </Section>
