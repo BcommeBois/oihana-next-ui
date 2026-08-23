@@ -51,6 +51,7 @@ export const TOP   = 'top' ;
  * @param {React.ReactNode} props.children                     - Page content.
  * @param {string}          [props.configPath='ui.dashboard']  - Config context path.
  * @param {DashboardLayout} [props.layout='aside']             - Navbar layout mode.
+ * @param {Object|boolean} [props.scrollReset]                - Forwarded to the `Drawer` — `{ behavior , disabled , ignore }`, or `false`. `ignore` names the query parameters that do not move the page, which is a fact about the application rather than about any one page : it is usually read from `ui.dashboard` in the config rather than passed here.
  * @param {string}          [props.titleClassName]             - Additional class names forwarded to the navbar title.
  */
 const Dashboard =
@@ -59,12 +60,14 @@ const Dashboard =
     children ,
     configPath  = 'ui.dashboard' ,
     layout : layoutProp ,
+    scrollReset : scrollResetProp ,
     titleClassName  ,
 }) =>
 {
     const {
-        breakpoint = breakpointProp ,
-        layout     = layoutProp ,
+        breakpoint  = breakpointProp ,
+        layout      = layoutProp ,
+        scrollReset = scrollResetProp ,
     }
     = useConfig( configPath ) ?? {} ;
 
@@ -103,6 +106,7 @@ const Dashboard =
                     sideBarClassName = "!h-full"
                     open             = { drawerOpen }
                     onClose          = { closeDrawer }
+                    scrollReset      = { scrollReset }
                     sideBar          = { sidebar }
                 >
                     { children }
@@ -114,11 +118,12 @@ const Dashboard =
     // Mode "aside" (default) : navbar in the drawer-content
     return (
         <Drawer
-            breakpoint = { bp }
-            open       = { drawerOpen }
-            onClose    = { closeDrawer }
-            navBar     = { navbar }
-            sideBar    = { sidebar }
+            breakpoint  = { bp }
+            open        = { drawerOpen }
+            onClose     = { closeDrawer }
+            navBar      = { navbar }
+            scrollReset = { scrollReset }
+            sideBar     = { sidebar }
         >
             { children }
         </Drawer>

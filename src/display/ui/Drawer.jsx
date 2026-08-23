@@ -45,6 +45,7 @@ export const END   = 'end' ;
  * @param {Function} [props.onClose] - Called when overlay is clicked.
  * @param {boolean} [props.open=false] - Drawer open state (mobile only).
  * @param {React.Ref} [props.ref] - Forwarded ref.
+ * @param {Object|boolean} [props.scrollReset] - How the content scrolls back to the top on a route change — `{ behavior , disabled , ignore }`, or `false` to turn it off. `ignore` names the query parameters that do not move the page : a control swapping one card in place writes one, and sending the reader back to the top is the one thing nobody asked for. See `useResetScroll`.
  * @param {React.ReactNode} [props.sideBar] - Sidebar content.
  * @param {string} [props.sideBarClassName] - Additional class on drawer-side.
  */
@@ -60,6 +61,7 @@ const Drawer =
     onClose ,
     open = false ,
     ref ,
+    scrollReset ,
     sideBar ,
     sideBarClassName ,
 }) =>
@@ -68,7 +70,9 @@ const Drawer =
     const contentRef = useRef( null ) ;
     const sideRef    = useRef( null ) ;
 
-    useResetScroll( contentRef ) ;
+    // `false` is the shorthand for `{ disabled : true }` — the whole shell stops
+    // resetting, which is coarse and occasionally what a page wants.
+    useResetScroll( contentRef , scrollReset === false ? { disabled : true } : scrollReset ) ;
 
     // Handle responsive breakpoint changes
     useEffect( () =>

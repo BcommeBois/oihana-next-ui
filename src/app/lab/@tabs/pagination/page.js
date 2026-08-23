@@ -1,7 +1,9 @@
 'use client' ;
 
-import PaginationDemo from '@/demo/paginations/PaginationDemo';
-import Container from '@/display/Container';
+import PaginationDemo  from '@/demo/paginations/PaginationDemo' ;
+import ResetScrollDemo from '@/demo/paginations/ResetScrollDemo' ;
+import Container from '@/display/Container' ;
+import Divider   from '@/components/Divider' ;
 import Page           from '@/display/Page' ;
 
 /**
@@ -21,6 +23,10 @@ const PaginationShowcase = ({ path = 'app.test' }) =>
             </Container>
 
             <PaginationDemo />
+
+            <Divider />
+
+            <ResetScrollDemo />
 
         </Page>
     ) ;
