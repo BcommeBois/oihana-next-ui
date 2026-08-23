@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Tooling — two `clean` scripts, because Turbopack's dev cache had reached 180 GB**
+
+- **`.next/dev/cache/turbopack` alone held 180 GB over 12 199 files**, real bytes and not a sparse-file illusion, against 623 MB of `server` and 607 MB of `static` beside it. Deleting it took under ten seconds — the weight is in metadata, not in anything worth keeping.
+- **`clean:cache` drops that cache and nothing else**, which is the one to reach for : it frees everything without throwing away the build output. **`clean` removes `.next` whole**, for when something is corrupt and the answer is to start over.
+- **Neither of them while a dev server is running** — it writes in there, and it will break mid-flight.
+- **It grows back**, so this is periodic hygiene rather than a fix. Tens of gigabytes returning within weeks would be a Turbopack defect worth reporting, not housekeeping : watch the order of magnitude, not the presence.
+
+
 **Application — a query parameter can now say that it does not move the page**
 
 - **`useResetScroll` sent the reader back to the top on *any* change of the query string.** Right for what it was written for — a list going to page four belongs at the top of page four — and wrong for everything else : a control swapping one card in place writes a parameter too, and being thrown to the top is the one thing nobody asked for. `router.push( … , { scroll : false } )` does not help, since Next honours that flag and this hook is not Next.

@@ -185,6 +185,8 @@
     "start": "next start",
     "lint": "biome check",
     "format": "biome format --write",
+    "clean": "rm -rf .next",
+    "clean:cache": "rm -rf .next/dev/cache",
     "inject-version": "bun run ./scripts/inject-version.js",
     "generate-exports": "bun run ./scripts/generate-exports.js",
     "generate-splash": "bun run ./scripts/generate-splash.js --bg \"#D9CFC4\" --force",
