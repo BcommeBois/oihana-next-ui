@@ -14,6 +14,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - **`clean:cache` drops that cache and nothing else**, which is the one to reach for : it frees everything without throwing away the build output. **`clean` removes `.next` whole**, for when something is corrupt and the answer is to start over.
 - **Neither of them while a dev server is running** — it writes in there, and it will break mid-flight.
 - **It grows back**, so this is periodic hygiene rather than a fix. Tens of gigabytes returning within weeks would be a Turbopack defect worth reporting, not housekeeping : watch the order of magnitude, not the presence.
+- **`cache:size` says what it weighs, and `predev` says it without being asked.** The number is the thing nobody remembers to go and look for — so the check runs before every `bun dev`, quiet on one line while the cache is in proportion, and loud with the command to run when it is not. Measured at **33 ms** on this project : it scales with the number of files, not with their weight.
+- **It measures and warns, it never deletes**, and that is the whole design. A cache at a hundred and eighty gigabytes is *information* — it says the bundler is misbehaving — and a script that quietly emptied it would hide the defect for good, turning something worth reporting into a chore that comes back every fortnight. It also exits `0` whatever it finds : a housekeeping note is not a reason to stop a dev server from starting.
+- **The threshold is 5 GB.** A healthy Turbopack cache here sits between a few hundred megabytes and a couple of gigabytes ; five leaves room for a bad week without ever crying wolf, and still catches the drift long before it costs a hundred and eighty.
 
 
 **Application — a query parameter can now say that it does not move the page**

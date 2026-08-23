@@ -187,6 +187,8 @@
     "format": "biome format --write",
     "clean": "rm -rf .next",
     "clean:cache": "rm -rf .next/dev/cache",
+    "cache:size": "bun run ./scripts/cache-size.js --all",
+    "predev": "bun run ./scripts/cache-size.js",
     "inject-version": "bun run ./scripts/inject-version.js",
     "generate-exports": "bun run ./scripts/generate-exports.js",
     "generate-splash": "bun run ./scripts/generate-splash.js --bg \"#D9CFC4\" --force",
