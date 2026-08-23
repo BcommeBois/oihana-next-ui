@@ -77,6 +77,7 @@ const inferKeys = ( data , indexBy ) =>
  * @param {boolean|string|Object} [props.legend='bottom'] - `false`, a position — `'bottom'`, `'top'`, `'right'`, `'left'` — or `{ position , values , valueFormatter , marker , orientation , size , className , items }`.
  * @param {boolean} [props.loading=false] - Show a skeleton instead of the chart.
  * @param {Object} [props.margin] - Explicit margin overrides, merged over the computed one.
+ * @param {number|string} [props.maxHeight] - Ceiling on the frame's height. Pair it with `aspect` : a circular chart takes its radius from the smaller inner dimension, so a fixed `height` leaves two empty bands on a narrow screen.
  * @param {Object} [props.nivoProps] - Escape hatch — spread last onto the nivo component.
  * @param {string|string[]} [props.palette='nivo'] - Series palette.
  * @param {string} [props.renderer='svg'] - `'svg'` or `'canvas'` (past ~2k marks).
@@ -118,6 +119,7 @@ const BarChart =
     legend = 'bottom' ,
     loading ,
     margin ,
+    maxHeight ,
     nivoProps ,
     palette = NIVO ,
     renderer = 'svg' ,
@@ -194,6 +196,7 @@ const BarChart =
             height          = { height }
             legend          = { legendProps }
             loading         = { loading }
+            maxHeight       = { maxHeight }
         >
             <Component
                 animate            = { animate && !reduceMotion }

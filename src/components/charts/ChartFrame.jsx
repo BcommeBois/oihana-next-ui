@@ -54,7 +54,12 @@ const LEADING_POSITIONS = [ 'top' , 'left' ] ;
  * ends up sprinkled with `<div className="w-full h-[500px]">`. This owns that
  * box so the chart components take a plain `height` or `aspect` prop.
  * `aspect` is usually the better choice : the chart keeps its proportions
- * across breakpoints instead of getting squashed on narrow screens.
+ * across breakpoints instead of getting squashed on narrow screens. On a
+ * circular chart it is close to mandatory — a radial shape takes its radius
+ * from the *smaller* inner dimension, so a fixed height that fits a desktop
+ * leaves two large empty bands on a phone, where the width is what limits the
+ * circle. `aspect` with `maxHeight` gives the box the width's proportions and
+ * stops it growing as tall as it is wide on a large screen.
  *
  * **States** — every chart passes through here, so this is where "no data
  * yet" and "no data at all" are handled once rather than guarded at all
@@ -95,14 +100,15 @@ const LEADING_POSITIONS = [ 'top' , 'left' ] ;
  * @param {string} [props.ariaDescribedBy] - Id of a longer description elsewhere on the page.
  * @param {string} [props.ariaLabel] - Text alternative. Required in practice — a chart without one is invisible to a screen reader.
  * @param {string} [props.ariaLabelledBy] - Id of an existing visible label, used instead of `ariaLabel`.
- * @param {string|number} [props.aspect] - CSS aspect ratio (e.g. `16/9`). Takes precedence over `height`.
+ * @param {string|number} [props.aspect] - CSS aspect ratio (e.g. `16/9`). Takes precedence over `height` — pair it with `maxHeight` to stop a wide frame from growing as tall as it is wide.
  * @param {string} [props.className] - Additional classes.
  * @param {*} [props.data] - The chart data ; emptiness is derived from it unless `empty` says otherwise.
  * @param {boolean} [props.empty] - Force the empty state, for data shapes this cannot inspect on its own.
  * @param {string} [props.emptyLabel='No data'] - Title of the default empty state.
  * @param {Object} [props.emptyProps] - Spread onto the default `EmptyState` — `icon`, `description`, `actions`, `announce`, `size`… Ignored when `emptyState` replaces it. **Only reachable on `ChartFrame` itself**: the fourteen chart wrappers forward `emptyLabel` and `emptyState` only, so from a chart a rich empty state goes through `emptyState={ <EmptyState … /> }`.
  * @param {React.ReactNode} [props.emptyState] - Replaces the default empty state entirely.
- * @param {number|string} [props.height=400] - Height in px, or any CSS length.
+ * @param {number|string} [props.height=400] - Height in px, or any CSS length. Ignored when `aspect` is set.
+ * @param {number|string} [props.maxHeight] - Ceiling on the frame's height, in px or any CSS length. **This is what makes `aspect` usable on a circular chart** : a radial shape is sized by the smaller inner dimension, so a box with a fixed height wastes on a phone exactly what it saves on a desktop — the circle shrinks with the width while the box keeps its height, and the room left over becomes two empty bands. `aspect` ties the box to the width instead, and `maxHeight` keeps it from turning a wide card into a square one.
  * @param {Object} [props.legend] - The legend to draw, as resolved by `useChartLegend`. `null` or omitted draws none, and the frame then renders exactly as it did before it could.
  * @param {boolean} [props.loading=false] - Show a skeleton instead of the chart.
  *
@@ -136,6 +142,7 @@ const ChartFrame =
     emptyState ,
     height = 400 ,
     legend ,
+    maxHeight ,
     loading = false ,
     ...rest
 }) =>
@@ -149,9 +156,11 @@ const ChartFrame =
         ) ;
     }
 
+    const length = ( value ) => ( typeof value === 'number' ? `${ value }px` : value ) ;
+
     const style = aspect
-        ? { aspectRatio : aspect }
-        : { height : typeof height === 'number' ? `${ height }px` : height } ;
+        ? { aspectRatio : aspect , maxHeight : length( maxHeight ) }
+        : { height : length( height ) , maxHeight : length( maxHeight ) } ;
 
     // An explicit `empty` wins : chord and marimekko know things about their
     // own shape that no generic inspection could work out.

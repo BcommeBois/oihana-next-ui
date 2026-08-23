@@ -57,6 +57,7 @@ import ChartTooltip from './ChartTooltip' ;
  * @param {boolean|string|Object} [props.legend=false] - `false`, a position, or a nivo legend override.
  * @param {boolean} [props.loading=false] - Show a skeleton instead of the chart.
  * @param {Object} [props.margin] - Explicit margin overrides, merged over the computed one.
+ * @param {number|string} [props.maxHeight] - Ceiling on the frame's height. Pair it with `aspect` : a circular chart takes its radius from the smaller inner dimension, so a fixed `height` leaves two empty bands on a narrow screen.
  * @param {number|string} [props.maxValue='auto'] - Upper bound of the color scale.
  * @param {number|string} [props.minValue='auto'] - Lower bound of the color scale.
  * @param {string} [props.monthBorderColor] - Month outline color ; defaults to a light DaisyUI theme color.
@@ -98,6 +99,7 @@ const CalendarChart =
     legend = false ,
     loading ,
     margin ,
+    maxHeight ,
     maxValue = 'auto' ,
     minValue = 'auto' ,
     monthBorderColor ,
@@ -149,6 +151,7 @@ const CalendarChart =
             emptyState      = { emptyState }
             height          = { height }
             loading         = { loading }
+            maxHeight       = { maxHeight }
         >
             <Component
                 animate          = { animate && !reduceMotion }

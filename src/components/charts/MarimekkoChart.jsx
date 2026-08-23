@@ -62,6 +62,7 @@ import ChartTooltip from './ChartTooltip' ;
  * @param {boolean|string|Object} [props.legend='bottom'] - `false`, a position — `'bottom'`, `'top'`, `'right'`, `'left'` — or `{ position , values , valueFormatter , marker , orientation , size , className , items }`.
  * @param {boolean} [props.loading=false] - Show a skeleton instead of the chart.
  * @param {Object} [props.margin] - Explicit margin overrides, merged over the computed one.
+ * @param {number|string} [props.maxHeight] - Ceiling on the frame's height. Pair it with `aspect` : a circular chart takes its radius from the smaller inner dimension, so a fixed `height` leaves two empty bands on a narrow screen.
  * @param {Object} [props.nivoProps] - Escape hatch — spread last onto the nivo component.
  * @param {string} [props.offset='none'] - Stack offset — `'none'`, `'expand'`, `'diverging'`, `'silouhette'`, `'wiggle'`.
  * @param {number} [props.outerPadding=6] - Gap between bars.
@@ -105,6 +106,7 @@ const MarimekkoChart =
     legend = 'bottom' ,
     loading ,
     margin ,
+    maxHeight ,
     nivoProps ,
     offset = 'none' ,
     outerPadding = 6 ,
@@ -195,6 +197,7 @@ const MarimekkoChart =
             height          = { height }
             legend          = { legendProps }
             loading         = { loading }
+            maxHeight       = { maxHeight }
         >
             <ResponsiveMarimekko
                 animate      = { animate && !reduceMotion }

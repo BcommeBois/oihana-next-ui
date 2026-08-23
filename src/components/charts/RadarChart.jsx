@@ -13,6 +13,7 @@ import { ResponsiveRadar } from '@nivo/radar' ;
 import { useMedia } from 'react-use' ;
 
 import useChartLayout  from '../../hooks/useChartLayout' ;
+import useChartLegend  from '../../hooks/useChartLegend' ;
 import usePalette from '../../hooks/usePalette' ;
 import useChartTheme   from '../../hooks/useChartTheme' ;
 
@@ -76,9 +77,10 @@ const inferKeys = ( data , indexBy ) =>
  * @param {number|string} [props.height=400] - Frame height.
  * @param {string} [props.indexBy='id'] - Field holding the dimension name.
  * @param {string[]} [props.keys] - Series keys ; inferred from the first datum when omitted.
- * @param {boolean|string|Object} [props.legend='bottom'] - `false`, a position, or a nivo legend override.
+ * @param {boolean|string|Object} [props.legend='bottom'] - `false`, a position — `'bottom'`, `'top'`, `'right'`, `'left'` — or `{ position , values , valueFormatter , marker , orientation , size , className , items }`.
  * @param {boolean} [props.loading=false] - Show a skeleton instead of the chart.
  * @param {Object} [props.margin] - Explicit margin overrides, merged over the computed one.
+ * @param {number|string} [props.maxHeight] - Ceiling on the frame's height. Pair it with `aspect` : a circular chart takes its radius from the smaller inner dimension, so a fixed `height` leaves two empty bands on a narrow screen.
  * @param {Object} [props.nivoProps] - Escape hatch — spread last onto the nivo component.
  * @param {string|string[]} [props.palette='nivo'] - Series palette.
  * @param {Object} [props.theme] - Partial nivo theme, deeply merged over the DaisyUI one.
@@ -116,6 +118,7 @@ const RadarChart =
     legend = 'bottom' ,
     loading ,
     margin ,
+    maxHeight ,
     nivoProps ,
     palette = NIVO ,
     theme : themeOverrides ,
@@ -135,13 +138,26 @@ const RadarChart =
 
     const reduceMotion = useMedia( '(prefers-reduced-motion: reduce)' , false ) ;
 
-    const { margin : resolvedMargin , legends } = useChartLayout
+    // The legend is drawn in HTML under the frame, so nothing is reserved for it
+    // in the margin any more and the plot gets that room back.
+    const { margin : resolvedMargin } = useChartLayout
     ({
         kind          : RADIAL ,
-        legend ,
         margin ,
         outsideLabels : true ,
     }) ;
+
+    // No `values` : a key carries one figure per axis, and the axes measure
+    // different things. Adding a wine's `fruity` to its `bitter` yields a
+    // number, not a total. `legend.values` as a function covers the caller who
+    // has a real one.
+    const legendProps = useChartLegend
+    ({
+        colors ,
+        legend ,
+        names : resolvedKeys ,
+    }) ;
+
 
     // Radar hovers a whole spoke rather than a single point, so every series
     // shows up at once — hence the multi-row tooltip.
@@ -172,7 +188,9 @@ const RadarChart =
             emptyLabel      = { emptyLabel }
             emptyState      = { emptyState }
             height          = { height }
+            legend          = { legendProps }
             loading         = { loading }
+            maxHeight       = { maxHeight }
         >
             <ResponsiveRadar
                 animate        = { animate && !reduceMotion }
@@ -192,7 +210,6 @@ const RadarChart =
                 gridShape      = { gridShape }
                 indexBy        = { indexBy }
                 keys           = { resolvedKeys }
-                legends        = { legends }
                 margin         = { resolvedMargin }
                 sliceTooltip   = { sliceTooltip }
                 theme          = { theme }

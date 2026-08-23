@@ -13,11 +13,14 @@ import { ResponsivePolarBar } from '@nivo/polar-bar' ;
 import { useMedia } from 'react-use' ;
 
 import useChartLayout  from '../../hooks/useChartLayout' ;
+import useChartLegend  from '../../hooks/useChartLegend' ;
 import usePalette from '../../hooks/usePalette' ;
 import useChartTheme   from '../../hooks/useChartTheme' ;
 
 import { RADIAL } from '../../themes/charts/layout' ;
 import { NIVO }   from '../../themes/charts/palettes' ;
+
+import { sumBy } from '../../themes/charts/legendItems' ;
 
 import ChartFrame   from './ChartFrame' ;
 import ChartTooltip from './ChartTooltip' ;
@@ -106,9 +109,10 @@ const defaultRadialAxis = ( startAngle , endAngle ) =>
  * @param {string} [props.indexBy='id'] - Field holding the index value.
  * @param {number} [props.innerRadius=0.2] - Size of the hole, `0` to `1`.
  * @param {string[]} [props.keys] - Series keys ; inferred from the first datum when omitted.
- * @param {boolean|string|Object} [props.legend='bottom'] - `false`, a position, or a nivo legend override.
+ * @param {boolean|string|Object} [props.legend='bottom'] - `false`, a position — `'bottom'`, `'top'`, `'right'`, `'left'` — or `{ position , values , valueFormatter , marker , orientation , size , className , items }`.
  * @param {boolean} [props.loading=false] - Show a skeleton instead of the chart.
  * @param {Object} [props.margin] - Explicit margin overrides, merged over the computed one.
+ * @param {number|string} [props.maxHeight] - Ceiling on the frame's height. Pair it with `aspect` : a circular chart takes its radius from the smaller inner dimension, so a fixed `height` leaves two empty bands on a narrow screen.
  * @param {Object} [props.nivoProps] - Escape hatch — spread last onto the nivo component.
  * @param {string|string[]} [props.palette='nivo'] - Series palette.
  * @param {boolean|Object} [props.radialAxis=true] - Radial axis ; an object is merged over the defaults. Its `angle` must fall inside the arc — on a partial circle, one outside it draws the ticks in empty space.
@@ -149,6 +153,7 @@ const PolarBarChart =
     legend = 'bottom' ,
     loading ,
     margin ,
+    maxHeight ,
     nivoProps ,
     palette = NIVO ,
     radialAxis = true ,
@@ -171,13 +176,31 @@ const PolarBarChart =
 
     const reduceMotion = useMedia( '(prefers-reduced-motion: reduce)' , false ) ;
 
-    const { margin : resolvedMargin , legends } = useChartLayout
+    // The legend is drawn in HTML under the frame, so nothing is reserved for it
+    // in the margin any more and the plot gets that room back.
+    const { margin : resolvedMargin } = useChartLayout
     ({
         kind          : RADIAL ,
-        legend ,
         margin ,
         outsideLabels : true ,
     }) ;
+
+    // A key spans every index, so its legend value is its total — same reading
+    // as `BarChart`, which this chart is, wrapped around a circle.
+    const legendValues = useMemo
+    (
+        () => resolvedKeys.map( key => sumBy( data , key ) ) ,
+        [ resolvedKeys , data ] ,
+    ) ;
+
+    const legendProps = useChartLegend
+    ({
+        colors ,
+        legend ,
+        names  : resolvedKeys ,
+        values : legendValues ,
+    }) ;
+
 
     const tooltip = useCallback
     (
@@ -203,7 +226,9 @@ const PolarBarChart =
             emptyLabel      = { emptyLabel }
             emptyState      = { emptyState }
             height          = { height }
+            legend          = { legendProps }
             loading         = { loading }
+            maxHeight       = { maxHeight }
         >
             <ResponsivePolarBar
                 adjustValueRange   = { adjustValueRange }
@@ -220,7 +245,6 @@ const PolarBarChart =
                 indexBy            = { indexBy }
                 innerRadius        = { innerRadius }
                 keys               = { resolvedKeys }
-                legends            = { legends }
                 margin             = { resolvedMargin }
                 radialAxis         = { radialAxis === true
                                          ? defaultRadialAxis( startAngle , endAngle )

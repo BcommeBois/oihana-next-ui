@@ -6,7 +6,7 @@
  * @module components/charts/ChordChart
  */
 
-import { useCallback } from 'react' ;
+import { useCallback , useMemo } from 'react' ;
 
 import { ResponsiveChord , ResponsiveChordCanvas } from '@nivo/chord' ;
 
@@ -15,6 +15,7 @@ import { useMedia } from 'react-use' ;
 import isChordDataValid from '../../helpers/charts/isChordDataValid' ;
 
 import useChartLayout  from '../../hooks/useChartLayout' ;
+import useChartLegend  from '../../hooks/useChartLegend' ;
 import usePalette from '../../hooks/usePalette' ;
 import useChartTheme   from '../../hooks/useChartTheme' ;
 
@@ -23,6 +24,24 @@ import { NIVO }   from '../../themes/charts/palettes' ;
 
 import ChartFrame   from './ChartFrame' ;
 import ChartTooltip from './ChartTooltip' ;
+
+/**
+ * Totals what leaves one entity — its row of the matrix, diagonal excluded.
+ *
+ * `data[ i ][ i ]` is a flow from an entity to itself : zero in a well-formed
+ * matrix, but counted it would inflate the figure with something that names
+ * nothing. What the legend states is therefore what goes *out*.
+ *
+ * @param {Array<number[]>} [data] - The square matrix.
+ * @param {number} row - The entity's index.
+ * @returns {number} The outgoing total.
+ */
+const outgoingTotal = ( data , row ) => ( data?.[ row ] ?? [] ).reduce
+(
+    ( total , flow , column ) =>
+        ( row === column || typeof flow !== 'number' || !Number.isFinite( flow ) ? total : total + flow ) ,
+    0 ,
+) ;
 
 /**
  * Chord diagram.
@@ -55,9 +74,10 @@ import ChartTooltip from './ChartTooltip' ;
  * @param {string[]} props.keys - Entity names, in matrix order.
  * @param {number} [props.labelOffset=12] - Distance of the labels from the arcs.
  * @param {number} [props.labelRotation=-90] - Label rotation, in degrees.
- * @param {boolean|string|Object} [props.legend='bottom'] - `false`, a position, or a nivo legend override.
+ * @param {boolean|string|Object} [props.legend='bottom'] - `false`, a position — `'bottom'`, `'top'`, `'right'`, `'left'` — or `{ position , values , valueFormatter , marker , orientation , size , className , items }`.
  * @param {boolean} [props.loading=false] - Show a skeleton instead of the chart.
  * @param {Object} [props.margin] - Explicit margin overrides, merged over the computed one.
+ * @param {number|string} [props.maxHeight] - Ceiling on the frame's height. Pair it with `aspect` : a circular chart takes its radius from the smaller inner dimension, so a fixed `height` leaves two empty bands on a narrow screen.
  * @param {Object} [props.nivoProps] - Escape hatch — spread last onto the nivo component.
  * @param {number} [props.padAngle=0.02] - Gap between arcs, in radians.
  * @param {string|string[]} [props.palette='nivo'] - Entity palette.
@@ -99,6 +119,7 @@ const ChordChart =
     legend = 'bottom' ,
     loading ,
     margin ,
+    maxHeight ,
     nivoProps ,
     padAngle = 0.02 ,
     palette = NIVO ,
@@ -132,13 +153,29 @@ const ChordChart =
         ) ;
     }
 
-    const { margin : resolvedMargin , legends } = useChartLayout
+    // The legend is drawn in HTML under the frame, so nothing is reserved for it
+    // in the margin any more and the plot gets that room back.
+    const { margin : resolvedMargin } = useChartLayout
     ({
         kind          : RADIAL ,
-        legend ,
         margin ,
         outsideLabels : true ,
     }) ;
+
+    const legendValues = useMemo
+    (
+        () => keys?.map( ( _ , row ) => outgoingTotal( data , row ) ) ,
+        [ keys , data ] ,
+    ) ;
+
+    const legendProps = useChartLegend
+    ({
+        colors ,
+        legend ,
+        names  : keys ,
+        values : legendValues ,
+    }) ;
+
 
     const arcTooltip = useCallback
     (
@@ -189,7 +226,9 @@ const ChordChart =
             emptyLabel      = { emptyLabel }
             emptyState      = { emptyState }
             height          = { height }
+            legend          = { legendProps }
             loading         = { loading }
+            maxHeight       = { maxHeight }
         >
             <Component
                 animate           = { animate && !reduceMotion }
@@ -204,7 +243,6 @@ const ChordChart =
                 labelOffset       = { labelOffset }
                 labelRotation     = { labelRotation }
                 labelTextColor    = {{ theme : 'labels.text.fill' }}
-                legends           = { legends }
                 margin            = { resolvedMargin }
                 padAngle          = { padAngle }
                 ribbonBorderColor = {{ from : 'color' , modifiers : [ [ 'darker' , 0.8 ] ] }}

@@ -59,6 +59,33 @@ const CHORD_DATA = CHORD_KEYS.map( ( _ , row ) =>
 
 const BUDGET_KEYS = [ 'Loyer' , 'Courses' , 'Transport' , 'Épargne' , 'Divers' ] ;
 
+/**
+ * What a half circle costs, and how it is paid.
+ *
+ * nivo centres the WHOLE circle in the plot area and draws only the swept
+ * part, so an arc spanning the top half leaves the bottom half empty by
+ * construction. No margin builder can know that — none of them receives the
+ * angles — so the room is taken back here, with the escape hatch meant for it.
+ *
+ * The band left under the arc is exactly `( height - top + bottom ) / 2`,
+ * whatever the width : the centre sits in the middle of the plot area, and
+ * the plot area is pushed below the frame by the negative bottom. With a top
+ * margin of 40 that is `( 460 - 40 - 320 ) / 2 = 50 px`, enough for the radial
+ * ticks written along the base and no more. To move it, move one number.
+ *
+ * The radius stays capped by the width, so a narrower screen only opens the
+ * gap ABOVE the arc — the band underneath does not move.
+ *
+ * @type {Object}
+ */
+const HALF_CIRCLE_HEIGHT = 460 ;
+
+/**
+ * @see HALF_CIRCLE_HEIGHT
+ * @type {Object}
+ */
+const HALF_CIRCLE_MARGIN = { bottom : -320 } ;
+
 // Twelve months around the circle : a cyclical index is exactly what a polar
 // layout reads better than a straight line, December sitting next to January.
 const BUDGET_DATA =
@@ -93,14 +120,16 @@ const CircularChartsDemo = () =>
 
             <Section
                 title       = "Pie"
-                description = "Donut par défaut (innerRadius 0.5), avec les labels liés à l'extérieur."
+                description = "Donut par défaut (innerRadius 0.5), avec les labels liés à l'extérieur. legend={{ values : true }} : sur une partition, un datum par arc, la valeur de la légende est celle du datum — c'est le seul cas où elle ne se somme pas et dit exactement ce qu'elle dit."
             >
                 <PieChart
                     ariaLabel = "Répartition des lignes de code par langage"
                     className = "max-w-2xl mx-auto"
                     data      = { PIE_DATA }
                     palette   = { palette }
-                    height    = { 600 }
+                    aspect    = "1/1"
+                    maxHeight = { 600 }
+                    legend    = {{ values : true }}
                 />
             </Section>
 
@@ -115,7 +144,8 @@ const CircularChartsDemo = () =>
                     className     = "max-w-3xl mx-auto"
                     data          = { PIE_DATA }
                     palette       = { palette }
-                    height        = { 480 }
+                    aspect        = "1/1"
+                    maxHeight     = { 480 }
                     innerRadius   = { 0 }
                     arcLinkLabels = { false }
                 />
@@ -132,7 +162,8 @@ const CircularChartsDemo = () =>
                     className = "max-w-2xl mx-auto"
                     data      = { RADIAL_DATA }
                     palette   = { palette }
-                    height    = { 560 }
+                    aspect    = "1/1"
+                    maxHeight = { 560 }
                 />
             </Section>
 
@@ -149,7 +180,8 @@ const CircularChartsDemo = () =>
                     indexBy   = "taste"
                     keys      = { WINES }
                     palette   = { palette }
-                    height    = { 560 }
+                    aspect    = "1/1"
+                    maxHeight = { 560 }
                 />
             </Section>
 
@@ -166,7 +198,8 @@ const CircularChartsDemo = () =>
                     indexBy   = "taste"
                     keys      = { WINES }
                     palette   = { palette }
-                    height    = { 520 }
+                    aspect    = "1/1"
+                    maxHeight = { 520 }
                     gridShape = "linear"
                 />
             </Section>
@@ -183,7 +216,8 @@ const CircularChartsDemo = () =>
                     data      = { CHORD_DATA }
                     keys      = { CHORD_KEYS }
                     palette   = { palette }
-                    height    = { 620 }
+                    aspect    = "1/1"
+                    maxHeight = { 620 }
                 />
             </Section>
 
@@ -202,7 +236,8 @@ const CircularChartsDemo = () =>
                     keys        = { BUDGET_KEYS }
                     nivoProps   = {{ arcLabelsSkipRadius : 14 }}
                     palette     = { palette }
-                    height      = { 640 }
+                    aspect      = "1/1"
+                    maxHeight   = { 640 }
                     innerRadius = { 0.25 }
                     valueSteps  = { 5 }
                     valueFormat = ">-.0f"
@@ -213,7 +248,7 @@ const CircularChartsDemo = () =>
 
             <Section
                 title       = "PolarBar — demi-cercle"
-                description = "startAngle / endAngle ouvrent l'arc. L'axe radial suit : son angle est ramené dans l'arc dessiné, sans quoi ses graduations flotteraient dans le vide."
+                description = "startAngle / endAngle ouvrent l'arc. L'axe radial suit : son angle est ramené dans l'arc dessiné, sans quoi ses graduations flotteraient dans le vide. Le couple height / margin.bottom est ce que coûte un demi-cercle — voir HALF_CIRCLE_MARGIN."
             >
                 <PolarBarChart
                     ariaLabel   = "Budget mensuel en demi-cercle, cinq postes de dépense"
@@ -221,8 +256,9 @@ const CircularChartsDemo = () =>
                     data        = { BUDGET_DATA }
                     indexBy     = "mois"
                     keys        = { BUDGET_KEYS }
+                    margin      = { HALF_CIRCLE_MARGIN }
                     palette     = { palette }
-                    height      = { 520 }
+                    height      = { HALF_CIRCLE_HEIGHT }
                     startAngle  = { -90 }
                     endAngle    = { 90 }
                     innerRadius = { 0.2 }

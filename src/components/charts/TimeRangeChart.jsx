@@ -56,6 +56,7 @@ import ChartTooltip from './ChartTooltip' ;
  * @param {boolean|string|Object} [props.legend=false] - `false`, a position, or a nivo legend override.
  * @param {boolean} [props.loading=false] - Show a skeleton instead of the chart.
  * @param {Object} [props.margin] - Explicit margin overrides, merged over the computed one.
+ * @param {number|string} [props.maxHeight] - Ceiling on the frame's height. Pair it with `aspect` : a circular chart takes its radius from the smaller inner dimension, so a fixed `height` leaves two empty bands on a narrow screen.
  * @param {Object} [props.nivoProps] - Escape hatch — spread last onto the nivo component.
  * @param {string|string[]} [props.palette='nivo'] - Sequential palette, or explicit ramp colors.
  * @param {boolean} [props.square=true] - Force square cells.
@@ -95,6 +96,7 @@ const TimeRangeChart =
     legend = false ,
     loading ,
     margin ,
+    maxHeight ,
     nivoProps ,
     palette = NIVO ,
     square = true ,
@@ -142,6 +144,7 @@ const TimeRangeChart =
             emptyState      = { emptyState }
             height          = { height }
             loading         = { loading }
+            maxHeight       = { maxHeight }
         >
             <ResponsiveTimeRange
                 animate        = { animate && !reduceMotion }

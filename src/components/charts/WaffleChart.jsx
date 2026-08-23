@@ -6,13 +6,14 @@
  * @module components/charts/WaffleChart
  */
 
-import { useCallback } from 'react' ;
+import { useCallback , useMemo } from 'react' ;
 
 import { ResponsiveWaffle , ResponsiveWaffleCanvas } from '@nivo/waffle' ;
 
 import { useMedia } from 'react-use' ;
 
 import useChartLayout  from '../../hooks/useChartLayout' ;
+import useChartLegend  from '../../hooks/useChartLegend' ;
 import usePalette from '../../hooks/usePalette' ;
 import useChartTheme   from '../../hooks/useChartTheme' ;
 import useThemeColors  from '../../themes/hooks/useThemeColors' ;
@@ -52,9 +53,10 @@ import ChartTooltip from './ChartTooltip' ;
  * @param {React.ReactNode} [props.emptyState] - Replaces the default empty state entirely.
  * @param {string} [props.fillDirection='bottom'] - Where filling starts — `'bottom'`, `'top'`, `'left'`, `'right'`.
  * @param {number|string} [props.height=400] - Frame height.
- * @param {boolean|string|Object} [props.legend='bottom'] - `false`, a position, or a nivo legend override.
+ * @param {boolean|string|Object} [props.legend='bottom'] - `false`, a position — `'bottom'`, `'top'`, `'right'`, `'left'` — or `{ position , values , valueFormatter , marker , orientation , size , className , items }`.
  * @param {boolean} [props.loading=false] - Show a skeleton instead of the chart.
  * @param {Object} [props.margin] - Explicit margin overrides, merged over the computed one.
+ * @param {number|string} [props.maxHeight] - Ceiling on the frame's height. Pair it with `aspect` : a circular chart takes its radius from the smaller inner dimension, so a fixed `height` leaves two empty bands on a narrow screen.
  * @param {Object} [props.nivoProps] - Escape hatch — spread last onto the nivo component.
  * @param {number} [props.padding=1] - Gap between cells.
  * @param {string|string[]} [props.palette='nivo'] - Series palette.
@@ -91,6 +93,7 @@ const WaffleChart =
     legend = 'bottom' ,
     loading ,
     margin ,
+    maxHeight ,
     nivoProps ,
     padding = 1 ,
     palette = NIVO ,
@@ -112,12 +115,31 @@ const WaffleChart =
 
     const reduceMotion = useMedia( '(prefers-reduced-motion: reduce)' , false ) ;
 
-    const { margin : resolvedMargin , legends } = useChartLayout
+    // The legend is drawn in HTML under the frame, so nothing is reserved for it
+    // in the margin any more and the plot gets that room back.
+    const { margin : resolvedMargin } = useChartLayout
     ({
         kind   : RADIAL ,
-        legend ,
         margin ,
     }) ;
+
+    // One datum per group, so a legend value is that datum's own.
+    const legendNames = useMemo
+    (
+        () => data?.map( datum => datum?.label ?? datum?.id ) ,
+        [ data ] ,
+    ) ;
+
+    const legendValues = useMemo( () => data?.map( datum => datum?.value ) , [ data ] ) ;
+
+    const legendProps = useChartLegend
+    ({
+        colors ,
+        legend ,
+        names  : legendNames ,
+        values : legendValues ,
+    }) ;
+
 
     const tooltip = useCallback
     (
@@ -144,7 +166,9 @@ const WaffleChart =
             emptyLabel      = { emptyLabel }
             emptyState      = { emptyState }
             height          = { height }
+            legend          = { legendProps }
             loading         = { loading }
+            maxHeight       = { maxHeight }
         >
             <Component
                 animate       = { animate && !reduceMotion }
@@ -155,7 +179,6 @@ const WaffleChart =
                 data          = { data }
                 emptyColor    = { emptyColor ?? emptyCell ?? 'transparent' }
                 fillDirection = { fillDirection }
-                legends       = { legends }
                 margin        = { resolvedMargin }
                 motionStagger = { 2 }
                 padding       = { padding }

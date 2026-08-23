@@ -111,14 +111,35 @@ export const getChartMargin = ( { xAxis , yAxis , legend , margin } = {} ) =>
 export const RADIAL_BASE_MARGIN = { top : 16 , right : 16 , bottom : 16 , left : 16 } ;
 
 /**
- * Room the labels drawn outside the shape need on every side.
+ * Room the labels drawn outside the shape need to the left and right.
  *
- * They stick out in all directions — a long label on the left needs as much
- * room as one on the right — so this is added uniformly rather than per side.
+ * Enough for a word, because that is what sticks out sideways — and a long
+ * label on the left needs as much room as one on the right, so the two sides
+ * take the same figure.
  *
  * @type {number}
  */
 export const ARC_LINK_LABELS_SPACE = 56 ;
+
+/**
+ * Room those same labels need above and below.
+ *
+ * **Deliberately much smaller than the sideways figure.** A label at the top
+ * or the bottom of a circle sticks out by its *line height*, not by its
+ * width, so reserving a word's worth there buys nothing — and on a circular
+ * chart the vertical margin is rarely free : the shape is sized by whichever
+ * inner dimension is smaller, which in a box wider than it is tall is the
+ * height. Every pixel over-reserved above and below therefore shrinks the
+ * circle *and* leaves a visible band under it.
+ *
+ * It used to be the same figure on all four sides, which went unnoticed for
+ * as long as the legend sat inside the SVG : the room reserved for it under
+ * the chart swallowed the excess. Drawing the legend in HTML took that room
+ * away and left the band in plain sight.
+ *
+ * @type {number}
+ */
+export const ARC_LINK_LABELS_HEIGHT = 24 ;
 
 /**
  * Computes the margin of a chart drawn without cartesian axes — pie, radial
@@ -138,8 +159,8 @@ export const ARC_LINK_LABELS_SPACE = 56 ;
  *
  * @example
  * ```js
- * getRadialMargin( { outsideLabels : true , legend : 'bottom' } ) ;
- * // → { top : 72 , right : 72 , bottom : 124 , left : 72 }
+ * getRadialMargin( { outsideLabels : true } ) ;
+ * // → { top : 40 , right : 72 , bottom : 40 , left : 72 }
  * ```
  */
 export const getRadialMargin = ( { outsideLabels = false , legend , margin } = {} ) =>
@@ -148,9 +169,9 @@ export const getRadialMargin = ( { outsideLabels = false , legend , margin } = {
 
     if ( outsideLabels )
     {
-        result.top    += ARC_LINK_LABELS_SPACE ;
+        result.top    += ARC_LINK_LABELS_HEIGHT ;
         result.right  += ARC_LINK_LABELS_SPACE ;
-        result.bottom += ARC_LINK_LABELS_SPACE ;
+        result.bottom += ARC_LINK_LABELS_HEIGHT ;
         result.left   += ARC_LINK_LABELS_SPACE ;
     }
 

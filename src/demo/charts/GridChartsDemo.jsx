@@ -100,7 +100,8 @@ const GridChartsDemo = () =>
                     data      = { WAFFLE_DATA }
                     total     = { 100 }
                     palette   = { palette }
-                    height    = { 460 }
+                    aspect    = "1/1"
+                    maxHeight = { 460 }
                 />
             </Section>
 
@@ -115,7 +116,8 @@ const GridChartsDemo = () =>
                     data          = { TARGET_DATA }
                     total         = { 100 }
                     palette       = { palette }
-                    height        = { 340 }
+                    aspect        = "1/1"
+                    maxHeight     = { 340 }
                     rows          = { 10 }
                     columns       = { 10 }
                     padding       = { 2 }

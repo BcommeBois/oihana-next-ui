@@ -13,6 +13,7 @@ import { ResponsiveRadialBar } from '@nivo/radial-bar' ;
 import { useMedia } from 'react-use' ;
 
 import useChartLayout  from '../../hooks/useChartLayout' ;
+import useChartLegend  from '../../hooks/useChartLegend' ;
 import usePalette from '../../hooks/usePalette' ;
 import useChartTheme   from '../../hooks/useChartTheme' ;
 
@@ -23,27 +24,34 @@ import ChartFrame   from './ChartFrame' ;
 import ChartTooltip from './ChartTooltip' ;
 
 /**
- * Counts the distinct categories across every serie.
+ * Lists the distinct categories across every serie, with their totals.
  *
- * nivo colors radial bars by category, not by serie, so this — and not
- * `data.length` — is how many colors the palette must yield.
+ * nivo colors radial bars by category, not by serie, so the count of these —
+ * and not `data.length` — is how many colors the palette must yield. The
+ * names are what the legend prints, and a `Map` keeps them in the order they
+ * were met, which is the order the palette is handed out in.
+ *
+ * The totals come from the same pass : one ring per serie means a category's
+ * legend value is what it adds up to across all of them.
  *
  * @param {Array} [data] - The series.
- * @returns {number} The number of distinct categories.
+ * @returns {{ categories : Array , totals : number[] }} The names and their totals, in the same order.
  */
-const countCategories = ( data ) =>
+const readCategories = ( data ) =>
 {
-    const categories = new Set() ;
+    const totals = new Map() ;
 
     data?.forEach( ( serie ) =>
     {
         serie?.data?.forEach( ( datum ) =>
         {
-            categories.add( datum?.x ) ;
+            const value = typeof datum?.y === 'number' && Number.isFinite( datum.y ) ? datum.y : 0 ;
+
+            totals.set( datum?.x , ( totals.get( datum?.x ) ?? 0 ) + value ) ;
         } ) ;
     } ) ;
 
-    return categories.size ;
+    return { categories : [ ...totals.keys() ] , totals : [ ...totals.values() ] } ;
 } ;
 
 /**
@@ -70,9 +78,10 @@ const countCategories = ( data ) =>
  * @param {React.ReactNode} [props.emptyState] - Replaces the default empty state entirely.
  * @param {number|string} [props.height=400] - Frame height.
  * @param {number} [props.innerRadius=0.3] - Size of the hole, `0` to `1`.
- * @param {boolean|string|Object} [props.legend='bottom'] - `false`, a position, or a nivo legend override.
+ * @param {boolean|string|Object} [props.legend='bottom'] - `false`, a position — `'bottom'`, `'top'`, `'right'`, `'left'` — or `{ position , values , valueFormatter , marker , orientation , size , className , items }`.
  * @param {boolean} [props.loading=false] - Show a skeleton instead of the chart.
  * @param {Object} [props.margin] - Explicit margin overrides, merged over the computed one.
+ * @param {number|string} [props.maxHeight] - Ceiling on the frame's height. Pair it with `aspect` : a circular chart takes its radius from the smaller inner dimension, so a fixed `height` leaves two empty bands on a narrow screen.
  * @param {number|string} [props.maxValue='auto'] - Upper bound of the value scale.
  * @param {Object} [props.nivoProps] - Escape hatch — spread last onto the nivo component.
  * @param {number} [props.padding=0.2] - Gap between rings.
@@ -109,6 +118,7 @@ const RadialBarChart =
     legend = 'bottom' ,
     loading ,
     margin ,
+    maxHeight ,
     maxValue = 'auto' ,
     nivoProps ,
     padding = 0.2 ,
@@ -121,18 +131,33 @@ const RadialBarChart =
 {
     const theme = useChartTheme( { overrides : themeOverrides } ) ;
 
-    const categories = useMemo( () => countCategories( data ) , [ data ] ) ;
+    const { categories , totals } = useMemo( () => readCategories( data ) , [ data ] ) ;
 
-    const colors = usePalette( { palette , count : categories } ) ;
+    const colors = usePalette( { palette , count : categories.length } ) ;
 
     const reduceMotion = useMedia( '(prefers-reduced-motion: reduce)' , false ) ;
 
-    const { margin : resolvedMargin , legends } = useChartLayout
+    // The legend is drawn in HTML under the frame, so nothing is reserved for it
+    // in the margin any more and the plot gets that room back.
+    const { margin : resolvedMargin } = useChartLayout
     ({
-        kind   : RADIAL ,
-        legend ,
+        kind          : RADIAL ,
         margin ,
+        // The radial axis prints its ticks outside the rings and the serie
+        // names to their left, so this chart has always had labels outside its
+        // shape without saying so. The room reserved for the in-SVG legend hid
+        // it ; without that legend the last tick was clipped by the frame.
+        outsideLabels : true ,
     }) ;
+
+    const legendProps = useChartLegend
+    ({
+        colors ,
+        legend ,
+        names  : categories ,
+        values : totals ,
+    }) ;
+
 
     const tooltip = useCallback
     (
@@ -158,7 +183,9 @@ const RadialBarChart =
             emptyLabel      = { emptyLabel }
             emptyState      = { emptyState }
             height          = { height }
+            legend          = { legendProps }
             loading         = { loading }
+            maxHeight       = { maxHeight }
         >
             <ResponsiveRadialBar
                 animate           = { animate && !reduceMotion }
@@ -167,7 +194,6 @@ const RadialBarChart =
                 cornerRadius      = { cornerRadius }
                 data              = { data }
                 innerRadius       = { innerRadius }
-                legends           = { legends }
                 margin            = { resolvedMargin }
                 maxValue          = { maxValue }
                 padding           = { padding }

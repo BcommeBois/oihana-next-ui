@@ -61,6 +61,7 @@ import ChartTooltip from './ChartTooltip' ;
  * @param {boolean|string|Object} [props.legend='bottom'] - `false`, a position, or a nivo legend override.
  * @param {boolean} [props.loading=false] - Show a skeleton instead of the chart.
  * @param {Object} [props.margin] - Explicit margin overrides, merged over the computed one.
+ * @param {number|string} [props.maxHeight] - Ceiling on the frame's height. Pair it with `aspect` : a circular chart takes its radius from the smaller inner dimension, so a fixed `height` leaves two empty bands on a narrow screen.
  * @param {number} [props.maxValue='auto'] - Upper bound of the color scale.
  * @param {number} [props.minValue='auto'] - Lower bound of the color scale.
  * @param {Object} [props.nivoProps] - Escape hatch — spread last onto the nivo component.
@@ -101,6 +102,7 @@ const HeatMapChart =
     legend = 'bottom' ,
     loading ,
     margin ,
+    maxHeight ,
     maxValue = 'auto' ,
     minValue = 'auto' ,
     nivoProps ,
@@ -173,6 +175,7 @@ const HeatMapChart =
             emptyState      = { emptyState }
             height          = { height }
             loading         = { loading }
+            maxHeight       = { maxHeight }
         >
             <Component
                 animate        = { animate && !reduceMotion }

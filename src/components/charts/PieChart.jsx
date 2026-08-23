@@ -6,7 +6,7 @@
  * @module components/charts/PieChart
  */
 
-import { useCallback } from 'react' ;
+import { useCallback , useMemo } from 'react' ;
 
 import { ArcLabelComponent } from '@nivo/arcs' ;
 
@@ -15,6 +15,7 @@ import { ResponsivePie , ResponsivePieCanvas } from '@nivo/pie' ;
 import { useMedia } from 'react-use' ;
 
 import useChartLayout  from '../../hooks/useChartLayout' ;
+import useChartLegend  from '../../hooks/useChartLegend' ;
 import usePalette from '../../hooks/usePalette' ;
 import useChartTheme   from '../../hooks/useChartTheme' ;
 
@@ -115,9 +116,10 @@ const defaultArcLinkLabel = ( datum ) => `${ datum.id } (${ datum.formattedValue
  * @param {React.ReactNode} [props.emptyState] - Replaces the default empty state entirely.
  * @param {number|string} [props.height=400] - Frame height.
  * @param {number} [props.innerRadius=0.5] - Hole size, `0` to `1`. `0` gives a full pie.
- * @param {boolean|string|Object} [props.legend='bottom'] - `false`, a position, or a nivo legend override.
+ * @param {boolean|string|Object} [props.legend='bottom'] - `false`, a position — `'bottom'`, `'top'`, `'right'`, `'left'` — or `{ position , values , valueFormatter , marker , orientation , size , className , items }`.
  * @param {boolean} [props.loading=false] - Show a skeleton instead of the chart.
  * @param {Object} [props.margin] - Explicit margin overrides, merged over the computed one.
+ * @param {number|string} [props.maxHeight] - Ceiling on the frame's height. Pair it with `aspect` : a circular chart takes its radius from the smaller inner dimension, so a fixed `height` leaves two empty bands on a narrow screen.
  * @param {Object} [props.nivoProps] - Escape hatch — spread last onto the nivo component.
  * @param {number} [props.padAngle=0.7] - Gap between arcs, in degrees.
  * @param {string|string[]} [props.palette='nivo'] - Series palette.
@@ -160,6 +162,7 @@ const PieChart =
     legend = 'bottom' ,
     loading ,
     margin ,
+    maxHeight ,
     nivoProps ,
     padAngle = 0.7 ,
     palette = NIVO ,
@@ -177,13 +180,33 @@ const PieChart =
 
     const reduceMotion = useMedia( '(prefers-reduced-motion: reduce)' , false ) ;
 
-    const { margin : resolvedMargin , legends } = useChartLayout
+    // The legend is drawn in HTML under the frame, so nothing is reserved for it
+    // in the margin any more and the plot gets that room back.
+    const { margin : resolvedMargin } = useChartLayout
     ({
         kind          : RADIAL ,
-        legend ,
         margin ,
         outsideLabels : arcLinkLabels ,
     }) ;
+
+    // One datum per arc, so a legend value is that datum's own — the one chart
+    // family where it needs no summing and means exactly what it says.
+    const legendNames = useMemo
+    (
+        () => data?.map( datum => datum?.label ?? datum?.id ) ,
+        [ data ] ,
+    ) ;
+
+    const legendValues = useMemo( () => data?.map( datum => datum?.value ) , [ data ] ) ;
+
+    const legendProps = useChartLegend
+    ({
+        colors ,
+        legend ,
+        names  : legendNames ,
+        values : legendValues ,
+    }) ;
+
 
     const tooltip = useCallback
     (
@@ -210,7 +233,9 @@ const PieChart =
             emptyLabel      = { emptyLabel }
             emptyState      = { emptyState }
             height          = { height }
+            legend          = { legendProps }
             loading         = { loading }
+            maxHeight       = { maxHeight }
         >
             <Component
                 activeOuterRadiusOffset = { 8 }
@@ -231,7 +256,6 @@ const PieChart =
                 enableArcLabels         = { arcLabels }
                 enableArcLinkLabels     = { arcLinkLabels }
                 innerRadius             = { innerRadius }
-                legends                 = { legends }
                 margin                  = { resolvedMargin }
                 padAngle                = { padAngle }
                 theme                   = { theme }
