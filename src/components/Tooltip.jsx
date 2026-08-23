@@ -13,20 +13,42 @@
  * rather than flipping. No prop can lift either : they are properties of where
  * the bubble lives.
  *
- * `float` moves it into a portal and positions it against its trigger, flipping
- * and clamping to whatever room the page leaves. Everything else is unchanged,
- * and **the CSS path stays the default** — it costs nothing and is right
- * wherever nothing clips it.
+ * `float` moves it into a portal and positions it against its trigger, clamping
+ * to whatever room the page leaves. Everything else is unchanged, and **the CSS
+ * path stays the default** — it costs nothing and is right wherever nothing
+ * clips it.
+ *
+ * `position` and `align` mean the same thing on both paths, so a bubble changes
+ * path without changing how it is written. On the floating one the side asked
+ * for is the side used : it falls back to the facing side only when the page
+ * leaves no room there, never as a preference, and the bubble carries
+ * `data-position` / `data-align` saying where it actually landed.
  *
  * The floating path also opens on **focus**, not only on hover, and never on
  * touch : there is no hovering on a touch screen, and a tap has somewhere better
- * to go than under a bubble.
+ * to go than under a bubble. Two things it does **not** carry : rich
+ * `tooltip-content` children, which only a pseudo-element can hold — pass the
+ * markup to `tip` instead — and the CSS transition, a portaled element having
+ * nothing to transition from.
+ *
+ * ### The element under the bubble is the one to think about
+ *
+ * `Tooltip` renders a `div` unless told otherwise, and a `div` is as wide as
+ * whatever holds it. In a table cell it takes the whole column, so `align="end"`
+ * lines the bubble up with the **cell** rather than with the badge inside it.
+ * There is no default that could know better — `as="span"`, or an element that
+ * hugs its content, is the answer, and it is the caller's to give.
  *
  * @example
  * ```jsx
  * // Inside anything that scrolls
  * <Tooltip tip="Never clipped" float color="primary">
  *     <button className="btn">Hover me</button>
+ * </Tooltip>
+ *
+ * // Under the badge and flush with its right edge — above it only if the page has no room below.
+ * <Tooltip as="span" tip="Third of four" float position="bottom" align="end">
+ *     <Badge color="warning">3</Badge>
  * </Tooltip>
  * ```
  *
@@ -73,13 +95,13 @@ import FloatingTip from './FloatingTip' ;
 
 /**
  * @param {Object} props
- * @param {import('../themes/components/tooltip').TooltipAlignment} [props.align] - Tooltip alignment ('start' | 'center' | 'end').
- * @param {React.ElementType} [props.as] - Root element type.
+ * @param {import('../themes/components/tooltip').TooltipAlignment} [props.align] - Where the bubble sits along the axis it does not open on ('start' | 'center' | 'end') — the inline axis under a 'top' or 'bottom' position, the block axis beside a 'left' or 'right' one.
+ * @param {React.ElementType} [props.as] - Root element type. It is the element the bubble is measured against — see the note above on what a `div` does in a table cell.
  * @param {React.ReactNode} [props.children] - Tooltip trigger content.
  * @param {string} [props.className] - Additional class name.
  * @param {import('../themes/components/tooltip').TooltipColorValue} [props.color] - Tooltip color.
  * @param {boolean} [props.open] - Force tooltip open.
- * @param {import('../themes/components/tooltip').TooltipPosition} [props.position] - Tooltip placement.
+ * @param {import('../themes/components/tooltip').TooltipPosition} [props.position] - The side of the trigger the bubble opens on ('top' | 'bottom' | 'left' | 'right'). Floating, it is a preference the placement only leaves for lack of room.
  * @param {React.Ref} [props.ref] - Forwarded ref.
  * @param {boolean} [props.show=true] - Enable/disable tooltip. When false, renders children only.
  *   A disabled trigger has to pass its state here : the bubble opens on the wrapper, and a
@@ -110,7 +132,18 @@ const Tooltip =
     if ( float )
     {
         return (
-            <FloatingTip as={ as } className={ className } color={ color } delay={ delay } ref={ ref } tip={ tip } { ...rest }>
+            <FloatingTip
+                align     = { align }
+                as        = { as }
+                className = { className }
+                color     = { color }
+                delay     = { delay }
+                open      = { open }
+                position  = { position }
+                ref       = { ref }
+                tip       = { tip }
+                { ...rest }
+            >
                 { children }
             </FloatingTip>
         ) ;

@@ -7,6 +7,8 @@
 
 import cn from '../helpers/cn' ;
 
+import { ARROW } from '../helpers/placeFloating' ;
+
 import {
     ACCENT ,
     ERROR ,
@@ -130,6 +132,47 @@ export const TOOLTIP_FLOATING = 'pointer-events-none fixed z-[70] w-max max-w-xs
  */
 export const TOOLTIP_ARROW = 'pointer-events-none absolute block h-1 w-2.5' ;
 
+/**
+ * How thick the tail is — `h-1`, the four pixels daisyUI gives its own.
+ *
+ * Its length is {@link module:themes/helpers/placeFloating.ARROW}, which the
+ * placement needs too : the two figures describe one shape and are not free to
+ * differ.
+ */
+export const TOOLTIP_ARROW_THICKNESS = 4 ;
+
+/**
+ * Which way the tail turns, per side of the trigger the bubble landed on.
+ *
+ * The mask is drawn pointing **down**, which is why `top` — a bubble above its
+ * trigger, tail underneath — turns not at all. The three others follow daisyUI's
+ * own rotations. Written as four literal strings rather than assembled from the
+ * direction : Tailwind v4 scans the source text, and a class built from a
+ * variable never appears in it.
+ */
+const arrowRotationMap =
+{
+    [ BOTTOM ] : 'rotate-180' ,
+    [ LEFT   ] : '-rotate-90' ,
+    [ RIGHT  ] : 'rotate-90' ,
+    [ TOP    ] : '' ,
+} ;
+
+/**
+ * What the trigger of a floating tooltip needs, and the CSS one gets for free.
+ *
+ * DaisyUI declares `.tooltip { display: inline-block }`, so on the CSS path even
+ * a bare `div` shrinks onto its content. The floating trigger carries no such
+ * class : left alone, a `div` is block-level and stretches to its container —
+ * the whole width of a table column, say — and the bubble then aligns on *that*
+ * box rather than on the thing it names.
+ *
+ * Applied **only when the component picked the element itself**. A caller who
+ * names one with `as` owns its display, and a `btn` — `inline-flex` in daisyUI's
+ * own stylesheet — must not be silently turned into something else.
+ */
+export const TOOLTIP_TRIGGER = 'inline-block' ;
+
 /** The tail's shape, as daisyUI draws it. */
 export const TOOLTIP_ARROW_MASK = `url("data:image/svg+xml,%3Csvg width='10' height='4' viewBox='0 0 8 4' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0.500009 1C3.5 1 3.00001 4 5.00001 4C7 4 6.5 1 9.5 1C10 1 10 0.499897 10 0H0C-1.99338e-08 0.5 0 1 0.500009 1Z' fill='black'/%3E%3C/svg%3E%0A")` ;
 
@@ -181,8 +224,62 @@ export const getFloatingTooltipStyle = ( color = 'neutral' ) => (
  */
 export const getFloatingTooltipClassNames = ({ className } = {} ) => cn( TOOLTIP_FLOATING , className ) ;
 
-/** The tail's className. Its fill is an inline variable, like the bubble's. */
-export const getTooltipArrowClassNames = ({ className } = {} ) => cn( TOOLTIP_ARROW , className ) ;
+/**
+ * The tail's className. Its fill is an inline variable, like the bubble's.
+ *
+ * @param {Object} [props]
+ * @param {string} [props.className] - ClassName to append.
+ * @param {TooltipPosition} [props.direction] - The side of the trigger the bubble landed on.
+ * @returns {string}
+ */
+export const getTooltipArrowClassNames = ({ className , direction } = {} ) => cn( TOOLTIP_ARROW , arrowRotationMap[ direction ] , className ) ;
+
+/**
+ * Where the tail goes, once the placement has said where the bubble is.
+ *
+ * **Turned, a box ten by four covers four by ten.** Rotation happens about the
+ * centre, and the element keeps its original box, so a tail on a side of the
+ * bubble cannot be placed by its corner : it is set back half its own length
+ * along the edge, and half its thickness across it. That is where the two
+ * figures below come from ; spelled as arithmetic rather than as the `3` and `7`
+ * they work out to, so the next reader is not left counting pixels.
+ *
+ * The offset itself is **physical** — a `left` and a `top`, never their logical
+ * pair. The bubble is placed in viewport coordinates, and an
+ * `inset-inline-start` would mirror the tail in a right-to-left page while the
+ * bubble it hangs from stayed put.
+ *
+ * @param {Object} [props]
+ * @param {number} [props.arrow=0] - Where the tail starts along the axis it slides on, from {@link module:themes/helpers/placeFloating}.
+ * @param {string} [props.color] - The bubble's fill, which the tail shares.
+ * @param {TooltipPosition} [props.direction='top'] - The side of the trigger the bubble landed on.
+ * @returns {Object} An inline style.
+ *
+ * @example
+ * getTooltipArrowStyle({ arrow : 42 , color : 'primary' , direction : 'bottom' })
+ */
+export const getTooltipArrowStyle = ({ arrow = 0 , color , direction = TOP } = {} ) =>
+{
+    const style =
+    {
+        ...tooltipArrowStyle ,
+        backgroundColor : getFloatingTooltipStyle( color ).backgroundColor ,
+    } ;
+
+    const back  = ARROW / 2 - TOOLTIP_ARROW_THICKNESS / 2 ;
+    const aside = ARROW / 2 + TOOLTIP_ARROW_THICKNESS / 2 ;
+
+    switch ( direction )
+    {
+        // Beside the bubble : the tail hangs off the edge facing the trigger.
+        case LEFT  : return { ...style , left : `calc(100% - ${ back }px)` , top : arrow + back } ;
+        case RIGHT : return { ...style , left : -aside , top : arrow + back } ;
+
+        // Under or over it, where the tail keeps its own box.
+        case BOTTOM : return { ...style , left : arrow , top : -TOOLTIP_ARROW_THICKNESS } ;
+        default     : return { ...style , bottom : -TOOLTIP_ARROW_THICKNESS , left : arrow } ;
+    }
+} ;
 
 /**
  * Generates a DaisyUI tooltip className expression.

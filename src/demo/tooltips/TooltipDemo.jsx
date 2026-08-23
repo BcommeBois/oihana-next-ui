@@ -1,5 +1,6 @@
 'use client' ;
 
+import Badge     from '@/components/Badge' ;
 import Button    from '@/components/Button' ;
 import Container from '@/display/Container' ;
 import Divider   from '@/components/Divider' ;
@@ -9,7 +10,7 @@ import Tooltip   from '@/components/Tooltip' ;
 import useModal from '@/components/modals/hooks/useModal' ;
 
 /**
- * Tooltip showcase — positions, the new start/center/end alignments, colours,
+ * Tooltip showcase — positions, the start/center/end alignments, colours,
  * forced-open state and rich content.
  */
 const TooltipDemo = () =>
@@ -175,6 +176,129 @@ const TooltipDemo = () =>
                     The floating one also opens on <strong>focus</strong> — tab into the list — and
                     never on touch, where a tap has somewhere better to go than under a bubble.
                 </p>
+            </div>
+
+            <Divider />
+
+            {/* float — the placement it is given, and the fallback it keeps */}
+            <div className="flex flex-col gap-4">
+                <h3 className="text-xl font-semibold">float — the four sides and the three alignments</h3>
+                <p className="text-sm text-base-content/70">
+                    <code>position</code> and <code>align</code> carry the same names, the same
+                    values and the same meaning on both paths, so a bubble changes path without
+                    changing how it is written. The side asked for is the side used : the facing one
+                    is taken only when the window leaves no room — scroll until a trigger nears the
+                    top of the screen and watch <code>top</code> give way while <code>bottom</code>
+                    stays put. Where the bubble actually landed is written on it as
+                    <code>data-position</code> and <code>data-align</code>, so a fallback is a thing
+                    to look at rather than to guess.
+                </p>
+
+                <div className="grid gap-6 py-4 sm:grid-cols-3">
+                    { [ 'top' , 'bottom' ]
+                        .flatMap( position => [ 'start' , 'center' , 'end' ].map( align => ({ align , position }) ) )
+                        .map( ({ align , position }) => (
+                            <Tooltip
+                                key       = { `${ position }-${ align }` }
+                                align     = { align }
+                                as        = "button"
+                                className = "btn w-full"
+                                color     = "primary"
+                                float
+                                position  = { position }
+                                tip       = { `${ position } · ${ align }` }
+                                type      = "button"
+                            >
+                                { position } · { align }
+                            </Tooltip>
+                        ) ) }
+                </div>
+
+                <p className="text-sm text-base-content/70">
+                    Beside the trigger, the alignment slides along the block axis instead — the
+                    triggers below are tall so it can be seen.
+                </p>
+
+                <div className="grid gap-6 py-4 sm:grid-cols-3">
+                    { [ 'left' , 'right' ]
+                        .flatMap( position => [ 'start' , 'center' , 'end' ].map( align => ({ align , position }) ) )
+                        .map( ({ align , position }) => (
+                            <Tooltip
+                                key       = { `${ position }-${ align }` }
+                                align     = { align }
+                                as        = "button"
+                                className = "btn h-24 w-full"
+                                color     = "secondary"
+                                float
+                                position  = { position }
+                                tip       = { `${ position } · ${ align }` }
+                                type      = "button"
+                            >
+                                { position } · { align }
+                            </Tooltip>
+                        ) ) }
+                </div>
+            </div>
+
+            <Divider />
+
+            {/* The anchor is what the bubble aligns on */}
+            <div className="flex flex-col gap-4">
+                <h3 className="text-xl font-semibold">The bubble aligns on the anchor, so the anchor is what to shape</h3>
+                <p className="text-sm text-base-content/70">
+                    A tooltip renders an element of its own, and that element is what the placement
+                    measures. Made to fill its cell, it is the <em>cell</em> whose right edge
+                    <code>align=&quot;end&quot;</code> lines the bubble up with ; hugging its badge,
+                    it is the badge. Neither is wrong and no default can tell them apart — an
+                    element that hugs its content is the answer, and it is the caller&apos;s to give.
+                    Both rows are held open with <code>open</code>, which the floating path honours
+                    like the CSS one, and which makes the bubble follow the page as it scrolls.
+                </p>
+
+                <div className="overflow-x-auto rounded-box border border-base-300 bg-base-100">
+                    <table className="table">
+                        <thead>
+                            <tr>
+                                <th>The anchor</th>
+                                <th className="text-end">Rank</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>As wide as its cell</td>
+                                <td className="h-20 text-end align-bottom">
+                                    <Tooltip
+                                        align     = "end"
+                                        className = "block w-full"
+                                        color     = "warning"
+                                        float
+                                        open
+                                        position  = "bottom"
+                                        tip       = "Aligned on the cell"
+                                    >
+                                        <Badge color="warning">3</Badge>
+                                    </Tooltip>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Hugging its badge</td>
+                                <td className="h-20 text-end align-bottom">
+                                    <Tooltip
+                                        align    = "end"
+                                        as       = "span"
+                                        color    = "success"
+                                        float
+                                        open
+                                        position = "bottom"
+                                        tip      = "Aligned on the badge"
+                                    >
+                                        <Badge color="success">4</Badge>
+                                    </Tooltip>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             <Divider />
