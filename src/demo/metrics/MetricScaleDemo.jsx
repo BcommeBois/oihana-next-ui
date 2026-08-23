@@ -32,6 +32,14 @@ const NIVO_RAMP = [ '#61CDBB' , '#97E3D5' , '#E8C1A0' , '#F47560' ] ;
 const TOKEN_RAMP = [ 'base-300' , 'info' , 'primary' , 'secondary' , 'accent' ] ;
 
 /**
+ * Ten buckets, to show what thinning is for.
+ * @type {string[]}
+ */
+const LONG_RAMP = Array.from( { length : 10 } , ( _ , index ) =>
+    `color-mix(in oklch, var(--color-primary) ${ 15 + index * 9 }%, var(--color-base-100))` ,
+) ;
+
+/**
  * MetricScale demo.
  *
  * @param {Object} props
@@ -39,7 +47,7 @@ const TOKEN_RAMP = [ 'base-300' , 'info' , 'primary' , 'secondary' , 'accent' ] 
  */
 const MetricScaleDemo = ( { path = 'demo.metrics.metricScale' } ) =>
 {
-    const { bounds , colors , description , orientation , simple , sizes , title } = useI18n( path ) ;
+    const { bounds , colors , description , orientation , simple , sizes , ticks , title } = useI18n( path ) ;
 
     const unit = value => t( simple?.unit , value ) ?? String( value ) ;
 
@@ -79,6 +87,40 @@ const MetricScaleDemo = ( { path = 'demo.metrics.metricScale' } ) =>
                     <MetricScale colors={ NIVO_RAMP } min={ 0 } max={ 240 } size="xs" />
                     <MetricScale colors={ NIVO_RAMP } min={ 0 } max={ 240 } size="sm" />
                     <MetricScale colors={ NIVO_RAMP } min={ 0 } max={ 240 } size="md" />
+                </div>
+            </Section>
+
+            <Divider />
+
+            <Section title={ ticks?.title } description={ ticks?.description }>
+                <div className="flex flex-col gap-6">
+
+                    <div className="flex flex-col gap-2">
+                        <span className="text-sm text-base-content/60">{ ticks?.all }</span>
+                        <MetricScale colors={ NIVO_RAMP } min={ 0 } max={ 240 } ticks />
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                        <span className="text-sm text-base-content/60">{ ticks?.thinned }</span>
+                        <MetricScale colors={ LONG_RAMP } min={ 0 } max={ 240 } ticks={ 4 } />
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                        <span className="text-sm text-base-content/60">{ ticks?.uneven }</span>
+                        <MetricScale
+                            colors         = { NIVO_RAMP }
+                            min            = { 12 }
+                            max            = { 37 }
+                            ticks
+                            valueFormatter = { value => value.toFixed( 1 ) }
+                        />
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                        <span className="text-sm text-base-content/60">{ ticks?.vertical }</span>
+                        <MetricScale colors={ NIVO_RAMP } min={ 0 } max={ 240 } orientation="vertical" ticks />
+                    </div>
+
                 </div>
             </Section>
 

@@ -260,6 +260,7 @@ const ChartFrame =
             min            = { drawnLegend.scale.min }
             orientation    = { orientation }
             size           = { drawnLegend.size }
+            ticks          = { drawnLegend.scale.ticks }
             valueFormatter = { drawnLegend.valueFormatter }
         />
     ) : (

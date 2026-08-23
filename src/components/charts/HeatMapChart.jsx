@@ -61,7 +61,7 @@ import ChartTooltip from './ChartTooltip' ;
  * @param {React.ReactNode} [props.emptyState] - Replaces the default empty state entirely.
  * @param {number|string} [props.height=460] - Frame height.
  * @param {boolean} [props.labels=true] - Draw the value inside each cell.
- * @param {boolean|string|Object} [props.legend='bottom'] - `false`, a position — `'bottom'`, `'top'`, `'right'`, `'left'` — or `{ position , valueFormatter , orientation , size , className }`. Drawn as a `MetricScale` : a quantitative chart legends itself with its colour ramp and the two ends of its range, not with a list.
+ * @param {boolean|string|Object} [props.legend='bottom'] - `false`, a position — `'bottom'`, `'top'`, `'right'`, `'left'` — or `{ position , valueFormatter , orientation , size , className }`. Drawn as a `MetricScale` : a quantitative chart legends itself with its colour ramp and the two ends of its range, not with a list. `ticks` prints the bucket boundaries instead of the ends alone.
  * @param {boolean} [props.loading=false] - Show a skeleton instead of the chart.
  * @param {Object} [props.margin] - Explicit margin overrides, merged over the computed one.
  * @param {number|string} [props.maxHeight] - Ceiling on the frame's height. Pair it with `aspect` : a circular chart takes its radius from the smaller inner dimension, so a fixed `height` leaves two empty bands on a narrow screen.

@@ -38,7 +38,7 @@ import { getLegendItems , resolveLegend } from '../themes/charts/legendItems' ;
  * @param {boolean|string|Object} [props.legend] - The `legend` prop.
  * @param {string} [props.marker='dot'] - The chart's default mark shape ; `legend.marker` overrides it. A curve is legended by a `'line'`, a filled mark by a `'dot'`.
  * @param {Array<string|number>} [props.names] - The series names, in the same order.
- * @param {{ min : number , max : number }} [props.scale] - The value range of a quantitative chart. Present, it makes the result a scale instead of a list, `colors` being read as the ramp rather than as one colour per name.
+ * @param {{ min : number , max : number }} [props.scale] - The value range of a quantitative chart. Present, it makes the result a scale instead of a list, `colors` being read as the ramp rather than as one colour per name. `legend.ticks` rides along to `MetricScale`.
  * @param {string[]} [props.tooltips] - Optional per-entry tooltips.
  * @param {Array<number|string>} [props.values] - The chart's natural per-series values, used when `legend.values` is `true`.
  *
@@ -69,6 +69,7 @@ const useChartLegend = ( { colors , legend , marker , names , scale , tooltips ,
             orientation ,
             position = 'bottom' ,
             size ,
+            ticks ,
             valueFormatter ,
             values : showValues = false ,
         } = resolved ;
@@ -82,7 +83,7 @@ const useChartLegend = ( { colors , legend , marker , names , scale , tooltips ,
                 return null ;
             }
 
-            return { className , marker , orientation , position , scale : { ...scale , colors } , size , valueFormatter } ;
+            return { className , marker , orientation , position , scale : { ...scale , colors , ticks } , size , valueFormatter } ;
         }
 
         let resolvedValues ;

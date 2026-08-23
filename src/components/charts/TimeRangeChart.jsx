@@ -56,7 +56,7 @@ import ChartTooltip from './ChartTooltip' ;
  * @param {number} [props.firstWeekday] - Index of the first weekday shown.
  * @param {string|number|Date} [props.from] - First day shown ; inferred from the data when omitted.
  * @param {number|string} [props.height=240] - Frame height.
- * @param {boolean|string|Object} [props.legend=false] - `false`, a position — `'bottom'`, `'top'`, `'right'`, `'left'` — or `{ position , valueFormatter , orientation , size , className }`. Drawn as a `MetricScale` : a quantitative chart legends itself with its colour ramp and the two ends of its range, not with a list.
+ * @param {boolean|string|Object} [props.legend=false] - `false`, a position — `'bottom'`, `'top'`, `'right'`, `'left'` — or `{ position , valueFormatter , orientation , size , className }`. Drawn as a `MetricScale` : a quantitative chart legends itself with its colour ramp and the two ends of its range, not with a list. `ticks` prints the bucket boundaries instead of the ends alone.
  * @param {boolean} [props.loading=false] - Show a skeleton instead of the chart.
  * @param {Object} [props.margin] - Explicit margin overrides, merged over the computed one.
  * @param {number|string} [props.maxHeight] - Ceiling on the frame's height. Pair it with `aspect` : a circular chart takes its radius from the smaller inner dimension, so a fixed `height` leaves two empty bands on a narrow screen.

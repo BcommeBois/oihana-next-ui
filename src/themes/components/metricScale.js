@@ -65,10 +65,24 @@ const boundsMap =
     [ VERTICAL ]   : [ 'flex-col-reverse' , 'justify-between' , 'h-full' ] ,
 } ;
 
+const ticksMap =
+{
+    // Absolutely placed, because the labels have unequal widths : distributing
+    // them with `justify-between` would put `120` a few pixels off the band edge
+    // it names, and a scale read askew is worse than one not read at all. The
+    // first label stays in flow, which is what gives the row its height at any
+    // text size — no spacer, no height map to keep in step with the sizes.
+    [ HORIZONTAL ] : [ 'relative' , 'w-full' ] ,
+    // Standing up the boxes are all one line tall, so `justify-between` is exact
+    // on its own and there is nothing to place by hand.
+    [ VERTICAL ]   : [ 'flex' , 'flex-col-reverse' , 'justify-between' , 'h-full' ] ,
+} ;
+
 export const METRIC_SCALE        = 'flex gap-1.5' ;
 export const METRIC_SCALE_BAR    = 'flex overflow-hidden rounded-xs' ;
 export const METRIC_SCALE_BAND   = 'flex-1' ;
 export const METRIC_SCALE_BOUNDS = 'flex text-base-content/70 tabular-nums' ;
+export const METRIC_SCALE_TICKS  = 'text-base-content/70 tabular-nums' ;
 
 /**
  * Generates the scale className expression.
@@ -119,6 +133,61 @@ export const getMetricScaleBoundsClasses = ( { orientation = HORIZONTAL } = {} )
     METRIC_SCALE_BOUNDS ,
     boundsMap[ orientation ] ?? boundsMap[ HORIZONTAL ] ,
 ) ;
+
+/**
+ * Generates the ticks row className expression.
+ *
+ * @param {Object} [props]
+ * @param {'horizontal'|'vertical'} [props.orientation='horizontal'] - Layout direction.
+ * @returns {string} The ticks className expression.
+ */
+export const getMetricScaleTicksClasses = ( { orientation = HORIZONTAL } = {} ) => cn
+(
+    METRIC_SCALE_TICKS ,
+    ticksMap[ orientation ] ?? ticksMap[ HORIZONTAL ] ,
+) ;
+
+/**
+ * Places one tick along the bar.
+ *
+ * The offset is a percentage worked out from the tick's rank, so it is an
+ * inline style and not a class : Tailwind v4 scans source text, and a class
+ * built from an index never appears in it.
+ *
+ * The two ends are pinned to the edges rather than centred on them — a label
+ * centred on 100 % would hang half-way out of the frame — which is the same
+ * convention the standing scale gets for free from its equal line heights.
+ *
+ * @param {Object} props
+ * @param {number} props.index - The tick's rank, `0` first.
+ * @param {number} props.total - The number of bands, so `total + 1` ticks.
+ * @param {'horizontal'|'vertical'} [props.orientation='horizontal'] - Layout direction.
+ *
+ * @returns {{ className : string , style : Object | undefined }} What to put on the tick.
+ */
+export const getMetricScaleTick = ( { index , total , orientation = HORIZONTAL } ) =>
+{
+    if ( orientation === VERTICAL )
+    {
+        return { className : '' , style : undefined } ;
+    }
+
+    if ( index === 0 )
+    {
+        // In flow, and therefore the one that gives the row its height.
+        return { className : '' , style : undefined } ;
+    }
+
+    if ( index === total )
+    {
+        return { className : 'absolute right-0 top-0' , style : undefined } ;
+    }
+
+    return {
+        className : 'absolute top-0 -translate-x-1/2' ,
+        style     : { left : `${ ( index / total ) * 100 }%` } ,
+    } ;
+} ;
 
 /**
  * Generates one band's className expression, and the inline style a non-token

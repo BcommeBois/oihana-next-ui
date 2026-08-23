@@ -8,6 +8,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Metrics — `MetricScale` can print the bucket boundaries, not only the two ends**
+
+- **`ticks` prints the edges, and is off by default.** N buckets make N+1 figures, and under a 224 px bar they crowd fast — fine for `240`, not for `1 250 €`. The two ends give the bar its direction, which is what a reader usually needs ; `ticks` is for when they need to read a value off it. `legend={{ ticks : true }}` reaches it from a chart, the object having been a passthrough from the start.
+- **🚨 Thinning takes one boundary in `k`, never an interpolation.** `ticks={ 4 }` over ten buckets prints `0 · 96 · 192 · 240`, so the last interval is shorter than the others — deliberately. Evenly spaced round figures under a *quantized* scale would say the colour changes where it does not : every number printed is a real edge, and an uneven gap is a smaller lie than a made-up figure.
+- **The ticks are placed absolutely, and lying flat that is not over-engineering.** Their widths differ, so `justify-between` would put `120` several pixels off the band edge it names — and a scale read askew is worse than one not read at all. Standing up the boxes are all one line tall, so the same `justify-between` is exact for free and nothing is placed by hand. The offset is a percentage worked out from the tick's rank, hence an inline style : Tailwind v4 scans source text, and a class built from an index never appears in it — the fourth time that trap has been paid in this codebase.
+- **The first label stays in flow**, which is what gives the row its height at any text size. No spacer element, and no height map to keep in step with `xs` / `sm` / `md`.
+- **The two ends are pinned to the edges rather than centred on them** : a label centred on 100 % would hang half-way out of the frame.
+- **Float noise is trimmed to twelve significant digits**, so a clean sixtieth prints as `60` and not `60.000000000000004`. A range that does not divide evenly keeps its repeating decimals — the rounding is `valueFormatter`'s call, not the scale's.
+- **No tick marks drawn.** The band already has a visible edge at exactly that spot ; a stroke under it would double the cue and weigh down a bar 8 px tall.
+
+
 **Tooling — two `clean` scripts, because Turbopack's dev cache had reached 180 GB**
 
 - **`.next/dev/cache/turbopack` alone held 180 GB over 12 199 files**, real bytes and not a sparse-file illusion, against 623 MB of `server` and 607 MB of `static` beside it. Deleting it took under ten seconds — the weight is in metadata, not in anything worth keeping.
