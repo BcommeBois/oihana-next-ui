@@ -10,7 +10,7 @@ import { useMemo } from 'react' ;
 
 import useThemeColors from '../themes/hooks/useThemeColors' ;
 
-import { buildChartTheme , CHART_COLOR_KEYS } from '../themes/charts/theme' ;
+import { buildChartTheme , CHART_COLOR_KEYS , LABEL_OUTLINE_COLOR , LABEL_OUTLINE_WIDTH } from '../themes/charts/theme' ;
 
 /**
  * React hook returning the nivo `theme` object for the current DaisyUI theme.
@@ -23,6 +23,8 @@ import { buildChartTheme , CHART_COLOR_KEYS } from '../themes/charts/theme' ;
  * @param {string} [props.fontFamily='inherit'] - Font family for every chart text.
  * @param {number} [props.fontSize=12] - Base font size in px.
  * @param {number|string} [props.labelFontWeight=500] - Weight of the data labels only, not the axis or legend text.
+ * @param {string} [props.labelOutlineColor='rgb(255 255 255 / 0.85)'] - Halo around the data labels. Light whatever the theme — see `buildChartTheme`.
+ * @param {number} [props.labelOutlineWidth=2] - Width of that halo. `0` removes it, for a chart writing its labels on the page background.
  * @param {Object} [props.overrides] - Partial nivo theme, deeply merged on top.
  * @param {number|string} [props.tickFontWeight=500] - Weight of the axis tick labels.
  * @param {number} [props.tickOutlineWidth=2] - Halo around the tick labels, in the surface color. `0` removes it.
@@ -48,6 +50,8 @@ const useChartTheme = ( {
     fontFamily = 'inherit' ,
     fontSize = 12 ,
     labelFontWeight = 500 ,
+    labelOutlineColor = LABEL_OUTLINE_COLOR ,
+    labelOutlineWidth = LABEL_OUTLINE_WIDTH ,
     overrides ,
     tickFontWeight = 500 ,
     tickOutlineWidth = 2 ,
@@ -67,11 +71,13 @@ const useChartTheme = ( {
             fontFamily ,
             fontSize ,
             labelFontWeight ,
+            labelOutlineColor ,
+            labelOutlineWidth ,
             overrides ,
             tickFontWeight ,
             tickOutlineWidth ,
         }) ,
-        [ text , muted , grid , border , surface , fontFamily , fontSize , labelFontWeight , overrides , tickFontWeight , tickOutlineWidth ] ,
+        [ text , muted , grid , border , surface , fontFamily , fontSize , labelFontWeight , labelOutlineColor , labelOutlineWidth , overrides , tickFontWeight , tickOutlineWidth ] ,
     ) ;
 } ;
 

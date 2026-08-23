@@ -89,7 +89,7 @@ const defaultRadialAxis = ( startAngle , endAngle ) =>
  * @param {Object} props
  * @param {boolean} [props.adjustValueRange=true] - Let the value scale start at the smallest value rather than zero.
  * @param {boolean} [props.animate=true] - Animate transitions ; forced off under `prefers-reduced-motion`.
- * @param {boolean} [props.arcLabels=false] - Draw the value inside each bar.
+ * @param {boolean} [props.arcLabels=false] - Draw the value inside each bar, in the bar's own color darkened, over a light halo.
  * @param {string} [props.ariaDescribedBy] - Id of a longer description elsewhere on the page.
  * @param {string} [props.ariaLabel] - Text alternative. Without one the chart is invisible to a screen reader.
  * @param {string} [props.ariaLabelledBy] - Id of an existing visible label, used instead of `ariaLabel`.
@@ -206,31 +206,32 @@ const PolarBarChart =
             loading         = { loading }
         >
             <ResponsivePolarBar
-                adjustValueRange  = { adjustValueRange }
-                animate           = { animate && !reduceMotion }
-                borderColor       = {{ from : 'color' , modifiers : [ [ 'darker' , 0.8 ] ] }}
-                borderWidth       = { borderWidth }
-                circularAxisOuter = { circularAxis === true ? {} : ( circularAxis || null ) }
-                colors            = { colors }
-                cornerRadius      = { cornerRadius }
-                data              = { data }
-                enableArcLabels   = { arcLabels }
-                endAngle          = { endAngle }
-                indexBy           = { indexBy }
-                innerRadius       = { innerRadius }
-                keys              = { resolvedKeys }
-                legends           = { legends }
-                margin            = { resolvedMargin }
-                radialAxis        = { radialAxis === true
-                                        ? defaultRadialAxis( startAngle , endAngle )
-                                        : ( radialAxis
-                                            ? { ...defaultRadialAxis( startAngle , endAngle ) , ...radialAxis }
-                                            : null ) }
-                startAngle        = { startAngle }
-                theme             = { theme }
-                tooltip           = { tooltip }
-                valueFormat       = { valueFormat }
-                valueSteps        = { valueSteps }
+                adjustValueRange   = { adjustValueRange }
+                animate            = { animate && !reduceMotion }
+                arcLabelsTextColor = {{ from : 'color' , modifiers : [ [ 'darker' , 1.8 ] ] }}
+                borderColor        = {{ from : 'color' , modifiers : [ [ 'darker' , 0.8 ] ] }}
+                borderWidth        = { borderWidth }
+                circularAxisOuter  = { circularAxis === true ? {} : ( circularAxis || null ) }
+                colors             = { colors }
+                cornerRadius       = { cornerRadius }
+                data               = { data }
+                enableArcLabels    = { arcLabels }
+                endAngle           = { endAngle }
+                indexBy            = { indexBy }
+                innerRadius        = { innerRadius }
+                keys               = { resolvedKeys }
+                legends            = { legends }
+                margin             = { resolvedMargin }
+                radialAxis         = { radialAxis === true
+                                         ? defaultRadialAxis( startAngle , endAngle )
+                                         : ( radialAxis
+                                             ? { ...defaultRadialAxis( startAngle , endAngle ) , ...radialAxis }
+                                             : null ) }
+                startAngle         = { startAngle }
+                theme              = { theme }
+                tooltip            = { tooltip }
+                valueFormat        = { valueFormat }
+                valueSteps         = { valueSteps }
                 { ...rest }
                 { ...nivoProps }
             />

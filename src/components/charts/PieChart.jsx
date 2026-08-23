@@ -8,6 +8,8 @@
 
 import { useCallback } from 'react' ;
 
+import { ArcLabelComponent } from '@nivo/arcs' ;
+
 import { ResponsivePie , ResponsivePieCanvas } from '@nivo/pie' ;
 
 import { useMedia } from 'react-use' ;
@@ -19,8 +21,53 @@ import useChartTheme   from '../../hooks/useChartTheme' ;
 import { RADIAL } from '../../themes/charts/layout' ;
 import { NIVO }   from '../../themes/charts/palettes' ;
 
+import { LABEL_OUTLINE_COLOR , LABEL_OUTLINE_WIDTH } from '../../themes/charts/theme' ;
+
 import ChartFrame   from './ChartFrame' ;
 import ChartTooltip from './ChartTooltip' ;
+
+/**
+ * The halo of the arc labels, written as inherited SVG paint properties.
+ *
+ * It cannot come from the theme : nivo styles the labels inside the arcs and
+ * the ones at the end of the leader lines from the same `labels.text` node,
+ * and only the first kind wants it — the second sits out on the page
+ * background in `base-content`, where a light halo circles light text in
+ * white and erases it in dark mode.
+ *
+ * `stroke`, `stroke-width`, `stroke-linejoin` and `paint-order` all inherit,
+ * so a wrapper `<g>` around the arc label alone reaches its `<text>` and
+ * nothing else. `paint-order` puts the stroke behind the fill, which is what
+ * makes it a halo rather than a smear over the glyphs — the same thing nivo
+ * does by drawing a stroked copy underneath, done in one element. The width
+ * doubles for the same reason nivo doubles it : a stroke is centered on the
+ * outline, so half of it lands inside the glyph.
+ *
+ * @type {Object}
+ */
+const ARC_LABEL_HALO =
+{
+    paintOrder     : 'stroke fill' ,
+    stroke         : LABEL_OUTLINE_COLOR ,
+    strokeLinejoin : 'round' ,
+    strokeWidth    : LABEL_OUTLINE_WIDTH * 2 ,
+} ;
+
+/**
+ * nivo's own arc label, wrapped in the halo.
+ *
+ * Declared at module level so its identity is stable : passed as
+ * `arcLabelsComponent`, a fresh function on every render would remount the
+ * whole label layer and drop its transitions.
+ *
+ * @param {Object} props - The `arcLabelsComponent` props — `{ datum , label , style }`.
+ * @returns {React.ReactNode} The label, haloed.
+ */
+const HaloedArcLabel = ( props ) => (
+    <g style={ ARC_LABEL_HALO }>
+        <ArcLabelComponent { ...props } />
+    </g>
+) ;
 
 /**
  * Default arc link label — the slice id followed by its formatted value.
@@ -41,9 +88,20 @@ const defaultArcLinkLabel = ( datum ) => `${ datum.id } (${ datum.formattedValue
  * default and the margin accounts for them — turning them off reclaims that
  * room automatically and grows the circle.
  *
+ * **Only the labels inside the arcs carry a halo.** The theme cannot say that
+ * — nivo styles both kinds of label from a single `labels.text` node — so it
+ * is said on the arc label itself, see `ARC_LABEL_HALO`. The leader labels are
+ * left alone, being ordinary text on the page background, exactly like an axis
+ * tick. `arcLabelOutline={ false }` removes the halo.
+ *
+ * The canvas renderer draws its labels itself and takes no component, so it
+ * has no halo. It is the renderer for thousands of arcs, which carry no
+ * readable label anyway.
+ *
  * @param {Object} props
  * @param {boolean} [props.animate=true] - Animate transitions ; forced off under `prefers-reduced-motion`.
- * @param {boolean} [props.arcLabels=true] - Draw the value inside each arc.
+ * @param {boolean} [props.arcLabelOutline=true] - Halo behind the labels inside the arcs. Ignored by the canvas renderer — see above.
+ * @param {boolean} [props.arcLabels=true] - Draw the value inside each arc, in the arc's own color darkened.
  * @param {Function|string} [props.arcLinkLabel] - Label accessor for the leader lines ; defaults to `id (value)`.
  * @param {boolean} [props.arcLinkLabels=true] - Draw the leader lines outside the circle.
  * @param {string} [props.ariaDescribedBy] - Id of a longer description elsewhere on the page.
@@ -83,6 +141,7 @@ const defaultArcLinkLabel = ( datum ) => `${ datum.id } (${ datum.formattedValue
 const PieChart =
 ({
     animate = true ,
+    arcLabelOutline = true ,
     arcLabels = true ,
     arcLinkLabel = defaultArcLinkLabel ,
     arcLinkLabels = true ,
@@ -110,7 +169,9 @@ const PieChart =
     ...rest
 }) =>
 {
-    const theme = useChartTheme( { overrides : themeOverrides } ) ;
+    // The theme halo would reach the leader labels too — the arc labels get
+    // theirs from `HaloedArcLabel` instead.
+    const theme = useChartTheme( { labelOutlineWidth : 0 , overrides : themeOverrides } ) ;
 
     const colors = usePalette( { palette , count : data?.length ?? 0 } ) ;
 
@@ -154,6 +215,7 @@ const PieChart =
             <Component
                 activeOuterRadiusOffset = { 8 }
                 animate                 = { animate && !reduceMotion }
+                arcLabelsComponent      = { arcLabelOutline ? HaloedArcLabel : undefined }
                 arcLabelsSkipAngle      = { 10 }
                 arcLabelsTextColor      = {{ from : 'color' , modifiers : [ [ 'darker' , 2 ] ] }}
                 arcLinkLabel            = { arcLinkLabel }

@@ -109,7 +109,12 @@ const ChordChart =
     ...rest
 }) =>
 {
-    const theme = useChartTheme( { overrides : themeOverrides } ) ;
+    // Every label of a chord sits OUTSIDE the ring, on the page background, and
+    // is written in `base-content` — so it wants the tick treatment, not the
+    // data-label one. The halo the theme puts on `labels.text` is light
+    // whatever the theme : in dark mode it would circle light text in white
+    // and thicken it into a blot. This chart has no label on a mark to lose.
+    const theme = useChartTheme( { labelOutlineWidth : 0 , overrides : themeOverrides } ) ;
 
     const colors = usePalette( { palette , count : keys?.length ?? 0 } ) ;
 

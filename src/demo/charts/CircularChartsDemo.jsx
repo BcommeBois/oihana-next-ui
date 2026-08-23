@@ -193,14 +193,16 @@ const CircularChartsDemo = () =>
 
             <Section
                 title       = "PolarBar"
-                description = "Mêmes données qu'un BarChart (keys + indexBy), mais enroulées autour d'un cercle. Un budget mensuel : douze mois cycliques, où décembre voisine janvier — ce qu'une ligne droite ne montre pas. À ne pas confondre avec RadialBar, qui dessine un anneau par série."
+                description = "Mêmes données qu'un BarChart (keys + indexBy), mais enroulées autour d'un cercle. Un budget mensuel : douze mois cycliques, où décembre voisine janvier — ce qu'une ligne droite ne montre pas. À ne pas confondre avec RadialBar, qui dessine un anneau par série. arcLabels imprime la valeur dans l'arc, dans sa propre couleur assombrie et sur un halo clair ; arcLabelsSkipRadius laisse les bandes trop fines en dehors du dessin, où le chiffre serait illisible."
             >
                 <PolarBarChart
                     ariaLabel   = "Budget mensuel réparti en cinq postes de dépense, sur douze mois"
+                    arcLabels   = { true }
                     className   = "max-w-2xl mx-auto"
                     data        = { BUDGET_DATA }
                     indexBy     = "mois"
                     keys        = { BUDGET_KEYS }
+                    nivoProps   = {{ arcLabelsSkipRadius : 14 }}
                     palette     = { palette }
                     height      = { 640 }
                     innerRadius = { 0.25 }
