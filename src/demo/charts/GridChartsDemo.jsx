@@ -130,13 +130,14 @@ const GridChartsDemo = () =>
 
             <Section
                 title       = "Calendar"
-                description = "Une année de jours. La palette est séquentielle et non catégorielle : les cellules codent une quantité, les couleurs doivent donc être ordonnées."
+                description = "Une année de jours. La palette est séquentielle et non catégorielle : les cellules codent une quantité, les couleurs doivent donc être ordonnées. legend n'est pas allumée par défaut sur ce graphe ni sur TimeRange — elle l'est ici pour montrer l'échelle."
             >
                 <CalendarChart
                     ariaLabel = "Activité quotidienne sur l'année 2026"
                     data      = { CALENDAR_DATA }
                     from      = "2026-01-01"
                     to        = "2026-12-31"
+                    legend    = "bottom"
                     palette   = { palette }
                     height    = { 240 }
                 />
@@ -162,7 +163,7 @@ const GridChartsDemo = () =>
 
             <Section
                 title       = "HeatMap"
-                description = "Une matrice ligne × colonne. La légende est une barre dégradée et non une liste de pastilles : une échelle quantitative n'a pas d'entrées discrètes à lister."
+                description = "Une matrice ligne × colonne. La légende est une échelle et non une liste de pastilles : une grandeur n'a pas d'entrées à nommer. Les bandes sont franches parce que le graphe range ses valeurs en seaux — un dégradé lisse dirait le contraire."
             >
                 <HeatMapChart
                     ariaLabel = "Fréquentation par mode de transport et par pays"

@@ -65,6 +65,48 @@ export const sumBy = ( data , accessor ) =>
 } ;
 
 /**
+ * The lowest and highest finite number in a set.
+ *
+ * **What a quantitative chart's scale needs, and what nivo does not hand
+ * back.** These charts let nivo work the domain out from the data unless
+ * `minValue` / `maxValue` say otherwise, and it keeps the result to itself —
+ * so a legend drawn outside the SVG has to read the data again.
+ *
+ * @param {Array<number>} [values] - The values, holes and non-numbers included.
+ * @returns {{ min : number , max : number }|undefined} The bounds, or `undefined` when nothing is numeric.
+ *
+ * @example
+ * ```js
+ * getValueBounds( [ 3 , null , 12 , 'x' ] ) ; // → { min : 3 , max : 12 }
+ * ```
+ */
+export const getValueBounds = ( values ) =>
+{
+    let min ;
+    let max ;
+
+    values?.forEach( ( value ) =>
+    {
+        if ( typeof value !== 'number' || !Number.isFinite( value ) )
+        {
+            return ;
+        }
+
+        if ( min === undefined || value < min )
+        {
+            min = value ;
+        }
+
+        if ( max === undefined || value > max )
+        {
+            max = value ;
+        }
+    } ) ;
+
+    return min === undefined ? undefined : { min , max } ;
+} ;
+
+/**
  * Builds the `MetricLegend` entries of a chart.
  *
  * Colors are read positionally : `usePalette` returns them in the order the

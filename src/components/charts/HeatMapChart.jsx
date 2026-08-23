@@ -13,6 +13,7 @@ import { ResponsiveHeatMap , ResponsiveHeatMapCanvas } from '@nivo/heatmap' ;
 import { useMedia } from 'react-use' ;
 
 import useChartLayout  from '../../hooks/useChartLayout' ;
+import useChartLegend  from '../../hooks/useChartLegend' ;
 import usePalette from '../../hooks/usePalette' ;
 import useChartTheme   from '../../hooks/useChartTheme' ;
 import useThemeColors  from '../../themes/hooks/useThemeColors' ;
@@ -20,6 +21,8 @@ import useThemeColors  from '../../themes/hooks/useThemeColors' ;
 import { CALENDAR_COLOR_KEYS } from '../../themes/charts/calendar' ;
 import { GRID }                from '../../themes/charts/layout' ;
 import { NIVO }                from '../../themes/charts/palettes' ;
+
+import { getValueBounds } from '../../themes/charts/legendItems' ;
 
 import ChartFrame   from './ChartFrame' ;
 import ChartTooltip from './ChartTooltip' ;
@@ -58,7 +61,7 @@ import ChartTooltip from './ChartTooltip' ;
  * @param {React.ReactNode} [props.emptyState] - Replaces the default empty state entirely.
  * @param {number|string} [props.height=460] - Frame height.
  * @param {boolean} [props.labels=true] - Draw the value inside each cell.
- * @param {boolean|string|Object} [props.legend='bottom'] - `false`, a position, or a nivo legend override.
+ * @param {boolean|string|Object} [props.legend='bottom'] - `false`, a position — `'bottom'`, `'top'`, `'right'`, `'left'` — or `{ position , valueFormatter , orientation , size , className }`. Drawn as a `MetricScale` : a quantitative chart legends itself with its colour ramp and the two ends of its range, not with a list.
  * @param {boolean} [props.loading=false] - Show a skeleton instead of the chart.
  * @param {Object} [props.margin] - Explicit margin overrides, merged over the computed one.
  * @param {number|string} [props.maxHeight] - Ceiling on the frame's height. Pair it with `aspect` : a circular chart takes its radius from the smaller inner dimension, so a fixed `height` leaves two empty bands on a narrow screen.
@@ -136,16 +139,34 @@ const HeatMapChart =
         [ ramp , minValue , maxValue ] ,
     ) ;
 
-    const { margin : resolvedMargin , legends , axisTop , axisLeft } = useChartLayout
+    // The scale is drawn in HTML under the frame, so nothing is reserved for it
+    // in the margin any more and the plot gets that room back.
+    const { margin : resolvedMargin , axisTop , axisLeft } = useChartLayout
     ({
-        continuousLegend : true ,
         kind             : GRID ,
-        legend ,
         margin ,
         xAxis ,
         xAxisPosition    : 'top' ,
         yAxis ,
     }) ;
+
+    // nivo keeps the domain it works out to itself, so the scale reads the data
+    // again — unless the caller stated the bounds, in which case they win.
+    const bounds = useMemo
+    (
+        () => ( minValue !== 'auto' && maxValue !== 'auto'
+            ? { min : minValue , max : maxValue }
+            : getValueBounds( data?.flatMap( serie => serie?.data?.map( datum => datum?.y ) ?? [] ) ) ) ,
+        [ data , minValue , maxValue ] ,
+    ) ;
+
+    const legendProps = useChartLegend
+    ({
+        colors : ramp ,
+        legend ,
+        scale  : bounds ,
+    }) ;
+
 
     // The cell datum uses `serieId` — singular, unlike the line chart's `seriesId`.
     const tooltip = useCallback
@@ -174,6 +195,7 @@ const HeatMapChart =
             emptyLabel      = { emptyLabel }
             emptyState      = { emptyState }
             height          = { height }
+            legend          = { legendProps }
             loading         = { loading }
             maxHeight       = { maxHeight }
         >
@@ -191,7 +213,6 @@ const HeatMapChart =
                 emptyColor     = { emptyColor ?? emptyCell ?? 'transparent' }
                 enableLabels   = { labels }
                 labelTextColor = {{ from : 'color' , modifiers : [ [ 'darker' , 2 ] ] }}
-                legends        = { legends }
                 margin         = { resolvedMargin }
                 theme          = { theme }
                 tooltip        = { tooltip }

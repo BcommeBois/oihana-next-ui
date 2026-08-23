@@ -6,13 +6,14 @@
  * @module components/charts/TimeRangeChart
  */
 
-import { useCallback } from 'react' ;
+import { useCallback , useMemo } from 'react' ;
 
 import { ResponsiveTimeRange } from '@nivo/calendar' ;
 
 import { useMedia } from 'react-use' ;
 
 import useChartLayout  from '../../hooks/useChartLayout' ;
+import useChartLegend  from '../../hooks/useChartLegend' ;
 import usePalette from '../../hooks/usePalette' ;
 import useChartTheme   from '../../hooks/useChartTheme' ;
 import useThemeColors  from '../../themes/hooks/useThemeColors' ;
@@ -20,6 +21,8 @@ import useThemeColors  from '../../themes/hooks/useThemeColors' ;
 import { CALENDAR_COLOR_KEYS } from '../../themes/charts/calendar' ;
 import { GRID }                from '../../themes/charts/layout' ;
 import { NIVO }                from '../../themes/charts/palettes' ;
+
+import { getValueBounds } from '../../themes/charts/legendItems' ;
 
 import ChartFrame   from './ChartFrame' ;
 import ChartTooltip from './ChartTooltip' ;
@@ -53,7 +56,7 @@ import ChartTooltip from './ChartTooltip' ;
  * @param {number} [props.firstWeekday] - Index of the first weekday shown.
  * @param {string|number|Date} [props.from] - First day shown ; inferred from the data when omitted.
  * @param {number|string} [props.height=240] - Frame height.
- * @param {boolean|string|Object} [props.legend=false] - `false`, a position, or a nivo legend override.
+ * @param {boolean|string|Object} [props.legend=false] - `false`, a position — `'bottom'`, `'top'`, `'right'`, `'left'` — or `{ position , valueFormatter , orientation , size , className }`. Drawn as a `MetricScale` : a quantitative chart legends itself with its colour ramp and the two ends of its range, not with a list.
  * @param {boolean} [props.loading=false] - Show a skeleton instead of the chart.
  * @param {Object} [props.margin] - Explicit margin overrides, merged over the computed one.
  * @param {number|string} [props.maxHeight] - Ceiling on the frame's height. Pair it with `aspect` : a circular chart takes its radius from the smaller inner dimension, so a fixed `height` leaves two empty bands on a narrow screen.
@@ -116,13 +119,26 @@ const TimeRangeChart =
 
     const reduceMotion = useMedia( '(prefers-reduced-motion: reduce)' , false ) ;
 
-    const { margin : resolvedMargin , legends } = useChartLayout
+    // The scale is drawn in HTML under the frame, so nothing is reserved for it
+    // in the margin any more and the plot gets that room back.
+    const { margin : resolvedMargin } = useChartLayout
     ({
         kind          : GRID ,
-        legend ,
         margin ,
         weekdayLabels : true ,
     }) ;
+
+    // This chart states no bounds of its own, so the scale reads them off the
+    // data — the same numbers nivo quantizes against.
+    const bounds = useMemo( () => getValueBounds( data?.map( datum => datum?.value ) ) , [ data ] ) ;
+
+    const legendProps = useChartLegend
+    ({
+        colors ,
+        legend ,
+        scale  : bounds ,
+    }) ;
+
 
     const tooltip = useCallback
     (
@@ -143,6 +159,7 @@ const TimeRangeChart =
             emptyLabel      = { emptyLabel }
             emptyState      = { emptyState }
             height          = { height }
+            legend          = { legendProps }
             loading         = { loading }
             maxHeight       = { maxHeight }
         >
@@ -156,7 +173,6 @@ const TimeRangeChart =
                 emptyColor     = { emptyColor ?? emptyCell ?? 'transparent' }
                 firstWeekday   = { firstWeekday }
                 from           = { from }
-                legends        = { legends }
                 margin         = { resolvedMargin }
                 square         = { square }
                 theme          = { theme }

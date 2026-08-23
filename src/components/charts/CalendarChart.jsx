@@ -6,13 +6,14 @@
  * @module components/charts/CalendarChart
  */
 
-import { useCallback } from 'react' ;
+import { useCallback , useMemo } from 'react' ;
 
 import { ResponsiveCalendar , ResponsiveCalendarCanvas } from '@nivo/calendar' ;
 
 import { useMedia } from 'react-use' ;
 
 import useChartLayout  from '../../hooks/useChartLayout' ;
+import useChartLegend  from '../../hooks/useChartLegend' ;
 import usePalette from '../../hooks/usePalette' ;
 import useChartTheme   from '../../hooks/useChartTheme' ;
 import useThemeColors  from '../../themes/hooks/useThemeColors' ;
@@ -20,6 +21,8 @@ import useThemeColors  from '../../themes/hooks/useThemeColors' ;
 import { CALENDAR_COLOR_KEYS } from '../../themes/charts/calendar' ;
 import { GRID }                from '../../themes/charts/layout' ;
 import { NIVO }                from '../../themes/charts/palettes' ;
+
+import { getValueBounds } from '../../themes/charts/legendItems' ;
 
 import ChartFrame   from './ChartFrame' ;
 import ChartTooltip from './ChartTooltip' ;
@@ -54,7 +57,7 @@ import ChartTooltip from './ChartTooltip' ;
  * @param {React.ReactNode} [props.emptyState] - Replaces the default empty state entirely.
  * @param {string|number|Date} props.from - First day shown.
  * @param {number|string} [props.height=260] - Frame height.
- * @param {boolean|string|Object} [props.legend=false] - `false`, a position, or a nivo legend override.
+ * @param {boolean|string|Object} [props.legend=false] - `false`, a position — `'bottom'`, `'top'`, `'right'`, `'left'` — or `{ position , valueFormatter , orientation , size , className }`. Drawn as a `MetricScale` : a quantitative chart legends itself with its colour ramp and the two ends of its range, not with a list.
  * @param {boolean} [props.loading=false] - Show a skeleton instead of the chart.
  * @param {Object} [props.margin] - Explicit margin overrides, merged over the computed one.
  * @param {number|string} [props.maxHeight] - Ceiling on the frame's height. Pair it with `aspect` : a circular chart takes its radius from the smaller inner dimension, so a fixed `height` leaves two empty bands on a narrow screen.
@@ -122,12 +125,31 @@ const CalendarChart =
 
     const reduceMotion = useMedia( '(prefers-reduced-motion: reduce)' , false ) ;
 
-    const { margin : resolvedMargin , legends } = useChartLayout
+    // The scale is drawn in HTML under the frame, so nothing is reserved for it
+    // in the margin any more and the plot gets that room back.
+    const { margin : resolvedMargin } = useChartLayout
     ({
         kind   : GRID ,
-        legend ,
         margin ,
     }) ;
+
+    // nivo keeps the domain it works out to itself, so the scale reads the data
+    // again — unless the caller stated the bounds, in which case they win.
+    const bounds = useMemo
+    (
+        () => ( minValue !== 'auto' && maxValue !== 'auto'
+            ? { min : minValue , max : maxValue }
+            : getValueBounds( data?.map( datum => datum?.value ) ) ) ,
+        [ data , minValue , maxValue ] ,
+    ) ;
+
+    const legendProps = useChartLegend
+    ({
+        colors ,
+        legend ,
+        scale  : bounds ,
+    }) ;
+
 
     const tooltip = useCallback
     (
@@ -150,6 +172,7 @@ const CalendarChart =
             emptyLabel      = { emptyLabel }
             emptyState      = { emptyState }
             height          = { height }
+            legend          = { legendProps }
             loading         = { loading }
             maxHeight       = { maxHeight }
         >
@@ -162,7 +185,6 @@ const CalendarChart =
                 direction        = { direction }
                 emptyColor       = { emptyColor ?? emptyCell ?? 'transparent' }
                 from             = { from }
-                legends          = { legends }
                 margin           = { resolvedMargin }
                 maxValue         = { maxValue }
                 minValue         = { minValue }

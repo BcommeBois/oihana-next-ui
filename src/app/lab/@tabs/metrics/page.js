@@ -9,6 +9,7 @@ import BarListDemo      from '@/demo/metrics/BarListDemo' ;
 import CategoryBarDemo  from '@/demo/metrics/CategoryBarDemo' ;
 import DeltaDemo        from '@/demo/metrics/DeltaDemo' ;
 import MetricLegendDemo from '@/demo/metrics/MetricLegendDemo' ;
+import MetricScaleDemo  from '@/demo/metrics/MetricScaleDemo' ;
 import SparklineDemo    from '@/demo/metrics/SparklineDemo' ;
 import TrackerDemo      from '@/demo/metrics/TrackerDemo' ;
 
@@ -33,6 +34,7 @@ const SECTIONS =
     { Demo : SparklineDemo    , id : 'sparkline'    , label : 'Sparkline'    } ,
     { Demo : DeltaDemo        , id : 'delta'        , label : 'Delta'        } ,
     { Demo : MetricLegendDemo , id : 'metricLegend' , label : 'MetricLegend' } ,
+    { Demo : MetricScaleDemo  , id : 'metricScale'  , label : 'MetricScale'  } ,
 ] ;
 
 /**
@@ -69,7 +71,7 @@ const MetricsShowcase = ( { path = 'app.lab.metrics' } ) =>
                 </p>
             </Container>
 
-            {/* Seven tabs do not fit on a phone : the row scrolls rather than wraps, so
+            {/* Eight tabs do not fit on a phone : the row scrolls rather than wraps, so
                 the selected tab keeps its place in a single line. */}
             <Container maxWidth="max-w-4xl">
                 <div className="overflow-x-auto">

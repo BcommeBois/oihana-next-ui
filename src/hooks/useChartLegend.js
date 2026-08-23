@@ -14,6 +14,13 @@ import { resolveLegend }  from '../themes/charts/legends' ;
 /**
  * React hook returning the legend `ChartFrame` should draw, or `null`.
  *
+ * **Two shapes come out of one prop.** A chart colouring categories legends
+ * itself with a list of names ; one colouring a quantity legends itself with a
+ * scale, which is a different component and not a list of anything. The
+ * `legend` prop is the same on both, the placements are the same, and the
+ * caller never has to know which of the two its chart happens to be : pass
+ * `scale` and the result carries a scale, pass `names` and it carries items.
+ *
  * The `legend` prop keeps the shape it always had — `false`, `true`, a
  * position, or an object — but the object's fields are now ours rather than
  * nivo's : `position`, `values`, `valueFormatter`, `marker`, `orientation`,
@@ -32,10 +39,11 @@ import { resolveLegend }  from '../themes/charts/legends' ;
  * @param {boolean|string|Object} [props.legend] - The `legend` prop.
  * @param {string} [props.marker='dot'] - The chart's default mark shape ; `legend.marker` overrides it. A curve is legended by a `'line'`, a filled mark by a `'dot'`.
  * @param {Array<string|number>} [props.names] - The series names, in the same order.
+ * @param {{ min : number , max : number }} [props.scale] - The value range of a quantitative chart. Present, it makes the result a scale instead of a list, `colors` being read as the ramp rather than as one colour per name.
  * @param {string[]} [props.tooltips] - Optional per-entry tooltips.
  * @param {Array<number|string>} [props.values] - The chart's natural per-series values, used when `legend.values` is `true`.
  *
- * @returns {{className:string,items:Object[],marker:string,orientation:string,position:string,size:string,valueFormatter:Function}|null} The legend to draw, or `null`.
+ * @returns {{className:string,items:Object[],marker:string,orientation:string,position:string,scale:Object,size:string,valueFormatter:Function}|null} The legend to draw, or `null`.
  *
  * @example
  * ```jsx
@@ -44,7 +52,7 @@ import { resolveLegend }  from '../themes/charts/legends' ;
  * <ChartFrame legend={ legendProps } … >
  * ```
  */
-const useChartLegend = ( { colors , legend , marker , names , tooltips , values } = {} ) => useMemo
+const useChartLegend = ( { colors , legend , marker , names , scale , tooltips , values } = {} ) => useMemo
 (
     () =>
     {
@@ -65,6 +73,18 @@ const useChartLegend = ( { colors , legend , marker , names , tooltips , values 
             valueFormatter ,
             values : showValues = false ,
         } = resolved ;
+
+        // A quantitative scale has no entries : the ramp and the two ends of the
+        // range are the whole legend, and `values` names nothing here.
+        if ( scale )
+        {
+            if ( !colors?.length )
+            {
+                return null ;
+            }
+
+            return { className , marker , orientation , position , scale : { ...scale , colors } , size , valueFormatter } ;
+        }
 
         let resolvedValues ;
 
@@ -87,7 +107,7 @@ const useChartLegend = ( { colors , legend , marker , names , tooltips , values 
 
         return { className , items : resolvedItems , marker : markerOverride ?? marker , orientation , position , size , valueFormatter } ;
     } ,
-    [ colors , legend , marker , names , tooltips , values ] ,
+    [ colors , legend , marker , names , scale , tooltips , values ] ,
 ) ;
 
 export default useChartLegend ;

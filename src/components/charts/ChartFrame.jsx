@@ -11,6 +11,7 @@ import isChartDataEmpty from '../../helpers/charts/isChartDataEmpty' ;
 import cn from '../../themes/helpers/cn' ;
 
 import MetricLegend from '../metrics/MetricLegend' ;
+import MetricScale  from '../metrics/MetricScale' ;
 
 import EmptyState from '../EmptyState' ;
 import Skeleton   from '../Skeleton' ;
@@ -18,19 +19,24 @@ import Skeleton   from '../Skeleton' ;
 /**
  * How the frame lays itself out around its legend.
  *
- * Written as four literal pairs rather than composed from the position :
+ * Written as four literal triples rather than composed from the position :
  * Tailwind v4 scans source text, and a class built from a variable never
  * appears in it. The chart box takes `min-w-0` beside a legend so a long
  * name cannot push it out of the row.
  *
- * @type {Object.<string,{ frame : string , legend : string }>}
+ * A list of names and a scale do not centre the same way. `MetricLegend` is a
+ * flex row, so `justify-center` centres its entries ; `MetricScale` is a flex
+ * column of bounded width, whose main axis is vertical — `justify-center`
+ * would do nothing to it and `mx-auto` is what puts it in the middle.
+ *
+ * @type {Object.<string,{ frame : string , legend : string , scale : string }>}
  */
 const LEGEND_LAYOUT =
 {
-    bottom : { frame : 'flex w-full flex-col gap-3'          , legend : 'justify-center' } ,
-    top    : { frame : 'flex w-full flex-col gap-3'          , legend : 'justify-center' } ,
-    right  : { frame : 'flex w-full flex-row items-center gap-4' , legend : '' } ,
-    left   : { frame : 'flex w-full flex-row items-center gap-4' , legend : '' } ,
+    bottom : { frame : 'flex w-full flex-col gap-3'              , legend : 'justify-center' , scale : 'mx-auto' } ,
+    top    : { frame : 'flex w-full flex-col gap-3'              , legend : 'justify-center' , scale : 'mx-auto' } ,
+    right  : { frame : 'flex w-full flex-row items-center gap-4' , legend : ''               , scale : '' } ,
+    left   : { frame : 'flex w-full flex-row items-center gap-4' , legend : ''               , scale : '' } ,
 } ;
 
 /**
@@ -109,7 +115,7 @@ const LEADING_POSITIONS = [ 'top' , 'left' ] ;
  * @param {React.ReactNode} [props.emptyState] - Replaces the default empty state entirely.
  * @param {number|string} [props.height=400] - Height in px, or any CSS length. Ignored when `aspect` is set.
  * @param {number|string} [props.maxHeight] - Ceiling on the frame's height, in px or any CSS length. **This is what makes `aspect` usable on a circular chart** : a radial shape is sized by the smaller inner dimension, so a box with a fixed height wastes on a phone exactly what it saves on a desktop — the circle shrinks with the width while the box keeps its height, and the room left over becomes two empty bands. `aspect` ties the box to the width instead, and `maxHeight` keeps it from turning a wide card into a square one.
- * @param {Object} [props.legend] - The legend to draw, as resolved by `useChartLegend`. `null` or omitted draws none, and the frame then renders exactly as it did before it could.
+ * @param {Object} [props.legend] - The legend to draw, as resolved by `useChartLegend` — a list of names, or a `scale` for a quantitative chart. `null` or omitted draws none, and the frame then renders exactly as it did before it could.
  * @param {boolean} [props.loading=false] - Show a skeleton instead of the chart.
  *
  * @example
@@ -242,12 +248,26 @@ const ChartFrame =
 
     const layout = LEGEND_LAYOUT[ drawnLegend.position ] ?? LEGEND_LAYOUT.bottom ;
 
-    const list = (
+    const orientation = drawnLegend.orientation ?? ( beside ? 'vertical' : undefined ) ;
+
+    // A quantitative chart legends itself with a scale, not with a list of
+    // names — same slot, same placements, different component.
+    const list = drawnLegend.scale ? (
+        <MetricScale
+            className      = { cn( layout.scale , drawnLegend.className ) }
+            colors         = { drawnLegend.scale.colors }
+            max            = { drawnLegend.scale.max }
+            min            = { drawnLegend.scale.min }
+            orientation    = { orientation }
+            size           = { drawnLegend.size }
+            valueFormatter = { drawnLegend.valueFormatter }
+        />
+    ) : (
         <MetricLegend
             className      = { cn( layout.legend , drawnLegend.className ) }
             items          = { drawnLegend.items }
             marker         = { drawnLegend.marker }
-            orientation    = { drawnLegend.orientation ?? ( beside ? 'vertical' : undefined ) }
+            orientation    = { orientation }
             size           = { drawnLegend.size }
             valueFormatter = { drawnLegend.valueFormatter }
         />

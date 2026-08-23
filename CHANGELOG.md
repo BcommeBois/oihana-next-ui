@@ -8,7 +8,20 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
-**Charts — the legend leaves the SVG and becomes a `MetricLegend` under the chart** *(lots 1 and 2 of 4 — the nine categorical charts)*
+**Charts — the legend leaves the SVG** *(lots 1 to 3 of 4 — all twelve charts)*
+
+*Lot 3 — the three quantitative charts, and the `MetricScale` they needed : `HeatMapChart`, `CalendarChart`, `TimeRangeChart`.*
+
+- **A quantity is not legended by a list of names, so `MetricLegend` could not serve it.** `MetricScale` is the house component for it : the colour ramp as a row of bands, and the two ends of the range written under them. It lives beside `MetricLegend` in `components/metrics`, borrows its text sizes rather than restating them — the two sit in the same slot under the same charts and have to read alike — and takes the same theme tokens, so a scale can be aligned on the ramp of the chart next to it.
+- **The bands are discrete, and that is not a stylistic call.** These charts hand nivo a `type : 'quantize'` and an *array* of colours, so a cell's colour is one bucket among N rather than a point on a ramp. A smooth gradient would have been prettier and would have misstated how the colours are handed out.
+- **Only the two ends are written.** Five buckets have six boundaries, and printing them all turns a 224 px bar into a line of unreadable figures. The ends give the bar its direction, which is what a reader needs ; a `ticks` prop can add the rest the day somebody asks.
+- **The bounds are read off the data, because nivo keeps the ones it computes to itself.** These charts let it work the domain out unless `minValue` / `maxValue` say otherwise, and a legend drawn outside the SVG cannot ask. `getValueBounds` walks the values once — an explicit pair still wins where the chart has one, and `TimeRangeChart`, which states none, always reads.
+- **One `legend` prop, two shapes behind it.** `useChartLegend` returns a scale instead of a list when it is given one, and `ChartFrame` draws either in the same slot with the same four placements. A caller never has to know which kind its chart happens to be. The one thing that differs is the centring : `MetricLegend` is a flex row, where `justify-center` centres the entries, while `MetricScale` is a bounded column whose main axis is vertical and which `mx-auto` puts in the middle.
+- **`CalendarChart` and `TimeRangeChart` keep `legend={ false }` as their default**, as they always had — a frieze of days is read without one. The lab card turns it on so the scale can be seen.
+- **`MetricScale` has its own page in the metrics lab**, `MetricScaleDemo`, alongside `MetricLegend`'s : ramp, orientations, sizes, a scale with no bounds at all, and token colours against CSS ones.
+- **Nothing reads `getChartLegends`, `getContinuousLegends` or `LEGEND_SPACE` any more.** All twelve charts are off them, and the `legend` and `continuousLegend` parameters of the three margin builders are now dead weight. They go together in the fourth and last lot.
+
+*Lots 1 and 2 — the mechanism, and the nine categorical charts.*
 
 *Lot 2 — the six circular charts : `PieChart`, `WaffleChart`, `PolarBarChart`, `ChordChart`, `RadialBarChart`, `RadarChart`.*
 
