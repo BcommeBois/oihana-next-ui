@@ -12,6 +12,11 @@ file can say : the shape of a group, and the recipes.
 
 ### Components
 
+- [`components/charts`](components/charts/README.md) — the twelve nivo charts, fitted to the
+  DaisyUI theme : which one answers which question, **what to install for each**, the legend
+  drawn in HTML under the frame, palettes, SVG against canvas, and what a page pays to carry
+  the first one. Plus [adding a chart](components/charts/adding-a-chart.md) — for the
+  thirteenth, and the traps that cost the most.
 - [`components/metrics`](components/metrics/README.md) — compact dashboard readings meant
   to sit inside a card or a table cell : category bar and bullet graph, bar list, tracker,
   sparkline, delta, legend.
@@ -26,7 +31,7 @@ file can say : the shape of a group, and the recipes.
   documents `src/components/metrics` there.
 - **A `README.md` per group**, which GitHub renders on opening the folder. A group large
   enough to need it adds a page beside it for a subject that would otherwise swallow the
-  guide — `scheduler` does, for schema.org. **A page per component, on the other hand, would
+  guide — `scheduler` does, for schema.org, and `charts` for adding a thirteenth. **A page per component, on the other hand, would
   only be the JSDoc copied**, and a copy is a thing that goes stale.
 - **English**, like the JSDoc and the changelog.
 - **No props tables.** They are a copy of the JSDoc, and a copy is a thing that goes stale.

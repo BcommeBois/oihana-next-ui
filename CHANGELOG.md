@@ -8,6 +8,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.15.0] — 2026-08-24
+
+**Documentation — the `charts` guide, which was the last thing the family was missing**
+
+- **Two pages**, split by audience, in `wiki/components/charts` : the [guide](wiki/components/charts/README.md) for whoever *uses* the group, and [adding a chart](wiki/components/charts/adding-a-chart.md) for whoever adds a thirteenth. All twelve components' code shipped long ago ; nothing said out loud what the group *is*.
+- **The install table is the section that justifies the whole thing.** The nivo packages are optional peers, so **nothing is installed for you** and the failure when you forget is a build-time `Module not found`. The table says what each chart needs — including the two that surprise : `TimeRangeChart` needs no package of its own, shipping inside `@nivo/calendar`, and `PieChart` names `@nivo/arcs` although `@nivo/pie` already depends on it, because the wrapper imports from it directly.
+- **Writing it corrected the repository twice.** `@nivo/arcs` was in `peerDependencies` and `peerDependenciesMeta` but **not in `devDependencies`** — the guide states the three-places rule, and the repo was breaking it. And the audit that preceded the guide had recorded `valueFormat` as present on all twelve : it is on eleven, `LineChart` carrying `xFormat` and `yFormat` instead, because a line has two axes to format and one prop could only serve one of them.
+- **The weight figures are measured rather than remembered.** One chart is **141 kB** gzipped, four are **175 kB** — so the first is the expensive one, dragging nivo's core and `chroma-js` in with it, and each one after costs roughly ten. The question is never how many charts a page has, it is whether it needs the first.
+- **No page per chart and no props tables**, deliberately. Both would be the JSDoc copied, and a copy goes stale within two commits. The space goes to what no single file can say : which chart answers which question, what diverges on purpose, and why.
+- **`MetricScale` joined the `metrics` guide** at the same time — it shipped after that page was written, and the charts guide was about to link to a component its own group did not mention.
+
+
 **Metrics — `MetricScale` can print the bucket boundaries, not only the two ends**
 
 - **`ticks` prints the edges, and is off by default.** N buckets make N+1 figures, and under a 224 px bar they crowd fast — fine for `240`, not for `1 250 €`. The two ends give the bar its direction, which is what a reader usually needs ; `ticks` is for when they need to read a value off it. `legend={{ ticks : true }}` reaches it from a chart, the object having been a passthrough from the start.
@@ -109,7 +121,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - **The four placements all stay, and the library picks none of them for the application** — including responsively. A breakpoint at which a side legend should drop underneath is a fact about the page the chart sits in, not about the chart, so it belongs to the caller ; guessing one here would have been a default nobody could see and everybody would have to undo. The `Line` card of the lab carries a selector that walks the four, `false` included, which is where they are tried rather than in eight cards each frozen on one.
 - **`getChartLegends`, `getContinuousLegends` and `LEGEND_SPACE` are untouched and still in use** — nine charts read them. They go when the last caller does, in the fourth lot.
 
-
 **Charts — the data labels get the halo the axis ticks have had all along**
 
 - **The amount printed inside a bar, a cell or an arc now carries an outline**, the same treatment `buildChartTheme` has been giving the axis ticks since the charts shipped. nivo renders `outline*` as a stroked copy of the glyphs underneath (`@nivo/text`), so it reads as a halo rather than a backing plate and never masks the mark it is printed on. Two new parameters on `buildChartTheme` and `useChartTheme` say it : `labelOutlineWidth` (`2`, the figure the ticks already spend) and `labelOutlineColor`.
@@ -124,7 +135,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - **`PolarBarChart` printed its labels in `base-content` on a coloured arc**, alone among the four charts with labels on marks : it enables `arcLabels` without setting `arcLabelsTextColor`, so nivo fell back to its own default, which reads the theme. It takes `darker 1.8` like `BarChart`. That is a **visible change** wherever `arcLabels` is on, and a legibility defect fixed on its own account — the halo would have been useless over text that flips with the theme.
 - **`MarimekkoChart`, `WaffleChart`, `RadialBarChart` and `RadarChart` are untouched**, and the reason is worth recording : the first two never route their text through `@nivo/text`, so an outline in the theme would be inert ; `RadialBarChart` ships `enableLabels: false` ; and `RadarChart` writes its captions in `axis.ticks.text`, which has had its halo from the start.
 - **The `PolarBar` demo now draws its labels**, with an `arcLabelsSkipRadius` that keeps the thinnest bands out of it — a change of default that no page exercises is a change nobody can look at.
-
 
 ## [0.14.0] — 2026-08-22
 

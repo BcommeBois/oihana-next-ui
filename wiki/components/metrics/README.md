@@ -10,6 +10,7 @@ import Tracker      from 'oihana-next-ui/components/metrics/Tracker'
 import Sparkline    from 'oihana-next-ui/components/metrics/Sparkline'
 import Delta        from 'oihana-next-ui/components/metrics/Delta'
 import MetricLegend from 'oihana-next-ui/components/metrics/MetricLegend'
+import MetricScale  from 'oihana-next-ui/components/metrics/MetricScale'
 ```
 
 ## What this group is not
@@ -33,6 +34,7 @@ import MetricLegend from 'oihana-next-ui/components/metrics/MetricLegend'
 | `Sparkline` | Which way is it going ? | The trend next to a number, in a tile or a table cell |
 | `Delta` | How much did it change, and is that good news ? | The variation under a KPI |
 | `MetricLegend` | What do the colours mean ? | Under a category bar, next to a tracker, below a row of sparklines |
+| `MetricScale` | What quantity does this colour stand for ? | Under a heat map, a calendar, a choropleth — where the colours are *ordered* rather than named |
 
 Everything is a client component (`'use client'`) and forwards `ref` plus any extra props to
 its root element.
@@ -53,6 +55,21 @@ is how a *translucent* tint is reached (`bg-base-content/20` is no token, and as
 style it would be nonsense) ; it reads on any surface, in both themes. **Any other CSS
 colour** lands as an inline style, which is how a component gets aligned with the palette of
 a chart next to it.
+
+**A legend names, a scale measures**, and the two are not interchangeable. `MetricLegend`
+lists entries : a mark, a name, and a value when there is one. `MetricScale` draws a ramp and
+writes the two ends of its range under it — there is nothing to name, only a quantity to
+read. Reach for the scale when the colours are ordered, for the legend when they are not.
+
+**`MetricScale` draws discrete bands, never a gradient.** The charts it serves quantize their
+colour scale — nivo is handed a `type : 'quantize'` and an *array* of colours, so a cell's
+colour is one bucket among N. A smooth ramp would be prettier and would misstate how the
+colours are handed out. `ticks` prints the bucket boundaries instead of the two ends alone,
+and thins them one edge in `k` rather than interpolating : every figure it shows is a real
+boundary.
+
+Both are what [`components/charts`](../charts/README.md) draws its legends with, under every
+one of the twelve.
 
 **Size props are responsive**, scalar or per breakpoint : `size="lg"` or
 `size={ { xs : 'xs' , lg : 'lg' } }`, where `xs` is the prefix-less default. Same for
