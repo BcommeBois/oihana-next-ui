@@ -204,6 +204,41 @@ prompt in front of anyone who merely loaded the page, which is how users learn t
 `unavailable`, `timeout` or `unsupported`. Say something about each — a button that silently
 does nothing is the worst of the outcomes.
 
+## Editing a position
+
+`InputGeoPoint` is the whole control : two masked fields and a draggable marker, all writing the
+same `{ latitude , longitude }`.
+
+```jsx
+<InputGeoPoint mapStyle={ style } value={ point } onChange={ setPoint } />
+```
+
+**The field only lets go of what it holds when it loses focus.** `48.8` is not yet a latitude,
+so a marker jumping at every keystroke would make the field unusable — the display and the model
+are two values that meet on blur, the arrangement `InputCurrency` arrived at first.
+
+**Display rounds, storage does not.** Six decimals is about eleven centimetres, which is finer
+than any address needs — but rounding on the way *in*, then showing the rounded figure, then
+writing that back walks the point a little further on every round trip. So `MapPicker` keeps
+what the engine gave it, and only the field rounds.
+
+**A half-filled point draws nothing.** `{ latitude : 48.85 }` alone would open the map on the
+Gulf of Guinea, which is a real place and not the one meant.
+
+Two smaller pieces sit underneath, and both are useful alone :
+
+| Component | Where | What it is |
+|---|---|---|
+| `MapPicker` | `components/maps` | The map and its draggable marker, no fields |
+| `InputCoordinate` | `components/inputs` | One masked axis, **no map dependency at all** |
+
+`InputGeoPoint` lives with the maps rather than with the inputs, although it is a form control :
+it carries the engine with it, and `components/inputs` has no dependency and must keep none.
+
+**Dragging only, never a click on the map.** Setting the point wherever the map is clicked reads
+as a convenience until the first time someone taps to dismiss something and silently moves a
+customer's address.
+
 ## Coordinates are named, everywhere
 
 Every component and every helper speaks `latitude` and `longitude`, flat — which is also what

@@ -36,6 +36,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - **The components absorb the point's fields now**, `Map` and `MapMarker` both, through one shared list in `helpers/geo/pointFields`. One list rather than two destructuring signatures, because the two must not drift : adding a field to a point shape and forgetting one of the components would put it straight back in the DOM.
 - **`latitude` and `longitude` are deliberately not in that list.** A component reading a point destructures those itself, and filtering them here would only hide a component that forgot to.
 
+**Editing a position, from either end**
+
+- **`InputGeoPoint` is the whole control** — two masked fields and a draggable marker, all writing the same `{ latitude , longitude }`, each following the other. It sits in `components/maps` rather than `components/inputs` although it is a form control : it carries the map engine with it, and the inputs folder has no dependency and must keep none.
+- **`InputCoordinate` is the same field without a map**, one axis, in `components/inputs`. The bounds come from the axis — a latitude past ±90 does not exist, a longitude past ±180 has wrapped round the world — so they are not a setting.
+- **🚨 The field only lets go of what it holds when it loses focus.** `48.8` is not yet a latitude : a marker jumping at every keystroke would be unusable, and reformatting mid-word makes the field impossible to type in. The display and the model are two values that meet on blur — which is the arrangement `InputCurrency` had already arrived at, and reusing it was cheaper and better than inventing a second one.
+- **🚨 Display rounds, storage does not.** Six decimals is about eleven centimetres, finer than any address needs — but rounding on the way *in*, then showing that figure, then writing it back walks the point a little further on every round trip. `MapPicker` keeps what the engine gave it ; only the field rounds. The demo puts the two side by side so the difference is visible rather than asserted.
+- **A half-filled point draws nothing.** `{ latitude : 48.85 }` alone would open the map on the Gulf of Guinea — a real place, and not the one meant — so the marker waits until both halves are there and the map stays where it was.
+- **Dragging only, never a click on the map.** Setting the point wherever the map is clicked reads as a convenience until the first time someone taps to dismiss something and silently moves a customer's address. A drag is a deliberate gesture on a deliberate object.
+- **Masked rather than a native number field**, which gets three things wrong in three ways : a thousand separator that stops the value parsing, a precision it will not hold, and a sign it handles differently per browser. `@maskito` was already a dependency.
+- **A fourth page in the `Cartes` group**, `/lab/mapsPicker`, and two labels added to the `components.input` bundle — the first visible copy in it, everything else there being an accessible name.
+
 **Geolocation — two answers, because there are two questions**
 
 - **`useGeolocation` is ours and lives outside `components/maps`**, because an address form wanting a « locate me » button has the same need and nothing to draw. It follows `useMediaPermission`'s shape — `permissionState`, `isGranted`, `isDenied`, `isLoading`, `request` — so the two read the same way, and adds `position`, `error`, `stop` and `watching`.
