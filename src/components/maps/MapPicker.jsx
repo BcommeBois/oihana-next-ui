@@ -6,7 +6,7 @@
  * @module components/maps/MapPicker
  */
 
-import { useCallback } from 'react' ;
+import { useCallback , useEffect , useRef } from 'react' ;
 
 import useValue from '../../hooks/useValue' ;
 
@@ -55,10 +55,15 @@ const readEvent = ( event ) =>
  * Display rounds — `InputCoordinate` does — and storage keeps what it was
  * given.
  *
- * **The map is uncontrolled**, as everywhere in this group : it opens where the
- * value says and does not chase it afterwards. Dragging the marker moves the
- * marker, not the map, which is what lets someone drag towards the edge and
- * keep their bearings.
+ * **The map follows a value it did not cause, and only that one.** Dragging the
+ * marker moves the marker and never the map — pulling the ground from under the
+ * hand doing the dragging is unusable. But a point arriving from anywhere else,
+ * an address search above all, has to be flown to : choosing an address in
+ * Amiens while the map shows Paris otherwise drops the marker off-screen and
+ * looks like nothing happened.
+ *
+ * So the component remembers what its own drag last emitted, and moves only for
+ * everything else.
  *
  * @param {Object} props
  * @param {import('../../themes/components/map').MapMarkerColor} [props.color='primary'] - Marker colour.
@@ -67,6 +72,9 @@ const readEvent = ( event ) =>
  * @param {number} [props.longitude] - Opening longitude, when there is no value yet.
  * @param {Function} [props.onChange] - `( { latitude , longitude } ) => void`, on drag end.
  * @param {Function} [props.onDrag] - `( { latitude , longitude } ) => void`, continuously while dragging.
+ * @param {Function} [props.onLoad] - Called once the map has loaded.
+ * @param {boolean} [props.follow=true] - Fly to a value that did not come from a drag.
+ * @param {number} [props.followZoom] - Zoom used when flying there. Omitted, the current zoom is kept.
  * @param {string} [props.title='Position'] - Accessible name of the marker.
  * @param {{ latitude : number , longitude : number }} [props.value] - Controlled point.
  *
@@ -79,16 +87,26 @@ const MapPicker =
 ({
     color = 'primary' ,
     defaultValue ,
+    follow = true ,
+    followZoom ,
     latitude ,
     longitude ,
     onChange ,
     onDrag ,
+    onLoad ,
+    ref ,
     title = 'Position' ,
     value : valueFromProps ,
     ...rest
 }) =>
 {
     const [ point , setPoint ] = useValue( defaultValue , valueFromProps , onChange ) ;
+
+    const instance = useRef( null ) ;
+
+    // What our own drag last wrote. Compared by value rather than by identity :
+    // a host is free to clone the point on its way through a reducer.
+    const dragged = useRef( null ) ;
 
     const handleDrag = useCallback( ( event ) =>
     {
@@ -107,18 +125,50 @@ const MapPicker =
 
         if ( next )
         {
+            dragged.current = next ;
             setPoint( next ) ;
         }
     } ;
 
     const placed = isPlaced( point ) ;
 
+    useEffect( () =>
+    {
+        const map = instance.current ;
+
+        if ( !follow || !map || !isPlaced( point ) )
+        {
+            return ;
+        }
+
+        const own = dragged.current ;
+
+        if ( own && own.latitude === point.latitude && own.longitude === point.longitude )
+        {
+            return ;
+        }
+
+        // `flyTo` rather than `easeTo` : an address can be a hundred kilometres
+        // away, and panning across at ground level reads as a glitch.
+        map.flyTo({
+            center : [ point.longitude , point.latitude ] ,
+            ...Number.isFinite( followZoom ) && { zoom : followZoom } ,
+        }) ;
+    }
+    , [ follow , followZoom , point ] ) ;
+
     // Where the map opens : the point once it is whole, the fallback until then.
     // Read once — the map is uncontrolled and will not follow later changes.
     const opening = placed ? point : { latitude , longitude } ;
 
+    const handleLoad = ( event ) =>
+    {
+        instance.current = event.target ;
+        onLoad?.( event ) ;
+    } ;
+
     return (
-        <Map { ...opening } { ...rest }>
+        <Map { ...opening } onLoad={ handleLoad } ref={ ref } { ...rest }>
             {
                 placed && (
                     <MapMarker

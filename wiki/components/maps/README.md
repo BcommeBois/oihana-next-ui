@@ -239,6 +239,60 @@ it carries the engine with it, and `components/inputs` has no dependency and mus
 as a convenience until the first time someone taps to dismiss something and silently moves a
 customer's address.
 
+**The map follows a value it did not cause, and only that one.** A drag moves the marker and
+never the map — pulling the ground from under the hand doing the dragging is unusable. A point
+arriving from anywhere else, an address search above all, is flown to : choosing an address in
+Amiens while the map shows Paris would otherwise drop the marker off-screen and look like
+nothing happened. `follow={ false }` turns it off, `followZoom` says how close to land.
+
+## Searching for an address
+
+**The library ships no provider.** `InputAddressSearch` takes a function and knows nothing about
+who answers it — which country, which terms, which quality is an application's decision.
+
+```js
+geocode( query , { signal } ) => Promise< Place[] >
+```
+
+`Place` objects, so `fromSchema` reads the answer with no translation, and a selection hands back
+the whole address rather than only its point.
+
+**The signal is not an optimisation.** Without it a slow first request lands after a fast second
+one, and the list shows results for what was being typed two words ago.
+
+### The BAN adapter, shipped beside
+
+One provider *is* shipped, as an adapter nothing imports on its own :
+
+```jsx
+import ban from 'oihana-next-ui/helpers/geo/adapters/ban'
+
+<InputAddressSearch geocode={ ban } onSelect={ setPlace } />
+```
+
+`api-adresse.data.gouv.fr` — free, no key, no account, and better on French addresses than any
+international service. Useless outside France, which is exactly why it is not wired in.
+
+It takes `{ limit , params }` too : `params` reaches the BAN's own filters, `postcode`,
+`citycode`, `type`, or `lat` / `lon` to bias results towards a region.
+
+### In a form
+
+`InputGeoPoint` takes the same function and grows a search field above its two others :
+
+```jsx
+<InputGeoPoint geocode={ ban } value={ point } onChange={ setPoint } onSelectAddress={ setAddress } />
+```
+
+That is the whole gesture — type an address, take a suggestion, then drag the marker because the
+geocoder landed in the middle of the street. Without a `geocode`, nothing changes and no search
+appears.
+
+**It is a real combobox** : `aria-expanded`, `aria-controls`, `aria-activedescendant`, arrow keys
+that wrap both ways, Enter to take the highlighted one, Escape to close, and focus that never
+leaves the field. The options are deliberately *not* focusable — that is what the
+activedescendant pattern is, and making them focusable would break it.
+
 ## Coordinates are named, everywhere
 
 Every component and every helper speaks `latitude` and `longitude`, flat — which is also what

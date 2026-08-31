@@ -3,9 +3,10 @@
  * own — the stepper buttons of `InputCounter` / `InputCurrency`, and the
  * visibility toggle of `InputPassword`.
  *
- * `geoPoint` is the exception : its two labels *are* visible copy, a field
- * being unusable without one. It sits here rather than in a bundle of its own
- * because it belongs to the same family.
+ * `address` and `geoPoint` are the exceptions : their labels *are* visible copy
+ * — a field is unusable without a name, and a suggestion list that fails
+ * silently tells nobody why. They sit here rather than in bundles of their own
+ * because they belong to the same family.
  *
  * The rest are `aria-label` (and `title`) values only : nothing there is visible
  * copy. They were hardcoded English in each signature and never passed by any
@@ -16,6 +17,13 @@ const input =
 {
     fr :
     {
+        address :
+        {
+            empty     : 'Aucune adresse trouvée' ,
+            error     : 'La recherche a échoué' ,
+            searching : 'Recherche…' ,
+        } ,
+
         counter :
         {
             decrease : 'Diminuer' ,
@@ -37,6 +45,13 @@ const input =
 
     en :
     {
+        address :
+        {
+            empty     : 'No address found' ,
+            error     : 'The search failed' ,
+            searching : 'Searching…' ,
+        } ,
+
         counter :
         {
             decrease : 'Decrease' ,

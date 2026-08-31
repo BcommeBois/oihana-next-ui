@@ -7,7 +7,10 @@ import Button        from '@/components/Button' ;
 import InputGeoPoint from '@/components/maps/InputGeoPoint' ;
 import MapPicker     from '@/components/maps/MapPicker' ;
 
-import InputCoordinate from '@/components/inputs/InputCoordinate' ;
+import InputAddressSearch from '@/components/inputs/InputAddressSearch' ;
+import InputCoordinate     from '@/components/inputs/InputCoordinate' ;
+
+import ban from '@/helpers/geo/adapters/ban' ;
 
 import Section from '@/demo/charts/Section' ;
 
@@ -28,6 +31,8 @@ const MapPickerDemo = () =>
     const [ blank    , setBlank    ] = useState( null ) ;
     const [ dragging , setDragging ] = useState( null ) ;
     const [ alone    , setAlone    ] = useState( { latitude : 48.8566 , longitude : 2.3522 } ) ;
+    const [ searched , setSearched  ] = useState( null ) ;
+    const [ address  , setAddress   ] = useState( null ) ;
 
     if ( !mapStyle )
     {
@@ -63,6 +68,48 @@ const MapPickerDemo = () =>
                 <p className="text-sm text-base-content/60">
                     { `La valeur enregistrée n'est pas arrondie : glissez le marqueur et regardez les décimales du champ contre celles de la ligne ci-dessus. L'affichage arrondit à six décimales — onze centimètres — mais ce qui est stocké garde tout, sinon le point avancerait un peu à chaque aller-retour.` }
                 </p>
+            </Section>
+
+            <Section
+                title       = "Chercher, puis corriger"
+                description = "Le geste métier complet : on tape une adresse, on choisit une suggestion, le point se place — puis on glisse le marqueur parce que le géocodeur est tombé au milieu de la rue. Le géocodeur est injecté : ici la Base Adresse Nationale, gratuite et sans clé."
+            >
+                <InputGeoPoint
+                    geocode         = { ban }
+                    mapProps        = {{ ...CENTRE , zoom : 11 }}
+                    mapStyle        = { mapStyle }
+                    onChange        = { setSearched }
+                    onSelectAddress = { setAddress }
+                    searchProps     = {{ label : 'Adresse' , placeholder : '8 boulevard du Port, Amiens' }}
+                    value           = { searched }
+                />
+
+                {
+                    address && (
+                        <p className="text-sm text-base-content/60">
+                            { `Le géocodeur rend un Place entier, pas seulement un point : ${ address.address?.streetAddress ?? '—' } · ${ address.address?.postalCode ?? '' } ${ address.address?.addressLocality ?? '' }` }
+                        </p>
+                    )
+                }
+            </Section>
+
+            <Section
+                title       = "Le champ de recherche seul"
+                description = "« InputAddressSearch » vit chez les inputs et n'apporte aucune dépendance carte. C'est un combobox : flèches pour parcourir, Entrée pour choisir, Échap pour fermer, et le focus ne quitte jamais le champ."
+            >
+                <InputAddressSearch
+                    geocode     = { ban }
+                    label       = "Adresse"
+                    onSelect    = { setAddress }
+                    placeholder = "Tapez au moins trois caractères"
+                />
+                {
+                    address && (
+                        <p className="font-mono text-xs text-base-content/60">
+                            { `${ address.name } → ${ formatCoordinates( fromSchema( address ) ) }` }
+                        </p>
+                    )
+                }
             </Section>
 
             <Section
