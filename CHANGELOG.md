@@ -21,6 +21,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - **`render="layer"` is deliberately not here.** It had been announced as this lot's escape hatch ; preparing it showed it is a second piece of work, not an option. A vector layer is styled in the engine's paint spec, so the theme tokens would have to be read at runtime and re-injected on every theme change — the exact trap the scheduler already paid for. Building it with no dataset that needs it would be speculative, and the question of a switching threshold disappears with it : there is no threshold while there is one path.
 
 
+**`MapMarkers` — the bubbles can be graded, not only sized**
+
+- **`clusterPalette` colours a cluster by how much it holds**, through the same `usePalette` the charts and the scheduler already use — in its **sequential** mode, which builds a ramp where more reads as stronger rather than a set of mutually distinguishable hues. Categorical colours would be exactly wrong here : the levels are ordered.
+- **As many colours as there are size steps, from one figure.** `CLUSTER_STEPS` is the length of the size table, and `getMapClusterStep` is what both the diameter and the colour ask. The two cues cannot drift apart, so a bigger bubble is never a paler one — which is the failure that makes a graded scale worse than no scale at all.
+- **🚨 A ramp returns hex values, and a hex has no `-content` to lean on.** So the fill goes inline and the text colour is computed against it by contrast — `readableOn`, new in `helpers/colors`, picking black or white by whichever wins the ratio. Black or white rather than a tinted shade : those two are what actually maximise contrast against an arbitrary hue, and a mid-tone chosen to look refined is a mid-tone that fails somewhere in the ramp.
+- **`getMapClusterClassNames` accepts `color : null`**, which is what stops it emitting a token class over the inline fill. A Tailwind utility beats an inline style, so leaving the token in place would have painted every bubble the same colour while the ramp was computed and thrown away — the kind of defect that looks like the feature simply not working.
+- **`clusterColor` is untouched and still the default.** One token for every bubble, `primary`, and nothing changes unless a palette is asked for.
+
 **Lab — the maps get their own group, before the page becomes unreadable**
 
 - **Three pages under a `Cartes` group** rather than one entry under *Display* : `/lab/maps` for the map and its frame, `/lab/mapsMarkers` for markers and clusters, `/lab/mapsModel` for the adapter. The single page was already carrying two halves with nothing in common — maps, and an adapter that draws none — and this lot added a third.

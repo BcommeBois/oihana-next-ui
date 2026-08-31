@@ -125,6 +125,27 @@ to the zoom at which it comes apart.
 `cluster` also takes an object, passed straight to supercluster : `{ radius , maxZoom ,
 minPoints }`.
 
+### Grading the bubbles
+
+A bubble's size already says how much it holds, in three steps. `clusterPalette` gives it a
+colour to match :
+
+```jsx
+<MapMarkers cluster clusterPalette="brand" items={ sites } />
+```
+
+It resolves through the same `usePalette` the charts and the scheduler use, in **sequential**
+mode — a ramp where more reads as stronger, pushed lighter on a dark background and darker on a
+light one so nothing sinks into the tiles. There are exactly as many colours as size steps, so
+the two cues always agree : a bigger bubble is never a paler one.
+
+Takes a palette name — `'brand'`, `'theme'`, `'nivo'` — or explicit colours. It wins over
+`clusterColor`, which stays what it was : one theme token for every bubble.
+
+**A ramp returns hex values, not tokens**, so the fill goes inline and the text colour is
+computed from it by contrast — a hex carries no `-content` pair to lean on. `readableOn` is
+exported from `helpers/colors` for anything else with the same problem.
+
 ## Coordinates are named, everywhere
 
 Every component and every helper speaks `latitude` and `longitude`, flat — which is also what

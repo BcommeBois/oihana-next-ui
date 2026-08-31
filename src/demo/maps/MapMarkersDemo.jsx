@@ -21,6 +21,7 @@ const MapMarkersDemo = () =>
     const mapStyle = config?.ui?.map?.style ;
 
     const [ clustered , setClustered ] = useState( true ) ;
+    const [ palette   , setPalette   ] = useState( '' ) ;
     const [ selected  , setSelected  ] = useState( null ) ;
 
     const crowd = useMemo( () => makeCrowd( 240 ) , [] ) ;
@@ -96,6 +97,20 @@ const MapMarkersDemo = () =>
                         <span className="label-text">Regrouper</span>
                     </label>
 
+                    <label className="flex items-center gap-2">
+                        <span className="label-text">Palette des niveaux</span>
+                        <select
+                            className = "select select-sm select-bordered"
+                            onChange  = { ( event ) => setPalette( event.target.value ) }
+                            value     = { palette }
+                        >
+                            <option value="">Aucune — jeton uniforme</option>
+                            <option value="brand">brand</option>
+                            <option value="theme">theme</option>
+                            <option value="nivo">nivo</option>
+                        </select>
+                    </label>
+
                     <p className="text-sm text-base-content/60">
                         {
                             selected
@@ -114,16 +129,20 @@ const MapMarkersDemo = () =>
                     { ...fromSchema( CENTRE ) }
                 >
                     <MapMarkers
-                        cluster      = { clustered }
-                        clusterLabel = { ( count ) => `${ count } sites, zoomer` }
-                        items        = { crowd }
-                        markerProps  = { ( site ) => ({ ...BY_TYPE[ site[ '@type' ] ] , size : 'sm' , title : site.name }) }
-                        onSelect     = { ( site ) => setSelected( site.name ) }
+                        cluster        = { clustered }
+                        clusterLabel   = { ( count ) => `${ count } sites, zoomer` }
+                        clusterPalette = { palette || undefined }
+                        items          = { crowd }
+                        markerProps    = { ( site ) => ({ ...BY_TYPE[ site[ '@type' ] ] , size : 'sm' , title : site.name }) }
+                        onSelect       = { ( site ) => setSelected( site.name ) }
                     />
                 </Map>
 
                 <p className="text-sm text-base-content/60">
                     { `Éteint, les 240 marqueurs sont dessinés d'un coup — c'est la limite du rendu DOM, et elle se voit. Allumé, le regroupement suit le zoom.` }
+                </p>
+                <p className="text-sm text-base-content/60">
+                    { `Sans palette, toutes les bulles portent le même jeton et seule la taille dit « plus ». Avec, la rampe est séquentielle : trois teintes pour trois paliers, donc une bulle plus grosse n'est jamais plus pâle. Le texte est calculé par contraste — une rampe rend des hex, pas des jetons, et un hex n'a pas de « -content » sur lequel s'appuyer.` }
                 </p>
             </Section>
 

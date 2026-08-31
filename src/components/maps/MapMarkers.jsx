@@ -7,6 +7,9 @@
  */
 
 import useMapCluster from '../../hooks/useMapCluster' ;
+import usePalette    from '../../hooks/usePalette' ;
+
+import { CLUSTER_STEPS , getMapClusterStep } from '../../themes/components/map' ;
 
 import { useMapInstance } from './context' ;
 
@@ -32,10 +35,18 @@ import MapMarker  from './MapMarker' ;
  * is not something a component should decide on a caller's behalf. Turned on,
  * a bubble opens on click by easing to the zoom at which it comes apart.
  *
+ * **`clusterPalette` grades the bubbles by how much they hold.** It resolves
+ * through the same `usePalette` the charts and the scheduler use, in its
+ * sequential mode — a ramp where more reads as stronger, pushed lighter on a
+ * dark background and darker on a light one so nothing sinks into the tiles.
+ * There are as many colours as there are size steps, so the two cues always
+ * agree : a bigger bubble is never a paler one.
+ *
  * @param {Object} props
  * @param {boolean|Object} [props.cluster=false] - Group nearby points. An object is passed to supercluster — `radius`, `maxZoom`, `minPoints`.
- * @param {import('../../themes/components/map').MapMarkerColor} [props.clusterColor] - Bubble color.
+ * @param {import('../../themes/components/map').MapMarkerColor} [props.clusterColor] - Bubble color, as a theme token. Uniform across levels.
  * @param {Function} [props.clusterLabel] - `( count ) => string`, the accessible name of a bubble.
+ * @param {string|string[]} [props.clusterPalette] - A palette name — `'brand'`, `'theme'`, `'nivo'` — or explicit colors. Grades the bubbles by level, and wins over `clusterColor`.
  * @param {Array} props.items - Places, `GeoCoordinates`, or anything `fromSchema` reads.
  * @param {Function} [props.markerProps] - `( item , point ) => Object`, props merged into each marker.
  * @param {Function} [props.onSelect] - `( item , point ) => void`, called when a single marker is clicked.
@@ -58,6 +69,7 @@ const MapMarkers =
     cluster = false ,
     clusterColor ,
     clusterLabel ,
+    clusterPalette ,
     items ,
     markerProps ,
     onSelect ,
@@ -65,6 +77,10 @@ const MapMarkers =
 }) =>
 {
     const map = useMapInstance() ;
+
+    // Hooks cannot be called conditionally, so the ramp is always resolved and
+    // only used when asked for. It costs a handful of chroma calls, memoized.
+    const ramp = usePalette({ count : CLUSTER_STEPS , palette : clusterPalette , sequential : true }) ;
 
     const { entries , expand } = useMapCluster({
         enabled : !!cluster ,
@@ -77,13 +93,14 @@ const MapMarkers =
     return entries.map( ( entry ) => entry.cluster
         ? (
             <MapCluster
-                color     = { clusterColor }
-                count     = { entry.count }
-                key       = { entry.id }
-                latitude  = { entry.latitude }
-                longitude = { entry.longitude }
-                onClick   = { () => expand( entry ) }
-                title     = { clusterLabel ? clusterLabel( entry.count ) : undefined }
+                background = { clusterPalette ? ramp[ getMapClusterStep( entry.count ) ] : undefined }
+                color      = { clusterColor }
+                count      = { entry.count }
+                key        = { entry.id }
+                latitude   = { entry.latitude }
+                longitude  = { entry.longitude }
+                onClick    = { () => expand( entry ) }
+                title      = { clusterLabel ? clusterLabel( entry.count ) : undefined }
             />
         )
         : (

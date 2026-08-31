@@ -6,6 +6,8 @@
  * @module components/maps/MapCluster
  */
 
+import readableOn from '../../helpers/colors/readableOn' ;
+
 import { getMapClusterClassNames } from '../../themes/components/map' ;
 
 import { Marker } from './engine' ;
@@ -29,9 +31,15 @@ export const formatCount = ( count ) => count >= 1000 ? `${ Math.floor( count / 
  * it means nothing to a screen reader ; « 24 places, zoom in » is the whole
  * affordance in four words.
  *
+ * **A `background` overrides `color` entirely.** A palette ramp gives hex
+ * values rather than tokens, so the fill goes inline — and the text colour is
+ * then computed from it by contrast, because a hex carries no `-content` pair
+ * to lean on.
+ *
  * @param {Object} props
+ * @param {string} [props.background] - Fill as a colour value. Wins over `color`.
  * @param {string} [props.className] - Additional classes.
- * @param {import('../../themes/components/map').MapMarkerColor} [props.color='primary'] - Bubble color.
+ * @param {import('../../themes/components/map').MapMarkerColor} [props.color='primary'] - Bubble color, as a theme token.
  * @param {number} props.count - How many points it stands for.
  * @param {number} props.latitude - Latitude in WGS 84.
  * @param {number} props.longitude - Longitude in WGS 84.
@@ -40,6 +48,7 @@ export const formatCount = ( count ) => count >= 1000 ? `${ Math.floor( count / 
  */
 const MapCluster =
 ({
+    background ,
     className ,
     color ,
     count ,
@@ -57,6 +66,8 @@ const MapCluster =
 
     const label = title ?? `${ count }` ;
 
+    const painted = !!background ;
+
     return (
         <Marker
             latitude  = { latitude }
@@ -66,7 +77,8 @@ const MapCluster =
         >
             <button
                 aria-label = { label }
-                className  = { getMapClusterClassNames({ className , color , count }) }
+                className  = { getMapClusterClassNames({ className , color : painted ? null : color , count }) }
+                style      = { painted ? { background , color : readableOn( background ) } : undefined }
                 title      = { label }
                 type       = "button"
             >

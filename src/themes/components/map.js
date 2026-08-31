@@ -151,12 +151,33 @@ const clusterSizeSteps =
 ] ;
 
 /**
+ * How many steps a cluster is graded on — the size, and the palette that
+ * follows it. One figure so the two cannot drift apart.
+ *
+ * @type {number}
+ */
+export const CLUSTER_STEPS = clusterSizeSteps.length ;
+
+/**
+ * Which step a count falls in, lowest first.
+ *
+ * @param {number} [count=0]
+ * @returns {number} An index in `[ 0 , CLUSTER_STEPS - 1 ]`.
+ */
+export const getMapClusterStep = ( count = 0 ) => clusterSizeSteps.findIndex( ( step ) => count < step.upTo ) ;
+
+/**
  * A cluster bubble : the same token as a marker, one step larger, with its count.
+ *
+ * **`color : null` leaves the bubble uncoloured**, on purpose. A palette ramp
+ * hands back hex values, not tokens, so the fill and the text that has to read
+ * on it are set inline — and a token class left here would win over them, a
+ * Tailwind utility beating an inline style at nothing.
  *
  * @param {Object} [props={}]
  * @param {string} [props.beforeClassName] - ClassName to prepend.
  * @param {string} [props.className] - ClassName to append.
- * @param {MapMarkerColor} [props.color='primary'] - Bubble color.
+ * @param {MapMarkerColor|null} [props.color='primary'] - Bubble color. `null` emits none.
  * @param {number} [props.count=0] - How many points it stands for.
  * @returns {string}
  */
@@ -166,8 +187,8 @@ export const getMapClusterClassNames = ({ beforeClassName , className , color = 
     'flex items-center justify-center rounded-full ring-2 ring-base-100 shadow-md' ,
     'cursor-pointer font-semibold tabular-nums transition-transform hover:scale-110' ,
     'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-content' ,
-    markerColorMap[ color ] ?? markerColorMap[ PRIMARY ] ,
-    clusterSizeSteps.find( ( step ) => count < step.upTo ).className ,
+    color && ( markerColorMap[ color ] ?? markerColorMap[ PRIMARY ] ) ,
+    clusterSizeSteps[ getMapClusterStep( count ) ].className ,
     className ,
 ) ;
 
