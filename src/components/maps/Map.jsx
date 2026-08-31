@@ -6,6 +6,10 @@
  * @module components/maps/Map
  */
 
+import { useCallback , useState } from 'react' ;
+
+import MapInstanceContext from './context' ;
+
 import { MapGL } from './engine' ;
 
 import MapControls from './MapControls' ;
@@ -138,6 +142,7 @@ const toCorners = ( bounds ) =>
  * @param {number} [props.longitude] - Opening longitude.
  * @param {boolean} [props.loading=false] - Show a skeleton instead of the map.
  * @param {Object} [props.mapProps] - Spread last onto the engine's `Map`.
+ * @param {Function} [props.onLoad] - Called once the map has loaded, with the engine's event.
  * @param {string|{ light : string , dark : string }} props.mapStyle - Style URL. Required — a map without one has nothing to draw.
  * @param {number|string} [props.maxHeight] - Ceiling on the frame's height.
  * @param {Object} [props.ref] - Ref on the map instance (`flyTo`, `fitBounds`, …), not on the frame.
@@ -180,14 +185,27 @@ const Map =
     mapProps ,
     mapStyle ,
     maxHeight ,
+    onLoad ,
     ref ,
     zoom = DEFAULT_ZOOM ,
     ...rest
 }) =>
 {
+    const [ instance , setInstance ] = useState( null ) ;
+
     const style   = resolveMapStyle( mapStyle ) ;
     const corners = toCorners( bounds ) ;
     const credit  = resolveAttribution( attribution ) ;
+
+    // The instance is published on load rather than on mount : `getBounds` and
+    // the rest answer earlier, but a child that moves the map before the style
+    // has arrived moves nothing.
+    const handleLoad = useCallback( ( event ) =>
+    {
+        setInstance( event.target ) ;
+        onLoad?.( event ) ;
+    }
+    , [ onLoad ] ) ;
     const located = Number.isFinite( latitude ) && Number.isFinite( longitude ) ;
 
     // Two ways of having nothing to draw, and they send whoever reads the frame
@@ -224,11 +242,14 @@ const Map =
                         initialViewState   = { initialViewState }
                         interactive        = { interactive }
                         mapStyle           = { style }
+                        onLoad             = { handleLoad }
                         ref                = { ref }
                         { ...mapProps }
                     >
-                        <MapControls controls={ controls } />
-                        { children }
+                        <MapInstanceContext value={ instance }>
+                            <MapControls controls={ controls } />
+                            { children }
+                        </MapInstanceContext>
                     </MapGL>
                 )
             }

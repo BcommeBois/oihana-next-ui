@@ -16,6 +16,9 @@
  *
  * ## Marker sizes
  * - size-5 | size-6 | size-8 | size-10 | size-12
+ *
+ * ## Cluster sizes
+ * - size-9 | size-11 | size-14
  */
 
 import cn from '../helpers/cn' ;
@@ -127,6 +130,44 @@ export const getMapMarkerClassNames = ({ beforeClassName , className , color = P
     markerColorMap[ color ] ?? markerColorMap[ PRIMARY ] ,
     markerSizeMap[ size ] ?? markerSizeMap[ MD ] ,
     interactive && 'cursor-pointer transition-transform hover:scale-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-content' ,
+    className ,
+) ;
+
+/**
+ * How big a cluster bubble is, by how much it stands for.
+ *
+ * Three steps rather than a computed diameter : a size built from a count never
+ * appears in the source, and Tailwind only ships what it can read. Three is also
+ * as much as the eye reads reliably — a bubble whose radius tracked the count
+ * exactly would say « slightly more » where the reader only needs « more ».
+ *
+ * @type {Array<{ upTo : number , className : string }>}
+ */
+const clusterSizeSteps =
+[
+    { upTo : 10       , className : 'size-9'  } ,
+    { upTo : 100      , className : 'size-11' } ,
+    { upTo : Infinity , className : 'size-14' } ,
+] ;
+
+/**
+ * A cluster bubble : the same token as a marker, one step larger, with its count.
+ *
+ * @param {Object} [props={}]
+ * @param {string} [props.beforeClassName] - ClassName to prepend.
+ * @param {string} [props.className] - ClassName to append.
+ * @param {MapMarkerColor} [props.color='primary'] - Bubble color.
+ * @param {number} [props.count=0] - How many points it stands for.
+ * @returns {string}
+ */
+export const getMapClusterClassNames = ({ beforeClassName , className , color = PRIMARY , count = 0 } = {}) => cn
+(
+    beforeClassName ,
+    'flex items-center justify-center rounded-full ring-2 ring-base-100 shadow-md' ,
+    'cursor-pointer font-semibold tabular-nums transition-transform hover:scale-110' ,
+    'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-content' ,
+    markerColorMap[ color ] ?? markerColorMap[ PRIMARY ] ,
+    clusterSizeSteps.find( ( step ) => count < step.upTo ).className ,
     className ,
 ) ;
 

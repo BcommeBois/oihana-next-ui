@@ -1,17 +1,17 @@
 'use client' ;
 
-import I18nMetas     from '@/components/i18n/I18nMetas.jsx';
-import useI18n       from '@/contexts/locale/useI18n.js';
-import Container     from '@/display/Container';
-import MapDemo       from '@/demo/maps/MapDemo';
-import Page          from '@/display/Page' ;
+import I18nMetas      from '@/components/i18n/I18nMetas.jsx';
+import useI18n        from '@/contexts/locale/useI18n.js';
+import Container      from '@/display/Container';
+import MapMarkersDemo from '@/demo/maps/MapMarkersDemo';
+import Page           from '@/display/Page' ;
 
 /**
- * Maps showcase page.
+ * Map markers and clusters showcase page.
  *
  * @param {Object} props
  */
-const MapsViewShowcase = ( { path = 'app.lab.mapsView' } ) =>
+const MapsMarkersShowcase = ( { path = 'app.lab.mapsMarkers' } ) =>
 {
     const { description , title } = useI18n( path ) ;
 
@@ -30,11 +30,11 @@ const MapsViewShowcase = ( { path = 'app.lab.mapsView' } ) =>
             </Container>
 
             <Container className="flex flex-col gap-4">
-                <MapDemo />
+                <MapMarkersDemo />
             </Container>
 
         </Page>
     ) ;
 } ;
 
-export default MapsViewShowcase ;
+export default MapsMarkersShowcase ;

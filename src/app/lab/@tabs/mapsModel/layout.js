@@ -4,7 +4,7 @@ export async function generateMetadata()
 {
     const i18n = await getServerI18n() ;
 
-    const { description , title } = i18n( 'app.lab.mapsView' ) ;
+    const { description , title } = i18n( 'app.lab.mapsModel' ) ;
 
     return { title , description } ;
 }

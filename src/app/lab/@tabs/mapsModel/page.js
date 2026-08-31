@@ -3,15 +3,15 @@
 import I18nMetas     from '@/components/i18n/I18nMetas.jsx';
 import useI18n       from '@/contexts/locale/useI18n.js';
 import Container     from '@/display/Container';
-import MapDemo       from '@/demo/maps/MapDemo';
+import GeoSchemaDemo from '@/demo/maps/GeoSchemaDemo';
 import Page          from '@/display/Page' ;
 
 /**
- * Maps showcase page.
+ * Geographic model and adapter showcase page.
  *
  * @param {Object} props
  */
-const MapsViewShowcase = ( { path = 'app.lab.mapsView' } ) =>
+const MapsModelShowcase = ( { path = 'app.lab.mapsModel' } ) =>
 {
     const { description , title } = useI18n( path ) ;
 
@@ -30,11 +30,11 @@ const MapsViewShowcase = ( { path = 'app.lab.mapsView' } ) =>
             </Container>
 
             <Container className="flex flex-col gap-4">
-                <MapDemo />
+                <GeoSchemaDemo />
             </Container>
 
         </Page>
     ) ;
 } ;
 
-export default MapsViewShowcase ;
+export default MapsModelShowcase ;

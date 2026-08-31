@@ -69,6 +69,7 @@
     "next": "16.2.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "supercluster": "^9.0.0",
     "tailwindcss": "^4.0.0"
   },
   "peerDependenciesMeta": {
@@ -112,6 +113,9 @@
       "optional": true
     },
     "maplibre-gl": {
+      "optional": true
+    },
+    "supercluster": {
       "optional": true
     }
   },
@@ -171,6 +175,7 @@
     "maplibre-gl": "^5.24.0",
     "raw-loader": "^4.0.2",
     "sharp": "^0.34.5",
+    "supercluster": "^9.0.0",
     "tailwind-scrollbar": "^4.0.2",
     "tailwindcss": "^4.3.3",
     "tailwindcss-animated": "^2.1.0",

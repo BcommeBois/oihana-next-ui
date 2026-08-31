@@ -2,7 +2,9 @@ import alerts         from './alerts'
 import badges         from './badges'
 import buttons        from './buttons'
 import i18n           from './i18n'
-import maps           from './maps'
+import mapsMarkers    from './mapsMarkers'
+import mapsModel      from './mapsModel'
+import mapsView       from './mapsView'
 import metrics        from './metrics'
 import scheduler      from './scheduler'
 import schedulerModel from './schedulerModel'
@@ -17,7 +19,9 @@ const lab =
     badges         ,
     buttons        ,
     i18n           ,
-    maps           ,
+    mapsMarkers    ,
+    mapsModel      ,
+    mapsView       ,
     metrics        ,
     scheduler      ,
     schedulerModel ,

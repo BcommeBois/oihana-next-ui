@@ -7,6 +7,7 @@ and the source attribution the data licence requires.
 ```jsx
 import Map        from 'oihana-next-ui/components/maps/Map'
 import MapMarker  from 'oihana-next-ui/components/maps/MapMarker'
+import MapMarkers from 'oihana-next-ui/components/maps/MapMarkers'
 import fromSchema from 'oihana-next-ui/helpers/geo/fromSchema'
 ```
 
@@ -19,6 +20,7 @@ build-time `Module not found`.
 | What you use | `npm i` |
 |---|---|
 | Anything in `components/maps` | `maplibre-gl @vis.gl/react-maplibre` |
+| `MapMarkers` with `cluster` | the above, plus `supercluster` |
 | `helpers/geo/*` only | nothing — they have no dependency at all |
 
 **`maplibre-gl` is pinned to the 5 line, and that is not conservatism.** Version 6 splits its
@@ -93,6 +95,36 @@ So the frame draws nothing by default. `attribution` on `Map` changes who prints
 | a string or node | The engine's control off, yours drawn instead — `OSM_ATTRIBUTION` is exported for the usual line |
 | `false` | Neither. **ODbL still requires the credit somewhere on the page** — this only says it is not here |
 
+## Drawing a collection
+
+`MapMarkers` takes the payloads, not points : it calls `fromSchema` itself and drops what it
+cannot place, so one address a geocoder never resolved does not cost the other two hundred their
+map.
+
+```jsx
+<Map { ...centre } mapStyle={ style }>
+    <MapMarkers
+        cluster
+        items       = { sites }
+        markerProps = { ( site ) => BY_TYPE[ site['@type'] ] }
+        onSelect    = { ( site ) => open( site ) }
+    />
+</Map>
+```
+
+`markerProps` is how a marker learns what it is — it gets the source object and returns props
+merged into the `MapMarker`. The mapping from a business type to a colour stays in the
+application, where it belongs ; the component stays data-driven.
+
+**Clustering is off by default**, because it changes where the points appear and that is not a
+component's decision to make. Turned on, it groups through `supercluster` — the very algorithm
+MapLibre embeds — called in plain JavaScript rather than read back from rendered tiles, which is
+what lets the bubbles stay DOM elements styled from the theme. A bubble opens on click, easing
+to the zoom at which it comes apart.
+
+`cluster` also takes an object, passed straight to supercluster : `{ radius , maxZoom ,
+minPoints }`.
+
 ## Coordinates are named, everywhere
 
 Every component and every helper speaks `latitude` and `longitude`, flat — which is also what
@@ -132,9 +164,11 @@ itself, which is what lets a house subtype work without being declared on this s
 - **Not a re-export of MapLibre.** The public API is ours — `latitude`, `longitude`, `bounds`,
   `zoom`, `mapStyle`, `controls`, plus the frame props `charts` already uses. Every component
   keeps `mapProps`, spread **last** onto the engine, so anything not exposed is still reachable.
-- **Not a clustering library, yet.** Markers are DOM elements : they take `color` and `size` like
+- **Not a vector-layer renderer.** Markers are DOM elements : they take `color` and `size` like
   a `Badge` and follow the theme, at the cost of holding a few hundred points rather than a few
-  thousand. A vector-layer path is planned and is not here.
+  thousand. A layer path would hold far more, at the price of a style written in the engine's
+  paint spec — out of reach of Tailwind and of the theme tokens — so it waits for a dataset that
+  actually needs it.
 - **Not a controlled viewport.** `latitude`, `longitude` and `zoom` say where the map *opens* ;
   changing them afterwards does not move it. Use the ref — `ref.current.flyTo( … )` — until the
   lot that needs a controlled viewport lands.
