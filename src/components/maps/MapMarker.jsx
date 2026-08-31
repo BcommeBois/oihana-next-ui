@@ -1,0 +1,118 @@
+'use client' ;
+
+/**
+ * A marker drawn in the DOM, styled from the theme.
+ *
+ * @module components/maps/MapMarker
+ */
+
+import { MdPlace } from 'react-icons/md' ;
+
+import cn from '../../themes/helpers/cn' ;
+
+import { getMapMarkerClassNames } from '../../themes/components/map' ;
+
+import { Marker } from './engine' ;
+
+/**
+ * A marker at a point.
+ *
+ * **It is DOM, not a vector layer.** A layer would hold tens of thousands of
+ * points, but its look would be written in the engine's style spec — out of
+ * reach of Tailwind and of the theme tokens, and impossible to keep in step
+ * with the rest of the library. In the DOM a marker is an ordinary element :
+ * it takes `color` and `size` like a `Badge`, follows the theme into dark
+ * mode, and can be replaced outright by `children`. The trade is the count —
+ * a few hundred, not a few thousand.
+ *
+ * The props are `latitude` and `longitude`, flat, which is exactly what
+ * `fromSchema` returns : `<MapMarker { ...fromSchema( place ) } />`.
+ *
+ * **A clickable marker is a real button.** Not a div with a handler : it has
+ * to be reachable by keyboard and announced as actionable, and `title` is what
+ * names it — a marker whose only label is its colour says nothing to a screen
+ * reader.
+ *
+ * @param {Object} props
+ * @param {React.ReactNode} [props.children] - Replaces the default pin entirely. Position and events still apply.
+ * @param {string} [props.className] - Additional classes on the pin.
+ * @param {import('../../themes/components/map').MapMarkerColor} [props.color='primary'] - Pin color.
+ * @param {React.ElementType} [props.Icon=MdPlace] - Icon drawn inside the pin.
+ * @param {string} [props.iconClassName] - Additional classes on the icon.
+ * @param {number} props.latitude - Latitude in WGS 84.
+ * @param {number} props.longitude - Longitude in WGS 84.
+ * @param {Function} [props.onClick] - Makes the marker a button.
+ * @param {boolean} [props.showIcon=true] - Show/hide the icon inside the pin.
+ * @param {import('../../themes/components/map').MapMarkerSize} [props.size='md'] - Pin size.
+ * @param {string} [props.title] - Accessible name, and the pointer tooltip.
+ *
+ * @example
+ * ```jsx
+ * <MapMarker { ...fromSchema( place ) } color="error" title={ place.name } />
+ * ```
+ */
+const MapMarker =
+({
+    children ,
+    className ,
+    color ,
+    Icon = MdPlace ,
+    iconClassName ,
+    latitude ,
+    longitude ,
+    onClick ,
+    showIcon = true ,
+    size ,
+    title ,
+    ...rest
+}) =>
+{
+    if ( !Number.isFinite( latitude ) || !Number.isFinite( longitude ) )
+    {
+        return null ;
+    }
+
+    const pinClassName = getMapMarkerClassNames({ className , color , interactive : !!onClick , size }) ;
+
+    const inner = children ?? ( showIcon && Icon && (
+        <Icon aria-hidden="true" className={ cn( 'size-2/3' , iconClassName ) } />
+    ) ) ;
+
+    const pin = onClick
+        ? (
+            <button
+                aria-label = { title }
+                className  = { pinClassName }
+                title      = { title }
+                type       = "button"
+            >
+                { inner }
+            </button>
+        )
+        : title
+            ? (
+                <div aria-label={ title } className={ pinClassName } role="img" title={ title }>
+                    { inner }
+                </div>
+            )
+            : (
+                <div className={ pinClassName }>
+                    { inner }
+                </div>
+            ) ;
+
+    return (
+        <Marker
+            latitude  = { latitude }
+            longitude = { longitude }
+            onClick   = { onClick }
+            { ...rest }
+        >
+            { pin }
+        </Marker>
+    ) ;
+} ;
+
+MapMarker.displayName = 'MapMarker' ;
+
+export default MapMarker ;

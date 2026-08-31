@@ -1,5 +1,6 @@
 import dashboard    from './dashboard' ;
 import logo         from './logo' ;
+import map          from './map' ;
 import navbar       from './navbar' ;
 import sidebar      from './sidebar' ;
 import splashScreen from './splashScreen' ;
@@ -9,6 +10,7 @@ const ui =
 {
     dashboard    ,
     logo         ,
+    map          ,
     navbar       ,
     sidebar      ,
     splashScreen ,

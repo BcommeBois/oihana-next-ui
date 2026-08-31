@@ -63,7 +63,9 @@
     "@nivo/radar": "^0.99.0",
     "@nivo/radial-bar": "^0.99.0",
     "@nivo/waffle": "^0.99.0",
+    "@vis.gl/react-maplibre": "^8.0.0",
     "daisyui": "^5.0.0",
+    "maplibre-gl": "^5.24.0",
     "next": "16.2.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -104,6 +106,12 @@
       "optional": true
     },
     "@nivo/waffle": {
+      "optional": true
+    },
+    "@vis.gl/react-maplibre": {
+      "optional": true
+    },
+    "maplibre-gl": {
       "optional": true
     }
   },
@@ -157,8 +165,10 @@
     "@types/node": "^25.9.5",
     "@types/react-syntax-highlighter": "^15.5.13",
     "@types/sanitize-html": "^2.16.1",
+    "@vis.gl/react-maplibre": "^8.1.2",
     "babel-plugin-react-compiler": "1.0.0",
     "daisyui": "^5.7.4",
+    "maplibre-gl": "^5.24.0",
     "raw-loader": "^4.0.2",
     "sharp": "^0.34.5",
     "tailwind-scrollbar": "^4.0.2",

@@ -18,6 +18,7 @@ import {
 
 import { LuSquareMousePointer   as ActionIcon         } from "react-icons/lu";
 import { TbAlertSquareRounded   as AlertIcon          } from "react-icons/tb";
+import { TbMap2                 as MapIcon            } from "react-icons/tb";
 import { LuCirclePlus           as FabIcon            } from "react-icons/lu";
 import { RxAvatar               as AvatarIcon         } from "react-icons/rx";
 import { LuBadgeAlert           as BadgeIcon          } from "react-icons/lu";
@@ -169,6 +170,7 @@ const navigation =
                     { id : 'images'     , type : LINK  , Icon : ImageIcon      , path  : '/lab/images'     } ,
                     { id : 'indicator'  , type : LINK  , Icon : IndicatorIcon  , path  : '/lab/indicator'  } ,
                     { id : 'lists'      , type : LINK  , Icon : ListIcon       , path  : '/lab/lists'      } ,
+                    { id : 'maps'       , type : LINK  , Icon : MapIcon        , path  : '/lab/maps'       } ,
                     { id : 'masks'      , type : LINK  , Icon : MaskIcon       , path  : '/lab/masks'      } ,
                     { id : 'markdown'   , type : LINK  , Icon : MarkdownIcon   , path  : '/lab/markdown'   } ,
                     { id : 'typography' , type : LINK  , Icon : TypographyIcon , path  : '/lab/typography' } ,
