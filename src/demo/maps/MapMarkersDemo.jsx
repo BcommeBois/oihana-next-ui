@@ -97,7 +97,7 @@ const MapMarkersDemo = () =>
                         <span className="label-text">Regrouper</span>
                     </label>
 
-                    <label className="flex items-center gap-2">
+                    <label className="label cursor-pointer gap-2 whitespace-nowrap">
                         <span className="label-text">Palette des niveaux</span>
                         <select
                             className = "select select-sm select-bordered"

@@ -5,5 +5,6 @@ export const PROMPT  = 'prompt'  ;
 
 export const ACCELEROMETER = 'accelerometer' ;
 export const CAMERA        = 'camera' ;
+export const GEOLOCATION   = 'geolocation' ;
 export const MICROPHONE    = 'microphone' ;
 export const MIDI          = 'midi' ;

@@ -146,6 +146,64 @@ Takes a palette name — `'brand'`, `'theme'`, `'nivo'` — or explicit colours.
 computed from it by contrast — a hex carries no `-content` pair to lean on. `readableOn` is
 exported from `helpers/colors` for anything else with the same problem.
 
+## Where the user is
+
+Two answers, because there are two questions.
+
+**On the map**, `controls={{ geolocate : true }}` adds `MapGeolocate` — **ours**, a `Button` in a
+`MapControl`, on the hook below. It draws the dot and, by default, the accuracy circle : a
+translucent disc of the margin the browser reports, in real metres, so it grows and shrinks with
+the zoom. A bare dot on a desktop fix five kilometres wide reads as a certainty.
+
+```jsx
+<Map { ...point } mapStyle={ style }>
+    <MapGeolocate track position="bottom-left" />
+</Map>
+```
+
+`track` makes the button a toggle that follows until pressed again ; without it, one press
+locates and centres, and that is the end of it. Two states, where the engine's own control has
+five — the third being « the watch runs but you dragged the map away », which costs two more
+appearances and is understood by nobody who sees it.
+
+The engine ships a control too, and it is not used : a control whose click we could not make
+fire is worth less than a small one we own end to end — and this one takes the theme.
+
+### A corner for our own controls
+
+`MapControl` is the primitive underneath, and geolocation is only its first passenger :
+
+```jsx
+<MapControl position="bottom-left">
+    <Button icon={ MdLayers } onClick={ toggleLayers } />
+</MapControl>
+```
+
+Four corners, `top-left` by default because the engine's controls hold the top-right.
+`bottom-right` sits higher than its siblings : the source credit lives in that corner, and
+covering a licence condition is not an option. The box wraps its children exactly, so the map
+stays draggable everywhere it does not actually cover.
+
+**Off the map**, `useGeolocation` answers the same question with nothing to draw — which is what
+an address form needs :
+
+```jsx
+const { error , isDenied , position , request } = useGeolocation() ;
+```
+
+It returns `latitude` and `longitude` flat, the same names as everything else, so a fix spreads
+straight into a `Map` or a `MapMarker`. It follows `useMediaPermission`'s shape —
+`permissionState`, `isGranted`, `isDenied`, `isLoading`, `request` — and adds `position`,
+`error`, `stop` and `watching`.
+
+**Nothing happens until you ask.** Mounting reads the permission state, which does not prompt ;
+the browser dialog appears on `request()`. A hook that asked on mount would put a permission
+prompt in front of anyone who merely loaded the page, which is how users learn to click *block*.
+
+**A refusal is a state, not an error to swallow** : `isDenied`, with `error.kind` of `refused`,
+`unavailable`, `timeout` or `unsupported`. Say something about each — a button that silently
+does nothing is the worst of the outcomes.
+
 ## Coordinates are named, everywhere
 
 Every component and every helper speaks `latitude` and `longitude`, flat — which is also what
@@ -156,6 +214,10 @@ Every component and every helper speaks `latitude` and `longitude`, flat — whi
     <MapMarker { ...fromSchema( place ) } title={ place.name } />
 </Map>
 ```
+
+`Map` and `MapMarker` absorb everything else the point carries — `elevation`, `source`,
+`accuracy` and the rest — so none of it reaches the DOM. The list they share lives in
+`helpers/geo/pointFields` ; a new field on a point shape has to be added there too.
 
 **The only place that handles `[ longitude , latitude ]` arrays is `parseGeoShape`**, converting
 schema.org's text geometries to GeoJSON. That is deliberate : a swapped pair does not raise

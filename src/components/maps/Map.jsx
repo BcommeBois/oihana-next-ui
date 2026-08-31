@@ -8,6 +8,8 @@
 
 import { useCallback , useState } from 'react' ;
 
+import { withoutPointFields } from '../../helpers/geo/pointFields' ;
+
 import MapInstanceContext from './context' ;
 
 import { MapGL } from './engine' ;
@@ -132,7 +134,7 @@ const toCorners = ( bounds ) =>
  * @param {{ north : number , south : number , east : number , west : number }} [props.bounds] - Opening box. Takes precedence over the centre.
  * @param {React.ReactNode} [props.children] - Markers, popups, layers.
  * @param {string} [props.className] - Additional classes on the frame.
- * @param {boolean|Object} [props.controls=true] - `true` for zoom and compass, `false` for none, or `{ fullscreen , navigation , scale }`.
+ * @param {boolean|Object} [props.controls=true] - `true` for zoom and compass, `false` for none, or `{ fullscreen , geolocate , navigation , scale }`.
  * @param {boolean} [props.empty] - Force the empty state.
  * @param {string} [props.emptyLabel] - Title of the empty state.
  * @param {React.ReactNode} [props.emptyState] - Replaces the empty state entirely.
@@ -193,6 +195,10 @@ const Map =
 {
     const [ instance , setInstance ] = useState( null ) ;
 
+    // A point is meant to be spread in whole, so everything it carries besides
+    // its coordinates arrives here and must not reach the DOM.
+    const domProps = withoutPointFields( rest ) ;
+
     const style   = resolveMapStyle( mapStyle ) ;
     const corners = toCorners( bounds ) ;
     const credit  = resolveAttribution( attribution ) ;
@@ -233,7 +239,7 @@ const Map =
             height          = { height }
             loading         = { loading }
             maxHeight       = { maxHeight }
-            { ...rest }
+            { ...domProps }
         >
             {
                 !isEmpty && !loading && (

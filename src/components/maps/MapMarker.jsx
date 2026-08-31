@@ -8,6 +8,8 @@
 
 import { MdPlace } from 'react-icons/md' ;
 
+import { withoutPointFields } from '../../helpers/geo/pointFields' ;
+
 import cn from '../../themes/helpers/cn' ;
 
 import { getMapMarkerClassNames } from '../../themes/components/map' ;
@@ -72,6 +74,10 @@ const MapMarker =
         return null ;
     }
 
+    // Same as `Map` : a spread point brings its elevation, its accuracy and its
+    // source along, and none of them is a marker option.
+    const domProps = withoutPointFields( rest ) ;
+
     const pinClassName = getMapMarkerClassNames({ className , color , interactive : !!onClick , size }) ;
 
     const inner = children ?? ( showIcon && Icon && (
@@ -106,7 +112,7 @@ const MapMarker =
             latitude  = { latitude }
             longitude = { longitude }
             onClick   = { onClick }
-            { ...rest }
+            { ...domProps }
         >
             { pin }
         </Marker>

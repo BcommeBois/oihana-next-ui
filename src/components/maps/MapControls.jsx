@@ -8,6 +8,8 @@
 
 import { FullscreenControl , NavigationControl , ScaleControl } from './engine' ;
 
+import MapGeolocate from './MapGeolocate' ;
+
 /**
  * What `controls={ true }` means.
  *
@@ -21,6 +23,7 @@ import { FullscreenControl , NavigationControl , ScaleControl } from './engine' 
 const DEFAULTS =
 {
     fullscreen : false ,
+    geolocate  : false ,
     navigation : true ,
     scale      : false ,
 } ;
@@ -45,7 +48,7 @@ export const resolveControls = ( controls ) =>
 
     if ( !controls )
     {
-        return { fullscreen : false , navigation : false , scale : false } ;
+        return { fullscreen : false , geolocate : false , navigation : false , scale : false } ;
     }
 
     return { ...DEFAULTS , ...controls } ;
@@ -53,16 +56,24 @@ export const resolveControls = ( controls ) =>
 
 /**
  * @param {Object} props
- * @param {boolean|Object} [props.controls=true] - `true` for navigation only, `false` for none, or `{ fullscreen , navigation , scale }`.
+ * @param {boolean|Object} [props.controls=true] - `true` for navigation only, `false` for none, or `{ fullscreen , geolocate , navigation , scale }`. `geolocate` also takes an options object, handed to `MapGeolocate`.
  * @param {string} [props.position='top-right'] - Corner the controls sit in.
  */
 const MapControls = ({ controls = true , position = 'top-right' }) =>
 {
-    const { fullscreen , navigation , scale } = resolveControls( controls ) ;
+    const { fullscreen , geolocate , navigation , scale } = resolveControls( controls ) ;
 
     return (
         <>
             { navigation && <NavigationControl position={ position } /> }
+            {
+                // Ours, not the engine's. The engine ships a geolocation control
+                // and it is a good one on paper, but a control whose click we
+                // could not make fire is worth less than a small button we own
+                // end to end — and this one takes the theme like every other
+                // button in the library.
+                geolocate && <MapGeolocate { ...( geolocate === true ? null : geolocate ) } />
+            }
             { fullscreen && <FullscreenControl position={ position } /> }
             { scale      && <ScaleControl position="bottom-left" /> }
         </>

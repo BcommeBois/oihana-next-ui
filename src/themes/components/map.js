@@ -19,6 +19,9 @@
  *
  * ## Cluster sizes
  * - size-9 | size-11 | size-14
+ *
+ * ## Control corners
+ * - top-2 start-2 | top-2 end-2 | bottom-2 start-2 | bottom-8 end-2
  */
 
 import cn from '../helpers/cn' ;
@@ -189,6 +192,68 @@ export const getMapClusterClassNames = ({ beforeClassName , className , color = 
     'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-content' ,
     color && ( markerColorMap[ color ] ?? markerColorMap[ PRIMARY ] ) ,
     clusterSizeSteps[ getMapClusterStep( count ) ].className ,
+    className ,
+) ;
+
+/**
+ * @typedef {'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'} MapControlPosition
+ */
+
+/** Valid control corners. @type {MapControlPosition[]} */
+export const positions = [ 'top-left' , 'top-right' , 'bottom-left' , 'bottom-right' ] ;
+
+/**
+ * Where a control sits.
+ *
+ * `bottom-right` is pushed further up than its siblings on purpose : the source
+ * credit lives in that corner, and a button landing on it would cover a licence
+ * condition.
+ *
+ * @type {Object.<MapControlPosition, string>}
+ */
+const positionMap =
+{
+    'top-left'     : 'top-2 start-2' ,
+    'top-right'    : 'top-2 end-2' ,
+    'bottom-left'  : 'bottom-2 start-2' ,
+    'bottom-right' : 'bottom-8 end-2' ,
+} ;
+
+/**
+ * A box holding our own controls, in one corner of the map.
+ *
+ * It wraps its children exactly, so the map stays draggable everywhere the box
+ * does not actually cover — no invisible panel eating gestures in a corner.
+ *
+ * @param {Object} [props={}]
+ * @param {string} [props.beforeClassName] - ClassName to prepend.
+ * @param {string} [props.className] - ClassName to append.
+ * @param {MapControlPosition} [props.position='top-left'] - Which corner.
+ * @returns {string}
+ */
+export const getMapControlClassNames = ({ beforeClassName , className , position = 'top-left' } = {}) => cn
+(
+    beforeClassName ,
+    'absolute z-10 flex w-fit flex-col gap-2' ,
+    positionMap[ position ] ?? positionMap[ 'top-left' ] ,
+    className ,
+) ;
+
+/**
+ * The translucent disc that says how sure the fix is.
+ *
+ * Its size is set in pixels by whoever draws it — the radius is in real metres
+ * and has to be recomputed at every zoom — so nothing here touches dimensions.
+ *
+ * @param {Object} [props={}]
+ * @param {string} [props.beforeClassName] - ClassName to prepend.
+ * @param {string} [props.className] - ClassName to append.
+ * @returns {string}
+ */
+export const getMapAccuracyCircleClassNames = ({ beforeClassName , className } = {}) => cn
+(
+    beforeClassName ,
+    'pointer-events-none rounded-full bg-info/15 ring-1 ring-info/40' ,
     className ,
 ) ;
 
