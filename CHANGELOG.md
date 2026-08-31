@@ -8,6 +8,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.16.0] — 2026-08-31
+
+**`Alert` — a color that is not one of four, and the style variants its own theme already knew**
+
+- **`getAlertClassNames` had accepted `style` and `direction` since the day it was written, and `Alert` passed neither.** The lab demo said as much : it reached for `className="alert-soft"` because the prop it wanted did not exist. Both are props now — `style` for `dash` / `outline` / `soft`, `direction` for `horizontal` / `vertical` — and the demo no longer writes DaisyUI classes by hand.
+- **🚨 `style` on `Alert` is the DaisyUI variant, not the DOM attribute**, following `Button` and `Badge`. The inline style moved to **`containerStyle`**. *Migration*: a call site passing `style={{ … }}` was reaching the root element through `rest` and now sets a variant that does not exist — rename it to `containerStyle`. Nothing in the repository did ; `ToastProvider`'s `options` passthrough is the path to check in an application.
+- **`color` says how it looks, `level` says what it means.** `level` still picks the icon and, on its own, still picks the color — so every existing call renders exactly as before. Passing `color` splits the two : an informative alert can wear the house `primary` without pretending to be something else.
+- **The four colors DaisyUI has no alert class for cost one CSS variable.** `.alert` is built entirely on `--alert-color` — background, border, and the text of the three pale variants all derive from it — so `primary`, `secondary`, `accent` and `neutral` set that variable directly and inherit every variant for free. **Any other color is the same variable set inline** : `containerStyle={{ '--alert-color' : '#7c3aed' }}`, which is the only form that can work, Tailwind v4 scanning source text and never seeing a color computed at runtime.
+- **🚨 The filled text color is emitted only when there is no style variant.** `alert-soft`, `alert-outline` and `alert-dash` paint their text *with* `--alert-color`, and a Tailwind utility beats DaisyUI's layers — so a `text-primary-content` left in place would repaint a pale background's text with the color meant for a solid one, which is the low-contrast defect the demo had been showing all along under its hand-written `alert-soft`.
+- **The icon and the cross stopped being colored at all.** They now inherit the container's color, which is right in all four combinations of variant and color, where the old explicit `${level}-content` was right in exactly one. The cross keeps its own hover by tinting the current color — `hover:bg-current/10` — instead of a `btn-error` that painted the button in the very hue it sits on.
+- **`direction` had to be said twice, and that is not redundancy.** DaisyUI lays an alert out as a grid ; this component forces `flex` so the option lands at the far edge — so `alert-vertical` had nothing left to act on. The theme helper still emits the DaisyUI class, correct for anyone calling it directly, and the component adds the flex counterpart it actually needs. The old demo's `alert-vertical md:alert-horizontal` had been doing nothing at all.
+- **Alerts have their own lab page at `/lab/alerts`**, under *Feedback*, with sections for colors, style variants, direction and arbitrary colors. They used to be a section at the bottom of the toasts page — which is now just about toasts.
+
 ## [0.15.0] — 2026-08-24
 
 **Documentation — the `charts` guide, which was the last thing the family was missing**

@@ -1,3 +1,4 @@
+import alerts         from './alerts'
 import badges         from './badges'
 import buttons        from './buttons'
 import i18n           from './i18n'
@@ -11,6 +12,7 @@ import schedulerWeek  from './schedulerWeek'
 
 const lab =
 {
+    alerts         ,
     badges         ,
     buttons        ,
     i18n           ,

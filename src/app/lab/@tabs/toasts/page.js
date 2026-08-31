@@ -1,6 +1,5 @@
 'use client' ;
 
-import AlertDemo from '@/demo/AlertDemo';
 import ToastDemo from '@/demo/ToastDemo';
 import Container from '@/display/Container' ;
 import Page      from '@/display/Page' ;
@@ -19,18 +18,13 @@ const ToastsShowcase = ({ path = 'app.test' }) =>
 
             <Container className="text-center" maxWidth="max-w-4xl">
                 <h1 className="text-4xl font-bold bg-linear-to-r from-secondary to-primary inline-block text-transparent bg-clip-text">
-                    Toast and Alert
+                    Toasts
                 </h1>
             </Container>
 
             <Container className="flex flex-col gap-4">
                 <h2 className="text-2xl font-bold">Toast Notifications</h2>
                 <ToastDemo />
-            </Container>
-
-            <Container className="flex flex-col gap-4">
-                <h2 className="text-2xl font-bold">Alerts</h2>
-                <AlertDemo />
             </Container>
 
         </Page>

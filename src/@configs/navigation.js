@@ -17,6 +17,7 @@ import {
 } from 'react-icons/md' ;
 
 import { LuSquareMousePointer   as ActionIcon         } from "react-icons/lu";
+import { TbAlertSquareRounded   as AlertIcon          } from "react-icons/tb";
 import { LuCirclePlus           as FabIcon            } from "react-icons/lu";
 import { RxAvatar               as AvatarIcon         } from "react-icons/rx";
 import { LuBadgeAlert           as BadgeIcon          } from "react-icons/lu";
@@ -199,6 +200,7 @@ const navigation =
                 Icon : FeedbackIcon ,
                 items :
                 [
+                    { id : 'alerts'         , type : LINK  , Icon : AlertIcon          , path  : '/lab/alerts'         } ,
                     { id : 'loading'        , type : LINK  , Icon : LoadingIcon        , path  : '/lab/loading'        } ,
                     { id : 'progress'       , type : LINK  , Icon : ProgressIcon       , path  : '/lab/progress'       } ,
                     { id : 'radialProgress' , type : LINK  , Icon : RadialProgressIcon , path  : '/lab/radialProgress' } ,
