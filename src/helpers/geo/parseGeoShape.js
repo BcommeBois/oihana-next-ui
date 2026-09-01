@@ -291,6 +291,15 @@ const fromPositions = ( positions ) => positions
  * inferred from the geometry, and a rectangle is then indistinguishable from
  * any other four-cornered polygon — which is correct, since it is.
  *
+ * **The values survive, the formatting does not.** `48.900` comes back `48.9` :
+ * once the text has been read as a number the two *are* the same number, and
+ * nothing says how many decimals to write. A ring also comes back closed, since
+ * GeoJSON requires that where schema.org only recommends it.
+ *
+ * So a store that detects changes by **comparing strings** will see an
+ * untouched shape as modified. Compare the numbers, or compare against what a
+ * round trip produces rather than against what was first received.
+ *
  * @param {Object} feature - A GeoJSON `Feature` or geometry.
  * @param {Object} [options]
  * @param {number} [options.radius] - Metres, for a point being written as a circle.

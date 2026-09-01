@@ -102,7 +102,7 @@ const MapZoneDemo = () =>
                 </div>
 
                 <p className="text-sm text-base-content/60">
-                    { `La seule différence attendue est le premier point répété à la fin : GeoJSON exige un anneau fermé, schema.org le recommande seulement. Les décimales, elles, doivent être identiques — le bruit flottant est rogné à douze chiffres significatifs.` }
+                    { `Deux différences attendues, et aucune n'est une perte. Le premier point est répété à la fin, GeoJSON exigeant un anneau fermé là où schema.org le recommande seulement. Et les zéros de fin tombent — « 48.900 » revient « 48.9 » — parce qu'une fois la chaîne lue en nombre les deux sont le même nombre, et que rien ne dit combien de décimales réécrire. Les valeurs, elles, sont exactes : le bruit flottant est rogné à douze chiffres significatifs, donc jamais de « 2.3200000000000003 ».` }
                 </p>
             </Section>
 

@@ -363,10 +363,17 @@ toGeoShape( feature ) ; // → { '@type' : 'GeoShape' , polygon : '48.845 2.32 �
 ```
 
 A round trip returns the same member : the shape that was read is recorded in
-`properties.shape`, so a box comes back a box rather than the polygon it was drawn as. The only
-expected difference is a polygon's repeated first point — GeoJSON requires a closed ring where
-schema.org only recommends one. Float noise is trimmed to twelve significant digits, so `2.32`
-does not come back as `2.3200000000000003`.
+`properties.shape`, so a box comes back a box rather than the polygon it was drawn as.
+
+Two differences are expected, and neither loses anything. A polygon's first point is repeated at
+the end, GeoJSON requiring a closed ring where schema.org only recommends one. And **trailing
+zeros do not survive** — `48.900` comes back `48.9` — because once the text has been read as a
+number the two are the same number, and nothing says how many decimals to write. Float noise is
+trimmed to twelve significant digits, so `2.32` does not come back as `2.3200000000000003`.
+
+**A store detecting changes by comparing strings will see an untouched shape as modified.**
+Compare numbers, or compare against what a round trip produces rather than against what was
+first received.
 
 **A `MultiPolygon` is a known gap** : `MapGeoJSON` filters its fill on `Polygon`, so a multi
 would be outlined and not filled. To be lifted the day a payload carries one.
