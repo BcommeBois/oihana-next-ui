@@ -8,6 +8,8 @@
 
 import { MdPlace } from 'react-icons/md' ;
 
+import useNativeClick from '../../hooks/useNativeClick' ;
+
 import readableOn from '../../helpers/colors/readableOn' ;
 
 import { withoutPointFields } from '../../helpers/geo/pointFields' ;
@@ -36,6 +38,13 @@ import { Marker } from './engine' ;
  * to be reachable by keyboard and announced as actionable, and `title` is what
  * names it — a marker whose only label is its colour says nothing to a screen
  * reader.
+ *
+ * **🚨 Its click is handled on the button and goes no further.** A marker is a
+ * DOM element *inside* the map's own container, so a click on it reaches the
+ * map too — and the map reads that as « the user clicked elsewhere », closing
+ * the very popup the marker just opened. React's `onClick` cannot prevent it :
+ * delegated to the root, it runs after every native listener on the way up. So
+ * the handler is native, on the element, where stopping actually stops.
  *
  * **A `background` overrides `color`**, for a colour that comes from the data
  * rather than from the theme — a route or a category carrying its own hex. The
@@ -78,6 +87,8 @@ const MapMarker =
     ...rest
 }) =>
 {
+    const clickRef = useNativeClick( onClick ) ;
+
     if ( !Number.isFinite( latitude ) || !Number.isFinite( longitude ) )
     {
         return null ;
@@ -102,6 +113,7 @@ const MapMarker =
             <button
                 aria-label = { title }
                 className  = { pinClassName }
+                ref        = { clickRef }
                 style      = { pinStyle }
                 title      = { title }
                 type       = "button"
@@ -125,7 +137,6 @@ const MapMarker =
         <Marker
             latitude  = { latitude }
             longitude = { longitude }
-            onClick   = { onClick }
             { ...domProps }
         >
             { pin }

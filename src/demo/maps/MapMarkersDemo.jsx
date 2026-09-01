@@ -200,7 +200,6 @@ const MapMarkersDemo = () =>
                         opened && (
                             <MapPopup
                                 { ...fromSchema( opened ) }
-                                offset  = { [ 0 , -12 ] }
                                 onClose = { () => setOpened( null ) }
                             >
                                 <Card
@@ -222,7 +221,7 @@ const MapMarkersDemo = () =>
                 </Map>
 
                 <p className="text-sm text-base-content/60">
-                    { `Une seule bulle à la fois, et l'intérieur est libre — ici une Card avec un bouton. Le décalage vertical évite de couvrir le marqueur. Bascule le thème : le fond et la petite pointe suivent, ce que le style du moteur ne fait pas tout seul.` }
+                    { `Une seule bulle à la fois, et l'intérieur est libre — ici une Card avec un bouton. « offset » prend une distance, et la bulle s'écarte du point quel que soit le côté par lequel elle s'accroche. En basculant le thème, le fond et la petite pointe suivent.` }
                 </p>
             </Section>
 

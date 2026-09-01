@@ -6,6 +6,8 @@
  * @module components/maps/MapCluster
  */
 
+import useNativeClick from '../../hooks/useNativeClick' ;
+
 import readableOn from '../../helpers/colors/readableOn' ;
 
 import { getMapClusterClassNames } from '../../themes/components/map' ;
@@ -59,6 +61,8 @@ const MapCluster =
     ...rest
 }) =>
 {
+    const clickRef = useNativeClick( onClick ) ;
+
     if ( !Number.isFinite( latitude ) || !Number.isFinite( longitude ) )
     {
         return null ;
@@ -72,12 +76,12 @@ const MapCluster =
         <Marker
             latitude  = { latitude }
             longitude = { longitude }
-            onClick   = { onClick }
             { ...rest }
         >
             <button
                 aria-label = { label }
                 className  = { getMapClusterClassNames({ className , color : painted ? null : color , count }) }
+                ref        = { clickRef }
                 style      = { painted ? { background , color : readableOn( background ) } : undefined }
                 title      = { label }
                 type       = "button"

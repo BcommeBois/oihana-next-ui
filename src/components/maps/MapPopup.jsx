@@ -23,6 +23,36 @@ import { Popup } from './engine' ;
 /** MapLibre caps a popup at 240px, which is narrow for anything but a sentence. */
 const DEFAULT_MAX_WIDTH = '320px' ;
 
+/** Enough to clear a marker of the usual size without floating away from it. */
+const DEFAULT_OFFSET = 14 ;
+
+/**
+ * Spreads one distance over the eight anchors.
+ *
+ * **A single offset is the wrong shape for this.** MapLibre applies it as
+ * given, whatever side the bubble ends up on — so `[ 0 , -12 ]` lifts a bubble
+ * that hangs *below* the point straight onto the marker it was meant to clear.
+ * The direction has to follow the anchor, and « away from the point » is the
+ * only thing a caller actually means.
+ *
+ * The sign reads off the anchor : the anchor names the bubble's own edge that
+ * touches the point, so `top` extends downwards and must be pushed down.
+ *
+ * @param {number} distance - Pixels between the point and the bubble.
+ * @returns {Object} An offset per anchor, as the engine wants it.
+ */
+export const spreadOffset = ( distance ) => ({
+    'bottom'       : [ 0 , -distance ] ,
+    'bottom-left'  : [ distance , -distance ] ,
+    'bottom-right' : [ -distance , -distance ] ,
+    'center'       : [ 0 , 0 ] ,
+    'left'         : [ distance , 0 ] ,
+    'right'        : [ -distance , 0 ] ,
+    'top'          : [ 0 , distance ] ,
+    'top-left'     : [ distance , distance ] ,
+    'top-right'    : [ -distance , distance ] ,
+}) ;
+
 /**
  * A bubble that belongs to the map rather than to the page.
  *
@@ -51,7 +81,7 @@ const DEFAULT_MAX_WIDTH = '320px' ;
  * @param {number} props.latitude - Latitude in WGS 84.
  * @param {number} props.longitude - Longitude in WGS 84.
  * @param {string|number} [props.maxWidth='320px'] - Ceiling on the bubble's width.
- * @param {number[]} [props.offset] - Pixels between the point and the bubble, so a marker is not covered.
+ * @param {number|number[]|Object} [props.offset=14] - Distance from the point, in pixels. A number is spread over the eight anchors so the bubble always moves *away* ; an array or an object is handed to the engine as is.
  * @param {Function} [props.onClose] - Called when the bubble closes, however it closed.
  * @param {string} [props.path='components.alert'] - i18n path the close label is read from.
  * @param {boolean} [props.showCloseButton=true] - Draw the cross.
@@ -81,7 +111,7 @@ const MapPopup =
     latitude ,
     longitude ,
     maxWidth = DEFAULT_MAX_WIDTH ,
-    offset ,
+    offset = DEFAULT_OFFSET ,
     onClose ,
     path = 'components.alert' ,
     showCloseButton = true ,
@@ -108,7 +138,7 @@ const MapPopup =
             latitude     = { latitude }
             longitude    = { longitude }
             maxWidth     = { typeof maxWidth === 'number' ? `${ maxWidth }px` : maxWidth }
-            offset       = { offset }
+            offset       = { typeof offset === 'number' ? spreadOffset( offset ) : offset }
             onClose      = { onClose }
             { ...withoutPointFields( rest ) }
         >
