@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.17.0] — 2026-09-01
+
 **`maps` — a collection of places, and the grouping that makes it readable**
 
 - **`MapMarkers` takes the payloads, not the points.** It calls `fromSchema` itself, so a page hands over what its API returned and nothing in between converts anything. What cannot be placed is dropped, silently and deliberately : one address a geocoder never resolved should not cost the other two hundred their map.
@@ -133,7 +135,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - **An unusable coordinate returns `null`, it never throws.** A map missing one point is still a map ; an exception thrown while rendering a list of places takes the page down. Out-of-range values are caught, which gets the gross swaps — a pair that stays in range once inverted, Paris at 48.85 / 2.35, cannot be told apart and never will be.
 - **A circle comes back as a `Point` carrying its radius** in the feature's properties. GeoJSON has no circle, and a renderer wants a centre and a radius anyway.
 - **`toGeoJSON` drops what it cannot place** rather than emitting a feature at `0, 0` — the Gulf of Guinea is where bad coordinates go to be mistaken for real ones. Its `id` comes from `_key` before `id`, `_key` being the unique one.
-
 
 **`components/maps` — MapLibre, wrapped the way the charts wrap nivo**
 
