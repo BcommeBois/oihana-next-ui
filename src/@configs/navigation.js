@@ -126,55 +126,6 @@ const navigation =
                 ]
             } ,
             {
-                id   : 'kanban'   ,
-                type : COLLAPSE   ,
-                Icon : KanbanIcon ,
-                items :
-                [
-                    { id : 'kanbanBoard' , type : LINK  , Icon : KanbanIcon , path  : '/lab/kanban' } ,
-                ]
-            } ,
-            {
-                id   : 'scheduler'   ,
-                type : COLLAPSE      ,
-                Icon : SchedulerIcon ,
-                items :
-                [
-                    { id : 'schedulerAgenda' , type : LINK  , Icon : AgendaIcon , path  : '/lab/scheduler'      } ,
-                    { id : 'schedulerWeek'   , type : LINK  , Icon : WeekIcon      , path  : '/lab/schedulerWeek'  } ,
-                    { id : 'schedulerMonth'  , type : LINK  , Icon : SchedulerIcon , path  : '/lab/schedulerMonth' } ,
-                    { id : 'schedulerTimeline' , type : LINK , Icon : TimelineIcon  , path  : '/lab/schedulerTimeline' } ,
-                    { id : 'schedulerSlots'  , type : LINK  , Icon : SlotsIcon     , path  : '/lab/schedulerSlots' } ,
-                    { id : 'schedulerModel'  , type : LINK  , Icon : SchemaIcon    , path  : '/lab/schedulerModel' } ,
-                ]
-            } ,
-            {
-                id   : 'charts'  ,
-                type : COLLAPSE  ,
-                Icon : ChartIcon ,
-                items :
-                [
-                    { id : 'chartsCartesian' , type : LINK  , Icon : ChartIcon         , path  : '/lab/charts'    } ,
-                    { id : 'chartsCirculars' , type : LINK  , Icon : ChartCircularIcon , path  : '/lab/circulars' } ,
-                    { id : 'chartsGrids'     , type : LINK  , Icon : ChartGridIcon     , path  : '/lab/grids'     } ,
-                    { id : 'chartsMetrics'   , type : LINK  , Icon : MetricsIcon       , path  : '/lab/metrics'   } ,
-                ]
-            } ,
-            {
-                id   : 'maps'   ,
-                type : COLLAPSE ,
-                Icon : MapIcon  ,
-                items :
-                [
-                    { id : 'mapsView'    , type : LINK  , Icon : MapIcon        , path  : '/lab/maps'        } ,
-                    { id : 'mapsMarkers' , type : LINK  , Icon : MapMarkerIcon  , path  : '/lab/mapsMarkers' } ,
-                    { id : 'mapsPicker'  , type : LINK  , Icon : PickerIcon     , path  : '/lab/mapsPicker'  } ,
-                    { id : 'mapsRoutes'  , type : LINK  , Icon : RouteIcon      , path  : '/lab/mapsRoutes'  } ,
-                    { id : 'mapsZones'   , type : LINK  , Icon : ZoneIcon       , path  : '/lab/mapsZones'   } ,
-                    { id : 'mapsModel'   , type : LINK  , Icon : SchemaIcon     , path  : '/lab/mapsModel'   } ,
-                ]
-            } ,
-            {
                 id   : 'display'   ,
                 type : COLLAPSE    ,
                 Icon : DisplayIcon ,
@@ -246,6 +197,55 @@ const navigation =
                     { id : 'selects'    , type : LINK  , Icon : SelectIcon    , path  : '/lab/selects'    } ,
                     { id : 'textareas'  , type : LINK  , Icon : TextAreaIcon  , path  : '/lab/textareas'  } ,
                     { id : 'toggles'    , type : LINK  , Icon : ToggleIcon    , path  : '/lab/toggles'    } ,
+                ]
+            } ,
+            {
+                id   : 'scheduler'   ,
+                type : COLLAPSE      ,
+                Icon : SchedulerIcon ,
+                items :
+                [
+                    { id : 'schedulerAgenda' , type : LINK  , Icon : AgendaIcon , path  : '/lab/scheduler'      } ,
+                    { id : 'schedulerWeek'   , type : LINK  , Icon : WeekIcon      , path  : '/lab/schedulerWeek'  } ,
+                    { id : 'schedulerMonth'  , type : LINK  , Icon : SchedulerIcon , path  : '/lab/schedulerMonth' } ,
+                    { id : 'schedulerTimeline' , type : LINK , Icon : TimelineIcon  , path  : '/lab/schedulerTimeline' } ,
+                    { id : 'schedulerSlots'  , type : LINK  , Icon : SlotsIcon     , path  : '/lab/schedulerSlots' } ,
+                    { id : 'schedulerModel'  , type : LINK  , Icon : SchemaIcon    , path  : '/lab/schedulerModel' } ,
+                ]
+            } ,
+            {
+                id   : 'kanban'   ,
+                type : COLLAPSE   ,
+                Icon : KanbanIcon ,
+                items :
+                [
+                    { id : 'kanbanBoard' , type : LINK  , Icon : KanbanIcon , path  : '/lab/kanban' } ,
+                ]
+            } ,
+            {
+                id   : 'charts'  ,
+                type : COLLAPSE  ,
+                Icon : ChartIcon ,
+                items :
+                [
+                    { id : 'chartsCartesian' , type : LINK  , Icon : ChartIcon         , path  : '/lab/charts'    } ,
+                    { id : 'chartsCirculars' , type : LINK  , Icon : ChartCircularIcon , path  : '/lab/circulars' } ,
+                    { id : 'chartsGrids'     , type : LINK  , Icon : ChartGridIcon     , path  : '/lab/grids'     } ,
+                    { id : 'chartsMetrics'   , type : LINK  , Icon : MetricsIcon       , path  : '/lab/metrics'   } ,
+                ]
+            } ,
+            {
+                id   : 'maps'   ,
+                type : COLLAPSE ,
+                Icon : MapIcon  ,
+                items :
+                [
+                    { id : 'mapsView'    , type : LINK  , Icon : MapIcon        , path  : '/lab/maps'        } ,
+                    { id : 'mapsMarkers' , type : LINK  , Icon : MapMarkerIcon  , path  : '/lab/mapsMarkers' } ,
+                    { id : 'mapsPicker'  , type : LINK  , Icon : PickerIcon     , path  : '/lab/mapsPicker'  } ,
+                    { id : 'mapsRoutes'  , type : LINK  , Icon : RouteIcon      , path  : '/lab/mapsRoutes'  } ,
+                    { id : 'mapsZones'   , type : LINK  , Icon : ZoneIcon       , path  : '/lab/mapsZones'   } ,
+                    { id : 'mapsModel'   , type : LINK  , Icon : SchemaIcon     , path  : '/lab/mapsModel'   } ,
                 ]
             } ,
         ]
