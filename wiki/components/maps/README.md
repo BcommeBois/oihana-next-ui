@@ -146,6 +146,62 @@ Takes a palette name — `'brand'`, `'theme'`, `'nivo'` — or explicit colours.
 computed from it by contrast — a hex carries no `-content` pair to lean on. `readableOn` is
 exported from `helpers/colors` for anything else with the same problem.
 
+## Saying what a point is
+
+A bubble is **anchored to coordinates, not to an element** — it stays glued to its ground while
+the map pans. That is what separates it from `Popover`, which follows a DOM node and would have
+to be repositioned every frame during a pan.
+
+```jsx
+<Map { ...centre } mapStyle={ style }>
+    <MapMarker { ...point } onClick={ () => setOpen( site ) } />
+
+    { open && (
+        <MapPopup { ...fromSchema( open ) } offset={ [ 0 , -12 ] } onClose={ () => setOpen( null ) }>
+            <Card title={ open.name } actions={ <Button>Open</Button> }>…</Card>
+        </MapPopup>
+    ) }
+</Map>
+```
+
+**Anything goes inside** : a `Card`, a `Button`, an image, a sentence. The engine's own padding
+is removed so the content decides its own — a `Card` sits in it without a frame inside a frame.
+`anchor`, `offset`, `maxWidth`, `closeOnClick`, `closeOnMove`, `showCloseButton` and the two
+class props take care of the rest, and the close cross is ours, so it matches `Modal` and
+`Popover` rather than being a third one that looks almost like them.
+
+**A bubble is not a modal, and the choice is not aesthetic.** The bubble answers *what is this
+point* without leaving the map ; a modal answers *let us work on this record*. Opening a modal
+from a marker needs nothing new — `onClick` is already there on `MapMarker`, `MapCluster` and a
+route's stops.
+
+**🚨 Theming it needs the important modifier, against the habit of this codebase.** The rule
+elsewhere is that a Tailwind utility beats DaisyUI, because DaisyUI nests its rules in
+`@layer utilities` where unlayered content wins. **MapLibre's stylesheet is not layered at all**,
+and unlayered declarations beat every layer whatever the specificity — so a plain utility loses
+and the popup stays white on a dark theme. Every class in `getMapPopupClassNames` carries a `!`
+for that reason, and the tip is eight classes because MapLibre colours one border side per
+anchor.
+
+## Searching from inside the map
+
+```jsx
+<MapSearch geocode={ ban } onSelect={ setPlace } />
+```
+
+`InputAddressSearch` in a `MapControl`, and nothing more. **The geocoder is still injected**, so
+the same field searches addresses at a service or **your own records in your own data** — both
+answer `Place` objects, and neither is the library's business.
+
+**Two shapes, and the reason is not taste.** The map frame clips its contents, so on a short map
+the suggestion list is cut off at the bottom edge — five suggestions do not fit under 320 pixels
+of height. `variant="inline"` is what a wide map wants ; `variant="modal"` is what a short one,
+or a phone, needs, its dialog opening in the browser's top layer where no `overflow` can reach
+it.
+
+Choosing a result flies the map to it and calls `onSelect( place , point )`. No marker is
+dropped — that is the caller's call, and `MapMarker` is right there.
+
 ## Where the user is
 
 Two answers, because there are two questions.

@@ -22,6 +22,19 @@
  *
  * ## Control corners
  * - top-2 start-2 | top-2 end-2 | bottom-2 start-2 | bottom-8 end-2
+ *
+ * ## Popup — every one of these needs its `!`, see `getMapPopupClassNames`
+ * - [&_.maplibregl-popup-content]:bg-base-100! | [&_.maplibregl-popup-content]:text-base-content!
+ * - [&_.maplibregl-popup-content]:rounded-box! | [&_.maplibregl-popup-content]:p-0!
+ * - [&_.maplibregl-popup-content]:shadow-lg!
+ * - [&.maplibregl-popup-anchor-top_.maplibregl-popup-tip]:border-b-base-100!
+ * - [&.maplibregl-popup-anchor-top-left_.maplibregl-popup-tip]:border-b-base-100!
+ * - [&.maplibregl-popup-anchor-top-right_.maplibregl-popup-tip]:border-b-base-100!
+ * - [&.maplibregl-popup-anchor-bottom_.maplibregl-popup-tip]:border-t-base-100!
+ * - [&.maplibregl-popup-anchor-bottom-left_.maplibregl-popup-tip]:border-t-base-100!
+ * - [&.maplibregl-popup-anchor-bottom-right_.maplibregl-popup-tip]:border-t-base-100!
+ * - [&.maplibregl-popup-anchor-left_.maplibregl-popup-tip]:border-r-base-100!
+ * - [&.maplibregl-popup-anchor-right_.maplibregl-popup-tip]:border-l-base-100!
  */
 
 import cn from '../helpers/cn' ;
@@ -254,6 +267,55 @@ export const getMapAccuracyCircleClassNames = ({ beforeClassName , className } =
 (
     beforeClassName ,
     'pointer-events-none rounded-full bg-info/15 ring-1 ring-info/40' ,
+    className ,
+) ;
+
+/**
+ * Dressing the engine's popup in the theme.
+ *
+ * ### 🚨 Why every class here carries a `!`
+ *
+ * The rule this project relies on everywhere else — *a Tailwind utility beats
+ * DaisyUI* — comes from DaisyUI nesting its rules inside `@layer utilities`,
+ * where unlayered content wins. **MapLibre's stylesheet is not layered at all**,
+ * and unlayered normal declarations beat *every* layer, whatever the
+ * specificity. So `background : #fff` on `.maplibregl-popup-content` would win
+ * against any ordinary utility, and the popup would stay white on a dark theme.
+ *
+ * The important modifier is what crosses that line. It is not tidiness here,
+ * it is the only thing that works.
+ *
+ * ### The tip is eight classes, not one
+ *
+ * MapLibre colours the little triangle by setting **one** border side per
+ * anchor — `border-bottom-color` when the popup hangs below the point,
+ * `border-top-color` when it sits above, and so on for the eight anchors. Each
+ * has to be answered on its own side ; setting all four would draw a square.
+ *
+ * @param {Object} [props={}]
+ * @param {string} [props.beforeClassName] - ClassName to prepend.
+ * @param {string} [props.className] - ClassName to append.
+ * @returns {string}
+ */
+export const getMapPopupClassNames = ({ beforeClassName , className } = {}) => cn
+(
+    beforeClassName ,
+
+    '[&_.maplibregl-popup-content]:bg-base-100!' ,
+    '[&_.maplibregl-popup-content]:text-base-content!' ,
+    '[&_.maplibregl-popup-content]:rounded-box!' ,
+    '[&_.maplibregl-popup-content]:p-0!' ,
+    '[&_.maplibregl-popup-content]:shadow-lg!' ,
+
+    '[&.maplibregl-popup-anchor-top_.maplibregl-popup-tip]:border-b-base-100!' ,
+    '[&.maplibregl-popup-anchor-top-left_.maplibregl-popup-tip]:border-b-base-100!' ,
+    '[&.maplibregl-popup-anchor-top-right_.maplibregl-popup-tip]:border-b-base-100!' ,
+    '[&.maplibregl-popup-anchor-bottom_.maplibregl-popup-tip]:border-t-base-100!' ,
+    '[&.maplibregl-popup-anchor-bottom-left_.maplibregl-popup-tip]:border-t-base-100!' ,
+    '[&.maplibregl-popup-anchor-bottom-right_.maplibregl-popup-tip]:border-t-base-100!' ,
+    '[&.maplibregl-popup-anchor-left_.maplibregl-popup-tip]:border-r-base-100!' ,
+    '[&.maplibregl-popup-anchor-right_.maplibregl-popup-tip]:border-l-base-100!' ,
+
     className ,
 ) ;
 

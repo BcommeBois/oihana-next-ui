@@ -7,6 +7,13 @@ import Alert     from '@/components/Alert' ;
 import Map        from '@/components/maps/Map' ;
 import MapMarker  from '@/components/maps/MapMarker' ;
 import MapMarkers from '@/components/maps/MapMarkers' ;
+import MapPopup   from '@/components/maps/MapPopup' ;
+import MapSearch  from '@/components/maps/MapSearch' ;
+
+import Button from '@/components/Button' ;
+import Card   from '@/components/Card' ;
+
+import ban from '@/helpers/geo/adapters/ban' ;
 
 import Section from '@/demo/charts/Section' ;
 
@@ -23,6 +30,8 @@ const MapMarkersDemo = () =>
     const [ clustered , setClustered ] = useState( true ) ;
     const [ palette   , setPalette   ] = useState( '' ) ;
     const [ selected  , setSelected  ] = useState( null ) ;
+    const [ opened    , setOpened    ] = useState( null ) ;
+    const [ found     , setFound     ] = useState( null ) ;
 
     const crowd = useMemo( () => makeCrowd( 240 ) , [] ) ;
 
@@ -162,6 +171,100 @@ const MapMarkersDemo = () =>
                         markerProps = { ( site ) => ({ ...BY_TYPE[ site[ '@type' ] ] , title : site.name }) }
                     />
                 </Map>
+            </Section>
+
+            <Section
+                title       = "La bulle, et ce qu'on peut mettre dedans"
+                description = "Une bulle est ancrée à des coordonnées, pas à un élément : elle reste collée à son lieu quand la carte bouge. Elle répond à « qu'est-ce que ce point » ; pour « je veux travailler dessus », un Modal ouvert depuis onClick marche déjà, sans rien de neuf."
+            >
+                <Map
+                    ariaLabel = "Bulles"
+                    height    = { 420 }
+                    mapStyle  = { mapStyle }
+                    zoom      = { 10.5 }
+                    { ...fromSchema( CENTRE ) }
+                >
+                    {
+                        SITES.map( ( site ) => (
+                            <MapMarker
+                                { ...fromSchema( site ) }
+                                key     = { site.name }
+                                onClick = { () => setOpened( site ) }
+                                title   = { site.name }
+                                { ...BY_TYPE[ site[ '@type' ] ] }
+                            />
+                        ))
+                    }
+
+                    {
+                        opened && (
+                            <MapPopup
+                                { ...fromSchema( opened ) }
+                                offset  = { [ 0 , -12 ] }
+                                onClose = { () => setOpened( null ) }
+                            >
+                                <Card
+                                    actions   = {
+                                        <Button color="primary" size="sm" onClick={ () => setSelected( opened.name ) }>
+                                            Ouvrir la fiche
+                                        </Button>
+                                    }
+                                    className = "w-64 shadow-none"
+                                    size      = "sm"
+                                    title     = { opened.name }
+                                    titleAs   = "h3"
+                                >
+                                    <p className="text-sm text-base-content/60">{ opened[ '@type' ] }</p>
+                                </Card>
+                            </MapPopup>
+                        )
+                    }
+                </Map>
+
+                <p className="text-sm text-base-content/60">
+                    { `Une seule bulle à la fois, et l'intérieur est libre — ici une Card avec un bouton. Le décalage vertical évite de couvrir le marqueur. Bascule le thème : le fond et la petite pointe suivent, ce que le style du moteur ne fait pas tout seul.` }
+                </p>
+            </Section>
+
+            <Section
+                title       = "Chercher depuis la carte"
+                description = "Un champ de recherche posé dans un contrôle de la carte. Le géocodeur est une fonction qu'on lui donne : ici la Base Adresse Nationale, mais le même composant chercherait dans n'importe quelle source rendant des Place."
+            >
+                <div className="grid gap-4 lg:grid-cols-2">
+                    <div className="flex flex-col gap-2">
+                        <p className="text-xs font-semibold uppercase text-base-content/50">En ligne — carte large</p>
+                        <Map
+                            ariaLabel = "Recherche en ligne"
+                            height    = { 420 }
+                            mapStyle  = { mapStyle }
+                            zoom      = { 10 }
+                            { ...fromSchema( CENTRE ) }
+                        >
+                            <MapSearch geocode={ ban } onSelect={ setFound } />
+                        </Map>
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                        <p className="text-xs font-semibold uppercase text-base-content/50">En modal — carte courte</p>
+                        <Map
+                            ariaLabel = "Recherche en modal"
+                            height    = { 240 }
+                            mapStyle  = { mapStyle }
+                            zoom      = { 10 }
+                            { ...fromSchema( CENTRE ) }
+                        >
+                            <MapSearch geocode={ ban } onSelect={ setFound } title="Chercher une adresse" variant="modal" />
+                        </Map>
+                    </div>
+                </div>
+
+                <p className="text-sm text-base-content/60">
+                    {
+                        found
+                            ? `Trouvé : ${ found.name }`
+                            : `Le cadre de carte coupe ce qui dépasse : sur la carte courte, la liste de suggestions serait tronquée en bas. Le modal s'ouvre dans la couche supérieure du navigateur, qu'aucun overflow ne rogne — c'est pour ça qu'il existe.`
+                    }
+                </p>
             </Section>
 
         </div>

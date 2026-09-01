@@ -194,7 +194,31 @@ const MapDraw =
             cancelled = true ;
             setReady( false ) ;
             draw.current = null ;
-            instance?.stop() ;
+
+            // 🚨 Torn down on the next frame, not now. The adapter renders
+            // through `requestAnimationFrame`, and `stop()` clears the map it
+            // renders against — so a render already queued when the effect is
+            // cleaned up would find nothing and throw
+            // `Cannot read properties of undefined (reading 'getSource')`.
+            // Letting that frame run first costs one tick and removes the race
+            // entirely. It bites on every hot reload, which is where it shows.
+            const doomed = instance ;
+
+            if ( doomed )
+            {
+                requestAnimationFrame( () =>
+                {
+                    try
+                    {
+                        doomed.stop() ;
+                    }
+                    catch
+                    {
+                        // The map may already be gone with the page ; there is
+                        // nothing left to tear down and nothing to report.
+                    }
+                } ) ;
+            }
         } ;
     }
     , [ map ] ) ;

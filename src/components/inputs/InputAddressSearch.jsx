@@ -6,7 +6,7 @@
  * @module components/inputs/InputAddressSearch
  */
 
-import { useCallback , useEffect , useId , useRef , useState } from 'react' ;
+import { useCallback , useEffect , useId , useLayoutEffect , useRef , useState } from 'react' ;
 
 import { MdLocationOn } from 'react-icons/md' ;
 
@@ -21,6 +21,7 @@ import useValue          from '../../hooks/useValue' ;
 import cn from '../../themes/helpers/cn' ;
 
 import Loading from '../Loading' ;
+import Portal  from '../Portal' ;
 
 import Input from './Input' ;
 
@@ -31,6 +32,23 @@ export const SEARCHING = 'searching' ;
 
 const DEFAULT_DELAY  = 300 ;
 const DEFAULT_LENGTH = 3 ;
+
+/** Breathing room between the field and its list. */
+const GAP = 4 ;
+
+/**
+ * Where the list has to be mounted to escape whatever clips it.
+ *
+ * A dropdown positioned inside its field is at the mercy of every ancestor
+ * with an `overflow` : a map frame clips it at the bottom edge, a modal body
+ * clips it too. Portalling to the body escapes both — **except** inside a
+ * `<dialog>` opened modally, whose top layer paints above everything in the
+ * body. So a dialog ancestor, when there is one, is the right host.
+ *
+ * @param {HTMLElement|null} node
+ * @returns {HTMLElement|null}
+ */
+const hostFor = ( node ) => node?.closest?.( 'dialog' ) ?? null ;
 
 /**
  * A combobox over a geocoder.
@@ -112,6 +130,47 @@ const InputAddressSearch =
     const debounced  = useDebouncedValue( query , debounceDelay ) ;
     const controller = useRef( null ) ;
     const chosen     = useRef( null ) ;
+
+    const anchorRef = useRef( null ) ;
+    const hostRef   = useRef( null ) ;
+
+    const [ coords , setCoords ] = useState( null ) ;
+
+    // Placed in fixed coordinates from the field's own rect, and kept there
+    // while the page scrolls or resizes under it.
+    useLayoutEffect( () =>
+    {
+        if ( !open || !anchorRef.current )
+        {
+            return ;
+        }
+
+        const place = () =>
+        {
+            const rect = anchorRef.current?.getBoundingClientRect() ;
+
+            if ( !rect )
+            {
+                return ;
+            }
+
+            hostRef.current = hostFor( anchorRef.current ) ;
+
+            setCoords({ left : rect.left , top : rect.bottom + GAP , width : rect.width }) ;
+        } ;
+
+        place() ;
+
+        window.addEventListener( 'resize' , place ) ;
+        window.addEventListener( 'scroll' , place , true ) ;
+
+        return () =>
+        {
+            window.removeEventListener( 'resize' , place ) ;
+            window.removeEventListener( 'scroll' , place , true ) ;
+        } ;
+    }
+    , [ open ] ) ;
 
     useEffect( () => () => controller.current?.abort() , [] ) ;
 
@@ -239,7 +298,7 @@ const InputAddressSearch =
                   : null ;
 
     return (
-        <div className={ cn( 'relative' , className ) }>
+        <div className={ cn( 'relative' , className ) } ref={ anchorRef }>
 
             <Input
                 aria-activedescendant = { open && active >= 0 ? optionId( active ) : undefined }
@@ -257,11 +316,13 @@ const InputAddressSearch =
             />
 
             {
-                open && (
+                open && coords && (
+                    <Portal containerRef={ hostRef }>
                     <div
-                        className = "absolute inset-x-0 top-full z-20 mt-1 max-h-72 overflow-y-auto rounded-box border border-base-300 bg-base-100 shadow-lg"
+                        className = "fixed z-1000 max-h-72 overflow-y-auto rounded-box border border-base-300 bg-base-100 shadow-lg"
                         id        = { listId }
                         role      = "listbox"
+                        style     = {{ left : coords.left , top : coords.top , width : coords.width }}
                     >
                         {
                             status === SEARCHING && !results.length && (
@@ -300,6 +361,7 @@ const InputAddressSearch =
                             ) )
                         }
                     </div>
+                    </Portal>
                 )
             }
 

@@ -197,7 +197,7 @@ const GeoSchemaDemo = () =>
 
             <Section
                 title       = "La collection GeoJSON"
-                description = "Ce qu'une source vectorielle consommera au lot 2. Le point hors bornes est écarté, il n'atterrit pas à zéro."
+                description = "Ce qu'une source vectorielle consomme. Le point hors bornes est écarté plutôt que placé à zéro."
             >
                 <CodeBlock className="text-xs!" language="json" showLineNumbers style={ oneDark }>
                     { JSON.stringify( collection , null , 2 ) }

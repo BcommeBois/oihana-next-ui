@@ -46,7 +46,7 @@ const MapZoneDemo = () =>
 
             <Section
                 title       = "Trois zones, trois formes"
-                description = "Un polygone tracé à la main, un rectangle, et un rayon autour d'un entrepôt. Les trois arrivent en « GeoShape », le format que ton back stocke déjà."
+                description = "Un polygone tracé à la main, un rectangle, et un rayon autour d'un entrepôt. Les trois sont décrits en « GeoShape », le format de schema.org."
             >
                 <div className="flex flex-wrap items-center gap-4">
                     <label className="label cursor-pointer gap-2 whitespace-nowrap">
