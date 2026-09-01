@@ -2,6 +2,7 @@ import alert      from './alert'
 import buttons    from './buttons'
 import dropdowns  from './dropdowns'
 import input      from './input'
+import map        from './map'
 import modal      from './modal'
 import pagination from './pagination'
 import picker     from './picker'
@@ -15,6 +16,7 @@ const components =
     buttons ,
     dropdowns,
     input ,
+    map ,
     modal ,
     pagination ,
     picker ,

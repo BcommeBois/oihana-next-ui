@@ -65,6 +65,8 @@
         "tailwindcss": "^4.3.3",
         "tailwindcss-animated": "^2.1.0",
         "tailwindcss-opentype": "^1.2.0",
+        "terra-draw": "^1.32.3",
+        "terra-draw-maplibre-gl-adapter": "^1.4.1",
       },
       "peerDependencies": {
         "@nivo/arcs": "^0.99.0",
@@ -85,6 +87,7 @@
         "next": "16.2.3",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
+        "supercluster": "^9.0.0",
         "tailwindcss": "^4.0.0",
       },
       "optionalPeers": [
@@ -102,6 +105,7 @@
         "@nivo/waffle",
         "@vis.gl/react-maplibre",
         "maplibre-gl",
+        "supercluster",
       ],
     },
   },
@@ -1011,6 +1015,10 @@
     "tailwindcss-opentype": ["tailwindcss-opentype@1.2.0", "", { "peerDependencies": { "tailwindcss": ">=3" } }, "sha512-vQ+Od/E57o6CG2pt4IBalN4yzs67a9QrP5at6NdD2wb4bMBLwnfyMity6QeP3HPtWVwjaCdUbP4vMYMLo/PCSw=="],
 
     "tapable": ["tapable@2.3.0", "", {}, "sha512-g9ljZiwki/LfxmQADO3dEY1CbpmXT5Hm2fJ+QaGKwSXUylMybePR7/67YW7jOrrvjEgL1Fmz5kzyAjWVWLlucg=="],
+
+    "terra-draw": ["terra-draw@1.32.3", "", {}, "sha512-pQpwL8winsDW6/DbBgsaZKeMc83D+HqokxR+t1AbrN4U7C4mGgEfCtmRix1/5L4GfkLh1FE7pq44SWt76vK2Bw=="],
+
+    "terra-draw-maplibre-gl-adapter": ["terra-draw-maplibre-gl-adapter@1.4.1", "", { "peerDependencies": { "maplibre-gl": ">=4", "terra-draw": "^1.0.0" } }, "sha512-qZ/bc9bVPnyt0keLVTofV8xiTPkdkbO6RzqrfNLe9zH/edW5PsjvJw97m1EksPZeXNJtFxsVbhi12cPaoNiWfg=="],
 
     "terser": ["terser@5.46.0", "", { "dependencies": { "@jridgewell/source-map": "^0.3.3", "acorn": "^8.15.0", "commander": "^2.20.0", "source-map-support": "~0.5.20" }, "bin": { "terser": "bin/terser" } }, "sha512-jTwoImyr/QbOWFFso3YoU3ik0jBBDJ6JTOQiy/J2YxVJdZCc+5u7skhNwiOR3FQIygFqVUPHl7qbbxtjW2K3Qg=="],
 

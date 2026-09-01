@@ -6,6 +6,7 @@ import Alert from '@/components/Alert' ;
 // biome-ignore lint/suspicious/noShadowRestrictedNames: the component is named `Map`, and this file never uses the built-in.
 import Map       from '@/components/maps/Map' ;
 import MapMarker from '@/components/maps/MapMarker' ;
+import MapDraw   from '@/components/maps/MapDraw' ;
 import MapZone   from '@/components/maps/MapZone' ;
 
 import CodeBlock from '@/components/typography/CodeBlock' ;
@@ -22,11 +23,14 @@ import fromSchema from '@/helpers/geo/fromSchema' ;
 
 const ROUND_TRIP = ZONES[ 0 ].geo ;
 
+const SEEDS = ZONES.map( ( zone ) => zone.geo ) ;
+
 const MapZoneDemo = () =>
 {
     const mapStyle = config?.ui?.map?.style ;
 
     const [ filled , setFilled ] = useState( true ) ;
+    const [ drawn  , setDrawn  ] = useState( SEEDS ) ;
 
     if ( !mapStyle )
     {
@@ -79,6 +83,35 @@ const MapZoneDemo = () =>
 
                 <p className="text-sm text-base-content/60">
                     { `Le cercle est le seul qui coûte quelque chose : « GeoShape.circle » est un centre et un rayon, et un point n'a pas d'intérieur. Il est approché par un polygone en coordonnées réelles — donc il grandit avec le zoom et survit à une rotation, là où un disque en pixels ne le ferait pas.` }
+                </p>
+            </Section>
+
+            <Section
+                title       = "Dessiner et modifier"
+                description = "Les trois modes sont exactement les trois membres de « GeoShape » : polygone, rectangle, cercle. Terra Draw en propose une douzaine — la main levée, le secteur, le capteur — mais les offrir laisserait dessiner des formes que l'enregistrement perdrait."
+            >
+                <Map
+                    ariaLabel = "Dessin de zones"
+                    aspect    = "16/9"
+                    mapStyle  = { mapStyle }
+                    maxHeight = { 560 }
+                    zoom      = { 10 }
+                    { ...fromSchema( CENTRE ) }
+                >
+                    <MapDraw defaultValue={ SEEDS } onChange={ setDrawn } />
+                </Map>
+
+                <div className="flex flex-col gap-1">
+                    <p className="text-xs font-semibold uppercase text-base-content/50">
+                        { `Ce qui partirait au back — ${ drawn.length } zone${ drawn.length > 1 ? 's' : '' }` }
+                    </p>
+                    <CodeBlock className="text-xs!" language="json" style={ oneDark }>
+                        { JSON.stringify( drawn , null , 2 ) }
+                    </CodeBlock>
+                </div>
+
+                <p className="text-sm text-base-content/60">
+                    { `Dessine un cercle et regarde ce qui sort : « circle » avec un centre et un rayon, pas un polygone de soixante-quatre points. Terra Draw note ce qui a dessiné chaque forme, donc l'intention survit à l'aller-retour. Le mode flèche reprend une forme existante — sommet par sommet, ou en entier.` }
                 </p>
             </Section>
 

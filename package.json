@@ -70,7 +70,9 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "supercluster": "^9.0.0",
-    "tailwindcss": "^4.0.0"
+    "tailwindcss": "^4.0.0",
+    "terra-draw": "^1.32.0",
+    "terra-draw-maplibre-gl-adapter": "^1.4.0"
   },
   "peerDependenciesMeta": {
     "@nivo/arcs": {
@@ -116,6 +118,12 @@
       "optional": true
     },
     "supercluster": {
+      "optional": true
+    },
+    "terra-draw": {
+      "optional": true
+    },
+    "terra-draw-maplibre-gl-adapter": {
       "optional": true
     }
   },
@@ -179,7 +187,9 @@
     "tailwind-scrollbar": "^4.0.2",
     "tailwindcss": "^4.3.3",
     "tailwindcss-animated": "^2.1.0",
-    "tailwindcss-opentype": "^1.2.0"
+    "tailwindcss-opentype": "^1.2.0",
+    "terra-draw": "^1.32.3",
+    "terra-draw-maplibre-gl-adapter": "^1.4.1"
   },
   "resolutions": {
     "serialize-javascript": "6.0.2"

@@ -36,6 +36,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - **The components absorb the point's fields now**, `Map` and `MapMarker` both, through one shared list in `helpers/geo/pointFields`. One list rather than two destructuring signatures, because the two must not drift : adding a field to a point shape and forgetting one of the components would put it straight back in the DOM.
 - **`latitude` and `longitude` are deliberately not in that list.** A component reading a point destructures those itself, and filtering them here would only hide a component that forgot to.
 
+**Drawing zones — the modes are the vocabulary**
+
+- **🚨 Three modes, and they are exactly the three `GeoShape` members** : polygon, rectangle, circle, plus a select mode to edit and delete. Terra Draw ships a dozen — freehand, sector, sensor, line, marker — and offering them would let someone spend ten minutes on a shape that saving would lose. A drawing tool whose modes exceed what the store can hold is a trap with a nice toolbar.
+- **🚨 A drawn circle goes back as a circle.** This was the one thing worth checking before promising anything, since a drawing library speaks GeoJSON and a circle is a polygon of many sides. Terra Draw records `properties.mode` on every feature and its circle mode keeps `radiusKilometers` — so the intent survives : centre plus radius, not sixty-four numbers nobody can edit. The centre is recovered as the mean of the ring and comes back exact to float epsilon, measured rather than hoped.
+- **The convention matched one we had already arrived at.** `parseGeoShape` records `properties.shape` for the same reason, independently. The two meet cleanly, which is what makes the round trip whole rather than one-directional.
+- **`onChange` emits `GeoShape`, not GeoJSON.** That is what the back office stores, and `parseGeoShape` converts the other way whenever a caller wants. The reverse would put the axis inversion in every application instead of in one file.
+- **`defaultValue` seeds and does not control**, and it is read through a ref rather than a dependency the linter has to be argued out of. A drawing surface holds work in progress : pushing a value into it mid-gesture would take the shape out from under the hand drawing it.
+- **A shape still being drawn is not a result.** The snapshot is filtered on Terra Draw's own `currentlyDrawing` flag, without which a parent would receive a half-finished polygon per vertex.
+- **Both packages load on mount, not at import.** They are optional peers and the dynamic import keeps a page that never draws from paying for either.
+- **The toolbar labels went to a locale bundle** — `components.map.draw`. They were hardcoded French in a library component, which is the same defect this project has corrected before, caught here before it shipped.
+- **No undo/redo**, although Terra Draw offers it : it needs its own controls, its keyboard shortcuts and a decision on scope — the session or the mode. Worth seeing before writing.
+
 **Zones — areas read from their shapes, and written back**
 
 - **`MapZone` is small because the two lots before it did the work** : `parseGeoShape` has converted `GeoShape` members since the first commit, and `MapGeoJSON` has filled polygons since yesterday. What is left is the one case neither covered.

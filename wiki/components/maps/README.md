@@ -353,6 +353,39 @@ The approximation is flat-earth, and measured rather than assumed : **0.11 % at 
 at 50 km, 0.23 % at 100 km**. At a two-kilometre delivery radius that is two metres. Past a few
 hundred kilometres a geodesic library is the right tool, and no delivery area has needed one.
 
+### Drawing them
+
+```jsx
+<Map { ...centre } mapStyle={ style }>
+    <MapDraw defaultValue={ zones } onChange={ setZones } />
+</Map>
+```
+
+**The three modes are exactly the three `GeoShape` members** — polygon, rectangle, circle — plus
+a select mode that edits and deletes. Terra Draw offers a dozen : freehand, sector, sensor,
+line, marker. Offering those would let someone spend ten minutes on a shape that saving would
+lose, so they are left out.
+
+**What comes out is what the store keeps.** `onChange` receives `GeoShape` objects rather than
+GeoJSON : that is what a back office holds, and `parseGeoShape` converts the other way whenever
+a caller needs it. Emitting GeoJSON instead would put the axis inversion in every application
+rather than in one place.
+
+**A drawn circle goes back as a circle.** Terra Draw records what drew each feature —
+`properties.mode` — and its circle mode keeps `radiusKilometers`, so a four-kilometre radius
+survives as a centre and a radius instead of becoming sixty-four numbers nobody can edit. The
+centre is recovered from the ring and comes back exact.
+
+**`defaultValue` seeds, it does not control.** A drawing surface holds work in progress, and
+pushing a new value into it mid-gesture would take the shape out from under the hand drawing it.
+
+Both packages are **optional peers** and are imported only when the component mounts, so a page
+that never draws pays for neither.
+
+| What you use | `npm i` |
+|---|---|
+| `MapDraw` | `terra-draw terra-draw-maplibre-gl-adapter` |
+
 ### Writing a shape back
 
 `toGeoShape` is the way back, and it lives in `parseGeoShape`'s own file so the two halves of the
