@@ -8,6 +8,8 @@
 
 import { MdPlace } from 'react-icons/md' ;
 
+import readableOn from '../../helpers/colors/readableOn' ;
+
 import { withoutPointFields } from '../../helpers/geo/pointFields' ;
 
 import cn from '../../themes/helpers/cn' ;
@@ -35,7 +37,13 @@ import { Marker } from './engine' ;
  * names it — a marker whose only label is its colour says nothing to a screen
  * reader.
  *
+ * **A `background` overrides `color`**, for a colour that comes from the data
+ * rather than from the theme — a route or a category carrying its own hex. The
+ * text is then computed against it by contrast, a hex having no `-content` pair
+ * to lean on, exactly as a cluster bubble does.
+ *
  * @param {Object} props
+ * @param {string} [props.background] - Fill as a colour value. Wins over `color`.
  * @param {React.ReactNode} [props.children] - Replaces the default pin entirely. Position and events still apply.
  * @param {string} [props.className] - Additional classes on the pin.
  * @param {import('../../themes/components/map').MapMarkerColor} [props.color='primary'] - Pin color.
@@ -55,6 +63,7 @@ import { Marker } from './engine' ;
  */
 const MapMarker =
 ({
+    background ,
     children ,
     className ,
     color ,
@@ -78,7 +87,11 @@ const MapMarker =
     // source along, and none of them is a marker option.
     const domProps = withoutPointFields( rest ) ;
 
-    const pinClassName = getMapMarkerClassNames({ className , color , interactive : !!onClick , size }) ;
+    const painted = !!background ;
+
+    const pinClassName = getMapMarkerClassNames({ className , color : painted ? null : color , interactive : !!onClick , size }) ;
+
+    const pinStyle = painted ? { background , color : readableOn( background ) } : undefined ;
 
     const inner = children ?? ( showIcon && Icon && (
         <Icon aria-hidden="true" className={ cn( 'size-2/3' , iconClassName ) } />
@@ -89,6 +102,7 @@ const MapMarker =
             <button
                 aria-label = { title }
                 className  = { pinClassName }
+                style      = { pinStyle }
                 title      = { title }
                 type       = "button"
             >
@@ -97,12 +111,12 @@ const MapMarker =
         )
         : title
             ? (
-                <div aria-label={ title } className={ pinClassName } role="img" title={ title }>
+                <div aria-label={ title } className={ pinClassName } role="img" style={ pinStyle } title={ title }>
                     { inner }
                 </div>
             )
             : (
-                <div className={ pinClassName }>
+                <div className={ pinClassName } style={ pinStyle }>
                     { inner }
                 </div>
             ) ;

@@ -98,3 +98,62 @@ export const makeCrowd = ( count = 240 ) =>
 
     return crowd ;
 } ;
+
+/**
+ * Two delivery routes, the way the back office describes them : places that
+ * carry the rank at which their circuit serves them, and a route term that
+ * carries its own colour.
+ *
+ * The ranks are deliberately out of order in the list — sorting them is the
+ * adapter's job, not the fixture's.
+ */
+export const ROUTES =
+[
+    {
+        '@type' : 'DeliveryRouteTerm' ,
+        color   : '#b45309' ,
+        name    : 'Tournée Nord' ,
+        stops   :
+        [
+            { '@type' : 'CustomerSite' , name : 'Saint-Ouen'      , position : 3 , latitude : 48.9057 , longitude : 2.3336 } ,
+            { '@type' : 'Warehouse'    , name : 'Gennevilliers'   , position : 1 , latitude : 48.9330 , longitude : 2.2940 } ,
+            { '@type' : 'CustomerSite' , name : 'Clichy'          , position : 2 , latitude : 48.9044 , longitude : 2.3064 } ,
+            { '@type' : 'CustomerSite' , name : 'Montmartre'      , position : 5 , latitude : 48.8867 , longitude : 2.3431 } ,
+            { '@type' : 'CustomerSite' , name : 'La Chapelle'     , position : 4 , latitude : 48.8900 , longitude : 2.3600 } ,
+        ] ,
+    } ,
+    {
+        '@type' : 'DeliveryRouteTerm' ,
+        color   : '#0f766e' ,
+        name    : 'Tournée Sud' ,
+        stops   :
+        [
+            { '@type' : 'Warehouse'    , name : 'Rungis'          , position : 1 , latitude : 48.7489 , longitude : 2.3606 } ,
+            { '@type' : 'CustomerSite' , name : 'Ivry'            , position : 2 , latitude : 48.8130 , longitude : 2.3880 } ,
+            { '@type' : 'CustomerSite' , name : 'Bercy'           , position : 3 , latitude : 48.8331 , longitude : 2.3866 } ,
+            { '@type' : 'CustomerSite' , name : 'Bastille'        , position : 4 , latitude : 48.8532 , longitude : 2.3692 } ,
+        ] ,
+    } ,
+] ;
+
+/**
+ * A path that follows the roads rather than cutting across them — what a
+ * routing service would answer for the first three stops of the northern route.
+ * Shortened by hand : enough points to read as a road, not a real trace.
+ */
+export const NORTH_PATH =
+{
+    type     : 'Feature' ,
+    geometry :
+    {
+        type        : 'LineString' ,
+        coordinates :
+        [
+            [ 2.2940 , 48.9330 ] , [ 2.2980 , 48.9250 ] , [ 2.3010 , 48.9160 ] ,
+            [ 2.3064 , 48.9044 ] , [ 2.3140 , 48.9020 ] , [ 2.3250 , 48.9010 ] ,
+            [ 2.3336 , 48.9057 ] , [ 2.3420 , 48.9000 ] , [ 2.3520 , 48.8940 ] ,
+            [ 2.3600 , 48.8900 ] , [ 2.3540 , 48.8880 ] , [ 2.3431 , 48.8867 ] ,
+        ] ,
+    } ,
+    properties : {} ,
+} ;

@@ -33,9 +33,11 @@ import 'maplibre-gl/dist/maplibre-gl.css' ;
 
 export {
     FullscreenControl ,
+    Layer ,
     Map as MapGL ,
     Marker ,
     NavigationControl ,
     Popup ,
     ScaleControl ,
+    Source ,
 } from '@vis.gl/react-maplibre' ;

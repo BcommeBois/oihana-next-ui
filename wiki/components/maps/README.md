@@ -293,6 +293,48 @@ that wrap both ways, Enter to take the highlighted one, Escape to close, and foc
 leaves the field. The options are deliberately *not* focusable — that is what the
 activedescendant pattern is, and making them focusable would break it.
 
+## Geometry the DOM cannot hold
+
+A route is a line and an area is a polygon : neither is an element, so both go through the
+engine's own layers. `MapGeoJSON` is the primitive.
+
+```jsx
+<Map { ...centre } mapStyle={ style }>
+    <MapGeoJSON color="error" data={ zone } />
+</Map>
+```
+
+**A layer is styled in the engine's paint spec, not in Tailwind.** `line-color` is a string the
+engine reads once, and a theme token means nothing to it — so the token is resolved against the
+colours the theme context extracts from the CSS variables, which is the very mechanism the
+charts have used since the beginning. Change the theme and the layer repaints. Anything that is
+not a known token — a hex carried by the data, an `oklch()` — goes through untouched.
+
+### Routes
+
+```jsx
+<MapRoute stops={ places } color={ route.color } geometry={ path } />
+```
+
+**It draws a geometry, it never computes an itinerary.** Working out the road between two
+addresses is a call to a routing service and belongs nowhere near a display component. Given a
+`geometry`, it draws that road, solid. Given none, it joins the stops with straight **dashed**
+segments — the dashes saying *this is an order of passage, not a road*. A solid line there would
+be a lie about a path nobody computed.
+
+**The order comes from the data.** `position` in the house schema, read through
+`helpers/geo/fromRoute` — which takes a `position` accessor for a payload that nests it, because
+guessing a property name works right up until the first API that nests it differently. The rank
+is printed inside each marker : a route whose order is invisible is a cloud of points.
+
+**The colour may come from the data too.** A `DeliveryRouteTerm` carries a hex, and it reaches
+the line and the markers alike — the marker painting it inline and computing its text by
+contrast, since a hex has no `-content` pair. A theme token takes the class path instead.
+
+`fit` brings the map to the whole route on mount, because a route almost always overflows the
+opening view. **Only one route per map should carry it** : two would fight over the view and the
+last one mounted would win.
+
 ## Coordinates are named, everywhere
 
 Every component and every helper speaks `latitude` and `longitude`, flat — which is also what

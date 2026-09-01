@@ -5,6 +5,7 @@ import i18n           from './i18n'
 import mapsMarkers    from './mapsMarkers'
 import mapsModel      from './mapsModel'
 import mapsPicker     from './mapsPicker'
+import mapsRoutes     from './mapsRoutes'
 import mapsView       from './mapsView'
 import metrics        from './metrics'
 import scheduler      from './scheduler'
@@ -23,6 +24,7 @@ const lab =
     mapsMarkers    ,
     mapsModel      ,
     mapsPicker     ,
+    mapsRoutes     ,
     mapsView       ,
     metrics        ,
     scheduler      ,

@@ -116,7 +116,7 @@ export const getMapClassNames = ({ beforeClassName , className } = {}) => cn
  * @param {Object} [props={}]
  * @param {string} [props.beforeClassName] - ClassName to prepend.
  * @param {string} [props.className] - ClassName to append.
- * @param {MapMarkerColor} [props.color='primary'] - Marker color.
+ * @param {MapMarkerColor|null} [props.color='primary'] - Marker color. `null` emits none, for a fill set inline.
  * @param {boolean} [props.interactive] - Add the cursor and hover affordances of a clickable marker.
  * @param {MapMarkerSize} [props.size='md'] - Marker size.
  * @returns {string}
@@ -130,7 +130,7 @@ export const getMapMarkerClassNames = ({ beforeClassName , className , color = P
 (
     beforeClassName ,
     'flex items-center justify-center rounded-full ring-2 ring-base-100 shadow-md' ,
-    markerColorMap[ color ] ?? markerColorMap[ PRIMARY ] ,
+    color && ( markerColorMap[ color ] ?? markerColorMap[ PRIMARY ] ) ,
     markerSizeMap[ size ] ?? markerSizeMap[ MD ] ,
     interactive && 'cursor-pointer transition-transform hover:scale-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-content' ,
     className ,

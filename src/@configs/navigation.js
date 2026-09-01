@@ -21,6 +21,7 @@ import { TbAlertSquareRounded   as AlertIcon          } from "react-icons/tb";
 import { TbMap2                 as MapIcon            } from "react-icons/tb";
 import { TbMapPin               as MapMarkerIcon      } from "react-icons/tb";
 import { TbMapPinCog            as PickerIcon         } from "react-icons/tb";
+import { TbRoute                as RouteIcon          } from "react-icons/tb";
 import { LuCirclePlus           as FabIcon            } from "react-icons/lu";
 import { RxAvatar               as AvatarIcon         } from "react-icons/rx";
 import { LuBadgeAlert           as BadgeIcon          } from "react-icons/lu";
@@ -167,6 +168,7 @@ const navigation =
                     { id : 'mapsView'    , type : LINK  , Icon : MapIcon        , path  : '/lab/maps'        } ,
                     { id : 'mapsMarkers' , type : LINK  , Icon : MapMarkerIcon  , path  : '/lab/mapsMarkers' } ,
                     { id : 'mapsPicker'  , type : LINK  , Icon : PickerIcon     , path  : '/lab/mapsPicker'  } ,
+                    { id : 'mapsRoutes'  , type : LINK  , Icon : RouteIcon      , path  : '/lab/mapsRoutes'  } ,
                     { id : 'mapsModel'   , type : LINK  , Icon : SchemaIcon     , path  : '/lab/mapsModel'   } ,
                 ]
             } ,
