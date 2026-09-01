@@ -157,3 +157,33 @@ export const NORTH_PATH =
     } ,
     properties : {} ,
 } ;
+
+/**
+ * Three delivery areas, described the way the back office describes them —
+ * `GeoShape` members, in schema.org's `latitude longitude` text.
+ *
+ * One of each kind on purpose : a polygon drawn by hand, a rectangle, and a
+ * radius around a warehouse. The circle is the one that costs something to
+ * draw, having no inside until it is approximated.
+ */
+export const ZONES =
+[
+    {
+        '@type' : 'Place' ,
+        color   : '#7c3aed' ,
+        geo     : { '@type' : 'GeoShape' , polygon : '48.895 2.28 48.900 2.36 48.870 2.40 48.845 2.35 48.855 2.29' } ,
+        name    : 'Secteur Nord-Ouest' ,
+    } ,
+    {
+        '@type' : 'Place' ,
+        color   : '#0f766e' ,
+        geo     : { '@type' : 'GeoShape' , box : '48.815 2.33 48.845 2.40' } ,
+        name    : 'Secteur Sud-Est' ,
+    } ,
+    {
+        '@type' : 'Place' ,
+        color   : 'warning' ,
+        geo     : { '@type' : 'GeoShape' , circle : '48.7489 2.3606 4000' } ,
+        name    : 'Rayon de Rungis — 4 km' ,
+    } ,
+] ;

@@ -6,6 +6,7 @@ import mapsMarkers    from './mapsMarkers'
 import mapsModel      from './mapsModel'
 import mapsPicker     from './mapsPicker'
 import mapsRoutes     from './mapsRoutes'
+import mapsZones      from './mapsZones'
 import mapsView       from './mapsView'
 import metrics        from './metrics'
 import scheduler      from './scheduler'
@@ -25,6 +26,7 @@ const lab =
     mapsModel      ,
     mapsPicker     ,
     mapsRoutes     ,
+    mapsZones      ,
     mapsView       ,
     metrics        ,
     scheduler      ,

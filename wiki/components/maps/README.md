@@ -335,6 +335,42 @@ contrast, since a hex has no `-content` pair. A theme token takes the class path
 opening view. **Only one route per map should carry it** : two would fight over the view and the
 last one mounted would win.
 
+### Zones
+
+```jsx
+<MapZone shape={ place.geo } color={ area.color } />
+```
+
+It takes what an application actually has : the `GeoShape` its API returned, the `Place` holding
+one in `geo`, or GeoJSON it built itself.
+
+**A circle becomes a polygon here, and that is the whole component.** `parseGeoShape` keeps a
+`GeoShape.circle` as a centre and a radius — faithful to schema.org and impossible to fill,
+since a point has no inside. So it is approximated as a polygon in real coordinates, which grows
+with the zoom and survives a rotation where a disc of fixed pixels would not.
+
+The approximation is flat-earth, and measured rather than assumed : **0.11 % at 1.5 km, 0.06 %
+at 50 km, 0.23 % at 100 km**. At a two-kilometre delivery radius that is two metres. Past a few
+hundred kilometres a geodesic library is the right tool, and no delivery area has needed one.
+
+### Writing a shape back
+
+`toGeoShape` is the way back, and it lives in `parseGeoShape`'s own file so the two halves of the
+same inversion are read side by side — anywhere else, one could be corrected without the other.
+
+```js
+toGeoShape( feature ) ; // → { '@type' : 'GeoShape' , polygon : '48.845 2.32 …' }
+```
+
+A round trip returns the same member : the shape that was read is recorded in
+`properties.shape`, so a box comes back a box rather than the polygon it was drawn as. The only
+expected difference is a polygon's repeated first point — GeoJSON requires a closed ring where
+schema.org only recommends one. Float noise is trimmed to twelve significant digits, so `2.32`
+does not come back as `2.3200000000000003`.
+
+**A `MultiPolygon` is a known gap** : `MapGeoJSON` filters its fill on `Polygon`, so a multi
+would be outlined and not filled. To be lifted the day a payload carries one.
+
 ## Coordinates are named, everywhere
 
 Every component and every helper speaks `latitude` and `longitude`, flat — which is also what

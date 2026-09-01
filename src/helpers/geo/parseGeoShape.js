@@ -1,5 +1,5 @@
 /**
- * Reads a schema.org `GeoShape` into GeoJSON.
+ * Reads a schema.org `GeoShape` into GeoJSON, and writes one back.
  *
  * ### The one place in this folder that touches the axis order
  *
@@ -17,6 +17,12 @@
  * halves of a point. Both are read. What is not forgiven is a wrong number of
  * values : an odd count, or a polygon of two points, means the payload is
  * wrong and `null` says so.
+ *
+ * ### Both directions live here, deliberately
+ *
+ * `toGeoShape` is the way back, and it sits in this file rather than a
+ * neighbouring one so the two halves of the same inversion are read side by
+ * side. Anywhere else, one could be corrected without the other.
  *
  * @module helpers/geo/parseGeoShape
  */
@@ -247,6 +253,113 @@ const parseGeoShape = ( shape , type ) =>
     }
 
     return geometry && { type : 'Feature' , geometry , properties } ;
+} ;
+
+/**
+ * Trims the float noise a round trip leaves behind.
+ *
+ * `2.32` read, projected and written back can come out as
+ * `2.3200000000000003` — true to the double, useless to a reader, and a diff
+ * against the stored value for no reason. Twelve significant digits is well
+ * past any coordinate's meaning and short of where the noise starts, which is
+ * the same figure `MetricScale` settled on.
+ *
+ * @param {number} value
+ * @returns {number}
+ */
+const trim = ( value ) => Number( Number( value ).toPrecision( 12 ) ) ;
+
+/**
+ * Writes GeoJSON positions back as schema.org text.
+ *
+ * **The inversion happens again, the other way.** Positions are
+ * `[ longitude , latitude ]` and schema.org writes `latitude longitude`.
+ *
+ * @param {number[][]} positions
+ * @returns {string}
+ */
+const fromPositions = ( positions ) => positions
+    .map( ( [ longitude , latitude ] ) => `${ trim( latitude ) } ${ trim( longitude ) }` )
+    .join( ' ' ) ;
+
+/**
+ * Writes a GeoJSON feature back into a schema.org `GeoShape`.
+ *
+ * A round trip through `parseGeoShape` and back returns the same member : the
+ * shape it read is recorded in `properties.shape`, so a box comes back a box
+ * rather than the polygon it was drawn as. Without that hint the member is
+ * inferred from the geometry, and a rectangle is then indistinguishable from
+ * any other four-cornered polygon — which is correct, since it is.
+ *
+ * @param {Object} feature - A GeoJSON `Feature` or geometry.
+ * @param {Object} [options]
+ * @param {number} [options.radius] - Metres, for a point being written as a circle.
+ * @param {'polygon'|'line'|'box'|'circle'} [options.shape] - Forces the member.
+ * @returns {Object|null} A `GeoShape`, or `null` when there is nothing to write.
+ *
+ * @example
+ * ```js
+ * toGeoShape( parseGeoShape({ polygon : '48.845 2.32 48.865 2.32 48.865 2.37' }) ) ;
+ * // → { '@type' : 'GeoShape' , polygon : '48.845 2.32 48.865 2.32 48.865 2.37 48.845 2.32' }
+ * ```
+ */
+export const toGeoShape = ( feature , { radius , shape } = {} ) =>
+{
+    const geometry = feature?.geometry ?? feature ;
+    const hinted   = shape ?? feature?.properties?.shape ;
+
+    if ( !geometry?.type )
+    {
+        return null ;
+    }
+
+    const written = { '@type' : 'GeoShape' } ;
+
+    if ( geometry.type === 'Point' )
+    {
+        const metres = radius ?? feature?.properties?.radius ;
+        const [ longitude , latitude ] = geometry.coordinates ?? [] ;
+
+        if ( !Number.isFinite( metres ) || !Number.isFinite( latitude ) || !Number.isFinite( longitude ) )
+        {
+            return null ;
+        }
+
+        return { ...written , [ CIRCLE ] : `${ trim( latitude ) } ${ trim( longitude ) } ${ trim( metres ) }` } ;
+    }
+
+    if ( geometry.type === 'LineString' )
+    {
+        return { ...written , [ hinted === BOX ? BOX : LINE ] : fromPositions( geometry.coordinates ?? [] ) } ;
+    }
+
+    if ( geometry.type !== 'Polygon' )
+    {
+        return null ;
+    }
+
+    const ring = geometry.coordinates?.[ 0 ] ?? [] ;
+
+    if ( ring.length < 4 )
+    {
+        return null ;
+    }
+
+    if ( hinted === BOX )
+    {
+        // A box is two opposite corners, so the ring collapses back to its own
+        // extent rather than to the four points it was drawn with.
+        const longitudes = ring.map( ( [ longitude ] ) => longitude ) ;
+        const latitudes  = ring.map( ( [ , latitude ] ) => latitude ) ;
+
+        return { ...written , [ BOX ] : fromPositions
+        ([
+            [ Math.min( ...longitudes ) , Math.min( ...latitudes ) ] ,
+            [ Math.max( ...longitudes ) , Math.max( ...latitudes ) ] ,
+        ]) } ;
+    }
+
+    return { ...written , [ POLYGON ] : fromPositions( ring ) } ;
 } ;
 
 export default parseGeoShape ;
