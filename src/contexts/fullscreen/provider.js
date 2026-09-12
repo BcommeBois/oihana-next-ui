@@ -1,13 +1,15 @@
 'use client' ;
 
-import { useRef } from 'react' ;
-
-import { useFullscreen as useFullscreenHook , useToggle } from 'react-use' ;
+import { useRef , useState } from 'react' ;
 
 import FullscreenContext from './context' ;
 
 /**
  * Provides fullscreen context with toggle functionality.
+ *
+ * The state is derived from `document.fullscreenElement` rather than held
+ * beside it, so leaving fullscreen by any route — the Escape key included —
+ * reports itself.
  *
  * @param {Object} props
  * @param {React.ReactNode} props.children - Child components.
@@ -40,20 +42,36 @@ const FullscreenProvider = ( { children } ) =>
 {
     const ref = useRef( null ) ;
 
-    const [ show , toggle ] = useToggle( false ) ;
+    const [ isFullscreen , setIsFullscreen ] = useState( false ) ;
 
-    const isFullscreen = useFullscreenHook( ref , show ,
-{
-        onClose: () => toggle( false )
-    } ) ;
-
+    // The request goes out in the click itself : the Fullscreen API grants it
+    // only while the user gesture is still active.
     const toggleFullscreen = () =>
     {
-        toggle( !show ) ;
+        if ( document.fullscreenElement )
+        {
+            document.exitFullscreen().catch( () => {} ) ;
+            return ;
+        }
+
+        const element = ref.current ;
+
+        // iOS Safari has no element fullscreen at all.
+        if ( !element?.requestFullscreen )
+        {
+            return ;
+        }
+
+        // A refusal leaves the state alone — no change event, nothing to undo.
+        element.requestFullscreen().catch( () => {} ) ;
     } ;
 
     return (
-        <div className="flex flex-col grow min-h-screen w-full min-w-0 overflow-y-auto" ref={ ref }>
+        <div
+            className          = "flex flex-col grow min-h-screen w-full min-w-0 overflow-y-auto"
+            onFullscreenChange = { () => setIsFullscreen( document.fullscreenElement === ref.current ) }
+            ref                = { ref }
+        >
             <FullscreenContext value={ { isFullscreen , toggleFullscreen } }>
                 { children }
             </FullscreenContext>

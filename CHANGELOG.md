@@ -8,6 +8,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**`contexts/fullscreen` — the provider asks the browser in the click, and reads the answer off the document**
+
+- **`react-use`'s `useFullscreen` is gone, replaced by React 19.3's `onFullscreenChange`.** The dependency drove the request from a *layout effect* : a state flipped, a render happened, and only then did `screenfull.request()` go out. The Fullscreen API grants a request while the user gesture is still active — so that worked by arriving just early enough, not by right. `requestFullscreen()` now leaves from the click handler itself.
+- **🚨 One source of truth instead of two.** The provider used to hold a `show` flag beside `document.fullscreenElement` and glue them back together through an `onClose` callback. `isFullscreen` is now derived from the document on every change event, so leaving fullscreen by any route reports itself — the Escape key included, which needed no code at all.
+- **A refused request no longer throws into the void.** `screenfull.request()` returns a promise and `react-use` wrapped it in a `try/catch`, which cannot catch a rejection : a browser saying no produced an unhandled rejection in the console. The rejection is caught, and the state is left alone — nothing was set, so nothing has to be undone.
+- **🚨 Safari below 16.4 loses fullscreen, deliberately.** `screenfull` normalised the `webkit`-prefixed names ; React registers `fullscreenchange` unprefixed and nothing else — unlike `animationend` and `transitionend`, which it does vendor-prefix. Safari has shipped the standard API since March 2023, and this repository already requires MapLibre 5, Tailwind 4 and DaisyUI 5. iOS Safari, which has no element fullscreen at any version, is guarded rather than left to throw : the toggle returns instead of calling a method that is not there, exactly as it behaved before.
+- **The context value is untouched** — `{ isFullscreen , toggleFullscreen }`, same names, same meaning. `FullscreenButton` and `Navbar`, its two consumers, did not change a line.
+- `react-use` stays installed : `useMedia` alone is in twelve charts.
+
 **`contexts` — the ten context modules say they are client modules, which React 19.3 now asks of them**
 
 - **The ten providers and twenty-three of the twenty-four hooks already carried `'use client'` ; the `context.js` files did not.** `createContext` cannot run in a Server Component, so importing one of them from a server file has always failed — the directive is what turns that runtime failure into a proper client boundary. `components/maps/context.js` had it from its first commit ; the other ten are now aligned with it.
