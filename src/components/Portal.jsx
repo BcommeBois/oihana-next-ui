@@ -1,5 +1,7 @@
 'use client' ;
 
+import { useEffect , useState } from 'react' ;
+
 import { createPortal } from 'react-dom' ;
 
 /**
@@ -42,15 +44,25 @@ const Portal =
      portalKey
 }) =>
 {
+    // A portal has no server-side form, and the hydration render has to say the
+    // same thing the server said — so the target is only reached once mounted.
+    // `document?.body` would not have guarded the server either : optional
+    // chaining protects a null value, not an undeclared global.
+    const [ mounted , setMounted ] = useState( false ) ;
+
+    useEffect( () => { setMounted( true ) ; } , [] ) ;
+
     if ( disabled )
     {
         return children ;
     }
 
-    // `document?.body` does not guard this : optional chaining protects a null
-    // value, not an undeclared global. Server-side, `document` throws first.
-    const container = containerRef?.current
-        ?? ( typeof document === 'undefined' ? null : document.body ) ;
+    if ( !mounted )
+    {
+        return null ;
+    }
+
+    const container = containerRef?.current ?? document.body ;
 
     if ( !container )
     {
