@@ -1,6 +1,6 @@
 'use client' ;
 
-import { useEffect , useMemo , useState } from 'react' ;
+import { Fragment , startTransition , useEffect , useMemo , useState } from 'react' ;
 
 import useLang       from '../../contexts/lang/useLang' ;
 import useValue      from '../../hooks/useValue' ;
@@ -13,10 +13,14 @@ import getCalendarClasses , { CALENDAR_CELL_MAX , CALENDAR_CELL_MIN } from '../.
 import { getRangeShortcuts , getSingleShortcuts } from '../../helpers/date/shortcuts' ;
 import createDisabledModel from '../../helpers/date/createDisabledModel' ;
 
+import { ViewTransition , addTransitionType } from '../../helpers/react/viewTransition' ;
+
 import MonthGrid from './calendar/MonthGrid' ;
 import MonthsGrid from './calendar/MonthsGrid' ;
 import YearsGrid from './calendar/YearsGrid' ;
 import Shortcuts from './calendar/Shortcuts' ;
+
+import './styles/calendar-transition.css' ;
 
 /** Single-date selection mode. */
 export const SINGLE = 'single' ;
@@ -25,6 +29,17 @@ export const SINGLE = 'single' ;
 export const RANGE = 'range' ;
 
 const EMPTY_RANGE = { from : null , to : null } ;
+
+// Which way the reader is going. The month leaves on that side and the next one
+// arrives from the other — see styles/calendar-transition.css.
+const NEXT     = 'next' ;
+const PREVIOUS = 'previous' ;
+
+const MONTH_UPDATE =
+{
+    [ NEXT ]     : 'oihana-calendar-next' ,
+    [ PREVIOUS ] : 'oihana-calendar-previous' ,
+} ;
 
 // Quick-navigation picker kinds (a month column shows one in place of its days).
 const MONTHS_VIEW = 'months' ;
@@ -58,6 +73,7 @@ const toLength = ( value ) =>
  *
  * @param {Object} props
  * @param {boolean} [props.allowDisabledInRange=false] - Allow a selected range to span blocked days (by default a range stops before the first blocked day).
+ * @param {boolean} [props.animate=false] - Slide the month in the direction being navigated, through the browser's View Transition API. Off by default : it is a change of behaviour, and the arrows work the same without it. Needs React 19.3 — an older one simply does not animate. Honours `prefers-reduced-motion` by fading instead of travelling.
  * @param {number|string} [props.cellMax] - How large a day cell may become when there is room. A number is pixels. **Set it to `cellMin` and the month stops growing altogether** — which is how this is turned off, rather than with a second prop. Defaults to the theme's, half again the floor.
  * @param {number|string} [props.cellMin] - How small a day cell may become. Defaults to the theme's, which is what a `btn-sm btn-square` measures — the value that keeps a calendar in a popover exactly as it was.
  * @param {boolean} [props.clearable=false] - Re-clicking the selected day (single) or a range endpoint clears the selection; `Escape` also clears.
@@ -96,6 +112,7 @@ const toLength = ( value ) =>
 const Calendar =
 ({
     allowDisabledInRange = false ,
+    animate = false ,
     cellMax ,
     cellMin ,
     className ,
@@ -169,6 +186,31 @@ const Calendar =
 
     const minDay = useMemo( () => ( min ? dayjs( min ).startOf( 'day' ) : null ) , [ min ] ) ;
     const maxDay = useMemo( () => ( max ? dayjs( max ).startOf( 'day' ) : null ) , [ max ] ) ;
+
+    // A stable region, tagged only when asked : without `animate` this is a plain
+    // Fragment and no transition is ever started.
+    const Frame      = animate ? ViewTransition : Fragment ;
+    const frameProps = animate ? { update : MONTH_UPDATE } : {} ;
+
+    // Arrow navigation. The transition type is what tells the stylesheet which way
+    // the reader is going ; without `animate` the state is set plainly, so nothing
+    // is marked as a Transition and nothing animates.
+    const goMonths = ( delta ) =>
+    {
+        const move = () => setViewMonth( ( m ) => m.add( delta , 'month' ) ) ;
+
+        if ( !animate )
+        {
+            move() ;
+            return ;
+        }
+
+        startTransition( () =>
+        {
+            addTransitionType( delta < 0 ? PREVIOUS : NEXT ) ;
+            move() ;
+        } ) ;
+    } ;
 
     // Quick-navigation handlers, per month column. Picking a month sets the anchor
     // so the picked month lands in the column it was opened from (in a dual view
@@ -391,6 +433,10 @@ const Calendar =
                 {/* Wider apart than the 1rem two content-sized months used to need :
                     now that each one fills its half, the space between them is all
                     that tells the eye where one month ends and the next begins. */}
+                {/* One stable region whose content changes, rather than a wrapper
+                    per column : `update` is what animates a replacement in place,
+                    and a keyed element that comes and goes is never tagged. */}
+                <Frame { ...frameProps }>
                 <div className="flex min-w-0 flex-1 flex-col gap-4 sm:flex-row sm:gap-8">
                     { monthsArr.map( ( month , i ) =>
                     {
@@ -432,28 +478,29 @@ const Calendar =
                         }
 
                         return (
-                            <MonthGrid
-                                key          = { month.valueOf() }
-                                month        = { month }
-                                lang         = { lang }
-                                showPrev     = { i === 0 }
-                                showNext     = { i === monthCount - 1 }
-                                prevDisabled = { prevMonthDisabled }
-                                nextDisabled = { nextMonthDisabled }
-                                onPrev       = { () => setViewMonth( ( m ) => m.subtract( 1 , 'month' ) ) }
-                                onNext       = { () => setViewMonth( ( m ) => m.add( 1 , 'month' ) ) }
-                                getDayState  = { ( day ) => getDayState( day , month ) }
-                                onPick       = { handlePick }
-                                onHover      = { handleHover }
-                                onLeave      = { () => setHovered( null ) }
-                                headerInteractive = { true }
-                                onMonthClick = { () => openMonths( i ) }
-                                onYearClick  = { () => openYears( i ) }
-                                weekStartsOn = { weekStartsOn }
-                            />
+                                <MonthGrid
+                                    key          = { month.valueOf() }
+                                    month        = { month }
+                                    lang         = { lang }
+                                    showPrev     = { i === 0 }
+                                    showNext     = { i === monthCount - 1 }
+                                    prevDisabled = { prevMonthDisabled }
+                                    nextDisabled = { nextMonthDisabled }
+                                    onPrev       = { () => goMonths( -1 ) }
+                                    onNext       = { () => goMonths(  1 ) }
+                                    getDayState  = { ( day ) => getDayState( day , month ) }
+                                    onPick       = { handlePick }
+                                    onHover      = { handleHover }
+                                    onLeave      = { () => setHovered( null ) }
+                                    headerInteractive = { true }
+                                    onMonthClick = { () => openMonths( i ) }
+                                    onYearClick  = { () => openYears( i ) }
+                                    weekStartsOn = { weekStartsOn }
+                                />
                         ) ;
                     } ) }
                 </div>
+                </Frame>
             </div>
         </div>
     ) ;

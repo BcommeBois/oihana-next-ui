@@ -1,0 +1,94 @@
+/**
+ * Directional month change for <Calendar animate>.
+ *
+ * The calendar wraps its month row in a single <ViewTransition update={…}>, so
+ * both snapshots of that one region — the month leaving and the month arriving —
+ * carry the class named for the direction. React writes it into the element's
+ * `view-transition-class`, which is selected through `*.<name>` on the
+ * pseudo-elements.
+ *
+ * ### The two never share the screen
+ *
+ * Both snapshots are stacked in the same box, so a short travel makes them read
+ * as one double-exposed month rather than as a movement. The old one leaves
+ * first and the new one waits for it : `both` holds the opening keyframe through
+ * the delay, so nothing is painted twice. Clipping the group keeps the journey
+ * inside the calendar instead of sweeping over what sits beside it.
+ */
+
+::view-transition-group( *.oihana-calendar-next ) ,
+::view-transition-group( *.oihana-calendar-previous )
+{
+    overflow : hidden ;
+}
+
+@keyframes oihana-calendar-in-from-right
+{
+    from { opacity : 0 ; transform : translateX(  40% ) ; }
+}
+
+@keyframes oihana-calendar-in-from-left
+{
+    from { opacity : 0 ; transform : translateX( -40% ) ; }
+}
+
+@keyframes oihana-calendar-out-to-left
+{
+    to { opacity : 0 ; transform : translateX( -40% ) ; }
+}
+
+@keyframes oihana-calendar-out-to-right
+{
+    to { opacity : 0 ; transform : translateX(  40% ) ; }
+}
+
+::view-transition-old( *.oihana-calendar-next )
+{
+    animation : oihana-calendar-out-to-left 130ms ease-in both ;
+}
+
+::view-transition-new( *.oihana-calendar-next )
+{
+    animation : oihana-calendar-in-from-right 190ms cubic-bezier( 0.22 , 1 , 0.36 , 1 ) 130ms both ;
+}
+
+::view-transition-old( *.oihana-calendar-previous )
+{
+    animation : oihana-calendar-out-to-right 130ms ease-in both ;
+}
+
+::view-transition-new( *.oihana-calendar-previous )
+{
+    animation : oihana-calendar-in-from-left 190ms cubic-bezier( 0.22 , 1 , 0.36 , 1 ) 130ms both ;
+}
+
+/**
+ * A reader who asked for less motion gets the change, not the travel — a plain
+ * fade rather than nothing at all, so the month is still seen to have changed.
+ * Scoped to these two classes : a page's own view transitions are none of our
+ * business.
+ */
+@media ( prefers-reduced-motion : reduce )
+{
+    ::view-transition-old( *.oihana-calendar-next ) ,
+    ::view-transition-old( *.oihana-calendar-previous )
+    {
+        animation : oihana-calendar-fade-out 100ms linear both ;
+    }
+
+    ::view-transition-new( *.oihana-calendar-next ) ,
+    ::view-transition-new( *.oihana-calendar-previous )
+    {
+        animation : oihana-calendar-fade-in 100ms linear 100ms both ;
+    }
+}
+
+@keyframes oihana-calendar-fade-in
+{
+    from { opacity : 0 ; }
+}
+
+@keyframes oihana-calendar-fade-out
+{
+    to { opacity : 0 ; }
+}

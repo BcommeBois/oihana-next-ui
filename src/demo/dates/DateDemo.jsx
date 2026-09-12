@@ -138,6 +138,30 @@ const DateDemo = () =>
             </div>
 
             <div className="flex flex-col gap-3">
+                <span className="font-semibold">Animate the month change (animate)</span>
+                <p className="text-xs opacity-50">
+                    The month slides in the direction the arrows point, through the browser's View Transition API.
+                    Off by default. The two calendars below differ by that single prop — use the arrows on both and
+                    compare. A reader who asks for reduced motion gets a fade instead of the travel, and a browser
+                    without the API simply changes the month as it always did.
+                </p>
+                <div className="flex flex-wrap gap-4">
+                    <div className="flex flex-col gap-2">
+                        <span className="text-xs opacity-50">Default</span>
+                        <div className="w-fit max-w-full overflow-x-auto rounded-box border border-base-300 bg-base-100 p-3 shadow-sm">
+                            <Calendar />
+                        </div>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                        <span className="text-xs opacity-50">animate</span>
+                        <div className="w-fit max-w-full overflow-x-auto rounded-box border border-base-300 bg-base-100 p-3 shadow-sm">
+                            <Calendar animate />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="flex flex-col gap-3">
                 <span className="font-semibold">Force the first day of week (weekStartsOn)</span>
                 <p className="text-xs opacity-50">
                     Independent of the locale : <span className="font-mono">weekStartsOn="sun"</span> starts weeks on
