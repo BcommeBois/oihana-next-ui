@@ -8,6 +8,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**`contexts/themes` — the theme is read from a store, not held beside one**
+
+- **🚨 `resolvedIsDark` had two ways of contradicting the server, and only one of them was the obvious one.** `react-use`'s `useLocalStorage` initialises with `useState( () => localStorage.getItem( key ) )`, so the stored theme was read **during the first client render** ; and `usePrefersDark` did the same with `window.matchMedia`. The server rendered `null` and `false`, the browser rendered the truth, and anything a consumer rendered from `isDark` was a hydration mismatch. Fixing the storage half alone would have left the whole defect standing for anyone whose system is in dark mode.
+- **Both are `useSyncExternalStore` now, which is the API built for exactly this** : `getServerSnapshot` answers the hydration render, React reads the browser once hydration is over and re-renders if it disagrees. No mismatch, no correcting Effect, no state duplicated beside the source of truth.
+- **The pattern was already in the house** — `hooks/useDisplayPreference` has worked this way since it was written, over the same `readStorage` / `writeStorage` / `subscribeStorage` helpers. The theme provider was the last place still reading storage at first render.
+- **Nothing stored changes, which is what makes this safe to ship.** `readStorage` parses JSON and `writeStorage` serialises it, exactly as `react-use` did — an existing `theme` value keeps being read, and the inline blocking script's own `JSON.parse` is untouched. Nor is there anything to migrate for a visitor who never toggled : `react-use` wrote its initial value only when that value was truthy, and here it was `null`.
+- **🚨 `toggleIsDark` writes with `{ cookie : false }`.** `writeStorage` sets a cookie by default and `useLocalStorage` never did — turning it on would have sent a theme cookie with every request to the domain, to be read by nobody. The day a consumer needs an `isDark` the server can get right, the cookie plus a `defaultIsDark` prop is the way in, and it is a piece of work of its own.
+- **`usePrefersColorScheme` was fixed with its twin.** Same defect to the line, no consumer in this repository — but it is exported, so leaving the bug in one of two identical hooks was not an option. Its guard for browsers without `MediaQueryList.addEventListener` went with the rewrite : that is Safari 13 and older.
+- One `react-use` import fewer. The dependency stays — `useMedia` alone is in twelve charts.
+
 **`contexts/fullscreen` — the provider asks the browser in the click, and reads the answer off the document**
 
 - **`react-use`'s `useFullscreen` is gone, replaced by React 19.3's `onFullscreenChange`.** The dependency drove the request from a *layout effect* : a state flipped, a render happened, and only then did `screenfull.request()` go out. The Fullscreen API grants a request while the user gesture is still active — so that worked by arriving just early enough, not by right. `requestFullscreen()` now leaves from the click handler itself.

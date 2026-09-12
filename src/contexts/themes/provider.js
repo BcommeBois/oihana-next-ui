@@ -1,12 +1,13 @@
 'use client' ;
 
-import { useEffect , useState } from 'react' ;
-
-import { useLocalStorage } from 'react-use' ;
+import { useEffect , useState , useSyncExternalStore } from 'react' ;
 
 import useThemeColor from './useThemeColor';
 
 import extractThemeColorsFromDOM from '../../themes/helpers/extractThemeColorsFromDom' ;
+import readStorage               from '../../helpers/storage/readStorage' ;
+import subscribeStorage          from '../../helpers/storage/subscribeStorage' ;
+import writeStorage              from '../../helpers/storage/writeStorage' ;
 import useConfig                 from '../config/useConfig' ;
 import usePrefersDark            from '../../themes/hooks/usePrefersDark';
 
@@ -163,8 +164,17 @@ const ThemesProvider =
 {
     const { light = LIGHT , dark = DARK } = useConfig() ?? {} ;
 
-    const [ isDark , setIsDark ] = useLocalStorage( storageKey , null ) ;
     const [ colors , setColors ] = useState( {} ) ;
+
+    // The stored theme is read through the store rather than held beside it :
+    // the server is told `null` and the browser is read once React is
+    // hydrating, so the first client render agrees with the server markup.
+    const isDark = useSyncExternalStore
+    (
+        subscribeStorage ,
+        () => readStorage( storageKey ) ,
+        () => null
+    ) ;
 
     const prefersDark    = usePrefersDark() ;
     const resolvedIsDark = isDark ?? prefersDark ?? false ;
@@ -172,7 +182,10 @@ const ThemesProvider =
     const toggleIsDark = () =>
     {
         const newIsDark = !resolvedIsDark ;
-        setIsDark( newIsDark ) ;
+
+        // No cookie : nothing reads one server-side today, and one would be
+        // sent with every request to the domain.
+        writeStorage( storageKey , newIsDark , { cookie : false } ) ;
 
         const element = document.querySelector( tag ) ;
         if ( element )

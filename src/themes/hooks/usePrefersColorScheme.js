@@ -1,4 +1,4 @@
-import { useEffect , useState } from 'react' ;
+import { useSyncExternalStore } from 'react' ;
 
 /**
  * MediaQueryList change event type.
@@ -29,10 +29,77 @@ const NO_PREFERENCE = 'no-preference' ;
  */
 
 /**
+ * The two MediaQueryLists, created on first use.
+ *
+ * `getSnapshot` runs on every render, and a list can only be built in a
+ * browser — so they are neither built at module scope nor rebuilt each time.
+ *
+ * @type {{ dark: MediaQueryList , light: MediaQueryList }|null}
+ */
+let mediaQueries = null ;
+
+/**
+ * @returns {{ dark: MediaQueryList , light: MediaQueryList }}
+ */
+const getMediaQueries = () =>
+{
+    if ( mediaQueries === null )
+    {
+        mediaQueries =
+        {
+            dark  : window.matchMedia( `(prefers-color-scheme: ${ DARK })`  ) ,
+            light : window.matchMedia( `(prefers-color-scheme: ${ LIGHT })` ) ,
+        } ;
+    }
+
+    return mediaQueries ;
+} ;
+
+/**
+ * @param {() => void} callback
+ * @returns {() => void}
+ */
+const subscribe = ( callback ) =>
+{
+    const { dark , light } = getMediaQueries() ;
+
+    dark.addEventListener( CHANGE , callback ) ;
+    light.addEventListener( CHANGE , callback ) ;
+
+    return () =>
+    {
+        dark.removeEventListener( CHANGE , callback ) ;
+        light.removeEventListener( CHANGE , callback ) ;
+    } ;
+} ;
+
+/**
+ * @returns {ColorScheme}
+ */
+const getSnapshot = () =>
+{
+    const { dark , light } = getMediaQueries() ;
+
+    if ( dark.matches  ) { return DARK  ; }
+    if ( light.matches ) { return LIGHT ; }
+
+    return NO_PREFERENCE ;
+} ;
+
+/**
+ * @returns {ColorScheme}
+ */
+const getServerSnapshot = () => NO_PREFERENCE ;
+
+/**
  * React hook to detect user's preferred color scheme.
  *
  * Listens to the `prefers-color-scheme` media query and updates
  * automatically when the user changes their system preference.
+ *
+ * The server is told `no-preference` and the browser is read only once React
+ * is hydrating, so the first client render matches the server markup instead
+ * of contradicting it.
  *
  * @returns {ColorScheme} The preferred color scheme.
  *
@@ -59,72 +126,6 @@ const NO_PREFERENCE = 'no-preference' ;
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme
  */
-const usePrefersColorScheme = () =>
-{
-    const [ preferredColorScheme , setPreferredColorScheme ] = useState( () =>
-    {
-        if ( typeof window === 'undefined' || typeof window.matchMedia !== 'function' )
-        {
-            return NO_PREFERENCE ;
-        }
-
-        if ( window.matchMedia( '(prefers-color-scheme: dark)' ).matches )
-        {
-            return DARK ;
-        }
-
-        if ( window.matchMedia( '(prefers-color-scheme: light)' ).matches )
-        {
-            return LIGHT ;
-        }
-
-        return NO_PREFERENCE ;
-    } ) ;
-
-    useEffect( () =>
-    {
-        if ( typeof window === 'undefined' || typeof window.matchMedia !== 'function' )
-        {
-            return ;
-        }
-
-        const darkQuery  = window.matchMedia( '(prefers-color-scheme: dark)' ) ;
-        const lightQuery = window.matchMedia( '(prefers-color-scheme: light)' ) ;
-
-        if ( typeof darkQuery.addEventListener !== 'function' )
-        {
-            console.warn( 'usePrefersColorScheme: addEventListener not supported' ) ;
-            return ;
-        }
-
-        const handleDarkChange = ( e ) =>
-        {
-            if ( e.matches )
-            {
-                setPreferredColorScheme( DARK ) ;
-            }
-        } ;
-
-        const handleLightChange = ( e ) =>
-        {
-            if ( e.matches )
-            {
-                setPreferredColorScheme( LIGHT ) ;
-            }
-        } ;
-
-        darkQuery.addEventListener( CHANGE , handleDarkChange ) ;
-        lightQuery.addEventListener( CHANGE , handleLightChange ) ;
-
-        return () =>
-        {
-            darkQuery.removeEventListener( CHANGE , handleDarkChange ) ;
-            lightQuery.removeEventListener( CHANGE , handleLightChange ) ;
-        } ;
-    }
-    , [] ) ;
-
-    return preferredColorScheme ;
-} ;
+const usePrefersColorScheme = () => useSyncExternalStore( subscribe , getSnapshot , getServerSnapshot ) ;
 
 export default usePrefersColorScheme ;
