@@ -8,6 +8,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**`contexts` — the ten context modules say they are client modules, which React 19.3 now asks of them**
+
+- **The ten providers and twenty-three of the twenty-four hooks already carried `'use client'` ; the `context.js` files did not.** `createContext` cannot run in a Server Component, so importing one of them from a server file has always failed — the directive is what turns that runtime failure into a proper client boundary. `components/maps/context.js` had it from its first commit ; the other ten are now aligned with it.
+- **This is what React 19.3's direct Context rendering asks for.** A Server Component may now render `<SomeContext value={…}>` itself, with no Provider component in between — but only if the module calling `createContext` is a client module. Without the directive the pattern is simply unavailable to an application built on this library.
+- **🚨 The prerequisite is in place ; the value shapes are not.** Every one of the ten contexts carries at least one function in its value — `setConfig`, `setLang`, `getLocale`, `toggleFullscreen`, `toggleSelected` — and a value rendered from a Server Component crosses the RSC boundary, where functions cannot be serialized. So nothing can be fed from a server layout *today*, whatever the directive says. Splitting the data half from the actions half is a piece of work of its own, and it is not this one.
+- **`contexts/themes/useThemeColor.js` gained the same directive**, unrelated to any of the above : it calls `useEffect` and was the only hook under `contexts/` without it.
+
 ## [0.17.0] — 2026-09-01
 
 **`maps` — a collection of places, and the grouping that makes it readable**
