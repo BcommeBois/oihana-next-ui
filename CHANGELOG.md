@@ -17,6 +17,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - **The context value is untouched** — `{ isFullscreen , toggleFullscreen }`, same names, same meaning. `FullscreenButton` and `Navbar`, its two consumers, did not change a line.
 - `react-use` stays installed : `useMedia` alone is in twelve charts.
 
+**`Portal` — it meant to guard against the server and did not**
+
+- **🚨 Rendering a `<Portal>` server-side threw `document is not defined`.** The line read `containerRef?.current ?? document?.body`, and optional chaining guards a *null value*, never an **undeclared global** : with no `document` in scope the reference throws before the operator is reached. The intent was already right — the `if ( !container ) return children` underneath renders in place when there is no target — it simply never ran.
+- **Found from a crash on `/lab/tooltips`.** The library's four portal call sites are all gated behind client state — `isOpen`, `mounted`, `shown`, `open && coords` — except one path : `<Tooltip float open>` makes `FloatingTip`'s `shown` true from the first server render, so the portal went out under Node. A failed SSR then falls back to rendering the page on the client, which is what put React face to face with the root layout's `<script>` tag and produced the second error of the pair.
+- The guard is `typeof document === 'undefined'`, which is the only form that answers before the identifier is evaluated.
+
 **`contexts` — the ten context modules say they are client modules, which React 19.3 now asks of them**
 
 - **The ten providers and twenty-three of the twenty-four hooks already carried `'use client'` ; the `context.js` files did not.** `createContext` cannot run in a Server Component, so importing one of them from a server file has always failed — the directive is what turns that runtime failure into a proper client boundary. `components/maps/context.js` had it from its first commit ; the other ten are now aligned with it.

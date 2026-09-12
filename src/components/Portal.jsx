@@ -47,7 +47,10 @@ const Portal =
         return children ;
     }
 
-    const container = containerRef?.current ?? document?.body ;
+    // `document?.body` does not guard this : optional chaining protects a null
+    // value, not an undeclared global. Server-side, `document` throws first.
+    const container = containerRef?.current
+        ?? ( typeof document === 'undefined' ? null : document.body ) ;
 
     if ( !container )
     {
