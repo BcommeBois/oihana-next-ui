@@ -7,7 +7,7 @@
  *
  * @example
  * ```js
- * import opacities from 'oihana-next-ui/themes/opacities' ;
+ * import opacities from 'oihana-next-ui/themes/colors/opacities' ;
  *
  * opacities.forEach( ( opacity ) => {
  *     console.log( `base-content/${ opacity }` ) ;

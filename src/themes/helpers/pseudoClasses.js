@@ -5,7 +5,7 @@
  *
  * @example
  * ```js
- * import { HOVER , FOCUS } from 'oihana-next-ui/themes/enums/pseudoClasses' ;
+ * import { HOVER , FOCUS } from 'oihana-next-ui/themes/helpers/pseudoClasses' ;
  *
  * const className = `${ HOVER }:bg-primary ${ FOCUS }:ring-2` ;
  * // → 'hover:bg-primary focus:ring-2'

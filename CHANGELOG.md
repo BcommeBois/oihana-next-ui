@@ -24,6 +24,23 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - **🚨 The prerequisite is in place ; the value shapes are not.** Every one of the ten contexts carries at least one function in its value — `setConfig`, `setLang`, `getLocale`, `toggleFullscreen`, `toggleSelected` — and a value rendered from a Server Component crosses the RSC boundary, where functions cannot be serialized. So nothing can be fed from a server layout *today*, whatever the directive says. Splitting the data half from the actions half is a piece of work of its own, and it is not this one.
 - **`contexts/themes/useThemeColor.js` gained the same directive**, unrelated to any of the above : it calls `useEffect` and was the only hook under `contexts/` without it.
 
+
+**Dependencies — React 19.3 and DaisyUI 5.7.37, and what they hand over for nothing**
+
+- **React, React DOM and `react-is` 19.2.8 → 19.3.0** ; **DaisyUI 5.7.4 → 5.7.37** ; `@vis.gl/react-maplibre` 8.1.3, `terra-draw` 1.33.0, `supercluster` 9.1.0, `@maskito/*` 5.4.0, `dayjs` 1.11.23, `sanitize-html` 2.17.7, `@types/node` 25.9.6. Thirty-three DaisyUI patch releases in one step, and nothing in the library had to move for them.
+- **`resize` updates are batched until the next frame now**, which two components get for free : `FloatingTip` and `InputAddressSearch` both *follow* an anchor, recomputing a position on every event of a drag-resize, and now recompute once per frame instead. `Popover` and `useHoverIntent` also listen for `resize`, and gain nothing — they *dismiss*, which is one state change after which the listener is gone. Worth knowing before anyone reaches for a hand-rolled `requestAnimationFrame` in those effects : React does it.
+- **This reaches plain `window` listeners, not only React's synthetic events** — the priority of an update is taken from the native event being dispatched when `setState` is called, whatever path the handler came through.
+- **Strict Mode now double-invokes Effects during hydration**, which was the one change in this release able to surface a defect rather than fix one. Checked, and there is nothing : `maps/Map.jsx` holds no Effect at all — the engine's mount and unmount belong to `@vis.gl/react-maplibre` — and the five `maps` components that do have Effects are gated behind the map instance, published on `load`, or behind a click. None of them runs in the hydration mount, which is the only window the change touches.
+
+
+**Documentation — eight `@example` imports that could not resolve**
+
+- **Three of them named a folder, and there are no `index.js` files under `contexts/`.** `oihana-next-ui/contexts/fullscreen` and `oihana-next-ui/contexts/application` are directories ; the paths now name the file, as the README and every wiki page already do. Two of the three also destructured a default export.
+- **One named a file that does not exist** — `contexts/themes/script`, in the `ThemesProvider` prerequisites, twelve lines under a correct mention of the same module. It is `getThemeScript`.
+- **🚨 One was a casing mistake, which is the kind that only breaks on someone else's machine.** `DisplayDropDown` documented itself as `components/dropdowns/DisplayDropDown` where the folder is `dropDowns` : silently fine on a case-insensitive macOS volume, a `Module not found` on a Linux CI.
+- **Three under `themes/` named a folder they had been moved out of** — `themes/opacities` for `themes/colors/opacities`, and `themes/enums/…` for `modifiers` and `pseudoClasses`, which live under `themes/helpers/`.
+- **All of them were found by sweeping every `oihana-next-ui/…` string in `src/`, `wiki/` and the README against the disk, case included** — which is the only way this class of mistake surfaces, none of it being reachable by a linter. One is knowingly left : `MenuNavigation`'s example imports a logo from `oihana-next-ui/@assets/Logo`, and there is no `@assets` in the package — what it should name depends on what the example meant to show.
+
 ## [0.17.0] — 2026-09-01
 
 **`maps` — a collection of places, and the grouping that makes it readable**

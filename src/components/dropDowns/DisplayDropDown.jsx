@@ -12,7 +12,7 @@
  *
  * @example
  * ```jsx
- * import DisplayDropDown from 'oihana-next-ui/components/dropdowns/DisplayDropDown' ;
+ * import DisplayDropDown from 'oihana-next-ui/components/dropDowns/DisplayDropDown' ;
  *
  * // Default icons
  * <DisplayDropDown autoPosition value="flex" onChange={ setDisplay } />
