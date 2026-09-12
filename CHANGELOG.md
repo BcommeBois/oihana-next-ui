@@ -17,6 +17,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - **The context value is untouched** — `{ isFullscreen , toggleFullscreen }`, same names, same meaning. `FullscreenButton` and `Navbar`, its two consumers, did not change a line.
 - `react-use` stays installed : `useMedia` alone is in twelve charts.
 
+**🚨 `reactCompiler` compiles the client only, and the two JSX transforms disagree about whitespace**
+
+- **`/lab/tooltips` hydrated with a mismatch on a sentence of static prose** — the kind of thing that cannot come from application logic. Both compiled artefacts, pulled from the running dev server and both rebuilt that morning, say why : the client chunk carries the React Compiler's temporaries and the string `" lines the bubble up with…"`, the server chunk carries neither and the string `"lines the bubble up with…"`. `reactCompiler: true` applies to the client bundle ; the server bundle goes through SWC alone. Where a text child begins on the same line as an element that opened its own line, the two do not agree on its leading space.
+- **One string in the whole page, not a systemic defect.** Every literal in both chunks was extracted and compared : 164 client-side, 137 server-side, exactly one differing. `{' '}` on both sides of the element settles it — an explicit child is a child neither transform can trim.
+- **The same edit fixes a defect that was on screen the whole time** : a line break before an inline element eats the space in front of it, so `whose right edge<code>align="end"</code>` had been rendering glued, identically on both sides, since August.
+- **It surfaced only once `Portal` stopped crashing.** The page had never hydrated, so its mismatch had never been reached — one defect was standing in front of the other.
+
 **`Portal` — it meant to guard against the server and did not**
 
 - **🚨 Rendering a `<Portal>` server-side threw `document is not defined`.** The line read `containerRef?.current ?? document?.body`, and optional chaining guards a *null value*, never an **undeclared global** : with no `document` in scope the reference throws before the operator is reached. The intent was already right — the `if ( !container ) return children` underneath renders in place when there is no target — it simply never ran.

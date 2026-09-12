@@ -247,8 +247,8 @@ const TooltipDemo = () =>
                 <h3 className="text-xl font-semibold">The bubble aligns on the anchor, so the anchor is what to shape</h3>
                 <p className="text-sm text-base-content/70">
                     A tooltip renders an element of its own, and that element is what the placement
-                    measures. Made to fill its cell, it is the <em>cell</em> whose right edge
-                    <code>align=&quot;end&quot;</code> lines the bubble up with ; hugging its badge,
+                    measures. Made to fill its cell, it is the <em>cell</em> whose right edge{' '}
+                    <code>align=&quot;end&quot;</code>{' '}lines the bubble up with ; hugging its badge,
                     it is the badge. Neither is wrong and no default can tell them apart — an
                     element that hugs its content is the answer, and it is the caller&apos;s to give.
                     Both rows are held open with <code>open</code>, which the floating path honours
