@@ -224,4 +224,60 @@ export const getCalendarCellClasses =
     className ,
 ) ;
 
+/**
+ * The column counts a month / year grid accepts, as **whole literal classes**.
+ *
+ * Four is the shape the quick-navigation grids have always had (4×3, twelve
+ * cells). Three is what full month names ask for, and six is for a month strip
+ * wide enough to hold one. Anything else falls back to four rather than
+ * inventing a class the scanner never saw.
+ *
+ * @safelist grid-cols-2 grid-cols-3 grid-cols-4 grid-cols-6
+ */
+export const CALENDAR_GRID_COLUMNS =
+{
+    2 : 'grid-cols-2' ,
+    3 : 'grid-cols-3' ,
+    4 : 'grid-cols-4' ,
+    6 : 'grid-cols-6' ,
+} ;
+
+/** Base classes for a month / year grid (the column count is added per call). */
+export const CALENDAR_GRID = 'grid gap-1' ;
+
+/**
+ * Generates the className for a month / year grid.
+ *
+ * @param {Object} [props]
+ * @param {Object} [props.after] - Class definitions to append.
+ * @param {Object} [props.before] - Class definitions to prepend.
+ * @param {string} [props.beforeClassName] - ClassName to prepend.
+ * @param {string} [props.className] - ClassName to append.
+ * @param {2|3|4|6} [props.columns=4] - Cells per row.
+ *
+ * @returns {string} The grid className expression.
+ *
+ * @example
+ * getCalendarGridClasses({ columns : 3 }) // → 'grid gap-1 grid-cols-3'
+ */
+export const getCalendarGridClasses =
+({
+    after ,
+    before ,
+    beforeClassName ,
+    className ,
+    columns = 4 ,
+}
+= {} ) => cn
+(
+    beforeClassName ,
+    CALENDAR_GRID ,
+    {
+        ...before ,
+        [ CALENDAR_GRID_COLUMNS[ columns ] ?? CALENDAR_GRID_COLUMNS[ 4 ] ] : true ,
+        ...after ,
+    } ,
+    className ,
+) ;
+
 export default getCalendarClasses ;

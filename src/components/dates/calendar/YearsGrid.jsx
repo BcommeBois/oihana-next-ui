@@ -1,17 +1,21 @@
 import { MdKeyboardDoubleArrowLeft as PrevIcon , MdKeyboardDoubleArrowRight as NextIcon } from 'react-icons/md' ;
 
-import { getCalendarCellClasses } from '../../../themes/components/calendar' ;
+import { getCalendarCellClasses , getCalendarGridClasses } from '../../../themes/components/calendar' ;
 
 /**
  * Quick year picker — a 4×3 grid of 12 years, paged ±12 by the double-chevron
  * header. Picking a year opens that year's months grid (`Calendar` chains
  * years → months → day). Replaces the day grid while open.
  *
+ * It is also the grid behind the standalone {@link module:components/dates/YearPicker},
+ * where picking a year selects it rather than navigating to it.
+ *
  * @module components/dates/calendar/YearsGrid
  *
  * @param {Object} props
  * @param {number} props.pageStart - First year of the displayed 12-year page.
- * @param {number} props.currentYear - The anchor year, highlighted.
+ * @param {number|null} props.currentYear - The anchor year, highlighted. `null` highlights nothing.
+ * @param {2|3|4|6} [props.columns=4] - Years per row.
  * @param {(year: number) => string|null} [props.getYearReason] - Why a year is not selectable ('bounds' | 'year'), or `null`.
  * @param {boolean} [props.prevDisabled=false] - Disable the previous-page arrow (even that page's last year falls short of `min`).
  * @param {boolean} [props.nextDisabled=false] - Disable the next-page arrow (same, against `max`).
@@ -23,6 +27,7 @@ const YearsGrid =
 ({
     pageStart ,
     currentYear ,
+    columns = 4 ,
     getYearReason ,
     prevDisabled = false ,
     nextDisabled = false ,
@@ -46,7 +51,7 @@ const YearsGrid =
                     <NextIcon className="size-5" />
                 </button>
             </div>
-            <div className="grid grid-cols-4 gap-1">
+            <div className={ getCalendarGridClasses({ columns }) }>
                 { years.map( ( y ) =>
                 {
                     const active = y === currentYear ;

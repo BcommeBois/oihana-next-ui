@@ -4,7 +4,7 @@ import { MdChevronLeft as PrevIcon , MdChevronRight as NextIcon } from 'react-ic
 
 import dayjs from '../../../helpers/date/configureDayjs' ;
 
-import { getCalendarCellClasses } from '../../../themes/components/calendar' ;
+import { getCalendarCellClasses , getCalendarGridClasses } from '../../../themes/components/calendar' ;
 
 const MONTHS = Array.from( { length : 12 } , ( _ , i ) => i ) ; // 0 → 11
 
@@ -13,6 +13,11 @@ const MONTHS = Array.from( { length : 12 } , ( _ , i ) => i ) ; // 0 → 11
  * (‹ year ›, the year itself opens the years grid). Picking a month jumps the
  * calendar to that month. Replaces the day grid while open (see `Calendar`).
  *
+ * It is also the grid behind the standalone {@link module:components/dates/MonthPicker}
+ * and {@link module:components/dates/MonthYearPicker} : without a header
+ * (`showHeader={ false }`) it is a bare month selector, and without `onYearClick`
+ * the year is a plain label rather than a button.
+ *
  * @module components/dates/calendar/MonthsGrid
  *
  * @param {Object} props
@@ -20,13 +25,16 @@ const MONTHS = Array.from( { length : 12 } , ( _ , i ) => i ) ; // 0 → 11
  * @param {number} props.currentMonth - The anchor month (0–11), highlighted when on `currentYear`.
  * @param {number} props.currentYear - The anchor year.
  * @param {string} props.lang - Active locale code (month labels).
+ * @param {2|3|4|6} [props.columns=4] - Months per row. Three is what full month names ask for.
+ * @param {'MMM'|'MMMM'} [props.labelFormat='MMM'] - Month label format : abbreviated or full.
  * @param {(year: number, month: number) => string|null} [props.getMonthReason] - Why a month is not selectable ('bounds' | 'month' | 'year' | 'blackout'), or `null`.
  * @param {boolean} [props.prevDisabled=false] - Disable the previous-year arrow (that year is entirely out of the `min` bound).
  * @param {boolean} [props.nextDisabled=false] - Disable the next-year arrow (same, against `max`).
+ * @param {boolean} [props.showHeader=true] - Show the ‹ year › header. Off for a picker that selects a month alone.
  * @param {(month: number) => void} props.onPick - Month click (0–11).
- * @param {() => void} props.onPrevYear - Go to the previous year.
- * @param {() => void} props.onNextYear - Go to the next year.
- * @param {() => void} props.onYearClick - Open the years grid.
+ * @param {() => void} [props.onPrevYear] - Go to the previous year.
+ * @param {() => void} [props.onNextYear] - Go to the next year.
+ * @param {() => void} [props.onYearClick] - Open the years grid. Omitted, the year stays a plain label.
  */
 const MonthsGrid =
 ({
@@ -34,9 +42,12 @@ const MonthsGrid =
     currentMonth ,
     currentYear ,
     lang ,
+    columns = 4 ,
+    labelFormat = 'MMM' ,
     getMonthReason ,
     prevDisabled = false ,
     nextDisabled = false ,
+    showHeader = true ,
     onPick ,
     onPrevYear ,
     onNextYear ,
@@ -45,26 +56,33 @@ const MonthsGrid =
 {
     const labels = useMemo
     (
-        () => MONTHS.map( ( m ) => dayjs( new Date( 2021 , m , 1 ) ).locale( lang ).format( 'MMM' ) ) ,
-        [ lang ]
+        () => MONTHS.map( ( m ) => dayjs( new Date( 2021 , m , 1 ) ).locale( lang ).format( labelFormat ) ) ,
+        [ lang , labelFormat ]
     ) ;
 
     return (
         // No width of its own : it replaces the day grid inside the same panel, and a
         // fixed one made that panel shrink the moment the picker opened.
         <div className="flex min-w-0 w-full flex-1 flex-col gap-2">
-            <div className="flex items-center justify-between gap-2 pb-1">
-                <button type="button" className="btn btn-ghost btn-sm btn-square" aria-label="Previous year" disabled={ prevDisabled } onClick={ onPrevYear }>
-                    <PrevIcon className="size-5" />
-                </button>
-                <button type="button" className="btn btn-ghost btn-sm font-semibold" onClick={ onYearClick }>
-                    { year }
-                </button>
-                <button type="button" className="btn btn-ghost btn-sm btn-square" aria-label="Next year" disabled={ nextDisabled } onClick={ onNextYear }>
-                    <NextIcon className="size-5" />
-                </button>
-            </div>
-            <div className="grid grid-cols-4 gap-1">
+            { showHeader && (
+                <div className="flex items-center justify-between gap-2 pb-1">
+                    <button type="button" className="btn btn-ghost btn-sm btn-square" aria-label="Previous year" disabled={ prevDisabled } onClick={ onPrevYear }>
+                        <PrevIcon className="size-5" />
+                    </button>
+                    { onYearClick
+                        ? (
+                            <button type="button" className="btn btn-ghost btn-sm font-semibold" onClick={ onYearClick }>
+                                { year }
+                            </button>
+                        )
+                        : <span className="font-semibold">{ year }</span>
+                    }
+                    <button type="button" className="btn btn-ghost btn-sm btn-square" aria-label="Next year" disabled={ nextDisabled } onClick={ onNextYear }>
+                        <NextIcon className="size-5" />
+                    </button>
+                </div>
+            )}
+            <div className={ getCalendarGridClasses({ columns }) }>
                 { MONTHS.map( ( m ) =>
                 {
                     const active = m === currentMonth && year === currentYear ;
