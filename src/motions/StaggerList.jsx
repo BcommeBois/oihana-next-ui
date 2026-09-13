@@ -1,20 +1,34 @@
 'use client' ;
 
-import { useMemo } from 'react' ;
+import { Children , cloneElement , isValidElement , useEffect , useState } from 'react' ;
 
-import { motion } from 'motion/react' ;
+import { useMedia } from 'react-use' ;
 
 /**
  * Wrapper that staggers the entrance animation of its children.
+ *
+ * ### It adds no element of its own
+ *
+ * Each child is **cloned** and carries its own delay, rather than being wrapped
+ * in a box that would carry it. The rendered DOM is the one that was written —
+ * which is what lets this work inside a grid, a `subgrid`, a flex row or a
+ * `<ul>`, where an intermediate `<div>` would become the grid item, break the
+ * column inheritance, or simply be invalid markup.
+ *
+ * The price is that a child must be an **element able to take a `style`**. Text
+ * and fragments are rendered untouched, with no animation : half of a compromise
+ * is worse than none.
+ *
+ * `prefers-reduced-motion` is honoured by showing everything at once.
  *
  * @param {Object} props
  * @param {string} [props.as='div'] - HTML element tag name.
  * @param {React.ReactNode} props.children - Child components.
  * @param {string} [props.className] - CSS class name.
- * @param {number} [props.delay=0] - Initial delay before the first child animates.
- * @param {number} [props.stagger=0.1] - Delay between each child animation.
- * @param {number} [props.duration=0.4] - Animation duration per child.
- * @param {number} [props.y=20] - Vertical offset for entrance.
+ * @param {number} [props.delay=0] - Milliseconds before the first child moves.
+ * @param {number} [props.stagger=100] - Milliseconds between two children.
+ * @param {number} [props.duration=400] - Milliseconds one child takes.
+ * @param {number} [props.y=20] - Pixels a child rises from.
  *
  * @returns {React.ReactElement} Staggered container.
  *
@@ -29,8 +43,8 @@ import { motion } from 'motion/react' ;
  *
  * @example
  * ```jsx
- * // Grid of cards
- * <StaggerList className="grid grid-cols-3 gap-6" stagger={ 0.15 }>
+ * // Grid of cards — the cards are the grid items, nothing sits between
+ * <StaggerList className="grid grid-cols-3 gap-6" stagger={ 150 }>
  *     { cards.map( card => <Card key={ card.id } { ...card } /> ) }
  * </StaggerList>
  * ```
@@ -41,49 +55,46 @@ const StaggerList =
     children ,
     className ,
     delay    = 0 ,
-    stagger  = 0.1 ,
-    duration = 0.4 ,
+    stagger  = 100 ,
+    duration = 400 ,
     y        = 20 ,
     ...rest
 }) =>
 {
-    const MotionTag = useMemo( () => motion.create( Tag ) , [ Tag ] ) ;
+    const reduceMotion = useMedia( '(prefers-reduced-motion: reduce)' , false ) ;
 
-    const containerVariants =
-    {
-        hidden  : {} ,
-        visible : { transition: { staggerChildren: stagger , delayChildren: delay } }
-    } ;
+    // Everything is in place but held back on the first render, then released —
+    // which is what gives the transition something to transition from.
+    const [ entered , setEntered ] = useState( false ) ;
 
-    const itemVariants =
-    {
-        hidden  : { opacity: 0 , y } ,
-        visible : { opacity: 1 , y: 0 }
-    } ;
+    useEffect( () => { setEntered( true ) ; } , [] ) ;
 
-    const itemTransition = { duration , type: 'tween' , ease: 'easeOut' } ;
+    const animating = !reduceMotion ;
 
     return (
-        <MotionTag
-            className = { className }
-            initial   = "hidden"
-            animate   = "visible"
-            variants  = { containerVariants }
-            { ...rest }
-        >
-            { Array.isArray( children )
-                ? children.map( ( child , i ) => (
-                    <motion.div
-                        key        = { child?.key ?? `stagger-item-${ i }` }
-                        variants   = { itemVariants }
-                        transition = { itemTransition }
-                    >
-                        { child }
-                    </motion.div>
-                ) )
-                : children
+        <Tag className={ className } { ...rest }>
+            {
+                Children.map( children , ( child , index ) =>
+                {
+                    if ( !animating || !isValidElement( child ) )
+                    {
+                        return child ;
+                    }
+
+                    return cloneElement( child ,
+                    {
+                        style :
+                        {
+                            ...child.props.style ,
+                            opacity         : entered ? 1 : 0 ,
+                            transform       : entered ? 'none' : `translateY(${ y }px)` ,
+                            transition      : `opacity ${ duration }ms ease-out, transform ${ duration }ms ease-out` ,
+                            transitionDelay : `${ delay + index * stagger }ms` ,
+                        } ,
+                    } ) ;
+                } )
             }
-        </MotionTag>
+        </Tag>
     ) ;
 } ;
 

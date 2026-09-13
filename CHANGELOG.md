@@ -8,6 +8,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🚨 `StaggerList` adds no element of its own any more — and its delays are milliseconds**
+
+- **It used to wrap every child in a `motion.div`, which is what made it unusable where it was most wanted.** In a grid the wrapper became the grid item and the real content was shut inside it ; under `subgrid` it cut the column inheritance ; and inside a `<ul>` it was simply invalid markup — the component's own example did exactly that. The `metrics` sprint had written the verdict down at the time and reimplemented the effect rather than use it.
+- **Each child is cloned and carries its own delay**, instead of being wrapped in a box that carries it. The rendered DOM is the one that was written, so the `<li>` stay the list's items and the cards stay the grid's cells.
+- **🚨 A child must now be an element able to take a `style`.** Text and fragments are rendered untouched, with no animation, where they used to be wrapped and animated. Half of a compromise is worse than none, and a bare string is not what a staggered list is for.
+- **🚨 `delay`, `stagger` and `duration` are milliseconds** — `stagger={ 150 }` where it was `0.15`. The seconds were `motion/react`'s convention ; the rest of this library counts in milliseconds, `BarList`'s `revealStagger` included. Nothing outside the demo used this component, so the break costs nobody anything and the inconsistency ends here. Values are otherwise unchanged : 100 ms between children, 400 ms each, a 20 px rise.
+- **No `motion/react` in this component any more.** The effect is two CSS transitions and an inline `transitionDelay`, which is what `metrics` has been doing since it was written — one implementation of the idea instead of two.
+- **`prefers-reduced-motion` shows everything at once**, read through the same `useMedia` call `BarList` uses.
+
 **`InputMonthYearPicker` — the field picker one granularity up**
 
 - **The twin of `InputDatePicker`, and deliberately nothing more.** Same prop names, same handlers (`onDate`, `onDisabledDate`, `strict`, `display`, `pickerProps`), the masked `InputDate` in its `mm/yyyy` mode paired with a `MonthYearPicker` in the responsive popover. Nothing to relearn when moving from one to the other, which is the whole point of not renaming anything.

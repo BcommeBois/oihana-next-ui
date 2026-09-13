@@ -216,6 +216,11 @@ const AnimationDemo = () =>
             {/* StaggerList */}
             <div className="flex flex-col gap-4">
                 <h3 className="text-xl font-semibold border-b-2 border-success pb-2">StaggerList</h3>
+                <p className="text-sm opacity-50">
+                    Each child enters after the one before it. The children are cloned to carry their own delay
+                    rather than wrapped, so the rendered markup is the one written — the <code>li</code> stay the
+                    list's items and the badges below stay the grid's cells. Delays are in milliseconds.
+                </p>
 
                 <div className="flex flex-wrap gap-8">
 
@@ -232,7 +237,7 @@ const AnimationDemo = () =>
 
                     <div className="flex flex-col gap-2">
                         <p className="text-sm font-medium opacity-70">Grid</p>
-                        <StaggerList key={ `stagger-grid-${ staggerKey }` } className="grid grid-cols-2 gap-2" stagger={ 0.15 }>
+                        <StaggerList key={ `stagger-grid-${ staggerKey }` } className="grid grid-cols-2 gap-2" stagger={ 150 }>
                             { [ 'primary' , 'secondary' , 'accent' , 'neutral' ].map( color => (
                                 <div
                                     key       = { color }
