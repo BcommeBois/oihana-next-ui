@@ -7,7 +7,6 @@ import { maskitoDateOptionsGenerator, maskitoParseDate } from '@maskito/kit'
 
 import useValue     from '../../hooks/useValue'
 import useMergeRefs from '../../hooks/useMergeRefs'
-import parseISO     from '../../helpers/date/parseISO'
 
 import readInputValue from '../../helpers/react/readInputValue'
 
@@ -30,8 +29,8 @@ import { MdCalendarToday as CalendarIcon } from 'react-icons/md'
 /**
  * InputDate component - Date input with Maskito formatting and multiple format modes.
  *
- * Supports standard Maskito modes (dd/mm/yyyy, mm/dd/yyyy, dd/mm, mm/dd, mm/yyyy, mm/yy)
- * and custom ISO format (yyyy/mm/dd).
+ * Every mode goes through Maskito, the ISO ones included : dd/mm/yyyy, mm/dd/yyyy,
+ * dd/mm, mm/dd, mm/yyyy, mm/yy, yyyy, yyyy/mm and yyyy/mm/dd.
  *
  * @param {Object} props
  * @param {string} [props.defaultValue=''] - Default date value (formatted string)
@@ -161,41 +160,18 @@ const InputDate =
 
     const [ value , setValue ] = useValue( defaultValue, valueFromProps, onChangeFromProps ) ;
 
-    // --------- Check if custom ISO mode
-
-    const isISOMode = mode === YYYY_MM_DD ;
-
-    // --------- Custom mask for yyyy/mm/dd
-
-    const customISOMask = [
-        /[1-2]/, // Year: 1000-2999
-        /\d/,
-        /\d/,
-        /\d/,
-        separator,
-        /[0-1]/, // Month first digit: 0-1
-        /\d/,    // Month second digit: 0-9
-        separator,
-        /[0-3]/, // Day first digit: 0-3
-        /\d/     // Day second digit: 0-9
-    ] ;
-
     // --------- Maskito options
 
-    const maskOptions = useMemo( () =>
-    {
-        if ( isISOMode )
-        {
-            return { mask : customISOMask } ;
-        }
-
-        return maskitoDateOptionsGenerator({
-            mode ,
-            separator ,
-            ...(min && { min }),
-            ...(max && { max })
-        }) ;
-    }, [ mode, separator, min, max, isISOMode ]) ;
+    // `yyyy/mm/dd` is a mode Maskito ships, and every other mode has always gone
+    // through here. The hand-written mask it used to get instead constrained only
+    // the first digit of each segment, so `2026/19/39` was typable ; and it carried
+    // neither `min` nor `max`, which every other mode honours.
+    const maskOptions = useMemo( () => maskitoDateOptionsGenerator({
+        mode ,
+        separator ,
+        ...(min && { min }),
+        ...(max && { max })
+    }) , [ mode, separator, min, max ]) ;
 
     const maskedInputRef = useMaskito({ options: maskOptions }) ;
     const internalRef    = useRef( null ) ;
@@ -221,14 +197,12 @@ const InputDate =
         {
             try
             {
-                const candidate = isISOMode
-                    ? parseISO( value, separator )
-                    : maskitoParseDate( value ,
-                    {
-                        mode : /** @type {any} */ (mode),
-                        min ,
-                        max
-                    } ) ;
+                const candidate = maskitoParseDate( value ,
+                {
+                    mode : /** @type {any} */ (mode),
+                    min ,
+                    max
+                } ) ;
 
                 parsedDate = candidate && !isNaN( candidate.getTime() ) ? candidate : null ;
             }
@@ -248,7 +222,7 @@ const InputDate =
         lastEmittedRef.current = stamp ;
         onDate( parsedDate ) ;
     }
-    , [ value, mode, separator, isISOMode, min, max, onDate ]) ;
+    , [ value, mode, separator, min, max, onDate ]) ;
 
     // --------- Handlers
 

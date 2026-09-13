@@ -7,7 +7,6 @@ import { maskitoDateRangeOptionsGenerator, maskitoParseDate } from '@maskito/kit
 
 import useMergeRefs from '../../hooks/useMergeRefs'
 import useValue     from '../../hooks/useValue'
-import parseISO     from '../../helpers/date/parseISO'
 
 import readInputValue from '../../helpers/react/readInputValue'
 
@@ -31,7 +30,7 @@ import { MdDateRange as DateRangeIcon } from 'react-icons/md'
  * InputDateRange component - Date range input with Maskito formatting.
  *
  * Supports standard Maskito modes (dd/mm/yyyy, mm/dd/yyyy, dd/mm, mm/dd, mm/yyyy, mm/yy)
- * and custom ISO format (yyyy/mm/dd).
+ * and the ISO ones (yyyy/mm, yyyy/mm/dd) — all through Maskito.
  *
  * @param {Object} props
  * @param {string} [props.defaultValue=''] - Default date range value
@@ -156,47 +155,21 @@ const InputDateRange =
 
     const [ value , setValue ] = useValue( defaultValue, valueFromProps, onChangeFromProps ) ;
 
-    // --------- Check if custom ISO mode
-
-    const isISOMode = mode === YYYY_MM_DD ;
-
     // --------- Maskito options
 
-    const maskOptions = useMemo( () =>
-    {
-        if ( isISOMode )
-        {
-            // Full static mask for yyyy/mm/dd – yyyy/mm/dd
-            const mask = [
-                // First date
-                /[1-2]/, /\d/, /\d/, /\d/, // Year: 1000-2999
-                dateSeparator,
-                /[0-1]/, /\d/,    // Month: 01-12
-                dateSeparator,
-                /[0-3]/, /\d/,    // Day: 01-31
-                // Range separator
-                ...rangeSeparator.split( '' ),
-                // Second date
-                /[1-2]/, /\d/, /\d/, /\d/, // Year: 1000-2999
-                dateSeparator,
-                /[0-1]/, /\d/,    // Month: 01-12
-                dateSeparator,
-                /[0-3]/, /\d/     // Day: 01-31
-            ] ;
-
-            return { mask } ;
-        }
-
-        return maskitoDateRangeOptionsGenerator({
-            mode,
-            dateSeparator,
-            rangeSeparator,
-            ...(min && { min }),
-            ...(max && { max }),
-            ...(minLength && { minLength }),
-            ...(maxLength && { maxLength })
-        }) ;
-    }, [ mode, dateSeparator, rangeSeparator, min, max, minLength, maxLength, isISOMode ]) ;
+    // `yyyy/mm/dd` is a mode Maskito ships, and every other mode has always gone
+    // through here. The static mask it used to get instead constrained only the
+    // first digit of each segment, so `2026/19/39` was typable ; and it carried
+    // none of `min`, `max`, `minLength` or `maxLength`.
+    const maskOptions = useMemo( () => maskitoDateRangeOptionsGenerator({
+        mode,
+        dateSeparator,
+        rangeSeparator,
+        ...(min && { min }),
+        ...(max && { max }),
+        ...(minLength && { minLength }),
+        ...(maxLength && { maxLength })
+    }) , [ mode, dateSeparator, rangeSeparator, min, max, minLength, maxLength ]) ;
 
     const maskedInputRef = useMaskito({ options : maskOptions }) ;
     const internalRef    = useRef( null ) ;
@@ -225,25 +198,15 @@ const InputDateRange =
                 {
                     const [ startStr , endStr ] = parts ;
 
-                    let startDate, endDate ;
-
-                    if ( isISOMode )
+                    const params =
                     {
-                        startDate = parseISO( startStr.trim() , dateSeparator ) ;
-                        endDate   = parseISO( endStr.trim()   , dateSeparator ) ;
-                    }
-                    else
-                    {
-                        const params =
-                        {
-                            mode : /** @type {any} */ (mode),
-                            min,
-                            max
-                        } ;
+                        mode : /** @type {any} */ (mode),
+                        min,
+                        max
+                    } ;
 
-                        startDate = maskitoParseDate( startStr.trim() , params ) ;
-                        endDate   = maskitoParseDate( endStr.trim()   , params ) ;
-                    }
+                    const startDate = maskitoParseDate( startStr.trim() , params ) ;
+                    const endDate   = maskitoParseDate( endStr.trim()   , params ) ;
 
                     // Validate both dates exist and are valid, in order
                     // (end date must be >= start date unless allowReversedRange)
@@ -272,7 +235,7 @@ const InputDateRange =
         lastEmittedRef.current = stamp ;
         onDateRange( range ) ;
     }
-    , [ value , mode , dateSeparator , rangeSeparator , isISOMode , allowReversedRange , min , max , onDateRange ] ) ;
+    , [ value , mode , dateSeparator , rangeSeparator , allowReversedRange , min , max , onDateRange ] ) ;
 
     // --------- Build placeholder
 

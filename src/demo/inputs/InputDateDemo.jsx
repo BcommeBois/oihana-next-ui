@@ -24,7 +24,9 @@ const InputDateDemo = () =>
                     label     = "Date ISO"
                     mode      = "yyyy/mm/dd"
                     separator = "/"
-                    helper    = "Format: YYYY/MM/DD"
+                    min       = { new Date( 2020 , 0 , 1 ) }
+                    max       = { new Date( 2030 , 11 , 31 ) }
+                    helper    = "Format: YYYY/MM/DD — bounded 2020 → 2030, a year outside is rewritten onto the bound"
                 />
 
                 <InputDate

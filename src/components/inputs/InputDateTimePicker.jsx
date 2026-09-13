@@ -21,9 +21,8 @@ import getButtonClassNames , { GHOST , SQUARE } from '../../themes/components/bu
 
 import dayjs from '../../helpers/date/configureDayjs' ;
 import formatDateForMode from '../../helpers/date/formatDateForMode' ;
-import parseISO from '../../helpers/date/parseISO' ;
 import readInputValue from '../../helpers/react/readInputValue' ;
-import { DD_MM_YYYY , YYYY_MM_DD } from '../../helpers/date/dateModes' ;
+import { DD_MM_YYYY } from '../../helpers/date/dateModes' ;
 import Time from '../../helpers/time/Time' ;
 import convertTo24Hour from '../../helpers/time/convertTo24Hour' ;
 import { AM , PM } from '../../helpers/time/meridies' ;
@@ -257,8 +256,6 @@ const InputDateTimePicker =
 
     const { isDayDisabled } = useDisabledModel({ disabledDates , disabledMonths , disabledWeekdays , disabledYears , min , max }) ;
 
-    const isISOMode = mode === YYYY_MM_DD ;
-
     // ---- Parse the combined value : field digits (no meridiem) + meridiem + parts.
     const meridiem   = ( value?.match( /(AM|PM)\s*$/i )?.[ 1 ] || '' ).toUpperCase() || undefined ;
     const fieldValue = ( value ?? '' ).replace( /\s*(AM|PM)\s*$/i , '' ) ;
@@ -288,7 +285,10 @@ const InputDateTimePicker =
         }
         try
         {
-            const d = isISOMode ? parseISO( datePart , separator ) : maskitoParseDate( datePart , { mode , min , max } ) ;
+            // Every mode parses through Maskito, the ISO one included : `parseISO`
+            // never clamped to the bounds, so a date typed outside them was emitted
+            // as typed here and nowhere else.
+            const d = maskitoParseDate( datePart , { mode , min , max } ) ;
             return d && !isNaN( d.getTime() ) ? d : null ;
         }
         catch ( error )
@@ -296,7 +296,7 @@ const InputDateTimePicker =
             return null ;
         }
     }
-    , [ datePart , mode , separator , isISOMode , min , max ] ) ;
+    , [ datePart , mode , separator , min , max ] ) ;
 
     const buildDateTime = ( date , t , mer ) =>
     {

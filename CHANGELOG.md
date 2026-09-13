@@ -8,6 +8,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🚨 `yyyy/mm/dd` was the one date mode that bypassed Maskito, and it showed**
+
+- **A hand-written mask that constrained only the first digit of each segment.** `/[1-2]/` for the year, `/[0-1]/` for the month, `/[0-3]/` for the day — so **`2026/19/39` was typable**, and `parseISO` turned it into a `Date` with `new Date( year , month , day )`, which does not fail on a month 18 : it **rolls over silently to August 2027**. The `isNaN` guard saw nothing and `onDate` emitted that date as though it had been typed.
+- **🚨 And the mode carried no bounds at all.** The custom branch returned `{ mask }` alone, so `min` / `max` never reached the mask's postprocessor, and `parseISO` never clamped — `yyyy/mm/dd` was the only mode where the bounds neither constrained typing nor rewrote the value. In `InputDateRange`, `minLength` / `maxLength` were lost the same way.
+- **The branch was in three components** — `InputDate`, `InputDateRange` and `InputDateTimePicker` — and dates from the repository's first commit, when Maskito's own `yyyy/mm/dd` was presumably not yet there. It is now, and it was verified in the installed package's `MaskitoDateMode` before a line was deleted. `InputDateTimePicker` was the least hurt : its mask is home-made for *every* mode and clamps per segment, so only its parsing took the detour.
+- **It had just become visible.** `yyyy/mm` shipped one release earlier through Maskito, leaving two ISO modes in the same field with two different answers on bounds and on validation.
+- **What changes on `yyyy/mm/dd` only, all of it alignment**: the bounds constrain typing and rewrite the field ; an impossible date is refused as it is typed instead of rolling over ; segments are zero-padded ; and `InputDateRange` honours `minLength` / `maxLength` there at last.
+- **The ISO demo declares bounds at last.** `/lab/inputs` had four `yyyy/mm/dd` fields and not one of them named a `min` or a `max`, so the very thing this fixes was unobservable ; « Date ISO » is now bounded 2020 → 2030.
+- **`helpers/date/parseISO` stays.** Nothing in the library calls it any more, but `package.json` exports `./helpers/*`, so it is a public entry point — removing it would break an importer for no gain. 111 lines deleted, 48 written.
+
 **`yyyy/mm` — the ISO 8601 year-month, which Maskito knew and we did not expose**
 
 - **`2026-09` is the order the back end speaks**, and `mm/yyyy` meant turning the segments round on every round trip. `helpers/date/dateModes` gains `YYYY_MM`, and `InputMonthYearPicker` accepts it beside `mm/yyyy` and `mm/yy`.
