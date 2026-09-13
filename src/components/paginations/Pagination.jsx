@@ -8,8 +8,12 @@ import useBreakpoint from '../../themes/hooks/useBreakpoint' ;
 
 import Button          from '../Button' ;
 import PaginationRange from './PaginationRange' ;
-import Popover , { RESPONSIVE } from '../Popover' ;
+import PopoverButton   from '../PopoverButton' ;
 import Typography      from '../typography/Typography' ;
+
+import { GHOST } from '../../themes/components/button' ;
+import getInputClasses  from '../../themes/components/input' ;
+import getSelectClasses from '../../themes/components/select' ;
 
 import getPaginationData from '../helpers/getPaginationData' ;
 
@@ -193,7 +197,6 @@ const Pagination =
     const isAtBreakpoint    = useBreakpoint( compactBreakpoint ) ;
     const isCompact         = compact || ( !!compactBelow && ! isAtBreakpoint ) ;
 
-    const jumpTriggerRef = useRef( null ) ;
     const jumpInputRef   = useRef( null ) ;
 
     const [ jumpOpen , setJumpOpen ] = useState( false ) ;
@@ -473,7 +476,7 @@ const Pagination =
         <label className="flex items-center gap-2 whitespace-nowrap text-sm text-base-content/70">
             { perPageLabel }
             <select
-                className = { cn( 'select w-auto' , `select-${ size }` ) }
+                className = { getSelectClasses({ size , className : 'w-auto' }) }
                 disabled  = { disabled }
                 onChange  = { handleLimitChange }
                 value     = { limit }
@@ -519,7 +522,7 @@ const Pagination =
                 <input
                     ref          = { jumpInputRef }
                     aria-label   = { pageNumberLabel }
-                    className    = { cn( 'input w-14 text-center' , `input-${ size }` ) }
+                    className    = { getInputClasses({ size , className : 'w-14 text-center' }) }
                     defaultValue = { currentPage }
                     disabled     = { disabled }
                     inputMode    = "numeric"
@@ -536,35 +539,29 @@ const Pagination =
             </div>
         ) ;
 
-        // Trigger + Popover (dropdown on desktop, bottom-sheet on mobile).
+        // Dropdown on desktop, bottom-sheet on mobile. The open state stays here
+        // rather than inside the button : the field's `key` resets its value on every
+        // reopening, and `applyJump` is reached from the field's Enter too — outside
+        // the panel's own render, where the `close` handed to `panel` cannot go.
         const modalJump = (
-            <>
-                <button
-                    ref           = { jumpTriggerRef }
-                    aria-haspopup = "dialog"
-                    aria-label    = { goToPageLabel }
-                    className     = { cn( 'btn btn-ghost gap-1 whitespace-nowrap' , `btn-${ size }` ) }
-                    disabled      = { disabled }
-                    onClick       = { () => setJumpOpen( true ) }
-                    type          = "button"
-                >
-                    { pageLabel } { currentPage } { ofLabel } { pageCount }
-                    <DefaultJumpIcon aria-hidden="true" className="opacity-60" />
-                </button>
-
-                <Popover
-                    anchorRef       = { jumpTriggerRef }
-                    applyLabel      = { goLabel }
-                    ariaLabel       = { goToPageLabel }
-                    cancelLabel     = { cancelLabel }
-                    display         = { RESPONSIVE }
-                    initialFocusRef = { jumpInputRef }
-                    isOpen          = { jumpOpen }
-                    onApply         = { applyJump }
-                    onCancel        = { closeJump }
-                    onClose         = { closeJump }
-                    showFooter
-                >
+            <PopoverButton
+                applyLabel      = { goLabel }
+                ariaLabel       = { goToPageLabel }
+                cancelLabel     = { cancelLabel }
+                className       = "gap-1 whitespace-nowrap"
+                disabled        = { disabled }
+                initialFocusRef = { jumpInputRef }
+                onApply         = { applyJump }
+                onCancel        = { closeJump }
+                onOpenChange    = { setJumpOpen }
+                open            = { jumpOpen }
+                panelHeight     = { 140 }
+                panelWidth      = { 240 }
+                showFooter
+                size            = { size }
+                style           = { GHOST }
+                title           = { goToPageLabel }
+                panel           = {
                     <div className="flex flex-col gap-2 p-1">
                         <label className="text-sm font-medium" htmlFor={ jumpFieldId }>
                             { goToPageLabel }
@@ -589,8 +586,13 @@ const Pagination =
                             </span>
                         </div>
                     </div>
-                </Popover>
-            </>
+                }
+            >
+                {/* The icon follows the label, so it stays a child rather than the
+                    `icon` prop — `Button` paints that one before the content. */}
+                { pageLabel } { currentPage } { ofLabel } { pageCount }
+                <DefaultJumpIcon aria-hidden="true" className="opacity-60" />
+            </PopoverButton>
         ) ;
 
         const controlsRow = (

@@ -8,6 +8,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**`Pagination` — its page-jump panel used to cover the button that opened it**
+
+- **🚨 The jump was the one anchored panel in the library with no `useDropdownPosition`** — a bare `useRef` and the popover's default direction. Not "it went off-screen" : `Popover` computes `top = rect.bottom + GAP` and then clamps that into the viewport, so near the bottom of a page the panel was pushed back up **over its own trigger** instead of opening above it. On `PopoverButton` the direction is computed, and it opens upward where there is no room below.
+- **`aria-expanded` on the trigger.** `Pagination` was the only component already declaring `aria-haspopup="dialog"` ; the state that goes with it was missing, here as everywhere. The primitive posts both, and `type="button"`.
+- **🚨 Three classes were being built at runtime** — `` `btn-${size}` ``, `` `select-${size}` `` and `` `input-${size}` ``. The scanner never sees a class assembled from a value, so these only resolved because `themes/components/{button,select,input}.js` emit the same literals elsewhere : the defect was masked, not absent. The three now go through the generators, which is where the literal maps live.
+- **The open state stays in `Pagination`**, deliberately : the field's `key` resets its value on every reopening, and `applyJump` is reached from the field's Enter as well — outside the panel's own render, where the `close` handed to `panel` cannot reach. `PopoverButton` takes the anchoring and the positioning, not a panel's own logic.
+- **One behaviour changes**: clicking the trigger while the panel is open now closes it. It used to do nothing, the handler only ever opening.
+- The icon stays a child rather than the `icon` prop — `Button` paints that one before the content, and this one follows the label.
+
+## [0.18.0] — 2026-09-13
+
 **`PopoverButton` — the montage every anchored panel was rewriting**
 
 - **The position hook, the `recalculate()` before opening, the open state and the five props that carry the computed direction and placement — written once.** What is left at the call site is the button and the panel. A filter-bar trigger that took twenty lines takes four.
@@ -125,14 +136,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - **🚨 The prerequisite is in place ; the value shapes are not.** Every one of the ten contexts carries at least one function in its value — `setConfig`, `setLang`, `getLocale`, `toggleFullscreen`, `toggleSelected` — and a value rendered from a Server Component crosses the RSC boundary, where functions cannot be serialized. So nothing can be fed from a server layout *today*, whatever the directive says. Splitting the data half from the actions half is a piece of work of its own, and it is not this one.
 - **`contexts/themes/useThemeColor.js` gained the same directive**, unrelated to any of the above : it calls `useEffect` and was the only hook under `contexts/` without it.
 
-
 **Dependencies — React 19.3 and DaisyUI 5.7.37, and what they hand over for nothing**
 
 - **React, React DOM and `react-is` 19.2.8 → 19.3.0** ; **DaisyUI 5.7.4 → 5.7.37** ; `@vis.gl/react-maplibre` 8.1.3, `terra-draw` 1.33.0, `supercluster` 9.1.0, `@maskito/*` 5.4.0, `dayjs` 1.11.23, `sanitize-html` 2.17.7, `@types/node` 25.9.6. Thirty-three DaisyUI patch releases in one step, and nothing in the library had to move for them.
 - **`resize` updates are batched until the next frame now**, which two components get for free : `FloatingTip` and `InputAddressSearch` both *follow* an anchor, recomputing a position on every event of a drag-resize, and now recompute once per frame instead. `Popover` and `useHoverIntent` also listen for `resize`, and gain nothing — they *dismiss*, which is one state change after which the listener is gone. Worth knowing before anyone reaches for a hand-rolled `requestAnimationFrame` in those effects : React does it.
 - **This reaches plain `window` listeners, not only React's synthetic events** — the priority of an update is taken from the native event being dispatched when `setState` is called, whatever path the handler came through.
 - **Strict Mode now double-invokes Effects during hydration**, which was the one change in this release able to surface a defect rather than fix one. Checked, and there is nothing : `maps/Map.jsx` holds no Effect at all — the engine's mount and unmount belong to `@vis.gl/react-maplibre` — and the five `maps` components that do have Effects are gated behind the map instance, published on `load`, or behind a click. None of them runs in the hydration mount, which is the only window the change touches.
-
 
 **Documentation — eight `@example` imports that could not resolve**
 
