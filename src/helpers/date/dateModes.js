@@ -15,6 +15,7 @@ export const MM_DD_YYYY = 'mm/dd/yyyy' ;
 export const MM_YY      = 'mm/yy' ;
 export const MM_YYYY    = 'mm/yyyy' ;
 export const YYYY       = 'yyyy' ;      // Year alone — no separator to speak of
+export const YYYY_MM    = 'yyyy/mm' ;   // ISO 8601 year-month
 export const YYYY_MM_DD = 'yyyy/mm/dd' ; // Custom ISO mode
 
 const dateModes =
@@ -26,6 +27,7 @@ const dateModes =
     MM_YY,
     MM_YYYY,
     YYYY,
+    YYYY_MM,
     YYYY_MM_DD
 ] ;
 

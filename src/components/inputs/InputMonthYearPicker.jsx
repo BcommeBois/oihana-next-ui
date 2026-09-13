@@ -24,8 +24,14 @@ import Popover from '../Popover' ;
 import { MdCalendarMonth as MonthIcon , MdClose as ClearIcon } from 'react-icons/md' ;
 
 /**
- * InputMonthYearPicker — the masked {@link InputDate} in its `mm/yyyy` mode, paired
- * with a {@link module:components/dates/MonthYearPicker} in a responsive popover.
+ * InputMonthYearPicker — the masked {@link InputDate} in one of its month modes,
+ * paired with a {@link module:components/dates/MonthYearPicker} in a responsive
+ * popover.
+
+ * The segments may be ordered either way — `mm/yyyy`, or `yyyy/mm` with
+ * `separator="-"` for the ISO 8601 year-month the back end speaks. Nothing here
+ * reads the order : the value is normalised with `startOf('month')` whichever
+ * side it came from.
  *
  * The twin of {@link InputDatePicker} one granularity up : the same props, the same
  * handlers, no days. The text field and the grid share one value — typing moves the
@@ -57,7 +63,7 @@ import { MdCalendarMonth as MonthIcon , MdClose as ClearIcon } from 'react-icons
  * @param {string} [props.error] - Error message shown under the field.
  * @param {Date|number} [props.max] - Latest selectable month (a `Date`, or a year — inclusive).
  * @param {Date|number} [props.min] - Earliest selectable month (same).
- * @param {'mm/yyyy'|'mm/yy'} [props.mode='mm/yyyy'] - Mask mode. `mm/yy` reads a two-digit year as the 2000s.
+ * @param {'mm/yyyy'|'mm/yy'|'yyyy/mm'} [props.mode='mm/yyyy'] - Mask mode. `mm/yy` reads a two-digit year as the 2000s ; `yyyy/mm` with `separator="-"` is the ISO 8601 year-month, `2026-09`.
  * @param {(value: string) => void} [props.onChange] - Change handler (formatted string).
  * @param {(date: Date|null) => void} [props.onDate] - Parsed-month handler (first day of the month).
  * @param {(date: Date) => void} [props.onDisabledDate] - Called instead of `onDate` when `strict` refuses a typed month.
@@ -75,6 +81,9 @@ import { MdCalendarMonth as MonthIcon , MdClose as ClearIcon } from 'react-icons
  * ```jsx
  * const [ period , setPeriod ] = useState('') ;
  * <InputMonthYearPicker label="Billing period" value={ period } onChange={ setPeriod } max={ new Date() } />
+ *
+ * // ISO 8601 year-month : the field reads 2026-09
+ * <InputMonthYearPicker mode={ YYYY_MM } separator="-" onDate={ setPeriod } />
  *
  * // Bounded by years, and no month of the second half
  * <InputMonthYearPicker min={ 2020 } max={ 2030 } disabledMonths={ [ 6 , 7 , 8 , 9 , 10 , 11 ] } strict />

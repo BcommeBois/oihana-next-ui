@@ -38,7 +38,7 @@ import { MdCalendarToday as CalendarIcon } from 'react-icons/md'
  * @param {string} [props.value] - Controlled date value (formatted string)
  * @param {Function} [props.onChange] - Change handler (receives formatted date string)
  * @param {Function} [props.onDate] - Date object change handler (receives Date object or null; called only when the parsed date actually changes)
- * @param {'dd/mm'|'dd/mm/yyyy'|'mm/dd'|'mm/dd/yyyy'|'mm/yy'|'mm/yyyy'|'yyyy'|'yyyy/mm/dd'} [props.mode='dd/mm/yyyy'] - Date format mode
+ * @param {'dd/mm'|'dd/mm/yyyy'|'mm/dd'|'mm/dd/yyyy'|'mm/yy'|'mm/yyyy'|'yyyy'|'yyyy/mm'|'yyyy/mm/dd'} [props.mode='dd/mm/yyyy'] - Date format mode
  * @param {string} [props.separator='/'] - Separator character ('/', '.', '-')
  * @param {Date} [props.min] - Minimum allowed date
  * @param {Date} [props.max] - Maximum allowed date
@@ -92,6 +92,10 @@ import { MdCalendarToday as CalendarIcon } from 'react-icons/md'
  * @example
  * // Year alone — four digits, no separator
  * <InputDate mode={YYYY} label="Vintage" />
+ *
+ * @example
+ * // ISO 8601 year-month — 2026-09, the order the back end speaks
+ * <InputDate mode={YYYY_MM} separator="-" label="Period" />
  *
  * @example
  * // Controlled with Date object callback

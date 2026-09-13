@@ -1,6 +1,5 @@
 'use client' ;
 
-import InputTime from '@/components/inputs/InputTime';
 import { useState } from 'react' ;
 import Container from '@/display/Container' ;
 import InputDate from '@/components/inputs/InputDate' ;
@@ -101,6 +100,19 @@ const InputDateDemo = () =>
                     mode      = "mm/yy"
                     separator = "/"
                     helper    = "Format: MM/YY"
+                />
+
+                <InputDate
+                    label     = "Year/Month (ISO 8601)"
+                    mode      = "yyyy/mm"
+                    separator = "-"
+                    helper    = "Format: YYYY-MM — the order the back end speaks"
+                />
+
+                <InputDate
+                    label  = "Year only"
+                    mode   = "yyyy"
+                    helper = "Format: YYYY — four digits, nothing to separate"
                 />
             </div>
 

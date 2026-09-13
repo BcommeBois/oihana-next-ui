@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**`yyyy/mm` — the ISO 8601 year-month, which Maskito knew and we did not expose**
+
+- **`2026-09` is the order the back end speaks**, and `mm/yyyy` meant turning the segments round on every round trip. `helpers/date/dateModes` gains `YYYY_MM`, and `InputMonthYearPicker` accepts it beside `mm/yyyy` and `mm/yy`.
+- **Not a line of code anywhere.** The mode is not `YYYY_MM_DD`, so it takes `InputDate`'s ordinary generator path : `maskitoDate` builds the template from the mode and the separator, `parseDateString` filters out a `day` segment the mode does not have, and `segmentsToDate` defaults the day to `1` — the same first-of-the-month `mm/yyyy` produces. `formatDateForMode` and the placeholder builder follow on their own. `InputMonthYearPicker` reads no order either : it normalises with `startOf('month')` whichever side the value came from.
+- **The `yyyy` mode is shown at last.** It shipped in 0.18.0 without ever reaching `/lab/inputs` ; « Short Formats » now carries it, next to the new `yyyy/mm`. The demo also drops an `InputTime` it imported and never rendered — the same defect swept out of the `@example` blocks in 0.18.0, this time in a demo.
+
 ## [0.18.0] — 2026-09-13
 
 **`Pagination` — its page-jump panel used to cover the button that opened it**
