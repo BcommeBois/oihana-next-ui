@@ -1,11 +1,10 @@
 'use client' ;
 
-import { useRef , useState } from 'react' ;
+import { useState } from 'react' ;
 
 import Container from '@/display/Container' ;
 
-import Button  from '@/components/Button' ;
-import Popover from '@/components/Popover' ;
+import PopoverButton from '@/components/PopoverButton' ;
 
 import InputMonthYearPicker from '@/components/inputs/InputMonthYearPicker' ;
 import InputYearPicker      from '@/components/inputs/InputYearPicker' ;
@@ -15,7 +14,6 @@ import MonthYearPicker from '@/components/dates/MonthYearPicker' ;
 import YearPicker      from '@/components/dates/YearPicker' ;
 
 import useLang from '@/contexts/lang/useLang' ;
-import useDropdownPosition from '@/themes/hooks/useDropdownPosition' ;
 
 import dayjs from '@/helpers/date/configureDayjs' ;
 
@@ -30,8 +28,9 @@ const Panel = ({ children }) =>
 ) ;
 
 /**
- * Showcase for the three grid pickers that select a period without showing days :
- * YearPicker, MonthPicker and MonthYearPicker — inline, then inside a popover.
+ * Showcase for the pickers that select a period without ever showing a day : the
+ * three grids (YearPicker, MonthPicker, MonthYearPicker) inline, then behind a
+ * PopoverButton, then the two masked fields built on them.
  */
 const MonthYearDemo = () =>
 {
@@ -44,9 +43,6 @@ const MonthYearDemo = () =>
     const [ period   , setPeriod   ] = useState( null ) ;
     const [ billing  , setBilling  ] = useState( new Date( new Date().getFullYear() , 0 , 1 ) ) ;
 
-    const [ popoverOpen , setPopoverOpen ] = useState( false ) ;
-    const [ modalOpen   , setModalOpen   ] = useState( false ) ;
-
     const [ billingText , setBillingText ] = useState( '' ) ;
     const [ billingDate , setBillingDate ] = useState( null ) ;
     const [ vintageText , setVintageText ] = useState( '' ) ;
@@ -55,23 +51,7 @@ const MonthYearDemo = () =>
     const [ strictDate  , setStrictDate  ] = useState( null ) ;
     const [ lastRefused , setLastRefused ] = useState( null ) ;
 
-    const modalRef = useRef( null ) ;
-
     const thisYear = new Date().getFullYear() ;
-
-    const { ref : anchorRef , direction , placement , recalculate } = useDropdownPosition
-    ({
-        panelWidth         : 280 ,
-        panelHeight        : 260 ,
-        preferredDirection : 'bottom' ,
-        preferredPlacement : 'start' ,
-    }) ;
-
-    const openPopover = () =>
-    {
-        recalculate() ;
-        setPopoverOpen( true ) ;
-    } ;
 
     const monthName  = ( m ) => ( m === null ? '—' : dayjs( new Date( 2021 , m , 1 ) ).locale( lang ).format( 'MMMM' ) ) ;
     const periodName = ( date ) => ( date ? dayjs( date ).locale( lang ).format( 'MMMM YYYY' ) : '—' ) ;
@@ -233,50 +213,55 @@ const MonthYearDemo = () =>
                 the <span className="font-mono">Popover</span>, which is a dropdown anchored to its
                 trigger on md+ screens and a bottom-sheet below
                 (<span className="font-mono">display=&quot;responsive&quot;</span>). Closing on pick is
-                the caller's decision — a picker that closes itself could not be used inline.
+                the caller's decision — a picker that closes itself could not be used inline — which is
+                exactly what the <span className="font-mono">close</span> handed to
+                the <span className="font-mono">panel</span> function is for.
+            </p>
+            <p className="text-xs opacity-50 -mt-4">
+                Both buttons below are
+                a <span className="font-mono">PopoverButton</span>, which owns the position hook, the
+                open state and the anchoring. Nothing is left at the call site but the button and the
+                panel — the trigger is its own anchor, and it carries
+                the <span className="font-mono">type=&quot;button&quot;</span>,
+                the <span className="font-mono">aria-haspopup</span> and
+                the <span className="font-mono">aria-expanded</span> a hand-written one forgets.
             </p>
 
             <div className="flex flex-wrap items-start gap-8">
 
-                <div ref={ anchorRef } className="flex flex-col gap-1">
-                    <Button type="button" icon={ PeriodIcon } onClick={ openPopover }>
-                        { periodName( period ) === '—' ? 'Pick a period' : periodName( period ) }
-                    </Button>
-                    <span className="text-xs opacity-50">responsive — dropdown on md+, sheet below</span>
-
-                    <Popover
-                        anchorRef = { anchorRef }
-                        isOpen    = { popoverOpen }
-                        onClose   = { () => setPopoverOpen( false ) }
-                        direction = { direction }
-                        placement = { placement }
-                        ariaLabel = "Pick a period"
+                <div className="flex flex-col gap-1">
+                    <PopoverButton
+                        icon        = { PeriodIcon }
+                        ariaLabel   = "Pick a period"
+                        panelWidth  = { 280 }
+                        panelHeight = { 260 }
+                        panel       = { ({ close }) => (
+                            <MonthYearPicker
+                                value    = { period }
+                                onChange = { ( value ) => { setPeriod( value ) ; close() ; } }
+                            />
+                        ) }
                     >
-                        <MonthYearPicker
-                            value    = { period }
-                            onChange = { ( value ) => { setPeriod( value ) ; setPopoverOpen( false ) ; } }
-                        />
-                    </Popover>
+                        { periodName( period ) === '—' ? 'Pick a period' : periodName( period ) }
+                    </PopoverButton>
+                    <span className="text-xs opacity-50">responsive — dropdown on md+, sheet below</span>
                 </div>
 
-                <div ref={ modalRef } className="flex flex-col gap-1">
-                    <Button type="button" style="outline" onClick={ () => setModalOpen( true ) }>
-                        { year ? `Year ${ year }` : 'Pick a year' }
-                    </Button>
-                    <span className="text-xs opacity-50">display=&quot;modal&quot; — centered card, backdrop</span>
-
-                    <Popover
-                        anchorRef = { modalRef }
-                        isOpen    = { modalOpen }
-                        onClose   = { () => setModalOpen( false ) }
+                <div className="flex flex-col gap-1">
+                    <PopoverButton
+                        style     = "outline"
                         display   = "modal"
                         ariaLabel = "Pick a year"
+                        panel     = { ({ close }) => (
+                            <YearPicker
+                                value    = { year }
+                                onChange = { ( value ) => { setYear( value ) ; close() ; } }
+                            />
+                        ) }
                     >
-                        <YearPicker
-                            value    = { year }
-                            onChange = { ( value ) => { setYear( value ) ; setModalOpen( false ) ; } }
-                        />
-                    </Popover>
+                        { year ? `Year ${ year }` : 'Pick a year' }
+                    </PopoverButton>
+                    <span className="text-xs opacity-50">display=&quot;modal&quot; — centered card, backdrop</span>
                 </div>
 
             </div>

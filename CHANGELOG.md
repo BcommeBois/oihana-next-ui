@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**`PopoverButton` — the montage every anchored panel was rewriting**
+
+- **The position hook, the `recalculate()` before opening, the open state and the five props that carry the computed direction and placement — written once.** What is left at the call site is the button and the panel. A filter-bar trigger that took twenty lines takes four.
+- **`children` is the button's content and the panel goes to `panel`**, not the other way round : it is a *button*, and `children` must mean here what it means everywhere else in the library. `panel` takes a node **or a function receiving `{ close }`** — a grid cannot dismiss what it does not know about, so closing on pick stays the caller's decision, and `close` is what makes it one line. The function runs only while the panel is open.
+- **🚨 It carries the three attributes the hand-written triggers forget** : `type="button"`, so one placed in a form submits nothing ; `aria-haspopup="dialog"`, which only `Pagination` was setting ; and `aria-expanded`, which **nothing in the library was setting at all**.
+- **The trigger is its own anchor**, not a wrapper around it — a button knows its own bounds. The four field pickers keep their wrapper on purpose : their anchor is the whole field, with the trigger a `join-item` inside it, so this is not theirs to use. `Pagination`'s jump button and `SchedulerMonth`'s moving anchor were left alone.
+- **Not a `PeriodPickerButton`.** A `precision` prop would have brought back exactly what got a single `PeriodPicker` rejected in the first place — the type of `value` changing with a prop — and three named period buttons would have been three shells whose whole work is a format string. What was actually costly to write was never specific to periods. `/lab/dates` shows both cases, one responsive and one forced to a modal.
+
 **`/lab/dates` — the modal regression demo was reading as an orphan**
 
 - **It opened on a `<span className="font-semibold">`**, which is the markup this page uses for a sub-heading *inside* a section, while the other two demos open on an `<h2>`. It announced itself as a sub-block of whatever came before rather than as a section of its own — invisible while it sat second, plain once the period pickers pushed it to the bottom.
