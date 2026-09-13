@@ -8,6 +8,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🚨 `Popover` — every dropdown had been invisible since `Portal` stopped rendering on the server**
+
+- **The panel is portaled, and a portal renders nothing until it has mounted.** `Portal` gained a `mounted` gate so it would say on the client's first render what the server said — nothing. The consequence went unnoticed : on the commit that opens a popover the panel does not exist yet, so `Popover`'s positioning `useLayoutEffect` — keyed on `[ isOpen , asModal , anchorRef , direction , placement ]` — read an empty `panelRef`, gave up, and was never asked again. `coords` stayed `null`, and the panel's fallback style is `visibility: hidden`. The dropdown opened, held focus, closed on Escape, and could not be seen.
+- **Only the dropdown.** The modal is centred by flexbox and measures nothing, which is exactly why the same trigger worked on a phone and did nothing on a desktop — the responsive display picks the modal below `md`.
+- **A callback ref is what says when the node arrives**, one commit later, and it is now a dependency of the positioning effect. Detaching it also drops the measurement, so the next opening cannot paint at the previous position for a frame.
+- **It reached `InputDatePicker`, `InputDateRangePicker`, `InputDateTimePicker`, `InputTimePicker`, `Pagination` and `SchedulerMonth`** — every consumer of the anchored display.
+
 **Documentation — `MenuNavigation`'s example imported four things it never used**
 
 - **One of them was the `@assets/Logo` path left open last time**, and reading the example answered the question it had raised : there was no intent to recover. `Logo` is imported and never rendered — as are `Container`, `Jump` and `LetterReveal`. The block is a page pasted into a JSDoc without pruning its imports, and `@assets` was only the most visible symptom : there is no such folder, it is not in the published `files`, and `exports` has no entry for it.

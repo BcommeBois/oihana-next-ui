@@ -1,6 +1,6 @@
 'use client' ;
 
-import { useEffect , useLayoutEffect , useRef , useState } from 'react' ;
+import { useCallback , useEffect , useLayoutEffect , useRef , useState } from 'react' ;
 
 import clamp from 'vegas-js-core/src/maths/clamp';
 
@@ -121,17 +121,40 @@ const Popover =
     const panelRef = useRef( null ) ;
     const [ coords , setCoords ] = useState( null ) ;
 
+    // The panel lives inside a `Portal`, and a portal renders nothing until it has
+    // mounted — it has no server-side form, so its first render is null. On the
+    // commit that opens the popover there is therefore no panel to measure, and a
+    // layout effect keyed on `isOpen` alone reads a ref that is still empty, gives
+    // up, and is never asked again : the dropdown would stay `visibility: hidden`
+    // for good. A callback ref is what says *when* the node arrives, one commit
+    // later. The modal never needed it — flexbox centres it without measuring.
+    const [ panel , setPanel ] = useState( null ) ;
+
+    const setPanelRef = useCallback( ( node ) =>
+    {
+        panelRef.current = node ;
+        setPanel( node ) ;
+
+        // Closing drops the measurement with the node : kept, it would paint the
+        // next opening at the previous trigger's position for a frame.
+        if ( !node )
+        {
+            setCoords( null ) ;
+        }
+    }
+    , [] ) ;
+
     // ---- Dropdown positioning (fixed, from the anchor rect + computed direction/placement).
     useLayoutEffect( () =>
     {
-        if ( !isOpen || asModal || !anchorRef?.current || !panelRef.current )
+        if ( !isOpen || asModal || !anchorRef?.current || !panel )
         {
             return ;
         }
 
         const rect = anchorRef.current.getBoundingClientRect() ;
-        const pw   = panelRef.current.offsetWidth ;
-        const ph   = panelRef.current.offsetHeight ;
+        const pw   = panel.offsetWidth ;
+        const ph   = panel.offsetHeight ;
         const vw   = window.innerWidth ;
         const vh   = window.innerHeight ;
 
@@ -147,7 +170,7 @@ const Popover =
 
         setCoords({ top , left }) ;
     }
-    , [ isOpen , asModal , anchorRef , direction , placement ] ) ;
+    , [ isOpen , asModal , anchorRef , direction , placement , panel ] ) ;
 
     // ---- Dismiss : outside click, Escape, scroll / resize (dropdown only).
     useEffect( () =>
@@ -321,7 +344,7 @@ const Popover =
                     {/* biome-ignore lint/a11y/useKeyWithClickEvents: same — keyboard dismissal goes through Escape, not the backdrop */}
                     <div className="absolute inset-0 bg-black/40" onClick={ onClose } />
                     <div
-                        ref             = { panelRef }
+                        ref             = { setPanelRef }
                         aria-label      = { ariaLabel }
                         aria-labelledby = { ariaLabelledBy }
                         aria-modal      = "true"
@@ -377,7 +400,7 @@ const Popover =
     return (
         <Portal containerRef={ containerRef }>
             <div
-                ref             = { panelRef }
+                ref             = { setPanelRef }
                 aria-label      = { ariaLabel }
                 aria-labelledby = { ariaLabelledBy }
                 className       = { cn( 'fixed z-60 w-fit max-w-[calc(100vw-12px)] border border-base-300 bg-base-100 p-3 shadow-lg rounded-box' , panelClassName ) }
