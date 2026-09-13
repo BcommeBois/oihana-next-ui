@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.18.0] — 2026-09-13
+
 **`Pagination` — its page-jump panel used to cover the button that opened it**
 
 - **🚨 The jump was the one anchored panel in the library with no `useDropdownPosition`** — a bare `useRef` and the popover's default direction. Not "it went off-screen" : `Popover` computes `top = rect.bottom + GAP` and then clamps that into the viewport, so near the bottom of a page the panel was pushed back up **over its own trigger** instead of opening above it. On `PopoverButton` the direction is computed, and it opens upward where there is no room below.
@@ -16,8 +18,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - **The open state stays in `Pagination`**, deliberately : the field's `key` resets its value on every reopening, and `applyJump` is reached from the field's Enter as well — outside the panel's own render, where the `close` handed to `panel` cannot reach. `PopoverButton` takes the anchoring and the positioning, not a panel's own logic.
 - **One behaviour changes**: clicking the trigger while the panel is open now closes it. It used to do nothing, the handler only ever opening.
 - The icon stays a child rather than the `icon` prop — `Button` paints that one before the content, and this one follows the label.
-
-## [0.18.0] — 2026-09-13
 
 **`PopoverButton` — the montage every anchored panel was rewriting**
 
