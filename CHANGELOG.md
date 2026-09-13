@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**`InputYearPicker` — four digits and nothing to separate**
+
+- **The third field picker, and the one that does not speak `Date`.** `onYear` hands back a plain `number`, as the `YearPicker` it wraps does ; `onDate` sits beside it on the 1st of January for symmetry with the rest of the family, and `onDisabledYear` is the refusal `strict` raises. A year is more often an integer than a point in time, and a field that wraps a grid should speak the grid's language.
+- **`helpers/date/dateModes` gained `YYYY`**, the mode Maskito already knew and we did not expose. Additive : `InputDate` accepts one mode more and nothing else changes. `maskitoDate` splits the template on `/`, finds none, and emits a clean four-digit mask ; `maskitoParseDate` defaults the month and the day to `1`, so the 1st of January falls out on its own.
+- **No `mode`, no `separator`.** There is one shape a year can take, and nothing inside it to separate.
+- **Only `disabledYears`.** Neither a day nor a month exists at this granularity — `disabledMonths` would only reach a year through the twelve-blocked-months derivation, which is not how someone picking a year thinks. `strict` asks `getYearReason`.
+- **`components.picker.year`** carries the `clear` / `disabled` / `open` labels, fr and en. `/lab/dates` shows the field bounded to 1950 → this year, with every decade's first year greyed out.
+
 **🚨 `StaggerList` adds no element of its own any more — and its delays are milliseconds**
 
 - **It used to wrap every child in a `motion.div`, which is what made it unusable where it was most wanted.** In a grid the wrapper became the grid item and the real content was shut inside it ; under `subgrid` it cut the column inheritance ; and inside a `<ul>` it was simply invalid markup — the component's own example did exactly that. The `metrics` sprint had written the verdict down at the time and reimplemented the effect rather than use it.
@@ -24,7 +32,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - **🚨 `strict` asks `getMonthReason`, never `isDayDisabled`.** A month partly inside the bounds is not blocked — its days are. Asking the day rules would refuse March because its first day falls before a `min` set mid-month, which is not what was picked.
 - **`disabledDates` and `disabledWeekdays` are not accepted.** A day does not exist at this granularity, and a rule that can never block anything is worse than a missing one. `disabledMonths` and `disabledYears` are the two that remain.
 - **`min` / `max` take a `Date` or a year**, normalised once for the three consumers — the mask, the rules and the grid.
-- **The bounds keep `InputDatePicker`'s parsing contract, knowingly.** Maskito clamps a typed value to the nearest bound, so the field's text and the emitted month can disagree in that one case, and `strict` never sees the overflow. Trading that for our own validation would cost the constraint-as-you-type and split the contract in two ; the honest version is a separate subject, to be applied to the four `Input*Picker` at once rather than to one.
+- **The bounds keep `InputDatePicker`'s parsing contract, knowingly.** Maskito clamps a typed value to the nearest bound, so `strict` never sees an overflow — it only ever fires for `disabledMonths` / `disabledYears`. Reading `createMinMaxDatePostprocessor` afterwards showed the clamp is **written back into the field**, not only into the parsed value : the two agree, and the only way to hold text and value apart is to set an out-of-bounds string from outside the field (`defaultValue`, or a controlled `value`), which the mask never revisits.
 - **`components.picker.monthYear`** carries the `clear` / `disabled` / `open` labels, fr and en, beside `date` and `dateRange`. `/lab/dates` shows the field, then the same field in `strict`.
 
 **🚨 `Popover` — every dropdown had been invisible since `Portal` stopped rendering on the server**

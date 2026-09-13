@@ -8,6 +8,7 @@ import Button  from '@/components/Button' ;
 import Popover from '@/components/Popover' ;
 
 import InputMonthYearPicker from '@/components/inputs/InputMonthYearPicker' ;
+import InputYearPicker      from '@/components/inputs/InputYearPicker' ;
 
 import MonthPicker     from '@/components/dates/MonthPicker' ;
 import MonthYearPicker from '@/components/dates/MonthYearPicker' ;
@@ -48,6 +49,8 @@ const MonthYearDemo = () =>
 
     const [ billingText , setBillingText ] = useState( '' ) ;
     const [ billingDate , setBillingDate ] = useState( null ) ;
+    const [ vintageText , setVintageText ] = useState( '' ) ;
+    const [ vintageYear , setVintageYear ] = useState( null ) ;
     const [ strictText  , setStrictText  ] = useState( '' ) ;
     const [ strictDate  , setStrictDate  ] = useState( null ) ;
     const [ lastRefused , setLastRefused ] = useState( null ) ;
@@ -350,6 +353,48 @@ const MonthYearDemo = () =>
                             Bounds given as years cover the whole year.
                         </p>
                     </div>
+                </div>
+            </div>
+
+            {/* ---------------------------------------------------------------- Input year picker */}
+
+            <h2 className="text-3xl font-bold">Input year picker</h2>
+            <p className="text-sm opacity-70 -mt-4">
+                One granularity further up : four digits and nothing to separate. It speaks the language
+                of the grid it wraps — <span className="font-mono">onYear</span> hands back a plain
+                number, as <span className="font-mono">YearPicker</span> does, rather than
+                a <span className="font-mono">Date</span> standing in for an integer.
+                An <span className="font-mono">onDate</span> on the 1st of January is offered beside it
+                for symmetry with the rest of the family. Only the
+                rule <span className="font-mono">disabledYears</span> is accepted : neither a day nor a
+                month exists here.
+            </p>
+
+            <div className="flex flex-wrap items-start gap-8">
+                <div className="w-full max-w-xs">
+                    <InputYearPicker
+                        label         = "Vintage"
+                        value         = { vintageText }
+                        onChange      = { setVintageText }
+                        onYear        = { setVintageYear }
+                        min           = { 1950 }
+                        max           = { thisYear }
+                        disabledYears = { ( y ) => y % 10 === 0 }
+                        helper        = "Type four digits, or open the grid"
+                    />
+                </div>
+                <div className="flex flex-col gap-1">
+                    <p className="text-sm opacity-70">
+                        Text : <span className="font-mono">{ vintageText || '—' }</span>
+                    </p>
+                    <p className="text-sm opacity-70">
+                        Year : <span className="font-mono">{ vintageYear ?? '—' }</span>
+                    </p>
+                    <p className="text-xs opacity-50">
+                        Bounded 1950 → this year, and every decade's first year greyed out. The mask
+                        rewrites a year typed outside the bounds onto the nearest one, so the field and
+                        the value never disagree.
+                    </p>
                 </div>
             </div>
 

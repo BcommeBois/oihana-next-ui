@@ -1,7 +1,7 @@
 /**
  * Default labels of the picker family — `Popover` and the inputs built on it
  * (`InputColor`, `InputDatePicker`, `InputDateRangePicker`, `InputDateTimePicker`,
- * `InputMonthYearPicker`, `InputTimePicker`).
+ * `InputMonthYearPicker`, `InputTimePicker`, `InputYearPicker`).
  *
  * `Popover` reads the root keys (`apply`, `cancel`) ; each input reads its own
  * sub-block for the labels that name *what* is being picked, and leaves the two
@@ -65,6 +65,13 @@ const picker =
             now   : 'Maintenant' ,
             open  : 'Ouvrir le sélecteur d’heure' ,
         } ,
+
+        year :
+        {
+            clear    : 'Effacer l’année' ,
+            disabled : 'Cette année n’est pas disponible' ,
+            open     : 'Ouvrir le sélecteur d’année' ,
+        } ,
     } ,
 
     en :
@@ -116,6 +123,13 @@ const picker =
             clear : 'Clear time' ,
             now   : 'Now' ,
             open  : 'Open time picker' ,
+        } ,
+
+        year :
+        {
+            clear    : 'Clear year' ,
+            disabled : 'This year is not available' ,
+            open     : 'Open year picker' ,
         } ,
     } ,
 } ;
