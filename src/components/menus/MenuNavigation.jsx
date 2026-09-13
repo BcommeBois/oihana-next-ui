@@ -10,11 +10,7 @@
  *
  * import { useState } from 'react';
  *
- * import Logo           from 'oihana-next-ui/@assets/Logo';
- * import Container      from 'oihana-next-ui/display/Container';
  * import Page           from 'oihana-next-ui/display/Page';
- * import Jump           from 'oihana-next-ui/motions/Jump';
- * import LetterReveal   from 'oihana-next-ui/motions/LetterReveal';
  *
  * import FlagMenu from 'oihana-next-ui/components/menus/FlagMenu' ;
  * import MenuNavigation from 'oihana-next-ui/components/menus/MenuNavigation' ;

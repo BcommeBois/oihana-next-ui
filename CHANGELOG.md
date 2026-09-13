@@ -8,6 +8,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Documentation — `MenuNavigation`'s example imported four things it never used**
+
+- **One of them was the `@assets/Logo` path left open last time**, and reading the example answered the question it had raised : there was no intent to recover. `Logo` is imported and never rendered — as are `Container`, `Jump` and `LetterReveal`. The block is a page pasted into a JSDoc without pruning its imports, and `@assets` was only the most visible symptom : there is no such folder, it is not in the published `files`, and `exports` has no entry for it.
+- **Every `@example` in the repository was swept for the same defect** — 36 documentation blocks carry imports, and this was the only one. The four that a first pass flagged are deliberate : an import line that enumerates what a module exports while the body illustrates one or two of them, as `themes/enums/alignments` does with `START`. Removing those would make the examples say less, not more.
+
 **`Calendar` — the month can slide the way the arrows point (`animate`)**
 
 - **React 19.3's `<ViewTransition>` and `addTransitionType`, on the one navigation that has a direction.** The arrows wrap their update in `startTransition` and name the way the reader is going ; the stylesheet does the rest. Forward pushes the month out to the left and brings the next one in from the right, which is what makes a calendar read as advancing rather than blinking.
