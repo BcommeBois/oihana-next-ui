@@ -2,6 +2,8 @@
 
 import { useState } from 'react' ;
 
+import Container from '@/display/Container' ;
+
 import Button   from '@/components/Button' ;
 import Modal    from '@/components/modals/Modal' ;
 import useModal from '@/components/modals/hooks/useModal' ;
@@ -37,25 +39,28 @@ const PickersInModalDemo = () =>
     const { modalRef , open } = useModal() ;
 
     return (
-        <div className="flex flex-col gap-4">
-            <span className="font-semibold">Pickers inside a Modal</span>
-            <p className="text-sm opacity-70">
+        <Container className="flex flex-col gap-8 bg-base-200/60 p-4 sm:p-8 rounded-box" maxWidth="max-w-5xl">
+
+            <h2 className="text-3xl font-bold">Pickers inside a Modal</h2>
+            <p className="text-sm opacity-70 -mt-4">
                 The Popover panel portals into the host <span className="font-mono">dialog[open]</span>
                 (body-level content under a modal dialog is inert and paints below the top layer).
                 Escape closes the topmost surface only : the picker when open, then « Éditer ».
             </p>
 
-            <div>
-                <Button color="primary" onClick={ open }>Ouvrir « Éditer »</Button>
-            </div>
+            <div className="flex flex-col gap-4">
+                <div>
+                    <Button color="primary" onClick={ open }>Ouvrir « Éditer »</Button>
+                </div>
 
-            <p className="text-sm opacity-70">
-                Date : <span className="font-mono">{ date || '—' }</span>
-                {' · '}
-                Heure : <span className="font-mono">{ time || '—' }</span>
-                {' · '}
-                Date-heure : <span className="font-mono">{ dateTime || '—' }</span>
-            </p>
+                <p className="text-sm opacity-70">
+                    Date : <span className="font-mono">{ date || '—' }</span>
+                    {' · '}
+                    Heure : <span className="font-mono">{ time || '—' }</span>
+                    {' · '}
+                    Date-heure : <span className="font-mono">{ dateTime || '—' }</span>
+                </p>
+            </div>
 
             <Modal ref={ modalRef } title="Éditer" maxWidth="max-w-md" agree="OK">
                 <div className="flex flex-col gap-6 p-2">
@@ -79,7 +84,8 @@ const PickersInModalDemo = () =>
                     />
                 </div>
             </Modal>
-        </div>
+
+        </Container>
     ) ;
 } ;
 

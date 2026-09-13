@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**`/lab/dates` — the modal regression demo was reading as an orphan**
+
+- **It opened on a `<span className="font-semibold">`**, which is the markup this page uses for a sub-heading *inside* a section, while the other two demos open on an `<h2>`. It announced itself as a sub-block of whatever came before rather than as a section of its own — invisible while it sat second, plain once the period pickers pushed it to the bottom.
+- **It was also the only demo the page had to wrap by hand**, the other two bringing their own `Container`. That exception is gone : it now carries its own, like everything else here.
+- **Moved back beside what it guards.** It exercises `InputDatePicker`, `InputTimePicker` and `InputDateTimePicker` inside a `Modal` — all three shown in `DateDemo`, from which seven unrelated sections had come to separate it. The page intro says what the page holds now, too.
+
 **`InputYearPicker` — four digits and nothing to separate**
 
 - **The third field picker, and the one that does not speak `Date`.** `onYear` hands back a plain `number`, as the `YearPicker` it wraps does ; `onDate` sits beside it on the 1st of January for symmetry with the rest of the family, and `onDisabledYear` is the refusal `strict` raises. A year is more often an integer than a point in time, and a field that wraps a grid should speak the grid's language.

@@ -21,9 +21,8 @@ const Dates = () =>
             </h1>
             <p className="text-base-content/70 text-lg max-w-2xl mx-auto">
                 Our own dayjs-based calendar — single date and range, one or two months, with
-                shortcuts — the two field pickers built on it, InputDatePicker and
-                InputDateRangePicker, and the three grid pickers that select a period without
-                showing days.
+                shortcuts — the three grid pickers that select a period without ever showing a
+                day, and the field pickers built on both.
             </p>
         </Container>
 
@@ -33,14 +32,12 @@ const Dates = () =>
 
         <Divider />
 
-        <MonthYearDemo />
+        {/* Beside the three field pickers it guards — inert/top-layer regression */}
+        <PickersInModalDemo />
 
         <Divider />
 
-        {/* Popover-based pickers nested inside a Modal — inert/top-layer regression */}
-        <Container className="flex flex-col gap-8 bg-base-200/60 p-4 sm:p-8 rounded-box" maxWidth="max-w-5xl">
-            <PickersInModalDemo />
-        </Container>
+        <MonthYearDemo />
 
     </Page>
 ) ;
