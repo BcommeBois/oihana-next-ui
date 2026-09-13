@@ -7,6 +7,8 @@ import Container from '@/display/Container' ;
 import Button  from '@/components/Button' ;
 import Popover from '@/components/Popover' ;
 
+import InputMonthYearPicker from '@/components/inputs/InputMonthYearPicker' ;
+
 import MonthPicker     from '@/components/dates/MonthPicker' ;
 import MonthYearPicker from '@/components/dates/MonthYearPicker' ;
 import YearPicker      from '@/components/dates/YearPicker' ;
@@ -43,6 +45,12 @@ const MonthYearDemo = () =>
 
     const [ popoverOpen , setPopoverOpen ] = useState( false ) ;
     const [ modalOpen   , setModalOpen   ] = useState( false ) ;
+
+    const [ billingText , setBillingText ] = useState( '' ) ;
+    const [ billingDate , setBillingDate ] = useState( null ) ;
+    const [ strictText  , setStrictText  ] = useState( '' ) ;
+    const [ strictDate  , setStrictDate  ] = useState( null ) ;
+    const [ lastRefused , setLastRefused ] = useState( null ) ;
 
     const modalRef = useRef( null ) ;
 
@@ -268,6 +276,81 @@ const MonthYearDemo = () =>
                     </Popover>
                 </div>
 
+            </div>
+
+            {/* ---------------------------------------------------------------- Input month-year picker */}
+
+            <h2 className="text-3xl font-bold">Input month and year picker</h2>
+            <p className="text-sm opacity-70 -mt-4">
+                The packaged version of what the section above assembles by hand : the masked
+                field <span className="font-mono">InputDate</span> in its
+                mode <span className="font-mono">mm/yyyy</span>, with the grid in the same responsive
+                popover. The twin of <span className="font-mono">InputDatePicker</span> one granularity up
+                — same props, same handlers, no days. Typing moves the grid, picking a month fills the
+                field and closes the popover, and <span className="font-mono">onDate</span> always hands
+                back the first day of the month, whichever side it came from.
+            </p>
+
+            <div className="flex flex-wrap items-start gap-8">
+                <div className="w-full max-w-xs">
+                    <InputMonthYearPicker
+                        label    = "Billing period"
+                        value    = { billingText }
+                        onChange = { setBillingText }
+                        onDate   = { setBillingDate }
+                        max      = { new Date() }
+                        helper   = "Type 09/2026, or open the grid"
+                    />
+                </div>
+                <div className="flex flex-col gap-1">
+                    <p className="text-sm opacity-70">
+                        Text : <span className="font-mono">{ billingText || '—' }</span>
+                    </p>
+                    <p className="text-sm opacity-70">
+                        Date : <span className="font-mono">{ billingDate ? billingDate.toDateString() : '—' }</span>
+                    </p>
+                    <p className="text-xs opacity-50">
+                        Bounded to today — a billing period cannot be in the future.
+                    </p>
+                </div>
+            </div>
+
+            <div className="flex flex-col gap-3">
+                <span className="font-semibold">strict — refusing what the grid would refuse</span>
+                <p className="text-xs opacity-50">
+                    A month typed at the keyboard never goes through the grid, so the rules are asked
+                    here too. The second half of the year is blocked : typing
+                    a <span className="font-mono">09/2026</span> puts the field into error rather than
+                    emitting. The question asked is
+                    the <span className="font-mono">getMonthReason</span> one, never the day rules — a
+                    month partly inside the bounds is not blocked, its days are.
+                </p>
+                <div className="flex flex-wrap items-start gap-8">
+                    <div className="w-full max-w-xs">
+                        <InputMonthYearPicker
+                            strict
+                            label            = "Semester"
+                            value            = { strictText }
+                            onChange         = { setStrictText }
+                            onDate           = { setStrictDate }
+                            onDisabledDate   = { setLastRefused }
+                            disabledMonths   = { [ 6 , 7 , 8 , 9 , 10 , 11 ] }
+                            min              = { thisYear - 2 }
+                            max              = { thisYear + 2 }
+                        />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                        <p className="text-sm opacity-70">
+                            Accepted : <span className="font-mono">{ strictDate ? periodName( strictDate ) : '—' }</span>
+                        </p>
+                        <p className="text-sm opacity-70">
+                            Last refused : <span className="font-mono">{ lastRefused ? periodName( lastRefused ) : '—' }</span>
+                        </p>
+                        <p className="text-xs opacity-50">
+                            Bounds given as years cover the whole year.
+                        </p>
+                    </div>
+                </div>
             </div>
 
         </Container>

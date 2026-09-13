@@ -8,6 +8,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**`InputMonthYearPicker` — the field picker one granularity up**
+
+- **The twin of `InputDatePicker`, and deliberately nothing more.** Same prop names, same handlers (`onDate`, `onDisabledDate`, `strict`, `display`, `pickerProps`), the masked `InputDate` in its `mm/yyyy` mode paired with a `MonthYearPicker` in the responsive popover. Nothing to relearn when moving from one to the other, which is the whole point of not renaming anything.
+- **The value is a `Date` on the first day of the month whichever side it came from.** The mask has no day segment, so `maskitoParseDate` already returns the 1st — but it also **clamps to the bounds during the parse**, which can move the day. Snapping to the start of the month is what keeps the promise.
+- **🚨 `strict` asks `getMonthReason`, never `isDayDisabled`.** A month partly inside the bounds is not blocked — its days are. Asking the day rules would refuse March because its first day falls before a `min` set mid-month, which is not what was picked.
+- **`disabledDates` and `disabledWeekdays` are not accepted.** A day does not exist at this granularity, and a rule that can never block anything is worse than a missing one. `disabledMonths` and `disabledYears` are the two that remain.
+- **`min` / `max` take a `Date` or a year**, normalised once for the three consumers — the mask, the rules and the grid.
+- **The bounds keep `InputDatePicker`'s parsing contract, knowingly.** Maskito clamps a typed value to the nearest bound, so the field's text and the emitted month can disagree in that one case, and `strict` never sees the overflow. Trading that for our own validation would cost the constraint-as-you-type and split the contract in two ; the honest version is a separate subject, to be applied to the four `Input*Picker` at once rather than to one.
+- **`components.picker.monthYear`** carries the `clear` / `disabled` / `open` labels, fr and en, beside `date` and `dateRange`. `/lab/dates` shows the field, then the same field in `strict`.
+
 **🚨 `Popover` — every dropdown had been invisible since `Portal` stopped rendering on the server**
 
 - **The panel is portaled, and a portal renders nothing until it has mounted.** `Portal` gained a `mounted` gate so it would say on the client's first render what the server said — nothing. The consequence went unnoticed : on the commit that opens a popover the panel does not exist yet, so `Popover`'s positioning `useLayoutEffect` — keyed on `[ isOpen , asModal , anchorRef , direction , placement ]` — read an empty `panelRef`, gave up, and was never asked again. `coords` stayed `null`, and the panel's fallback style is `visibility: hidden`. The dropdown opened, held focus, closed on Escape, and could not be seen.

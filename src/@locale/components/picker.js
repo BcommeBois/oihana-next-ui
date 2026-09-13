@@ -1,7 +1,7 @@
 /**
  * Default labels of the picker family — `Popover` and the inputs built on it
  * (`InputColor`, `InputDatePicker`, `InputDateRangePicker`, `InputDateTimePicker`,
- * `InputTimePicker`).
+ * `InputMonthYearPicker`, `InputTimePicker`).
  *
  * `Popover` reads the root keys (`apply`, `cancel`) ; each input reads its own
  * sub-block for the labels that name *what* is being picked, and leaves the two
@@ -52,6 +52,13 @@ const picker =
             open     : 'Ouvrir le sélecteur de date et d’heure' ,
         } ,
 
+        monthYear :
+        {
+            clear    : 'Effacer le mois' ,
+            disabled : 'Ce mois n’est pas disponible' ,
+            open     : 'Ouvrir le sélecteur de mois' ,
+        } ,
+
         time :
         {
             clear : 'Effacer l’heure' ,
@@ -95,6 +102,13 @@ const picker =
             clear    : 'Clear date-time' ,
             disabled : 'This date is not available' ,
             open     : 'Open date-time picker' ,
+        } ,
+
+        monthYear :
+        {
+            clear    : 'Clear month' ,
+            disabled : 'This month is not available' ,
+            open     : 'Open month picker' ,
         } ,
 
         time :
