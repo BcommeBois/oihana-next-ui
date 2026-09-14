@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.18.1] — 2026-09-14
+
 **The three development dependencies left behind, and the one that was costing a duplicate**
 
 - **🚨 `sharp` was installed twice** — `^0.34.5` here against the `^0.35.4` Next declares as its own optional dependency, so the tree carried 0.34.5 hoisted and 0.35.4 nested under `next`, **20 MB for two copies of the same native binary**. It only ever cost local disk, `sharp` being a development dependency a consumer never sees, but it is one build of a native module for nothing. Now `^0.35.4`, which is what Next was asking for all along, and the lockfile resolves a single `sharp@0.35.4`. The old nested directory survives on disk regardless — bun does not prune what a manifest stops naming — and goes on the next clean install.
