@@ -25,7 +25,12 @@ bun add oihana-next-ui
 npm install oihana-next-ui
 ```
 
+`next`, `react` and `react-dom` are **peer dependencies** : the library installs
+none of them, your application provides them — in a single copy.
+
 ## Requirements
+
+Your application must already depend on :
 
 ```json
 {
