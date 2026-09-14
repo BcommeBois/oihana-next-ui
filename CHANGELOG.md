@@ -8,6 +8,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**`html-react-parser` 6 — three breaking changes, none of them an API**
+
+- **Nothing we call has moved.** The 6.0 major is `html-dom-parser` 5.1.8 → 7.0.0, `domhandler` 5.0.3 → 6.0.1, and a build target going from ES5 to ES2016. Not a function renamed, not an option dropped. The rest of the 6.x line is dependency bumps and one optional addition, `trustedTypePolicy` for CSP.
+- **The surface is a single call.** `helpers/parseHtml` invokes `parse( html , options )` and nothing else, and its four callers — `Alert`, `Blockquote`, `Typography` and `getParsedElement` — pass no options at all. The `...parseOptions` passthrough stays a public affordance nobody here uses.
+- **The ES2016 target is the only thing a consumer could feel**, and only one aiming at browsers older than Next's own defaults.
+- **🚨 The audit predicted a deduplication and was wrong, so it is corrected here rather than left standing.** `sanitize-html` asks for `htmlparser2` `^12`, and `html-dom-parser` 8 pins `12.0.0` — the two parser stacks looked certain to merge. They did not. The hoisted `domhandler` flipped from 5.0.3 to 6.0.1, which pushed `domutils`, `dom-serializer` and the remaining `htmlparser2` 10 into nested 5.0.3 copies of their own : **`domhandler` went from two copies to five**, not to one. The whole family weighs 5 MB and holds no React context — pure parsing, no state — so nothing about it is a defect. But it was published as a reason to move, and it was not one.
+
 **Motion 13 — a major release this library does not feel**
 
 - **The only breaking change in 13.0 is the removal of `@emotion/is-prop-valid`**, and it bites CSS-in-JS alone : a styled `motion` component now forwards to the DOM what that validator used to filter out. There is no styled-components and no Emotion here, and the package was an *optional* peer of Motion 12 that was never installed in the first place.

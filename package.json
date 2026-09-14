@@ -138,7 +138,7 @@
     "clsx": "^2.1.1",
     "dayjs": "^1.11.23",
     "flag-icons": "^7.5.0",
-    "html-react-parser": "^5.2.17",
+    "html-react-parser": "^6.1.7",
     "motion": "^13.2.0",
     "react-icons": "^5.7.0",
     "react-is": ">=19.0.0",
