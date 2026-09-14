@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**The three development dependencies left behind, and the one that was costing a duplicate**
+
+- **🚨 `sharp` was installed twice** — `^0.34.5` here against the `^0.35.4` Next declares as its own optional dependency, so the tree carried 0.34.5 hoisted and 0.35.4 nested under `next`, **20 MB for two copies of the same native binary**. It only ever cost local disk, `sharp` being a development dependency a consumer never sees, but it is one build of a native module for nothing. Now `^0.35.4`, which is what Next was asking for all along, and the lockfile resolves a single `sharp@0.35.4`. The old nested directory survives on disk regardless — bun does not prune what a manifest stops naming — and goes on the next clean install.
+- **`@biomejs/biome` 2.2.0 → 2.5.13, measured before being taken.** Run against this codebase, the new version reports 1994 errors and 135 warnings where the old one reported 1990 and 132, over three more files, and asks for no configuration migration. The figures are large in both columns because the formatter disagrees with this repository's spacing by design and is never applied — what matters is that the **difference** is four diagnostics, not a sweep. The pin stays exact : a linter that moves on its own turns a clean tree into a red one with no commit to blame.
+- **`@types/node` 25 → 26.** Types only, and the repository is JavaScript with JSDoc — nothing is compiled from them.
+
 **`html-react-parser` 6 — three breaking changes, none of them an API**
 
 - **Nothing we call has moved.** The 6.0 major is `html-dom-parser` 5.1.8 → 7.0.0, `domhandler` 5.0.3 → 6.0.1, and a build target going from ES5 to ES2016. Not a function renamed, not an option dropped. The rest of the 6.x line is dependency bumps and one optional addition, `trustedTypePolicy` for CSP.
