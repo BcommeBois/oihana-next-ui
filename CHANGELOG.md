@@ -8,6 +8,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**Motion 13 — a major release this library does not feel**
+
+- **The only breaking change in 13.0 is the removal of `@emotion/is-prop-valid`**, and it bites CSS-in-JS alone : a styled `motion` component now forwards to the DOM what that validator used to filter out. There is no styled-components and no Emotion here, and the package was an *optional* peer of Motion 12 that was never installed in the first place.
+- **Four symbols is the whole surface** — `motion.div`, `motion.span`, `motion.create()` and `AnimatePresence`, across thirteen files. They behave identically either side of the major. Two near-misses were checked rather than assumed : `useInView` is this repository's own hook, and every `Reorder` in the tree is an `onReorder` prop on the dnd-kit components, neither of them Motion's.
+- **🚨 Two `AnimatePresence` fixes land in our favour, and one of them is the reason to move.** 13.1.1 improves compatibility with **React 19 strict mode** — this library is on React 19.3 and the dev server runs strict — and 13.0 makes nodes mark themselves safe to remove when the render propagates. Both are defects we were carrying without naming them.
+- **One residue for consumers.** `Tilt`, `ScrollReveal`, `LetterReveal` and `WordReveal` take an `as` prop and hand it to `motion.create()` ; it defaults to `'div'` or `'span'`, but anyone passing a *styled* component there meets the 13.0 behaviour. The way back is `<MotionConfig isValidProp={ isPropValid }>` around the tree, or `motion.create( StyledThing )` so the styling library keeps control of forwarding.
+
 **🚨 The library was installing a second Next and a second React into every consumer**
 
 - **293 MB of nested tree, measured in a consuming application** (Next 16.2.11, React 19.2.4, oihana-next-ui 0.18.0) : `next` 285 MB, `react-dom` 7.9 MB, `react` 260 kB and `react-is` 32 kB, all under `node_modules/oihana-next-ui/node_modules` — for a library that must install none of them.
