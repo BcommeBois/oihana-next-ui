@@ -6,6 +6,10 @@
  * @module components/charts/ChartFrame
  */
 
+import { useRef } from 'react' ;
+
+import ChartPointerContext from '../../contexts/chartPointer/context' ;
+
 import isChartDataEmpty from '../../helpers/charts/isChartDataEmpty' ;
 
 import cn from '../../themes/helpers/cn' ;
@@ -75,6 +79,20 @@ const LEADING_POSITIONS = [ 'top' , 'left' ] ;
  *
  * The box keeps its size in all three states, so the page does not jump when
  * the data lands.
+ *
+ * **It watches the pointer, for the tooltip's sake.** nivo places its tooltip
+ * from the cursor and never turns it round : against the right edge of a page,
+ * the bubble of the last point of a series is simply cut. The bubble can place
+ * itself — it is our own HTML — but only if it knows where the cursor is, and
+ * this frame is the one element that wraps every chart and sees the pointer
+ * travel over it. So it records the position in a ref and passes it down
+ * through {@link module:contexts/chartPointer/context}. A ref, so that
+ * following the pointer re-renders nothing.
+ *
+ * The order is on our side and it is not luck : `pointermove` is dispatched
+ * before `mousemove`, and nivo listens to `mousemove`. The position is
+ * therefore written before nivo asks for a tooltip, one render ahead of the
+ * layout effect that reads it.
  *
  * **Accessibility lives here, not on the nivo component.** nivo's aria
  * support is uneven across its packages — `@nivo/pie`, `@nivo/calendar` and
@@ -162,6 +180,27 @@ const ChartFrame =
         ) ;
     }
 
+    const pointer = useRef( null ) ;
+
+    // `onPointerDown` as well as `onPointerMove` : a finger taps a bar without
+    // ever moving, and `pointerdown` is what a touch has instead of a hover.
+    //
+    // Placed after the spread so the frame keeps its own tracking, and chained
+    // rather than substituted so a caller watching the pointer for reasons of
+    // its own still hears about it.
+    const track = ( handler ) => ( event ) =>
+    {
+        pointer.current = { x : event.clientX , y : event.clientY } ;
+
+        handler?.( event ) ;
+    } ;
+
+    const pointerProps =
+    {
+        onPointerDown : track( rest.onPointerDown ) ,
+        onPointerMove : track( rest.onPointerMove ) ,
+    } ;
+
     const length = ( value ) => ( typeof value === 'number' ? `${ value }px` : value ) ;
 
     const style = aspect
@@ -216,7 +255,7 @@ const ChartFrame =
     if ( !describesChart )
     {
         box = (
-            <div className={ frameClassName } style={ style } { ...rest }>
+            <div className={ frameClassName } style={ style } { ...rest } { ...pointerProps }>
                 { content }
             </div>
         ) ;
@@ -233,11 +272,20 @@ const ChartFrame =
                 role             = "img"
                 style            = { style }
                 { ...rest }
+                { ...pointerProps }
             >
                 { content }
             </div>
         ) ;
     }
+
+    // The tooltip is rendered by nivo, deep inside `content` — the provider has to
+    // stand above the box for it to be reached, and it draws no element of its own.
+    box = (
+        <ChartPointerContext.Provider value={ pointer }>
+            { box }
+        </ChartPointerContext.Provider>
+    ) ;
 
     // No legend, no wrapper : the frame renders exactly what it rendered before it
     // could carry one, which is what keeps the remaining charts untouched.

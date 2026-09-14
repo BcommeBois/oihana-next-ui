@@ -319,6 +319,45 @@ const CartesianChartsDemo = () =>
                 </div>
             </Section>
 
+            <Divider />
+
+            <Section
+                title       = "Infobulles — placement"
+                description = "La bulle se place elle-même : au-dessus du curseur tant que la fenêtre le permet, en dessous sinon, et toujours ramenée à l'intérieur de l'écran. Survole le dernier point à droite d'une courbe, puis un point tout en haut d'un graphe."
+            >
+                <div className="flex flex-col gap-4 sm:flex-row">
+
+                    <div className="min-w-0 flex-1">
+                        <LineChart
+                            ariaLabel = "Sessions quotidiennes, pour éprouver le placement de l'infobulle au bord droit"
+                            data      = { TIME_DATA }
+                            palette   = { palette }
+                            height    = { 260 }
+                            curve     = "monotoneX"
+                            legend    = { false }
+                            xScale    = "time"
+                            xAxis     = {{ tickRotation : -35 }}
+                        />
+                    </div>
+
+                    <div className="min-w-0 flex-1 overflow-hidden rounded-box border border-base-300 p-3">
+                        <p className="mb-2 text-xs text-base-content/60">
+                            Dans une carte qui coupe ce qui dépasse — <code>overflow-hidden</code> — la bulle en sort quand même.
+                        </p>
+
+                        <BarChart
+                            ariaLabel = "Population par pays, dans une carte qui coupe ce qui dépasse"
+                            data      = { BAR_DATA }
+                            indexBy   = "country"
+                            palette   = { palette }
+                            height    = { 200 }
+                            legend    = { false }
+                        />
+                    </div>
+
+                </div>
+            </Section>
+
         </div>
     ) ;
 } ;

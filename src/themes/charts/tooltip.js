@@ -20,16 +20,29 @@ export const CHART_TOOLTIP_LABEL = 'text-base-content/70' ;
 export const CHART_TOOLTIP_VALUE = 'ml-auto pl-3 font-medium tabular-nums' ;
 
 /**
+ * What the bubble becomes once it places itself.
+ *
+ * `fixed` because the placement it gets is in viewport coordinates, `w-max`
+ * because out of the chart it would otherwise take the width of the body, and
+ * `pointer-events-none` because a bubble that can be hovered steals the hover
+ * that is keeping it open. The layer is the one the floating tooltip already
+ * uses — same kind of bubble, same height in the stack.
+ */
+export const CHART_TOOLTIP_FLOATING = 'pointer-events-none fixed z-[70] w-max' ;
+
+/**
  * Generates the tooltip container class names.
  *
  * @param {Object} [props]
  * @param {string} [props.className] - Additional classes.
+ * @param {boolean} [props.floating] - The bubble places itself in the viewport rather than sitting where it was rendered.
  *
  * @returns {string} Combined class names.
  */
-export const getChartTooltipClasses = ( { className } = {} ) => cn
+export const getChartTooltipClasses = ( { className , floating } = {} ) => cn
 (
     CHART_TOOLTIP ,
+    floating && CHART_TOOLTIP_FLOATING ,
     className ,
 ) ;
 

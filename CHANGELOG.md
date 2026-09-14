@@ -8,6 +8,20 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.18.2] — 2026-09-14
+
+**🚨 A chart tooltip could run off the page and be cut in half**
+
+- **Reported from a consuming application**, on the point a reader looks at most : the last one of a series, the current month. Hovering it opened a bubble that crossed the right edge of the window and was truncated there.
+- **The placement was never ours to begin with.** `LineChart` and its twelve neighbours build the *content* of the tooltip — `ChartTooltip`, plain HTML on DaisyUI classes — and hand it to nivo, which positions it. `@nivo/tooltip` translates its wrapper from the cursor, offsets it by the anchor (`top`, the default everywhere here : centred, fourteen pixels above the pointer) and stops there. **No clamp, no flip, no notion of an edge**, neither the window's nor the container's. Half the bubble therefore hangs to the right of the last point, and that half is outside the page.
+- **Nothing in nivo's API fixes it.** The anchor is not a prop — `tooltipAnchor` exists in `@nivo/voronoi` alone and is unreachable from `<Line>` — and the one fallback the package has swaps sides according to which half of the *container* the cursor is in, which says nothing about the room the window leaves. The bubble being our own HTML is what leaves a way out : it can place itself.
+- **`ChartTooltip` now goes into a `Portal` and is placed by `placeFloating`** — the same pure function `FloatingTip` already uses : the side asked for, turned round only when it has no room, then pulled back inside the window on both axes. So the bubble sits above the pointer, moves under it near the top of the screen, and never crosses an edge again. On the thirteen charts at once, `BarChart` included, and without one line changed in any of them.
+- **A portal rather than a correcting transform**, because a card with `overflow-hidden` cuts a bubble just as surely as the window does, and only a portal escapes that. It is the reasoning `FloatingTip` was built on — nivo's own container clips nothing, but the card a chart is dropped into often does.
+- **The placement needs the cursor, and `ChartFrame` is what knows it.** It is the one element that wraps every chart and sees the pointer travel over it, so it records the position in a **ref** — following a pointer must re-render nothing — and passes it down through a new `contexts/chartPointer`. The order is not luck : `pointermove` is dispatched before `mousemove`, and nivo listens to `mousemove`, so the position is written before nivo asks for a tooltip.
+- **`float` is the way back**, `true` by default : it is a defect being repaired, and it does nothing at all while there is room. `float={false}` leaves the bubble in the flow for a `ChartTooltip` rendered outside a chart. **Without a pointer — outside a chart, or before one has been seen — the bubble stays exactly where it was rendered**, which is what it did before it could float : the fix cannot be worse than what it replaces.
+- **What it costs is nivo's spring.** The bubble no longer glides from point to point ; it is simply where it belongs at every move. On a figure being read rather than watched, that is the better of the two.
+- **One limit, stated rather than hidden** : a caller who passes their own `tooltip` prop bypasses `ChartTooltip` and gets nivo's placement back, untouched.
+
 ## [0.18.1] — 2026-09-14
 
 **The three development dependencies left behind, and the one that was costing a duplicate**
