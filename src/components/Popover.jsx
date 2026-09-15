@@ -121,13 +121,16 @@ const Popover =
     const panelRef = useRef( null ) ;
     const [ coords , setCoords ] = useState( null ) ;
 
-    // The panel lives inside a `Portal`, and a portal renders nothing until it has
-    // mounted — it has no server-side form, so its first render is null. On the
-    // commit that opens the popover there is therefore no panel to measure, and a
-    // layout effect keyed on `isOpen` alone reads a ref that is still empty, gives
-    // up, and is never asked again : the dropdown would stay `visibility: hidden`
-    // for good. A callback ref is what says *when* the node arrives, one commit
-    // later. The modal never needed it — flexbox centres it without measuring.
+    // A callback ref is what says *when* the panel arrives, and the positioning
+    // effect below depends on it rather than on `isOpen` alone. Measuring on
+    // `isOpen` is measuring on the wrong signal : the two coincide only while the
+    // panel mounts in the same commit that opens it. A portal renders nothing
+    // through hydration, so a popover opened that early has no panel to measure
+    // yet — and a layout effect that reads an empty ref gives up and is never
+    // asked again, leaving the dropdown `visibility: hidden` for good.
+    //
+    // Detaching is the other half : dropping the measurement with the node keeps
+    // the next opening from painting a frame at the previous trigger's position.
     const [ panel , setPanel ] = useState( null ) ;
 
     const setPanelRef = useCallback( ( node ) =>

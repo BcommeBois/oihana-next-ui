@@ -1,8 +1,8 @@
 'use client' ;
 
-import { useEffect , useState } from 'react' ;
-
 import { createPortal } from 'react-dom' ;
+
+import useIsHydrated from '../hooks/useIsHydrated' ;
 
 /**
  * Portal component for rendering children in a different DOM node.
@@ -45,19 +45,25 @@ const Portal =
 }) =>
 {
     // A portal has no server-side form, and the hydration render has to say the
-    // same thing the server said — so the target is only reached once mounted.
-    // `document?.body` would not have guarded the server either : optional
-    // chaining protects a null value, not an undeclared global.
-    const [ mounted , setMounted ] = useState( false ) ;
-
-    useEffect( () => { setMounted( true ) ; } , [] ) ;
+    // same thing the server said — so the target is out of reach until hydration
+    // is behind us. `document?.body` would not have guarded the server either :
+    // optional chaining protects a null value, not an undeclared global.
+    //
+    // The question is asked of React rather than of an effect, because an effect
+    // cannot tell a hydration render from a plain client mount : it answers
+    // `false` first in both cases, which costs a commit to every portal on the
+    // page when only the hydrating ones owe it. That commit is not free — the
+    // children do not exist during it, so a ref handed to them is still null when
+    // the parent's mount effect runs, and an imperative `showModal()` played
+    // there is lost in silence.
+    const hydrated = useIsHydrated() ;
 
     if ( disabled )
     {
         return children ;
     }
 
-    if ( !mounted )
+    if ( !hydrated )
     {
         return null ;
     }
