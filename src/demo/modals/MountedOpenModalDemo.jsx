@@ -12,6 +12,7 @@ import Container from '@/display/Container' ;
 
 const ATTACHED = 'attached' ;
 const MISSING  = 'missing' ;
+const OPENED   = 'opened' ;
 
 /**
  * The modal is wrapped in a `Portal` by the caller and opens itself through the
@@ -120,6 +121,36 @@ const HookDriven = ({ onClose , onResult }) =>
 HookDriven.displayName = 'HookDriven' ;
 
 /**
+ * No effect at all : mounting the component is the request to open it.
+ */
+const HookOnMount = ({ onClose , onResult }) =>
+{
+    const { modalRef } = useModal({
+        onClose ,
+        onOpen      : () => onResult( OPENED ) ,
+        openOnMount : true ,
+    }) ;
+
+    return (
+        <Portal>
+            <Modal
+                ref          = { modalRef }
+                title        = "openOnMount"
+                agree        = "Close"
+                showDisagree = { false }
+            >
+                <p className="py-4">
+                    The component holds no effect and makes no call. It mounts already meaning to be open,
+                    and the hook opens whatever node it is eventually handed.
+                </p>
+            </Modal>
+        </Portal>
+    ) ;
+} ;
+
+HookOnMount.displayName = 'HookOnMount' ;
+
+/**
  * One card : a button that mounts the component, and the component that opens
  * itself. The result of the attempt is reported beside the button, because a
  * modal that never opens looks exactly like a button that was never clicked.
@@ -157,6 +188,7 @@ const Case = ({ children , component : Component , title }) =>
                 ) }
 
                 { result === ATTACHED && <Badge color="success">ref attached</Badge> }
+                { result === OPENED   && <Badge color="success">opened on mount</Badge> }
                 { result === MISSING  && <Badge color="error">ref still null</Badge> }
 
             </div>
@@ -212,6 +244,11 @@ const MountedOpenModalDemo = () =>
                 <Case title="Driven by useModal" component={ HookDriven }>
                     <code className="badge badge-sm">open()</code> from the hook, which owns the node
                     and its listeners.
+                </Case>
+
+                <Case title="Declared with openOnMount" component={ HookOnMount }>
+                    <code className="badge badge-sm">useModal({ '{ openOnMount : true }' })</code> and
+                    no effect in the component at all.
                 </Case>
 
             </div>
