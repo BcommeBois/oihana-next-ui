@@ -1,11 +1,12 @@
 'use client' ;
 
-import CRUDDemo           from '@/demo/modals/CRUDModalDemo';
-import InputModalDemo     from '@/demo/modals/InputModalDemo';
-import ModalDemo          from '@/demo/modals/ModalDemo';
-import ToastOverModalDemo from '@/demo/modals/ToastOverModalDemo';
-import Container          from '@/display/Container';
-import Page               from '@/display/Page' ;
+import CRUDDemo             from '@/demo/modals/CRUDModalDemo';
+import InputModalDemo       from '@/demo/modals/InputModalDemo';
+import ModalDemo            from '@/demo/modals/ModalDemo';
+import MountedOpenModalDemo from '@/demo/modals/MountedOpenModalDemo';
+import ToastOverModalDemo   from '@/demo/modals/ToastOverModalDemo';
+import Container            from '@/display/Container';
+import Page                 from '@/display/Page' ;
 
 /**
  * Modal showcase page.
@@ -32,6 +33,8 @@ const ModalShowcase = ({ path = 'app.test' }) =>
             <CRUDDemo />
 
             <InputModalDemo />
+
+            <MountedOpenModalDemo />
 
         </Page>
     ) ;
