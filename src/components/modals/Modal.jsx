@@ -1,6 +1,6 @@
 'use client' ;
 
-import { useEffect , useId , useRef , useState } from 'react'
+import { useId , useRef } from 'react'
 
 import useI18n   from '../../contexts/locale/useI18n'
 import NO_LOCALE from '../../contexts/locale/noLocale'
@@ -129,7 +129,7 @@ const FOOTER_NODE_OVERRIDE_PROPS =
  * @param {boolean} [props.disableBackdropClick=false] - Prevent close on backdrop click.
  * @param {boolean} [props.disableEscapeKeyDown=false] - Prevent close on `Escape`.
  * @param {(event: Event) => void} [props.onClose] - Called with the native `close` event (or the popover `toggle` event) when the modal closes. Fires only for this modal's **own** dialog : lifecycle events bubbled up (through the React tree) from a portaled descendant modal are ignored, so dismissing a nested picker never closes its ancestor.
- * @param {boolean} [props.portal=false] - Render the modal through a portal on `document.body`, detached from the parent DOM subtree. Required when the modal lives inside another `Modal` : two DOM-nested modal `<dialog>` elements trigger the browser's native nested-dialog handling, which closes the ancestor dialog when the inner one is used — and no JS handler can intercept it.
+ * @param {boolean} [props.portal=false] - Render the modal through a portal on `document.body`, detached from the parent DOM subtree. Required when the modal lives inside another `Modal` : two DOM-nested modal `<dialog>` elements trigger the browser's native nested-dialog handling, which closes the ancestor dialog when the inner one is used — and no JS handler can intercept it. A portal has no server-side form, so a portalled modal renders nothing at all until hydration is past — open it through `useModal`, whose `open()` holds an intention until there is a node, rather than through the DOM node itself.
  * @param {boolean} [props.usePopover=false] - Render through the native Popover API instead of `<dialog>`, so the modal can be opened declaratively (`<button popovertarget={id}>`, hence the `id` prop). **It is not a non-modal mode**: the root keeps daisyUI's `modal` class, which is a full-viewport overlay — it still dims the page, its backdrop still catches every click, and it still locks `:root` scrolling through `:root:has()`, which no class on the element can undo. It also self-closes when a `<dialog>` opens above it in the top layer. For a panel the user works alongside, reach for `<SplitPanel>` instead.
  * @param {string}  [props.contentClassName] - Extra classes on the content wrapper. In custom-footer mode, the default is `flex-1 min-h-0 overflow-y-auto p-2 py-4`; in standard mode, `overflow-y-auto h-full p-2 py-4`.
  * @param {string}  [props.modalBoxClassName] - Extra classes on the modal-box.
@@ -235,14 +235,6 @@ const Modal = ( props ) =>
 
     const dialogRef = useRef( null ) ;
     const titleId   = useId() ;
-
-    // The portal target only exists client-side : render in place until mounted
-    // (keeps SSR markup and hydration consistent — the dialog is closed and
-    // invisible at that point), then move to document.body. useModal's ref setter
-    // re-attaches its listeners when the node is swapped.
-    const [ mounted , setMounted ] = useState( false ) ;
-
-    useEffect( () => { setMounted( true ) ; } , [] ) ;
 
     const hasCustomFooter = footerNode !== undefined && footerNode !== null ;
 
@@ -553,9 +545,13 @@ const Modal = ( props ) =>
             </dialog>
         ) ;
 
-    return portal && mounted
-        ? <Portal>{ node }</Portal>
-        : node ;
+    // `Portal` holds the server and hydration gate itself, so there is nothing
+    // left to wait for here — and waiting was harmful. Rendering the dialog in
+    // place first and portalling it on the next commit puts two different element
+    // types at the same position : React unmounts the node and mounts a new one.
+    // The ref detaches and re-attaches with it, and a `showModal()` played on the
+    // first node dies with it. One element type, one mount, one ref.
+    return portal ? <Portal>{ node }</Portal> : node ;
 } ;
 
 Modal.displayName = 'Modal' ;
