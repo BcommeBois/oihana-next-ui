@@ -8,6 +8,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**⏳ A busy `Button` lost the keyboard focus — twice over**
+
+- **Reported from a consuming application** : icon buttons with a tooltip, disabled while their action runs (invite, resend, star a favourite, refresh), threw the keyboard user back onto the page every time they were pressed, and a confirmation opened from one of them had nowhere to return the focus to on close.
+- **First cause, in the library : the button was destroyed and recreated.** `Button` hid its tooltip on a disabled button by passing `show={ false }` to `Tooltip`, which then renders the bare child. The element went from `div.tooltip > button` to `button` on every toggle, and React cannot reuse a node whose parent changed : it built a new one. **Fixed** — the wrapper now stays whenever the button has a tooltip, and a disabled button only loses its `data-tip` : without it DaisyUI draws no bubble, so nothing shows, and nothing is rebuilt.
+- **Second cause, in the browser : a focused button that becomes `disabled` drops the focus.** That one no prop can undo on a native `disabled`. **New `busy` prop**, off by default, for a button that is only unavailable while something runs : it renders `aria-disabled="true"` and `aria-busy="true"` instead of `disabled` — DaisyUI already styles `[aria-disabled=true]` like a disabled button and removes pointer events —, ignores the Enter / Space activation, hides the tooltip, and **stays focusable**. Pressed from the keyboard, it keeps the focus through the action and after it, and a screen reader hears that it is unavailable. `disabled` keeps its meaning.
+- Lab : a « busy button » card on the buttons page, `busy` and `disabled` side by side, with a counter proving the button is never recreated.
+
 **🧱 `I18nText` took the whole page down when its key pointed at a sub-object**
 
 - **Reported from a consuming application**, where a detail page died on « Objects are not valid as a React child » : its error branch asked the bundle for `error` while the bundle holds `error : { description }`. `I18nText` handed the object to React, and React refuses an object as a child — for the whole tree, not the one line.

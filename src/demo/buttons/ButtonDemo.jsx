@@ -1,7 +1,9 @@
 'use client' ;
 
-import { useState } from 'react' ;
-import { MdCheck, MdClose, MdLock, MdLockOpen, MdVisibility, MdVisibilityOff } from 'react-icons/md' ;
+import { useCallback , useRef , useState } from 'react' ;
+import { MdCheck, MdClose, MdLock, MdLockOpen, MdSave, MdVisibility, MdVisibilityOff } from 'react-icons/md' ;
+
+import Button from '@/components/Button' ;
 
 import AddButton        from '@/components/buttons/AddButton' ;
 import ClearButton      from '@/components/buttons/ClearButton' ;
@@ -17,12 +19,43 @@ import SaveButton       from '@/components/buttons/SaveButton' ;
 import SwapButton       from '@/components/buttons/SwapButton' ;
 
 const SIZES  = [ 'xl', 'lg', 'md', 'sm', 'xs' ] ;
+
+// How long the busy button stays disabled, as an action in flight would.
+const BUSY_DELAY = 1500 ;
 const COLORS = [ 'primary', 'secondary', 'accent', 'neutral', 'info', 'success', 'warning', 'error' ] ;
 
 const ButtonDemo = () =>
 {
     const [ isVisible, setIsVisible ] = useState( false ) ;
     const [ isLocked, setIsLocked ]   = useState( true ) ;
+
+    const [ busy         , setBusy         ] = useState( false ) ;
+    const [ disabledBusy , setDisabledBusy ] = useState( false ) ;
+    const [ mounts  , setMounts  ] = useState( 0 ) ;
+    const lastNode = useRef( null ) ;
+
+    // A stable ref callback runs once per DOM node : a new node means the button
+    // was destroyed and recreated. The first mount is not a recreation.
+    const countMounts = useCallback( ( node ) =>
+    {
+        if ( node && node !== lastNode.current )
+        {
+            lastNode.current = node ;
+            setMounts( count => count + 1 ) ;
+        }
+    } , [] ) ;
+
+    const runBusy = () =>
+    {
+        setBusy( true ) ;
+        setTimeout( () => setBusy( false ) , BUSY_DELAY ) ;
+    } ;
+
+    const runDisabled = () =>
+    {
+        setDisabledBusy( true ) ;
+        setTimeout( () => setDisabledBusy( false ) , BUSY_DELAY ) ;
+    } ;
 
     return (
         <div className="flex flex-col gap-8">
@@ -43,6 +76,43 @@ const ButtonDemo = () =>
                         <div className="flex flex-wrap items-center gap-3 justify-center">
                             { COLORS.map( c => <RevokeButton key={ c } color={ c } /> ) }
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Busy button : unavailable while its action runs */}
+            <div className="card bg-base-200 shadow-xl">
+                <div className="card-body gap-3">
+                    <h2 className="card-title">Bouton occupé : busy ou disabled</h2>
+                    <p className="text-sm text-base-content/70">
+                        Deux boutons avec infobulle, indisponibles 1,5 s le temps de leur action. Activez-les au
+                        clavier (Tab puis Entrée). Avec <code>busy</code>, le bouton garde le focus pendant et après
+                        l'action : Entrée le relance aussitôt. Avec <code>disabled</code>, le navigateur retire le
+                        focus d'un bouton qui devient désactivé. Dans les deux cas, le bouton n'est jamais recréé.
+                    </p>
+                    <div className="flex flex-wrap items-center gap-4">
+                        <Button
+                            busy     = { busy }
+                            color    = "primary"
+                            icon     = { MdSave }
+                            onClick  = { runBusy }
+                            ref      = { countMounts }
+                            tooltip  = "Enregistrer"
+                        >
+                            { busy ? 'Enregistrement…' : 'busy' }
+                        </Button>
+                        <Button
+                            color    = "neutral"
+                            disabled = { disabledBusy }
+                            icon     = { MdSave }
+                            onClick  = { runDisabled }
+                            tooltip  = "Enregistrer"
+                        >
+                            { disabledBusy ? 'Enregistrement…' : 'disabled' }
+                        </Button>
+                        <span className="text-sm tabular-nums text-base-content/70">
+                            Bouton « busy » recréé : { Math.max( mounts - 1 , 0 ) } fois
+                        </span>
                     </div>
                 </div>
             </div>

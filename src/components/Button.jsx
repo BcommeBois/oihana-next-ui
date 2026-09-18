@@ -24,6 +24,9 @@
  * // Disabled
  * <Button path="actions.submit" color="primary" disabled />
  *
+ * // Busy while its action runs : looks disabled, ignores clicks, KEEPS the keyboard focus
+ * <Button icon={MdSave} color="primary" busy={ saving } onClick={ save } tooltip="Save" />
+ *
  * // Circle icon button
  * // Icon only : `title` becomes the aria-label, and without it the button has no name
  * <Button icon={MdSearch} shape="circle" size="sm" title="Search" />
@@ -51,7 +54,8 @@ import getButtonClassNames from '../themes/components/button' ;
  * @param {React.ReactNode} [props.children] - Button content (overrides i18n label).
  * @param {string} [props.className] - Additional class name.
  * @param {import('../themes/components/button').ButtonColorValue} [props.color] - Button color.
- * @param {boolean} [props.disabled] - Disabled state.
+ * @param {boolean} [props.busy=false] - Temporarily unavailable while an action runs. Rendered with `aria-disabled` and `aria-busy` instead of the native `disabled` : it looks disabled (DaisyUI styles `[aria-disabled=true]` like `:disabled`), ignores clicks and the Enter / Space activation, hides its tooltip — but stays focusable. A native `disabled` makes the browser drop the focus of the button that holds it, so a keyboard user who pressed it would land on the page. Prefer it to `disabled` for anything that is only busy.
+ * @param {boolean} [props.disabled] - Disabled state. A disabled button shows no tooltip, but keeps the tooltip wrapper : only the bubble goes out, so toggling `disabled` never swaps the element React renders — the button is not destroyed and recreated. The browser still takes the focus away from a button that becomes `disabled` : for a button that is only busy, use `busy`.
  * @param {boolean} [props.glass] - Glass effect.
  * @param {React.ReactNode} [props.icon] - Icon component.
  * @param {string} [props.iconClassName] - Icon wrapper class name.
@@ -62,7 +66,7 @@ import getButtonClassNames from '../themes/components/button' ;
  * @param {React.Ref} [props.ref] - Forwarded ref.
  * @param {import('../themes/components/button').ButtonShape} [props.shape] - Button shape.
  * @param {boolean} [props.showIcon=true] - Show/hide icon.
- * @param {boolean} [props.showTooltip=true] - Show/hide tooltip.
+ * @param {boolean} [props.showTooltip=true] - Show/hide tooltip. Unlike `disabled`, it removes the wrapper : flipping it — or a tooltip text going from empty to set — does swap the element, so keep it stable on a button that holds the focus.
  * @param {import('../themes/components/button').ButtonSize} [props.size='sm'] - Button size.
  * @param {import('../themes/components/button').ButtonStyle} [props.style] - Button style variant.
  * @param {number} [props.tabIndex] - Tab index.
@@ -82,6 +86,7 @@ const Button =
     animation ,
     as ,
     children ,
+    busy = false ,
     className ,
     color ,
     disabled ,
@@ -118,17 +123,32 @@ const Button =
 
     const Component = as || 'button' ;
 
+    // Busy is inert for the pointer (DaisyUI puts `pointer-events: none` on
+    // `[aria-disabled=true]`) but not for the keyboard : Enter and Space still
+    // fire a click on a focused button, so the handler is guarded here.
+    const handleClick = busy
+        ? event => { event.preventDefault() ; }
+        : onClick ;
+
+    const unavailable = disabled || busy ;
+
     return (
         <Tooltip
             align     = { tooltipAlign }
             className = { tooltipClassName }
             color     = { tooltipColor }
-            tip       = { resolvedTooltip }
+            // The wrapper stays while the button is disabled or busy : `show={ false }`
+            // would render the bare button, and React would destroy and recreate it on
+            // every toggle. Without `data-tip` DaisyUI draws no bubble, so dropping
+            // `tip` is enough to hide it.
+            tip       = { unavailable ? undefined : resolvedTooltip }
             position  = { tooltipPosition }
-            show      = { showTooltip && !disabled && !!resolvedTooltip }
+            show      = { showTooltip && !!resolvedTooltip }
         >
             <Component
-                aria-label = { resolvedTitle }
+                aria-busy     = { busy || undefined }
+                aria-disabled = { busy || undefined }
+                aria-label    = { resolvedTitle }
                 className  =
                 {
                     getButtonClassNames
@@ -147,7 +167,7 @@ const Button =
                     })
                 }
                 disabled = { disabled }
-                onClick  = { onClick }
+                onClick  = { handleClick }
                 ref      = { ref }
                 tabIndex = { tabIndex }
                 { ...rest }
@@ -156,7 +176,7 @@ const Button =
                     showIcon &&
                     <IconBox
                         className = { iconClassName }
-                        disabled  = { disabled }
+                        disabled  = { unavailable }
                         icon      = { icon }
                         size      = { size }
                         style     = { iconStyle }
