@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🧼 `useSanitize` never applied the project configuration**
+
+- **The hook read its allow-lists at the root of the configuration** — `config.sanitizeAll`, `config.sanitizeOptions` — while `@configs` files them under `html`. Both reads came back `undefined`, and the hook's own defaults always won : whatever a project set in `config.html` was ignored. The `AppConfig` typedef of `useConfig` documented the same wrong shape.
+- **Now it reads `config.html.sanitizeAll` and `config.html.sanitizeOptions`**, and falls back on its own lists when the configuration has no `html` key. The typedef is corrected.
+- **What it changes in `html` mode, with the library's configuration** : `h4`–`h6`, `i`, `u`, `s`, `sup`, `sub`, `blockquote`, `code` and `pre` are kept ; a `style` attribute is kept on an allowed tag, reduced to the properties and values `allowedStyles` accepts ; links are limited to `http`, `https`, `mailto` and `tel`. The default mode, which strips every tag, is unchanged.
+- Found by an audit of a consuming application ; no component of the library called the hook.
+- Lab : a « useSanitize » card on the typography page, the same HTML raw and cleaned in both modes, printed as text.
+
 **🧹 Small fixes : the navigation link spacing, and a label family that could not load**
 
 - **A badged navigation item had a wider icon → label gap.** The navigation `Link` carried `space-x-4`. The label is a text node, so while the icon was the only element child the margin touched nothing ; the day a badge appeared, the icon was no longer the last element child and took 16 px — on that item alone. **Removed** : the daisyUI menu item already spaces its children, and every item now reads the same. Reported from a consuming application that had been cancelling it with `space-x-0`. Lab : the « Badges » entry of the lab menu carries a badge.

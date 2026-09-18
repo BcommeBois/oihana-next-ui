@@ -18,6 +18,7 @@ import ErrorLabel       from '@/components/labels/ErrorLabel' ;
 import HelperLabel      from '@/components/labels/HelperLabel' ;
 
 import I18nTextDemo from '@/demo/typography/I18nTextDemo';
+import SanitizeDemo from '@/demo/typography/SanitizeDemo' ;
 
 /**
  * Typography showcase page.
@@ -292,6 +293,9 @@ const TypographyShowcase = ({ path = 'app.test' }) =>
 
                 {/* I18nText — client-side, reacts to global language switch */}
                 <I18nTextDemo />
+
+                {/* useSanitize — what each mode keeps */}
+                <SanitizeDemo />
 
             </Container>
 

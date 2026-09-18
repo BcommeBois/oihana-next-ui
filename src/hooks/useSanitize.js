@@ -20,6 +20,11 @@ const DEFAULT_SANITIZE_OPTIONS =
 /**
  * React hook that returns a text sanitizer function.
  *
+ * Both allow-lists come from the project configuration, under `html` —
+ * `config.html.sanitizeAll` (the default mode, strips every tag) and
+ * `config.html.sanitizeOptions` (the `html` mode). A configuration without an
+ * `html` key falls back on the hook's own lists, narrower in `html` mode.
+ *
  * @param {Object} params
  * @param {boolean} [params.disabled=false] - Skip sanitization entirely.
  * @param {boolean} [params.html=false] - Use HTML-safe sanitization (keeps some tags).
@@ -62,8 +67,10 @@ const useSanitize =
             return text ?? '' ;
         }
 
-        const sanitizeAll     = config?.sanitizeAll     ?? DEFAULT_SANITIZE_ALL ;
-        const sanitizeOptions = config?.sanitizeOptions ?? DEFAULT_SANITIZE_OPTIONS ;
+        // Under `html`, where `@configs` puts them — read at the root, they were
+        // never found and the defaults below always won.
+        const sanitizeAll     = config?.html?.sanitizeAll     ?? DEFAULT_SANITIZE_ALL ;
+        const sanitizeOptions = config?.html?.sanitizeOptions ?? DEFAULT_SANITIZE_OPTIONS ;
 
         let result = trim( text ) ;
 

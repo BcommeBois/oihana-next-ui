@@ -8,8 +8,9 @@ import ConfigContext from './context' ;
 
 /**
  * @typedef {Object} AppConfig
- * @property {Object} sanitizeAll - Sanitize options to strip all HTML.
- * @property {Object} sanitizeOptions - Sanitize options that allow some HTML tags.
+ * @property {Object} [html] - HTML sanitize settings, read by `useSanitize`.
+ * @property {Object} [html.sanitizeAll] - Sanitize options to strip all HTML.
+ * @property {Object} [html.sanitizeOptions] - Sanitize options that allow some HTML tags.
  */
 
 /**
