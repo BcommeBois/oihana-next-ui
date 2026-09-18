@@ -1,6 +1,6 @@
 'use client' ;
 
-import { useState } from 'react' ;
+import { useCallback , useState } from 'react' ;
 
 import Container   from '@/display/Container' ;
 import InputSearch from '@/components/inputs/InputSearch' ;
@@ -14,6 +14,11 @@ const InputSearchDemo = () =>
 {
     const [ loading, setLoading ] = useState( false ) ;
     const [ results, setResults ] = useState( [] ) ;
+
+    // Every value the debounced field hands to `onSearch`, newest first.
+    const [ searches , setSearches ] = useState( [] ) ;
+
+    const logSearch = useCallback( value => setSearches( list => [ value , ...list ].slice( 0 , 8 ) ) , [] ) ;
 
     const handleSearch = async value =>
     {
@@ -41,6 +46,28 @@ const InputSearchDemo = () =>
         <Container className="flex flex-col gap-6 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-7xl">
 
             <h3 className="text-2xl font-bold">Input Search Examples</h3>
+
+            {/* Debounced search log : what reaches onSearch, and how often */}
+            <div className="flex flex-col gap-3 rounded-box bg-base-100 p-4">
+                <h4 className="font-semibold">Recherche différée</h4>
+                <p className="text-sm text-base-content/70">
+                    Chaque appel à <code>onSearch</code> s'ajoute au journal. Tapez puis attendez, effacez au clavier
+                    puis attendez : la valeur vide part aussi. Entrée ou la loupe ne font partir une valeur qu'une fois.
+                </p>
+                <InputSearch
+                    debounceDelay   = { 400 }
+                    onSearch        = { logSearch }
+                    placeholder     = "Tapez, effacez, appuyez sur Entrée…"
+                    showClearButton
+                />
+                <ol className="flex flex-col gap-1 text-sm font-mono">
+                    { searches.length === 0
+                        ? <li className="text-base-content/50">Aucune recherche envoyée</li>
+                        : searches.map( ( value , index ) => (
+                            <li key={ `${ index }-${ value }` }>{ searches.length - index }. « { value } »</li>
+                        ) ) }
+                </ol>
+            </div>
 
             {/* Debounced auto-search (no search button) */}
             <InputSearch

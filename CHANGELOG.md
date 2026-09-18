@@ -8,6 +8,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🔎 `InputSearch`'s debounced search skipped a return to the default value, and repeated Enter**
+
+- **Reported from a consuming application**, whose two debounced lists each intercepted `onChange` to reset themselves : a field emptied from the keyboard left the list filtered on the last word, because nothing was searched.
+- **The debounced search compared against `defaultValue`.** The test was meant to keep it quiet on mount ; it also silenced every later return to that value — typing « oak », then erasing it, never searched `''`. And it had no idea what Enter or the search button had just searched, so a value validated with Enter was searched a second time when the debounce elapsed.
+- **Now it compares against the last value actually searched.** A ref, seeded with `defaultValue` so nothing fires on mount, is updated by every path that calls `onSearch` — the debounce, Enter, the search button. The debounced search fires for every new value, a return to the default included, and never twice for the same one.
+- **One more repeat goes with it** : `onSearch` sits in the effect's dependencies, so a handler written inline — a new function on every render — re-ran the effect on every parent render and searched the current value again. It is the same value as the last one searched now, and nothing fires.
+- **The clear button** : with an `onClear`, the caller is trusted to reset the search itself and the debounce does not hand it `''` again ; without one, the debounce does. The JSDoc of `debounceDelay` and `onClear` states these rules.
+- **To know, for a controlled field with a debounce** : a value set by the parent is now searched when it differs from the last one searched, where it used to be skipped if it equalled `defaultValue`.
+- Lab : a « debounced search » card on the search demo, logging every call to `onSearch`.
+
 **📏 The action buttons of eight inputs ignored `size`**
 
 - **Reported from a consuming application** : a search field set to `size="sm"` shrank, and its clear button did not — it kept the default height and stood out of the field by a quarter.

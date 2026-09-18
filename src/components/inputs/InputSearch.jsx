@@ -21,6 +21,8 @@ import { MdClose as CloseIcon, MdSearch as SearchIcon } from 'react-icons/md';
  * InputSearch component - Search input with debounce, search button, and clear functionality.
  *
  * @param {Object} props
+ * @param {number} [props.debounceDelay=0] - Milliseconds of quiet before `onSearch` fires on its own. The debounced search fires for every NEW value — a return to the default value included, so a field emptied from the keyboard resets the list — and never twice for the same value : Enter or the search button already searched it. Nothing fires on mount.
+ * @param {Function} [props.onClear] - Called by the clear button. When given, it is trusted to reset the search itself, so the debounced search does not fire `onSearch('')` again ; without it, the debounced search does.
  * @param {import('../../themes/sizing/sizes').Size} [props.size] - Field + action button size : the clear and search buttons follow the field, as in the date and time pickers.
  */
 const InputSearch =
@@ -71,6 +73,13 @@ const InputSearch =
 
     const debouncedValue = useDebouncedValue( value , debounceDelay ) ;
 
+    // The last value handed to `onSearch`, from any path. The debounced search
+    // compares against it rather than against `defaultValue` : comparing to the
+    // default skipped a return to it (a field emptied by hand never reset the
+    // list) and repeated what Enter had just searched. Seeded with the default,
+    // so nothing fires on mount.
+    const lastSearched = useRef( defaultValue ) ;
+
     const handleChange = event =>
     {
         const inputValue = readInputValue( event ) ;
@@ -80,6 +89,7 @@ const InputSearch =
     const handleSearch = event =>
     {
         event?.preventDefault() ;
+        lastSearched.current = value ;
         onSearch?.(value) ;
     };
 
@@ -87,7 +97,13 @@ const InputSearch =
     {
         event?.preventDefault() ;
         setValue( '' ) ;
-        onClear?.() ;
+        if ( onClear )
+        {
+            // The caller resets the search itself : the debounced search must not
+            // hand it `''` a second time.
+            lastSearched.current = '' ;
+            onClear() ;
+        }
         requestAnimationFrame( () =>
         {
             internalRef.current?.focus() ;
@@ -99,6 +115,7 @@ const InputSearch =
         if (event.key === 'Enter' && !disabled && !readOnly)
         {
             event.preventDefault() ;
+            lastSearched.current = value ;
             onSearch?.( value ) ;
         }
 
@@ -108,12 +125,13 @@ const InputSearch =
     // Debounced auto-search
     useEffect(() =>
     {
-        if ( debounceDelay > 0 && debouncedValue !== defaultValue )
+        if ( debounceDelay > 0 && debouncedValue !== lastSearched.current )
         {
+            lastSearched.current = debouncedValue ;
             onSearch?.( debouncedValue ) ;
         }
     }
-    , [ debouncedValue , debounceDelay , defaultValue , onSearch ] ) ;
+    , [ debouncedValue , debounceDelay , onSearch ] ) ;
 
     const iconElement = showIcon && (
         <div className="flex items-center justify-center opacity-50">
