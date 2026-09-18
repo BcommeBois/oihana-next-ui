@@ -8,6 +8,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🧹 Small fixes : the navigation link spacing, and a label family that could not load**
+
+- **A badged navigation item had a wider icon → label gap.** The navigation `Link` carried `space-x-4`. The label is a text node, so while the icon was the only element child the margin touched nothing ; the day a badge appeared, the icon was no longer the last element child and took 16 px — on that item alone. **Removed** : the daisyUI menu item already spaces its children, and every item now reads the same. Reported from a consuming application that had been cancelling it with `space-x-0`. Lab : the « Badges » entry of the lab menu carries a badge.
+- **`HelperLabel` was a copy of `ErrorLabel`** — same name inside, red text, « Error label » JSDoc — since it was created. It is now a helper label : `label text-base-content/70 text-xs`, the ink `Input` gives its `helper`.
+- **`DescriptionLabel`'s JSDoc** called it an error label and documented a red default ; it now describes the muted line it renders (`text-base-content/60`).
+- **None of the three labels could be imported at all.** `getParsedElement`, which `InitLabel` uses, imported `parseHtml` one directory short (`themes/helpers` instead of `helpers`) : the module was not found and any page importing a label failed to build. Nothing in the library imported them, which is why it went unseen. **Fixed.** Lab : a « Labels » card on the typography page, the three side by side.
+
 **🔎 `InputSearch`'s debounced search skipped a return to the default value, and repeated Enter**
 
 - **Reported from a consuming application**, whose two debounced lists each intercepted `onChange` to reset themselves : a field emptied from the keyboard left the list filtered on the last word, because nothing was searched.

@@ -13,6 +13,10 @@ import H6         from '@/components/typography/H6' ;
 import Paragraph  from '@/components/typography/Paragraph' ;
 import Typography from '@/components/typography/Typography' ;
 
+import DescriptionLabel from '@/components/labels/DescriptionLabel' ;
+import ErrorLabel       from '@/components/labels/ErrorLabel' ;
+import HelperLabel      from '@/components/labels/HelperLabel' ;
+
 import I18nTextDemo from '@/demo/typography/I18nTextDemo';
 
 /**
@@ -250,6 +254,36 @@ const TypographyShowcase = ({ path = 'app.test' }) =>
                                     <Paragraph>
                                         Les classes responsive permettent une lecture optimale sur tous les appareils.
                                     </Paragraph>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Labels — the three lines that sit under a field */}
+                <section className="card bg-base-200 shadow-xl">
+                    <div className="card-body gap-4">
+                        <h3 className="card-title">Labels</h3>
+                        <p className="text-sm text-base-content/70">
+                            Les trois lignes qui se posent sous un champ : une erreur, une aide, une description.
+                        </p>
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                            <div className="card bg-base-100">
+                                <div className="card-body gap-1">
+                                    <span className="font-mono text-sm">ErrorLabel</span>
+                                    <ErrorLabel>Ce champ est obligatoire.</ErrorLabel>
+                                </div>
+                            </div>
+                            <div className="card bg-base-100">
+                                <div className="card-body gap-1">
+                                    <span className="font-mono text-sm">HelperLabel</span>
+                                    <HelperLabel>Au moins 8 caractères, dont un chiffre.</HelperLabel>
+                                </div>
+                            </div>
+                            <div className="card bg-base-100">
+                                <div className="card-body gap-1">
+                                    <span className="font-mono text-sm">DescriptionLabel</span>
+                                    <DescriptionLabel>Visible par tous les membres de l'équipe.</DescriptionLabel>
                                 </div>
                             </div>
                         </div>

@@ -132,7 +132,7 @@ const navigation =
                 items :
                 [
                     { id : 'avatars'    , type : LINK  , Icon : AvatarIcon     , path  : '/lab/avatars'    } ,
-                    { id : 'badges'     , type : LINK  , Icon : BadgeIcon      , path  : '/lab/badges'     } ,
+                    { id : 'badges'     , type : LINK  , Icon : BadgeIcon      , path  : '/lab/badges'     , badge : { label : '3' , color : 'primary' , size : 'sm' } } ,
                     { id : 'card'       , type : LINK  , Icon : CardIcon       , path  : '/lab/card'       } ,
                     { id : 'effects'    , type : LINK  , Icon : EffectIcon     , path  : '/lab/effects'    } ,
                     { id : 'emptyState' , type : LINK  , Icon : EmptyStateIcon , path  : '/lab/emptyState' } ,

@@ -118,9 +118,11 @@ const Link =
 
     const active = navigation ? path === navigation.activePath : isPathMatch( pathname , path ) ;
 
+    // No `space-x-*` here : the daisyUI menu item already spaces its children.
+    // The margin only reached the icon once a badge made it no longer the last
+    // element child, widening the icon → label gap of badged items alone.
     const classNames = cn
     (
-        'space-x-4' ,
         active && ( activeClassName ?? DEFAULT_ACTIVE_CLASSNAME ) ,
         className ,
     ) ;

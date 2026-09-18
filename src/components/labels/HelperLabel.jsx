@@ -1,17 +1,17 @@
 import InitLabel from './InitLabel' ;
 
 /**
- * Error label component.
+ * Helper label component — the hint under a field, in the same ink `Input` gives its `helper`.
  *
  * @param {Object} props
- * @param {string} [props.defaultClassName='label text-error text-xs'] - Default classes.
+ * @param {string} [props.defaultClassName='label text-base-content/70 text-xs'] - Default classes.
  * @param {string} [props.className] - Additional classes.
  * @param {React.ReactNode} [props.children] - Label content.
  * @param {boolean} [props.html=false] - Parse children as HTML.
  */
-const ErrorLabel =
+const HelperLabel =
 ({
-     defaultClassName = 'label text-error text-xs' ,
+     defaultClassName = 'label text-base-content/70 text-xs' ,
      className ,
      children,
      html
@@ -26,4 +26,4 @@ const ErrorLabel =
     </InitLabel>
 ) ;
 
-export default ErrorLabel ;
+export default HelperLabel ;
