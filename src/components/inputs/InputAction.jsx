@@ -43,6 +43,7 @@ import { MdAdd as DefaultIcon } from 'react-icons/md' ;
 
 import Input from './Input' ;
 import cn    from '../../themes/helpers/cn' ;
+import getButtonClassNames , { SQUARE } from '../../themes/components/button' ;
 
 /**
  * @param {Object}                  props
@@ -57,6 +58,7 @@ import cn    from '../../themes/helpers/cn' ;
  * @param {Function}                [props.onAction]                            - Fires on click + on Enter.
  * @param {Function}                [props.onKeyDown]                           - Forwarded after the Enter handler.
  * @param {boolean}                 [props.submitOnEnter=true]                  - Trigger `onAction` when Enter is pressed.
+ * @param {import('../../themes/sizing/sizes').Size} [props.size] - Field + action button size : the buttons follow the field, as in the date and time pickers.
  */
 const InputAction =
 ({
@@ -71,6 +73,7 @@ const InputAction =
     onAction ,
     onKeyDown : onKeyDownFromProps ,
     submitOnEnter = true ,
+    size ,
     ...rest
 }) =>
 {
@@ -91,7 +94,8 @@ const InputAction =
 
     const buttonClasses = cn
     (
-        'btn join-item btn-square' ,
+        getButtonClassNames({ shape : SQUARE , size }) ,
+        'join-item' ,
         actionColor && `btn-${ actionColor }` ,
         actionStyle && `btn-${ actionStyle }` ,
         error && 'btn-error' ,
@@ -117,6 +121,7 @@ const InputAction =
         <Input
             actions   = { action }
             onKeyDown = { handleKeyDown }
+            size      = { size }
             { ...rest }
         />
     ) ;

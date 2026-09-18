@@ -5,6 +5,7 @@ import { useRef } from 'react' ;
 import Input from './Input' ;
 
 import cn           from '../../themes/helpers/cn' ;
+import getButtonClassNames , { GHOST , SQUARE } from '../../themes/components/button' ;
 import styles       from './styles/InputActions.module.css' ;
 import useMergeRefs from '../../hooks/useMergeRefs'
 import useValue     from '../../hooks/useValue' ;
@@ -38,6 +39,7 @@ import { FaSearch as SearchIcon } from 'react-icons/fa' ;
  * @param {string} [props.placeholder='Search...'] - Input placeholder
  * @param {*} [props.ref] - Ref object to access the input element
  * @param {Object} props.rest - Other props passed to InputClear
+ * @param {import('../../themes/sizing/sizes').Size} [props.size] - Field + action button size : the buttons follow the field, as in the date and time pickers.
  *
  * @example
  * // Basic search input
@@ -75,6 +77,7 @@ const InputClear =
 
     ref ,
 
+    size ,
     ...rest
 }) =>
 {
@@ -115,7 +118,7 @@ const InputClear =
             key        = "clear"
             type       = "button"
             onClick    = { handleClear }
-            className  = { cn( 'btn join-item btn-square btn-ghost opacity-70 hover:opacity-100' , styles.btnInput , error && styles.btnInputError ) }
+            className  = { cn( getButtonClassNames({ shape : SQUARE , size , style : GHOST }) , 'join-item opacity-70 hover:opacity-100' , styles.btnInput , error && styles.btnInputError ) }
             aria-label = { clearLabel }
             title      = { clearLabel }
         >
@@ -141,6 +144,7 @@ const InputClear =
             type          = { type }
             useFieldset   = { useFieldset }
             value         = { value }
+            size          = { size }
             { ...rest }
         />
     );

@@ -8,6 +8,7 @@ import NO_LOCALE from '../../contexts/locale/noLocale' ;
 import Input from './Input'
 
 import cn           from '../../themes/helpers/cn' ;
+import getButtonClassNames , { SQUARE } from '../../themes/components/button' ;
 import styles       from './styles/InputActions.module.css' ;
 import useMergeRefs from '../../hooks/useMergeRefs'
 
@@ -51,6 +52,7 @@ from 'react-icons/md' ;
  * @param {string} [props.title] - HTML5 title (validation message)
  * @param {*} [props.ref] - Ref object to access the input element
  * @param {Object} props.rest - Other props passed to InputPassword
+ * @param {import('../../themes/sizing/sizes').Size} [props.size] - Field + action button size : the buttons follow the field, as in the date and time pickers.
  *
  * @example
  * // Simple password input
@@ -109,6 +111,7 @@ const InputPassword =
 
     ref,
 
+    size ,
     ...rest
 }) =>
 {
@@ -162,7 +165,7 @@ const InputPassword =
             key          = "toggle"
             type         = "button"
             onClick      = { handleToggle }
-            className    = { cn( 'btn join-item btn-square font-semibold' , styles.btnInput , error && styles.btnInputError ) }
+            className    = { cn( getButtonClassNames({ shape : SQUARE , size }) , 'join-item font-semibold' , styles.btnInput , error && styles.btnInputError ) }
             aria-label   = { isVisible ? hideText : showText }
             aria-pressed = { isVisible }
             title        = { isVisible ? hideText : showText }
@@ -198,6 +201,7 @@ const InputPassword =
             minLength     = { minLength }
             maxLength     = { maxLength }
             title         = { title }
+            size          = { size }
             { ...rest }
         />
     ) ;

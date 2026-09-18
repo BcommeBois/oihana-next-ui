@@ -19,6 +19,7 @@ import InputDateRangeDemo  from '@/demo/inputs/InputDateRangeDemo' ;
 import InputHexColorDemo   from '@/demo/inputs/InputHexColorDemo' ;
 import InputPercentageDemo from '@/demo/inputs/InputPercentageDemo' ;
 import InputSearchDemo     from '@/demo/inputs/InputSearchDemo' ;
+import InputSizesDemo      from '@/demo/inputs/InputSizesDemo' ;
 import InputPasswordDemo   from '@/demo/inputs/InputPasswordDemo' ;
 import InputPinDemo        from '@/demo/inputs/InputPinDemo' ;
 import InputTimeDemo       from '@/demo/inputs/InputTimeDemo' ;
@@ -42,6 +43,7 @@ import {
     MdSearch ,
     MdTextFields ,
     MdSchedule ,
+    MdStraighten ,
     MdTranslate ,
     MdVerified ,
     MdViewModule ,
@@ -88,6 +90,14 @@ const Inputs = ({ path = 'app.test' }) =>
             description : 'Search input with icon' ,
             category    : 'Text' ,
             component   : <InputSearchDemo /> ,
+        } ,
+        {
+            key         : 'sizes' ,
+            label       : 'Sizes' ,
+            icon        : MdStraighten ,
+            description : 'Action buttons follow the field size' ,
+            category    : 'Text' ,
+            component   : <InputSizesDemo /> ,
         } ,
         {
             key         : 'action' ,

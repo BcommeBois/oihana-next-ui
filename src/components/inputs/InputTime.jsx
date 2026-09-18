@@ -54,6 +54,7 @@ import { MdAccessTime as TimeIcon } from 'react-icons/md'
  * @param {React.ReactNode|React.ReactNode[]} [props.actions] - Extra action button(s) appended after the AM/PM toggle (e.g. a picker trigger)
  * @param {*} [props.ref] - Ref object to access the input element
  * @param {Object} props.rest - Other props passed to Input
+ * @param {import('../../themes/sizing/sizes').Size} [props.size] - Field + action button size : the buttons follow the field, as in the date and time pickers.
  *
  * @example
  * // Simple 24-hour format (HH:MM)
@@ -135,6 +136,7 @@ const InputTime =
 
     ref ,
 
+    size ,
     ...rest
 }) =>
 {
@@ -212,6 +214,7 @@ const InputTime =
     const meridiemButton = ampm ? (
         <SwapButton
             className        = { cn( 'join-item' , styles.btnInput , error && styles.btnInputError ) }
+            size             = { size }
             checked          = { meridiem === AM }
             disabled         = { disabled || readOnly }
             on               = { AM }
@@ -256,6 +259,7 @@ const InputTime =
             useValidator  = { useValidator }
             validatorHint = { validatorHint }
             value         = { value ?? '' }
+            size          = { size }
             { ...rest }
         />
     ) ;

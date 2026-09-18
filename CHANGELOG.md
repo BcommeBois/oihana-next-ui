@@ -8,6 +8,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**📏 The action buttons of eight inputs ignored `size`**
+
+- **Reported from a consuming application** : a search field set to `size="sm"` shrank, and its clear button did not — it kept the default height and stood out of the field by a quarter.
+- **Eight inputs never read `size`.** `InputSearch`, `InputCounter`, `InputCurrency`, `InputClear`, `InputUrl`, `InputPassword`, `InputAction` and `InputTime` let it through to `Input`, which sizes the field only, and wrote their buttons as `btn btn-square` with no size. The date and time pickers and `InputColor` already did it right : they build their buttons with `getButtonClassNames({ shape , size })`.
+- **Now the eight do the same.** Each reads `size`, hands it to `Input`, and builds its buttons with `getButtonClassNames({ shape : SQUARE , size })` — `InputTime` passes it to its AM/PM `SwapButton`. At every size the buttons share the field's height (24, 32, 40, 48 px from `xs` to `lg`). Without `size`, or with `md`, nothing changes. The `size` JSDoc of each says so.
+- Lab : a « Sizes » demo on the inputs page, four inputs with buttons at four sizes.
+
 **⏳ A busy `Button` lost the keyboard focus — twice over**
 
 - **Reported from a consuming application** : icon buttons with a tooltip, disabled while their action runs (invite, resend, star a favourite, refresh), threw the keyboard user back onto the page every time they were pressed, and a confirmation opened from one of them had nowhere to return the focus to on close.

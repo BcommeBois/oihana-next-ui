@@ -5,6 +5,7 @@ import { useRef } from 'react'
 import Input from './Input'
 
 import cn           from '../../themes/helpers/cn' ;
+import getButtonClassNames , { SQUARE } from '../../themes/components/button' ;
 import styles       from './styles/InputActions.module.css' ;
 import useValue     from '../../hooks/useValue'
 import useMergeRefs from '../../hooks/useMergeRefs'
@@ -45,6 +46,7 @@ import { MdLink as LinkIcon, MdOpenInNew as OpenIcon } from 'react-icons/md' ;
  * @param {string} [props.title] - HTML5 title (validation message)
  * @param {*} [props.ref] - Ref object to access the input element
  * @param {Object} props.rest - Other props passed to InputGroup
+ * @param {import('../../themes/sizing/sizes').Size} [props.size] - Field + action button size : the buttons follow the field, as in the date and time pickers.
  *
  * @example
  * // Simple URL input (accepts http and https)
@@ -136,6 +138,7 @@ const InputURL =
 
      ref ,
 
+    size ,
     ...rest
 }) =>
 {
@@ -197,7 +200,7 @@ const InputURL =
             type       = "button"
             onClick    = { handleOpen }
             disabled   = { !value || disabled }
-            className  = { cn( 'btn join-item btn-square font-semibold' , styles.btnInput , error && styles.btnInputError ) }
+            className  = { cn( getButtonClassNames({ shape : SQUARE , size }) , 'join-item font-semibold' , styles.btnInput , error && styles.btnInputError ) }
             aria-label = { openLabel }
             title      = { openLabel }
         >
@@ -267,6 +270,7 @@ const InputURL =
             useValidator  = { useValidator }
             value         = { value }
             validatorHint = { validatorHint }
+            size          = { size }
             { ...rest }
         />
     ) ;

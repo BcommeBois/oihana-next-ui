@@ -13,6 +13,7 @@ import round from 'vegas-js-core/src/maths/round'
 import Input from './Input'
 
 import cn           from '../../themes/helpers/cn' ;
+import getButtonClassNames , { SQUARE } from '../../themes/components/button' ;
 import styles       from './styles/InputActions.module.css' ;
 import useMergeRefs from '../../hooks/useMergeRefs'
 
@@ -53,6 +54,7 @@ import { MdAdd as MoreIcon, MdRemove as LessIcon } from 'react-icons/md'
  * @param {boolean} [props.useFieldset=false] - Use fieldset wrapper
  * @param {*} [props.ref] - Ref object to access the input element
  * @param {Object} props.rest - Other props passed to InputGroup
+ * @param {import('../../themes/sizing/sizes').Size} [props.size] - Field + action button size : the buttons follow the field, as in the date and time pickers.
  *
  * @example
  * // Basic counter
@@ -96,6 +98,7 @@ const InputCounter =
 
     ref,
 
+    size ,
     ...rest
 }) =>
 {
@@ -169,7 +172,8 @@ const InputCounter =
 
     const btnClassNames = cn
     (
-       'btn join-item btn-square font-semibold' ,
+        getButtonClassNames({ shape : SQUARE , size }) ,
+        'join-item font-semibold' ,
         styles.btnInput ,
         error && styles.btnInputError
     ) ;
@@ -221,6 +225,7 @@ const InputCounter =
             type          = "number"
             useFieldset   = { useFieldset }
             value         = { value ?? '' }
+            size          = { size }
             { ...rest }
         />
     );

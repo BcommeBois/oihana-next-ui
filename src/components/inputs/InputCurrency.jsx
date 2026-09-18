@@ -15,6 +15,7 @@ import round from 'vegas-js-core/src/maths/round'
 import Input from './Input'
 
 import cn           from '../../themes/helpers/cn' ;
+import getButtonClassNames , { SQUARE } from '../../themes/components/button' ;
 import styles       from './styles/InputActions.module.css' ;
 import useMergeRefs from '../../hooks/useMergeRefs'
 import useValue     from '../../hooks/useValue'
@@ -64,6 +65,7 @@ from 'react-icons/md'
  * @param {boolean} [props.useFieldset=false] - Use fieldset wrapper
  * @param {*} [props.ref] - Ref object to access the input element
  * @param {Object} props.rest - Other props passed to Input
+ * @param {import('../../themes/sizing/sizes').Size} [props.size] - Field + action button size : the buttons follow the field, as in the date and time pickers.
  *
  * @example
  * // Simple Euro currency
@@ -124,6 +126,7 @@ const InputCurrency =
 
      ref,
 
+    size ,
      ...rest
 }) =>
 {
@@ -272,7 +275,7 @@ const InputCurrency =
 
     const currentNum = isValueEmpty( value ) || isNaN( value ) ? defaultValue : Number( value ) ;
 
-    const btnClassNames = cn( 'btn join-item btn-square font-semibold' , styles.btnInput , error && styles.btnInputError ) ;
+    const btnClassNames = cn( getButtonClassNames({ shape : SQUARE , size }) , 'join-item font-semibold' , styles.btnInput , error && styles.btnInputError ) ;
 
     const actions = showStepper && !readOnly ?
     [
@@ -319,6 +322,7 @@ const InputCurrency =
             type          = "text"
             useFieldset   = { useFieldset }
             value         = { displayValue }
+            size          = { size }
             { ...rest }
         />
     ) ;

@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react'
 
 import cn from '../../themes/helpers/cn'
+import getButtonClassNames , { SQUARE } from '../../themes/components/button' ;
 
 import Input from './Input'
 
@@ -18,6 +19,9 @@ import { MdClose as CloseIcon, MdSearch as SearchIcon } from 'react-icons/md';
 
 /**
  * InputSearch component - Search input with debounce, search button, and clear functionality.
+ *
+ * @param {Object} props
+ * @param {import('../../themes/sizing/sizes').Size} [props.size] - Field + action button size : the clear and search buttons follow the field, as in the date and time pickers.
  */
 const InputSearch =
 ({
@@ -56,6 +60,7 @@ const InputSearch =
 
      ref,
 
+    size ,
     ...rest
 }) =>
 {
@@ -120,7 +125,8 @@ const InputSearch =
 
     const btnClassNames = cn
     (
-        'btn join-item btn-square font-semibold' ,
+        getButtonClassNames({ shape : SQUARE , size }) ,
+        'join-item font-semibold' ,
         styles.btnInput ,
         error && styles.btnInputError ,
     ) ;
@@ -178,6 +184,7 @@ const InputSearch =
             type          = "text"
             useFieldset   = { useFieldset }
             value         = { value }
+            size          = { size }
             { ...rest }
         />
     );
