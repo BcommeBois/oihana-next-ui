@@ -25,16 +25,15 @@ const I18nTextDemo = () =>
                 </h3>
 
                 <p className="text-sm text-base-content/70">
-                    Basculez la langue globale (menu drapeau de l'interface) : les valeurs
-                    ci-dessous changent instantanément, sans navigation.
+                    <I18nText path="app.lab.i18n" field="hint" />
                 </p>
 
-                <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+                <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-4">
 
                     {/* Plain string */}
                     <div className="card bg-base-100">
                         <div className="card-body">
-                            <H3>field="title"</H3>
+                            <H3 size="base" className="font-mono">field="title"</H3>
                             <Paragraph>
                                 <I18nText path="app.lab.i18n" field="title" />
                             </Paragraph>
@@ -44,7 +43,7 @@ const I18nTextDemo = () =>
                     {/* Interpolation via fastformat args */}
                     <div className="card bg-base-100">
                         <div className="card-body">
-                            <H3>field="count" + args</H3>
+                            <H3 size="base" className="font-mono">field="count" + args</H3>
                             <Paragraph>
                                 <I18nText
                                     path  = "app.lab.i18n"
@@ -58,13 +57,27 @@ const I18nTextDemo = () =>
                     {/* Missing field → fallback (still interpolated) */}
                     <div className="card bg-base-100">
                         <div className="card-body">
-                            <H3>missing field → fallback</H3>
+                            <H3 size="base" className="font-mono">missing field → fallback</H3>
                             <Paragraph>
                                 <I18nText
                                     path     = "app.lab.i18n"
                                     field    = "does.not.exist"
                                     fallback = "Fallback shown for {0}"
                                     args     = { [ 'this key' ] }
+                                />
+                            </Paragraph>
+                        </div>
+                    </div>
+
+                    {/* The key holds a sub-object → fallback, the page stays up */}
+                    <div className="card bg-base-100">
+                        <div className="card-body">
+                            <H3 size="base" className="font-mono">field="error" (sous-objet) → fallback</H3>
+                            <Paragraph>
+                                <I18nText
+                                    path     = "app.lab.i18n"
+                                    field    = "error"
+                                    fallback = "« error » est un objet { description } : le texte de repli s'affiche."
                                 />
                             </Paragraph>
                         </div>

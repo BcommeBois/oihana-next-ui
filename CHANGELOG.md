@@ -8,6 +8,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🧱 `I18nText` took the whole page down when its key pointed at a sub-object**
+
+- **Reported from a consuming application**, where a detail page died on « Objects are not valid as a React child » : its error branch asked the bundle for `error` while the bundle holds `error : { description }`. `I18nText` handed the object to React, and React refuses an object as a child — for the whole tree, not the one line.
+- **Now only a printable value is rendered.** A string or a number goes through ; anything else — a sub-branch of the bundle, an array, a boolean — renders the `fallback`, then nothing. A bundle whose shape drifted costs a default text, never a page. Nothing changes for a key that resolves to a string or a number, and there is no new prop.
+- **The consuming application had forked the component to add this guard** ; the fork can go.
+- Lab : a fourth card on the `I18nText` demo, a key holding an object, with its fallback shown ; the demo's introduction now follows the language too, and the card titles are set at body size so four fit on a row.
+
 **📈 A line or bar tooltip showed the raw number when no format was given**
 
 - **Reported from a consuming application** : on revenue curves, hovering a point read `1234567.89` — no thousands separator, a dot for a French reader. The four curves concerned passed no `yFormat`, which the documentation presented as optional.
