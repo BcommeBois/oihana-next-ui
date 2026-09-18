@@ -21,6 +21,8 @@ import { formatTimeTick } from '../../themes/charts/axes' ;
 import { CARTESIAN }      from '../../themes/charts/layout' ;
 import { NIVO }           from '../../themes/charts/palettes' ;
 
+import { formatTooltipValue } from '../../themes/charts/tooltip' ;
+
 import { LINE } from '../../themes/components/metricLegend' ;
 
 import ChartFrame   from './ChartFrame' ;
@@ -131,10 +133,10 @@ const formatTooltipX = ( value ) => ( value instanceof Date ? formatTimeTick( va
  * @param {boolean} [props.stacked=false] - Stack the series on the y axis.
  * @param {Object} [props.theme] - Partial nivo theme, deeply merged over the DaisyUI one.
  * @param {Object|boolean} [props.xAxis] - Bottom axis — `{ legend , format , tickRotation , hide }`.
- * @param {string} [props.xFormat] - d3-format string for x values ; this chart's equivalent of `valueFormat`.
+ * @param {string|Function} [props.xFormat] - d3-format string, or `( value ) => string`, for x values ; this chart's equivalent of `valueFormat`.
  * @param {string|Object} [props.xScale='point'] - `'point'`, `'time'`, `'linear'`, or a nivo scale config.
  * @param {Object|boolean} [props.yAxis] - Left axis — `{ legend , format , hide }`.
- * @param {string} [props.yFormat] - d3-format string for y values ; this chart's equivalent of `valueFormat`.
+ * @param {string|Function} [props.yFormat] - d3-format string, or `( value ) => string`, for y values ; this chart's equivalent of `valueFormat`. Without it the tooltip shows the value as a number of the active locale (`1 234 567,89`), never nivo's raw `1234567.89`.
  * @param {string|Object} [props.yScale='linear'] - `'linear'`, `'log'`, or a nivo scale config.
  *
  * @example
@@ -143,6 +145,16 @@ const formatTooltipX = ( value ) => ( value instanceof Date ? formatTimeTick( va
  *     data  = { [ { id : 'france' , data : [ { x : 'plane' , y : 431 } ] } ] }
  *     xAxis = {{ legend : 'transportation' }}
  *     yAxis = {{ legend : 'count' }}
+ * />
+ * ```
+ *
+ * @example
+ * ```jsx
+ * // Amounts — the tooltip gives the exact figure, the axis a compact one
+ * <LineChart
+ *     data    = { revenue }
+ *     yAxis   = {{ format : value => compact( value ) }}
+ *     yFormat = { value => euros.format( value ) } // euros = new Intl.NumberFormat( lang , { style : 'currency' , currency : 'EUR' } )
  * />
  * ```
  *
@@ -222,13 +234,18 @@ const LineChart =
     (
         ( { point } ) => (
             <ChartTooltip
-                title = { formatTooltipX( point?.data?.xFormatted ?? point?.data?.x ) }
+                // Same trap on x : `xFormatted` is `'' + x` without an `xFormat`, so a
+                // time scale's Date reached `formatTooltipX` as a string and was never
+                // formatted.
+                title = { xFormat ? point?.data?.xFormatted : formatTooltipX( point?.data?.x ) }
                 color = { point?.seriesColor ?? point?.color }
                 label = { point?.seriesId }
-                value = { point?.data?.yFormatted ?? point?.data?.y }
+                // nivo always fills `yFormatted` — with `'' + y` when no format was
+                // given — so it only speaks for the caller when there is a `yFormat`.
+                value = { yFormat ? point?.data?.yFormatted : formatTooltipValue( point?.data?.y ) }
             />
         ) ,
-        [] ,
+        [ xFormat , yFormat ] ,
     ) ;
 
     const Component = renderer === 'canvas' ? ResponsiveLineCanvas : ResponsiveLine ;

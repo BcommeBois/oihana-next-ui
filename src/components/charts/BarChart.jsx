@@ -21,6 +21,8 @@ import { CARTESIAN } from '../../themes/charts/layout' ;
 import { sumBy }     from '../../themes/charts/legendItems' ;
 import { NIVO }      from '../../themes/charts/palettes' ;
 
+import { formatTooltipValue } from '../../themes/charts/tooltip' ;
+
 import ChartFrame   from './ChartFrame' ;
 import ChartTooltip from './ChartTooltip' ;
 
@@ -83,7 +85,7 @@ const inferKeys = ( data , indexBy ) =>
  * @param {string} [props.renderer='svg'] - `'svg'` or `'canvas'` (past ~2k marks).
  * @param {boolean} [props.stacked=false] - Stack the series instead of grouping them.
  * @param {Object} [props.theme] - Partial nivo theme, deeply merged over the DaisyUI one.
- * @param {string} [props.valueFormat] - d3-format string for values.
+ * @param {string|Function} [props.valueFormat] - d3-format string, or `( value ) => string`, for values. Without it the tooltip and the label inside each bar show the value as a number of the active locale (`1 234 567,89`), never nivo's raw `1234567.89`.
  * @param {Object|boolean} [props.xAxis] - Bottom axis — `{ legend , format , tickRotation , hide }`.
  * @param {Object|boolean} [props.yAxis] - Left axis — `{ legend , format , hide }`.
  *
@@ -175,11 +177,19 @@ const BarChart =
                 title = { indexValue }
                 color = { color }
                 label = { id }
-                value = { formattedValue ?? value }
+                // nivo always fills `formattedValue` — with `'' + value` when no format
+                // was given — so it only speaks for the caller when there is a `valueFormat`.
+                value = { valueFormat ? formattedValue : formatTooltipValue( value ) }
             />
         ) ,
-        [] ,
+        [ valueFormat ] ,
     ) ;
+
+    // The label drawn inside a bar reads nivo's `formattedValue` too — the same
+    // `'' + value` without a format. Without `valueFormat` it follows the tooltip ;
+    // with one, `undefined` leaves nivo its own default. A caller's `label` still
+    // wins, through `rest` / `nivoProps` spread after.
+    const label = useCallback( ( { value } ) => formatTooltipValue( value ) , [] ) ;
 
     const Component = renderer === 'canvas' ? ResponsiveBarCanvas : ResponsiveBar ;
 
@@ -211,6 +221,7 @@ const BarChart =
                 groupMode          = { stacked ? 'stacked' : 'grouped' }
                 indexBy            = { indexBy }
                 keys               = { resolvedKeys }
+                label              = { valueFormat ? undefined : label }
                 labelSkipHeight    = { 14 }
                 labelSkipWidth     = { 20 }
                 labelTextColor     = {{ from : 'color' , modifiers : [ [ 'darker' , 1.8 ] ] }}

@@ -8,6 +8,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**📈 A line or bar tooltip showed the raw number when no format was given**
+
+- **Reported from a consuming application** : on revenue curves, hovering a point read `1234567.89` — no thousands separator, a dot for a French reader. The four curves concerned passed no `yFormat`, which the documentation presented as optional.
+- **The fallback could never fire.** `LineChart` showed `yFormatted ?? y` and `BarChart` `formattedValue ?? value`, meaning *the formatted value if there is a format, the value otherwise*. But nivo **always** fills the formatted value : without a format, its formatter is `v => '' + v`. The fallback never ran, and the tooltip received a stringified number.
+- **Now a missing format means a number of the active locale.** Without `yFormat` (`LineChart`) or `valueFormat` (`BarChart`), the tooltip formats a numeric value with `Intl.NumberFormat` in the language dayjs holds — the one the `LangProvider` keeps in sync, and that the time axes already follow : `1 234 567,89` in French, `1,234,567.89` in English. A non-numeric value is shown as it is. With a format, nothing changes : the formatted value is shown. The tooltip only exists on hover, so no server render has to agree with it.
+- **The format can be a function — it always could.** nivo accepts `( value ) => string` as well as a d3-format string ; the JSDoc of `xFormat`, `yFormat` and `valueFormat` now says so, with an example giving the exact amount in the tooltip while the axis keeps a compact one.
+- **And inside the bars.** A bar's label reads the same `formattedValue`, so a bar chart without `valueFormat` wrote `3412587.42` in each bar. Without `valueFormat` the label now goes through the same locale formatter ; with one, nivo's default label is kept, and a `label` passed by the caller still wins.
+- **The same trap hid on the x axis.** The line tooltip's title read `xFormatted ?? x` : on a time scale, `xFormatted` is the stringified `Date`, so the existing time formatter (`formatTimeTick`, the one the axis uses) never received a `Date` and the title showed the full date string. Without `xFormat`, the title now goes through that formatter again — « 3 févr. » on the time-axis demo.
+- New helper `formatTooltipValue` in `themes/charts/tooltip`. Lab : a « formatted tooltip » section on the cartesian charts page, each chart with and without a format.
+
 ## [0.18.3] — 2026-09-15
 
 **🚨 A modal mounted on demand stopped opening, and said nothing about it**

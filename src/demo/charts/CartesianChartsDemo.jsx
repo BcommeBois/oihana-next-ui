@@ -13,6 +13,8 @@ import Select     from '@/components/selects/Select' ;
 
 import { MdBarChart as NoChartIcon , MdRefresh as RefreshIcon } from 'react-icons/md' ;
 
+import useLang from '@/contexts/lang/useLang' ;
+
 import PalettePicker from '@/demo/PalettePicker' ;
 import Section       from './Section' ;
 
@@ -59,6 +61,28 @@ const TIME_DATA =
             y : Math.round( 200 + Math.sin( index / 2 ) * 120 ) ,
         }) ) ,
     } ,
+] ;
+
+// Amounts with decimals and seven digits : the case the tooltip used to show raw
+// (`1234567.89`) whenever no format was given.
+const MONTHS = [ 'jan' , 'feb' , 'mar' , 'apr' , 'may' , 'jun' , 'jul' , 'aug' , 'sep' , 'oct' , 'nov' , 'dec' ] ;
+
+const REVENUE_DATA = [ 2025 , 2026 ].map( ( year , seed ) =>
+({
+    id   : String( year ) ,
+    data : MONTHS.map( ( x , index ) =>
+    ({
+        x ,
+        y : Math.round( ( 900_000 + ( Math.sin( seed * 2.1 + index * 0.8 ) + 1 ) * 350_000 ) * 100 ) / 100 + 0.89 ,
+    }) ) ,
+}) ) ;
+
+const QUARTER_DATA =
+[
+    { quarter : 'Q1' , revenue : 3_412_587.42 } ,
+    { quarter : 'Q2' , revenue : 3_987_104.19 } ,
+    { quarter : 'Q3' , revenue : 2_756_930.07 } ,
+    { quarter : 'Q4' , revenue : 4_120_655.73 } ,
 ] ;
 
 const BAR_DATA =
@@ -109,6 +133,15 @@ const CartesianChartsDemo = () =>
     const [ loading , setLoading ] = useState( false ) ;
 
     const [ legendPosition , setLegendPosition ] = useState( 'bottom' ) ;
+
+    const { lang } = useLang() ;
+
+    const formatEuro = ( value ) => new Intl.NumberFormat( lang , { style : 'currency' , currency : 'EUR' } ).format( value ) ;
+
+    // The axis stays compact (`1,05 M`) : seven raw digits do not fit the left margin,
+    // and the exact figure is the tooltip's job. Two fraction digits, because the
+    // ticks step by 50 k — with one, 1 050 000 and 1 100 000 both read `1,1 M`.
+    const formatCompact = ( value ) => new Intl.NumberFormat( lang , { notation : 'compact' , maximumFractionDigits : 2 } ).format( value ) ;
 
     return (
         <div className="flex flex-col gap-8">
@@ -162,6 +195,58 @@ const CartesianChartsDemo = () =>
                     xAxis     = {{ legend : 'date' , tickRotation : -35 }}
                     yAxis     = {{ legend : 'sessions' }}
                 />
+            </Section>
+
+            <Divider />
+
+            <Section
+                title       = "Infobulle formatée — Line et Bar"
+                description = "Sans format, l'infobulle écrit la valeur comme un nombre de la langue active (1 234 567,89 en français) au lieu du 1234567.89 brut de nivo. yFormat / valueFormat acceptent une chaîne d3-format ou une fonction : ici un montant en euros, pendant que l'axe garde une écriture compacte."
+            >
+                <div className="grid gap-6 lg:grid-cols-2">
+                    <LineChart
+                        ariaLabel = "Chiffre d'affaires mensuel, sans yFormat"
+                        curve     = "monotoneX"
+                        data      = { REVENUE_DATA }
+                        height    = { 300 }
+                        palette   = { palette }
+                        xAxis     = {{ legend : 'sans yFormat' }}
+                        yAxis     = {{ format : formatCompact }}
+                    />
+                    <LineChart
+                        ariaLabel = "Chiffre d'affaires mensuel, avec yFormat en fonction"
+                        curve     = "monotoneX"
+                        data      = { REVENUE_DATA }
+                        height    = { 300 }
+                        palette   = { palette }
+                        xAxis     = {{ legend : 'yFormat = { value => euros }' }}
+                        yAxis     = {{ format : formatCompact }}
+                        yFormat   = { formatEuro }
+                    />
+                    <BarChart
+                        ariaLabel = "Chiffre d'affaires par trimestre, sans valueFormat"
+                        data      = { QUARTER_DATA }
+                        height    = { 300 }
+                        indexBy   = "quarter"
+                        keys      = { [ 'revenue' ] }
+                        legend    = { false }
+                        palette   = { palette }
+                        xAxis     = {{ legend : 'sans valueFormat' }}
+                        yAxis     = {{ format : formatCompact }}
+                    />
+                    <BarChart
+                        ariaLabel   = "Chiffre d'affaires par trimestre, avec valueFormat en fonction"
+                        data        = { QUARTER_DATA }
+                        height      = { 300 }
+                        indexBy     = "quarter"
+                        keys        = { [ 'revenue' ] }
+                        legend      = { false }
+                        palette     = { palette }
+                        valueFormat = { formatEuro }
+                        xAxis       = {{ legend : 'valueFormat = { value => euros }' }}
+                        yAxis       = {{ format : formatCompact }}
+                    />
+                </div>
             </Section>
 
             <Divider />
