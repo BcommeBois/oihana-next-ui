@@ -40,12 +40,20 @@ const GAP = 6 ;
  *
  * `display='responsive'` (default) picks dropdown on `md`+ and modal below.
  *
- * When the trigger sits inside an open `<dialog>` (a {@link module:components/modals/Modal}),
+ * When the trigger sits inside an open `<dialog>` (a {@link Modal}),
  * the panel portals **into that dialog** instead of `document.body` : body-level
  * content under a modal dialog is inert and paints below the top layer, so the
  * panel would be invisible and unclickable. Children of the dialog stay
  * interactive and paint within its top-layer entry (same technique as the toast
  * provider).
+ *
+ * **Outside click.** A click in the panel, on the trigger, or in anything the
+ * panel renders through a portal — a nested picker's calendar, a dropdown, a
+ * floating tooltip — keeps it open : such content sits outside the panel in the
+ * DOM but inside it in the React tree, and the panel's `onMouseDown` sees it.
+ * Any other click closes it. Known limit : a portalled descendant with its OWN
+ * scrolling area still closes the popover when it scrolls, since scroll events
+ * do not travel the React tree the same way.
  *
  * @module components/Popover
  *
@@ -119,6 +127,16 @@ const Popover =
     const shouldTrap = trapFocus ?? asModal ;
 
     const panelRef = useRef( null ) ;
+
+    // Set by the panel's React `onMouseDown`, read by the document listener. A
+    // descendant rendered through a portal — a nested picker's calendar, a
+    // dropdown, a floating tooltip — sits outside the panel in the DOM, so
+    // `contains` calls its click « outside ». React, though, bubbles the event
+    // along the component tree, portals included, and runs before a listener
+    // on `document` : the flag says the click came from inside.
+    const insideRef = useRef( false ) ;
+
+    const markInside = useCallback( () => { insideRef.current = true ; } , [] ) ;
     const [ coords , setCoords ] = useState( null ) ;
 
     // A callback ref is what says *when* the panel arrives, and the positioning
@@ -183,6 +201,10 @@ const Popover =
             return ;
         }
 
+        // A flag left over from a click that closed the previous opening must not
+        // spare the first outside click of this one.
+        insideRef.current = false ;
+
         const onKey = ( event ) =>
         {
             if ( event.key === 'Escape' )
@@ -227,6 +249,12 @@ const Popover =
 
         const onPointerDown = ( event ) =>
         {
+            if ( insideRef.current )
+            {
+                insideRef.current = false ;
+                return ;
+            }
+
             if ( panelRef.current?.contains( event.target ) || anchorRef?.current?.contains( event.target ) )
             {
                 return ;
@@ -315,6 +343,7 @@ const Popover =
     // ancestor) : document.body. `:popover-open` can be unsupported (older
     // browsers) — fall back to the dialog-only lookup rather than throwing.
     let hostTopLayer = null ;
+
     try
     {
         hostTopLayer = anchorRef?.current?.closest?.( 'dialog[open], [popover]:popover-open' ) ?? null ;
@@ -323,6 +352,7 @@ const Popover =
     {
         hostTopLayer = anchorRef?.current?.closest?.( 'dialog[open]' ) ?? null ;
     }
+
     const containerRef = hostTopLayer ? { current : hostTopLayer } : undefined ;
 
     const footer = showFooter
@@ -351,6 +381,7 @@ const Popover =
                         aria-label      = { ariaLabel }
                         aria-labelledby = { ariaLabelledBy }
                         aria-modal      = "true"
+                        onMouseDown     = { markInside }
                         className       = { cn
                         (
                             'relative z-10 border-base-300 bg-base-100 p-3 shadow-xl' ,
@@ -407,6 +438,7 @@ const Popover =
                 aria-label      = { ariaLabel }
                 aria-labelledby = { ariaLabelledBy }
                 className       = { cn( 'fixed z-60 w-fit max-w-[calc(100vw-12px)] border border-base-300 bg-base-100 p-3 shadow-lg rounded-box' , panelClassName ) }
+                onMouseDown     = { markInside }
                 role            = "dialog"
                 style           = { coords ? { top : coords.top , left : coords.left } : { top : 0 , left : 0 , visibility : 'hidden' } }
                 tabIndex        = { -1 }

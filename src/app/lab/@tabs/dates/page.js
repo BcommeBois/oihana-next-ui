@@ -7,6 +7,7 @@ import Page      from '@/display/Page' ;
 import DateDemo           from '@/demo/dates/DateDemo' ;
 import MonthYearDemo      from '@/demo/dates/MonthYearDemo' ;
 import PickersInModalDemo from '@/demo/dates/PickersInModalDemo' ;
+import PickersInPopoverDemo from '@/demo/dates/PickersInPopoverDemo' ;
 
 /**
  * Date components showcase page (lab/dates).
@@ -34,6 +35,11 @@ const Dates = () =>
 
         {/* Beside the three field pickers it guards — inert/top-layer regression */}
         <PickersInModalDemo />
+
+        <Divider />
+
+        {/* Pickers nested in a Popover — the calendar's clicks count as inside */}
+        <PickersInPopoverDemo />
 
         <Divider />
 

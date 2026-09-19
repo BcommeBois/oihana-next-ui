@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**📅 A click inside a portalled descendant closed its `Popover`**
+
+- **Reported from a consuming application**, which had to host two date pickers in a `Modal` at every width instead of a `Popover` : picking a day closed the panel, and the picker with it.
+- **The outside click was decided from the DOM alone.** The document listener spared a click when the panel or the trigger `contains` its target. A date picker's calendar is itself a `Popover`, portalled to `document.body` : in the DOM it is the panel's sibling, so its clicks read as « outside ». So would a `Dropdown` or a floating tooltip's content rendered in the panel.
+- **Now the React tree decides too.** React bubbles events along the component tree, portals included, and runs before a listener on `document` : the panel's `onMouseDown` marks the click as coming from inside, and the document listener spares it. Anything the panel renders — however it is portalled — keeps it open ; any other click still closes it. The mark is reset on each opening, so a leftover can never spare the first outside click.
+- **Known limit, stated in the JSDoc** : a portalled descendant with its own scrolling area still closes the popover when it scrolls — scroll events do not travel the React tree the same way. The date picker's calendar does not scroll.
+- Lab : « Pickers inside a Popover » on the dates page, two date pickers in a `PopoverButton`.
+
 **🧼 `useSanitize` never applied the project configuration**
 
 - **The hook read its allow-lists at the root of the configuration** — `config.sanitizeAll`, `config.sanitizeOptions` — while `@configs` files them under `html`. Both reads came back `undefined`, and the hook's own defaults always won : whatever a project set in `config.html` was ignored. The `AppConfig` typedef of `useConfig` documented the same wrong shape.
