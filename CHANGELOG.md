@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - **The bundles were shipped but not exported.** `src/@locale` is in the package, but not in the `exports` map, so a host could not import it.
 - **`exports` now maps `./locale/*`** to `src/@locale/*` : `import components from 'oihana-next-ui/locale/components/index'`, spread into the host's own `components` entry, and every family — present and future — arrives with the library. Resolved like the other entries (`./components/*`…) : by the host's bundler.
 - **README** : a « Default labels » section with the merge.
+- **`scripts/generate-exports.js`**, which rewrites `exports` on every release, knows the entry : a new `ALIASED_DIRS` table publishes `src/@locale` as `./locale/*`, sorted with the others. Without it the release would have dropped the mapping.
 - **`sortable.toggle`** reads « Expand or collapse » in English, rather than « Toggle » — the accessible name of a tree node's disclosure button should say what it toggles. Same wording for `SortableTreeItem`'s own fallback.
 
 ## [0.19.0] — 2026-09-18

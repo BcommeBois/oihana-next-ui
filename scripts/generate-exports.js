@@ -14,6 +14,12 @@ const SRC_DIRS = [
     'themes'
 ];
 
+// Folders published under another name than their own : `src/@locale` is
+// imported as `oihana-next-ui/locale/*`.
+const ALIASED_DIRS = {
+    locale : '@locale'
+};
+
 const exports = {
     "./package.json": "./package.json",
     "./README.md": "./README.md",
@@ -21,11 +27,16 @@ const exports = {
     "./version": "./src/version.js"
 };
 
-for (const dir of SRC_DIRS) {
+const entries = [
+    ...SRC_DIRS.map( dir => [ dir , dir ] ),
+    ...Object.entries( ALIASED_DIRS )
+].sort( ( [ a ] , [ b ] ) => a.localeCompare( b ) );
+
+for (const [ name , dir ] of entries) {
     const dirPath = join(__dirname, '../src', dir);
 
     if (existsSync(dirPath)) {
-        exports[`./${dir}/*`] = `./src/${dir}/*`;
+        exports[`./${name}/*`] = `./src/${dir}/*`;
     }
 }
 
