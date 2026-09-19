@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.19.0] — 2026-09-18
+
 **⏳ `Modal` can stay open while its agree action runs**
 
 - **Reported from a consuming application**, where three password dialogs rebuilt a whole footer through `footerNode` — two buttons, a spinner, a « busy » label, `Escape` and backdrop locked — only because the standard one could not wait, and two confirmations documented the behaviour as « the known trap ».
