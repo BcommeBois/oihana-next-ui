@@ -20,7 +20,7 @@ const sortable =
     en :
     {
         handle : 'Drag to reorder' ,
-        toggle : 'Toggle' ,
+        toggle : 'Expand or collapse' ,
     } ,
 } ;
 

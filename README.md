@@ -55,6 +55,25 @@ which component to reach for, and the recipes that span several of them. So far 
 [`components/metrics`](wiki/components/metrics/README.md) and
 [`components/scheduler`](wiki/components/scheduler/README.md).
 
+### Default labels
+
+Components read their labels — button names, tooltips, `aria-label`s — from the
+host's i18n dictionary, under `components.<family>` (`components.modal`,
+`components.pagination`, `components.buttons.theme`…). The library ships a
+French / English bundle for each family ; merge them into your own `components`
+entry rather than copying them, so keys added upstream reach you on upgrade :
+
+```js
+// @locale/components/index.js
+import components from 'oihana-next-ui/locale/components/index' ;
+
+import auth from './auth' ; // your own component bundles
+
+export default { ...components , auth } ;
+```
+
+A family you redefine replaces the library's one as a whole.
+
 ### CSS
 
 Some components require their stylesheet to be imported explicitly :

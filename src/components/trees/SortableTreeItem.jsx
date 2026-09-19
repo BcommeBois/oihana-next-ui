@@ -59,7 +59,7 @@ import {
  * @param {number} [props.indent=24] - Indentation width per depth level, in pixels (injected)
  * @param {number} props.index - Index of the row within the flat list (injected by SortableTree)
  * @param {Function} [props.onToggle] - Expand/collapse handler (injected)
- * @param {string} [props.toggleLabel] - Accessible label of the expand/collapse toggle. Defaults to the i18n `toggle` key read at `path`, then `'Toggle'`.
+ * @param {string} [props.toggleLabel] - Accessible label of the expand/collapse toggle. Defaults to the i18n `toggle` key read at `path`, then `'Expand or collapse'`.
  */
 const SortableTreeItem =
 ({
@@ -87,7 +87,7 @@ const SortableTreeItem =
     // all declared the same string. Nothing here is visible — aria-label only.
     const {
         handle : handleFromI18n = 'Drag to reorder' ,
-        toggle : toggleFromI18n = 'Toggle' ,
+        toggle : toggleFromI18n = 'Expand or collapse' ,
     }
     = useI18n( path , NO_LOCALE , false ) ;
 

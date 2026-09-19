@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🌐 The default label bundles can be imported**
+
+- **Reported from a consuming application**, which copied nine of the bundles under `src/@locale/components` into its own i18n source — the only way to give the components their French labels — and had drifted from them : `pagination` without `perPage` / `pageNumber` (so a French list read « Per page »), `modal` without `agreeBusy`, `picker` without the `disabled` names, `buttons/fullscreen` and `buttons/theme` missing altogether (two icon buttons with no accessible name and no tooltip), and a `buttons/inputClear` removed here long ago.
+- **The bundles were shipped but not exported.** `src/@locale` is in the package, but not in the `exports` map, so a host could not import it.
+- **`exports` now maps `./locale/*`** to `src/@locale/*` : `import components from 'oihana-next-ui/locale/components/index'`, spread into the host's own `components` entry, and every family — present and future — arrives with the library. Resolved like the other entries (`./components/*`…) : by the host's bundler.
+- **README** : a « Default labels » section with the merge.
+- **`sortable.toggle`** reads « Expand or collapse » in English, rather than « Toggle » — the accessible name of a tree node's disclosure button should say what it toggles. Same wording for `SortableTreeItem`'s own fallback.
+
 ## [0.19.0] — 2026-09-18
 
 **⏳ `Modal` can stay open while its agree action runs**

@@ -47,6 +47,7 @@
     "./display/*": "./src/display/*",
     "./helpers/*": "./src/helpers/*",
     "./hooks/*": "./src/hooks/*",
+    "./locale/*": "./src/@locale/*",
     "./motions/*": "./src/motions/*",
     "./themes/*": "./src/themes/*"
   },
