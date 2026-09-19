@@ -8,6 +8,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**⏳ `Modal` can stay open while its agree action runs**
+
+- **Reported from a consuming application**, where three password dialogs rebuilt a whole footer through `footerNode` — two buttons, a spinner, a « busy » label, `Escape` and backdrop locked — only because the standard one could not wait, and two confirmations documented the behaviour as « the known trap ».
+- **The agree button closed the dialog, then called `onAgree`.** By the time an API call started, the modal was gone : no progress to show, nothing to lock, no way to stay open on a failure.
+- **Three new props, all off by default** — without them, `Modal`, `ConfirmModal`, `AlertModal` and `InputModal` behave exactly as before :
+  - **`closeOnAgree`** (default `true`). At `false`, the agree button only calls `onAgree` ; the caller closes the modal when its action is done (`close()` from `useModal`, or unmounting it).
+  - **`busy`** (default `false`). The agree button turns `busy` — the focusable state of `Button` —, shows a spinner and `agreeBusyLabel` ; disagree and the header close button are disabled ; neither `Escape` (popover mode included) nor a backdrop click closes the modal.
+  - **`agreeBusyLabel`**. Defaults to the new i18n key `components.modal.agreeBusy` (« En cours… » / « Working… »), then to the agree label.
+- They belong to the standard footer : with a `footerNode` they are ignored, and the development warning lists them with the other standard-footer props.
+- Lab : « Confirmation asynchrone » on the modals page — a success that closes, a failure that stays open with an error.
+
 **📅 A click inside a portalled descendant closed its `Popover`**
 
 - **Reported from a consuming application**, which had to host two date pickers in a `Modal` at every width instead of a `Popover` : picking a day closed the panel, and the picker with it.

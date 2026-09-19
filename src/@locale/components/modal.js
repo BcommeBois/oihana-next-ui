@@ -1,7 +1,7 @@
 /**
  * Default labels of the modal family.
  *
- * `Modal` reads the root keys (`agree`, `disagree`, `close`) ; each preset
+ * `Modal` reads the root keys (`agree`, `agreeBusy`, `disagree`, `close`) ; each preset
  * reads its own sub-block for the labels that differ from the base — and
  * only those, so `disagree` and `close` stay defined in a single place.
  *
@@ -12,9 +12,10 @@ const modal =
 {
     fr :
     {
-        agree    : 'OK' ,
-        disagree : 'Annuler' ,
-        close    : 'Fermer' ,
+        agree     : 'OK' ,
+        agreeBusy : 'En cours…' ,
+        disagree  : 'Annuler' ,
+        close     : 'Fermer' ,
 
         alert    :
         {
@@ -35,9 +36,10 @@ const modal =
 
     en :
     {
-        agree    : 'OK' ,
-        disagree : 'Cancel' ,
-        close    : 'Close' ,
+        agree     : 'OK' ,
+        agreeBusy : 'Working…' ,
+        disagree  : 'Cancel' ,
+        close     : 'Close' ,
 
         alert    :
         {

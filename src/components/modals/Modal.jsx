@@ -41,6 +41,9 @@ const FOOTER_NODE_OVERRIDE_PROPS =
     'footerOptions',
     'onAgree',
     'onCancel',
+    'busy',
+    'closeOnAgree',
+    'agreeBusyLabel',
 ] ;
 
 /**
@@ -117,6 +120,9 @@ const FOOTER_NODE_OVERRIDE_PROPS =
  * @param {React.ReactNode} [props.headerOptions] - Extra nodes injected in the header row.
  * @param {React.ReactNode} [props.footerOptions] - Extra nodes rendered alongside agree/disagree (standard mode only).
  * @param {(event: MouseEvent) => void} [props.onAgree] - Called with the click event when the agree button is pressed (standard mode ; ignored when `footerNode` is set).
+ * @param {boolean} [props.closeOnAgree=true] - Close the modal when the agree button is pressed. Set it to `false` for an action that takes time : the agree button then only calls `onAgree`, and the caller closes the modal once the action is done (`close()` from `useModal`, or unmounting it). Standard mode only.
+ * @param {boolean} [props.busy=false] - The agree action is running. The agree button turns `busy` (focusable, spinner, `agreeBusyLabel`), the disagree and close buttons are disabled, and neither `Escape` nor a backdrop click closes the modal. Standard mode only.
+ * @param {React.ReactNode} [props.agreeBusyLabel] - Agree button label while `busy`. Defaults to the i18n `agreeBusy` key, then the agree label.
  * @param {(event: MouseEvent) => void} [props.onCancel] - Called with the click event when the disagree button or the header close button is pressed (standard mode ; ignored when `footerNode` is set).
  * @param {React.ReactNode} [props.footerNode] - **Custom footer** that fully replaces the standard footer. Activates the flex-column layout (sticky footer + internal content scroll). When set, all `agree*`/`disagree*`/`footer*`/`onAgree`/`onCancel`/`showFooter` props are ignored.
  * @param {React.ReactNode} [props.children] - Modal body content.
@@ -173,6 +179,9 @@ const Modal = ( props ) =>
         footerOptions,
         onAgree,
         onCancel,
+        closeOnAgree = true,
+        busy = false,
+        agreeBusyLabel,
 
         // Footer (custom mode)
         footerNode,
@@ -223,13 +232,15 @@ const Modal = ( props ) =>
     // non-throwable form of the hook, unlike `Pagination`.
 
     const {
-        agree    : agreeFromI18n    = 'OK' ,
-        disagree : disagreeFromI18n = 'Cancel' ,
-        close    : closeFromI18n    = 'Close' ,
+        agree     : agreeFromI18n    = 'OK' ,
+        disagree  : disagreeFromI18n = 'Cancel' ,
+        close     : closeFromI18n    = 'Close' ,
+        agreeBusy : agreeBusyFromI18n ,
     }
     = useI18n( path , NO_LOCALE , false ) ;
 
     const agreeLabel    = agree      ?? agreeFromI18n ;
+    const agreeBusyText = agreeBusyLabel ?? agreeBusyFromI18n ?? agreeLabel ;
     const disagreeLabel = disagree   ?? disagreeFromI18n ;
     const closeLabel    = closeTitle ?? closeFromI18n ;
 
@@ -237,6 +248,14 @@ const Modal = ( props ) =>
     const titleId   = useId() ;
 
     const hasCustomFooter = footerNode !== undefined && footerNode !== null ;
+
+    // `busy` belongs to the standard footer : with a `footerNode`, the caller's own
+    // buttons and props decide, as for every other standard-footer prop.
+    const isBusy = busy && !hasCustomFooter ;
+
+    // While the agree action runs, nothing may dismiss the modal behind its back.
+    const lockBackdrop = disableBackdropClick || isBusy ;
+    const lockEscape   = disableEscapeKeyDown || isBusy ;
 
     if ( process.env.NODE_ENV !== 'production' && hasCustomFooter )
     {
@@ -302,13 +321,25 @@ const Modal = ( props ) =>
 
     const handleAgreeClick = e =>
     {
-        closeNode() ;
+        if ( isBusy )
+        {
+            return ;
+        }
+
+        // Closing first stays the default. With `closeOnAgree={ false }` the caller
+        // keeps the modal up through its action — a spinner, locked buttons, an
+        // error it can show — and closes it when it is done.
+        if ( closeOnAgree )
+        {
+            closeNode() ;
+        }
+
         onAgree?.( e ) ;
     } ;
 
     const handleBackdropClick = ( e ) =>
     {
-        if ( disableBackdropClick )
+        if ( lockBackdrop )
         {
             e.preventDefault() ;
             return ;
@@ -322,6 +353,11 @@ const Modal = ( props ) =>
 
     const handleCancelClick = e =>
     {
+        if ( isBusy )
+        {
+            return ;
+        }
+
         closeNode() ;
         onCancel?.( e ) ;
     } ;
@@ -346,7 +382,7 @@ const Modal = ( props ) =>
             return ;
         }
 
-        if ( disableEscapeKeyDown )
+        if ( lockEscape )
         {
             event.preventDefault() ;
         }
@@ -363,7 +399,7 @@ const Modal = ( props ) =>
             return ;
         }
 
-        if ( disableEscapeKeyDown && event.key === 'Escape' )
+        if ( lockEscape && event.key === 'Escape' )
         {
             event.preventDefault() ;
             event.stopPropagation() ;
@@ -405,7 +441,7 @@ const Modal = ( props ) =>
 
     // Popover mode : 'manual' disables the browser's auto-dismiss so `disableEscapeKeyDown` is honored ;
     // otherwise 'auto' (Escape closes natively, backdrop click via our handler).
-    const popoverMode = usePopover ? ( disableEscapeKeyDown ? 'manual' : 'auto' ) : undefined ;
+    const popoverMode = usePopover ? ( lockEscape ? 'manual' : 'auto' ) : undefined ;
 
     const handlePopoverToggle = event =>
     {
@@ -465,7 +501,7 @@ const Modal = ( props ) =>
                                     // title having already done the pushing.
                                     className  = { cn( "btn btn-md btn-circle btn-ghost ms-auto" , closeClassName ) }
                                     onClick    = { handleCancelClick }
-                                    disabled   = { disabled }
+                                    disabled   = { disabled || isBusy }
                                     title      = { closeLabel }
                                 >
                                     { closeIcon }
@@ -494,7 +530,7 @@ const Modal = ( props ) =>
                                 <Button
                                     color    = { disagreeColor }
                                     onClick  = { handleCancelClick }
-                                    disabled = { disabled || disagreeDisabled }
+                                    disabled = { disabled || disagreeDisabled || isBusy }
                                 >
                                     { disagreeIcon }
                                     { disagreeLabel }
@@ -503,12 +539,15 @@ const Modal = ( props ) =>
 
                             { showAgree && (
                                 <Button
+                                    busy     = { isBusy }
                                     color    = { agreeColor }
                                     onClick  = { handleAgreeClick }
                                     disabled = { disabled || agreeDisabled }
                                 >
-                                    { agreeIcon }
-                                    { agreeLabel }
+                                    { isBusy
+                                        ? <span aria-hidden="true" className="loading loading-spinner loading-xs" />
+                                        : agreeIcon }
+                                    { isBusy ? agreeBusyText : agreeLabel }
                                 </Button>
                             )}
                         </div>

@@ -1,5 +1,6 @@
 'use client' ;
 
+import AsyncConfirmModalDemo from '@/demo/modals/AsyncConfirmModalDemo' ;
 import CRUDDemo             from '@/demo/modals/CRUDModalDemo';
 import InputModalDemo       from '@/demo/modals/InputModalDemo';
 import ModalDemo            from '@/demo/modals/ModalDemo';
@@ -31,6 +32,8 @@ const ModalShowcase = ({ path = 'app.test' }) =>
             <ToastOverModalDemo />
 
             <CRUDDemo />
+
+            <AsyncConfirmModalDemo />
 
             <InputModalDemo />
 
