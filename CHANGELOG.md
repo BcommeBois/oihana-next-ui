@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.20.0] — 2026-09-20
+
 **🧭 The navbar's end section can be composed**
 
 - **Reported from a consuming application**, which kept two forks for it : one of `Navbar`, because the three end controls — fullscreen, language, theme — are written in place and no prop removes one, and `children` replaces the whole layout ; and one of `Dashboard`, only to hand the navbar a `right` slot for its own cart and profile controls. Its reason : on a hand-held screen, the two controls that are *preferences* leave the bar for a profile sheet, since the top-right corner is the hardest place to reach with a thumb — while fullscreen, reached for in the moment, stays.
