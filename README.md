@@ -101,6 +101,16 @@ A family you redefine replaces the library's one as a whole.
 
 ### CSS
 
+The base layer — the `theme-dark` variant, the `.z-*` / `.rotate-*` scales the
+components use, `text-glow`, the heading scale, the fullscreen backdrop and the
+scrollbar — ships as one file. No colour and no font live in it :
+
+```css
+/* globals.css */
+@import 'tailwindcss' ;
+@import 'oihana-next-ui/themes/base.css' ;
+```
+
 Some components require their stylesheet to be imported explicitly :
 
 ```css
@@ -123,11 +133,15 @@ With Tailwind CSS v4, plugins are registered directly in your CSS file :
 @plugin 'oihana-next-ui/themes/plugins/pattern-craft/index' ;
 ```
 
-### DaisyUI Catppuccin theme
+### DaisyUI themes
+
+Each palette is a file of its own, next to the others — take one, or write your
+own beside your `@plugin "daisyui"` block, which stays yours :
 
 ```css
 /* globals.css */
-@import 'oihana-next-ui/themes/daisyui/catppuccin.css' ;
+@import 'oihana-next-ui/themes/daisyui/oihana.css' ;     /* oihana-ui-light / oihana-ui-dark */
+@import 'oihana-next-ui/themes/daisyui/catppuccin.css' ; /* the four Catppuccin flavours */
 ```
 
 ## Development

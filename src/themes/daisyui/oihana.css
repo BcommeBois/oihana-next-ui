@@ -1,0 +1,96 @@
+/**
+ * The two themes of this library, as daisyUI theme plugins — same shape as
+ * `catppuccin.css` beside it.
+ *
+ *     @import 'oihana-next-ui/themes/daisyui/oihana.css' ;
+ *
+ * The host keeps its own `@plugin "daisyui"` block : which built-in themes it
+ * enables, and on which root, is its call.
+ */
+
+@plugin "daisyui/theme"
+{
+    name                      : "oihana-ui-light" ;
+    default                   : true ;
+    color-scheme              : light ;
+
+    /* Colors */
+
+    --color-primary           : #E12A27 ;
+    --color-primary-content   : #ECEFF4 ;
+    --color-secondary         : #F9BF05 ;
+    --color-secondary-content : #3B4252 ;
+    --color-accent            : #434C5E ;
+    --color-accent-content    : #F7F0EA ;
+    --color-neutral           : #4C566A ;
+    --color-neutral-content   : #ECEFF4 ;
+
+    /*--color-base-100: oklch(91.637% 0.034 90.515);*/
+    /*--color-base-200: oklch(88.272% 0.049 91.774);*/
+    /*--color-base-300: oklch(84.133% 0.065 90.856);*/
+    /*--color-base-content: oklch(41% 0.112 45.904);*/
+
+    --color-base-100          : #FAF6F2 ;
+    --color-base-200          : #F0E8E0 ;
+    --color-base-300          : #D9CFC4 ;
+    --color-base-content      : #2E3440 ;
+
+    /* The Nord Aurora hues these four carried — #EBCB8B, #A3BE8C, #D08770,
+       #BF616A — are FILL colors : light enough to take dark ink on top, and
+       unreadable AS ink. daisyUI paints a `soft` surface with the token itself
+       for the text, so a `badge-soft badge-success` sat at 1.82:1 on its own
+       background and every `text-success` at 1.90:1 — against 4.5:1 for AA,
+       with the ink 10px tall in a `badge-xs`. Measured on `base-100`, on a
+       `soft` badge and on `base-200` : nothing below 4.60:1 now, and the
+       `-content` values flip to light with them.
+
+       The dark theme keeps the Aurora values, where they measure 5.33:1 and up :
+       a token is a colour FOR a background, and the two backgrounds differ.
+
+       `info` is at the CEILING of its own lightness rather than below it — at
+       this hue, L 0.52 in oklch is the brightest a colour can be and still hold
+       4.5:1 on a soft badge — so its chroma is what carries it : C 0.11 at
+       h 95°, a gold rather than a khaki, and further from `warning` and
+       `success` than the duller value was. */
+
+    --color-info              : #7D6700 ;
+    --color-info-content      : #ECEFF4 ;
+    --color-success           : #3F6B4A ;
+    --color-success-content   : #ECEFF4 ;
+    --color-warning           : #8F5230 ;
+    --color-warning-content   : #ECEFF4 ;
+    --color-error             : #9E4048 ;
+    --color-error-content     : #ECEFF4 ;
+}
+
+@plugin "daisyui/theme"
+{
+    name         : "oihana-ui-dark" ;
+    prefersdark  : true ;
+    color-scheme : dark ;
+
+    /* Colors */
+
+    --color-primary           : #E12A27 ;
+    --color-primary-content   : #ECEFF4 ;
+    --color-secondary         : #F9BF05 ;
+    --color-secondary-content : #2E3440 ;
+    --color-accent            : #4C566A ;
+    --color-accent-content    : #F7F0EA ;
+    --color-neutral           : #D8DEE9 ;
+    --color-neutral-content   : #2E3440 ;
+
+    --color-base-100          : #2E3440 ;
+    --color-base-200          : #3B4252 ;
+    --color-base-300          : #434C5E ;
+    --color-base-content      : #ECEFF4 ;
+
+    --color-info              : #EBCB8B ;
+    --color-info-content      : #3B4252 ;
+    --color-success           : #A3BE8C ;
+    --color-success-content   : #2E3440 ;
+    --color-warning           : #D08770 ;
+    --color-warning-content   : #2E3440 ;
+    --color-error             : #BF616A ;
+    --color-error-content     : #ECEFF4 ;
+}

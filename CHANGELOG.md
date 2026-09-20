@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🎨 The base layer and the themes are files of their own**
+
+- **Reported from a consuming application**, whose `globals.css` carried a byte-for-byte copy of this package's base layer — and had to, since three pieces of the library take it for granted : `ThemesProvider` warns at startup when the `theme-dark` variant is missing, `Arrow` draws its tip with `rotate-225` and `InputAddressSearch` raises its suggestion list with `z-1000`, two scales Tailwind 4 does not have (and the rotations write `transform` where Tailwind writes `rotate`).
+- **New `themes/base.css`** : that layer, and only it — the `theme-dark` variant, the base layer (body and heading fonts, heading scale, no spinners on a number input), the transparent fullscreen backdrop, the thin scrollbar, the `.z-*` / `.rotate-*` scales and `text-glow`. **No colour, no font, no plugin** : a palette is a choice, and a Next application's font variables are its own.
+- **New `themes/daisyui/oihana.css`** : `oihana-ui-light` and `oihana-ui-dark`, as daisyUI theme plugins — the shape `catppuccin.css` already had. The `@plugin "daisyui"` block stays with the host, which decides what it enables and on which root.
+- **The light theme's four semantic tokens are now legible.** They carried Nord Aurora hues, which are FILL colours : daisyUI paints a `soft` surface with the token itself for the text, so a `badge-soft badge-success` sat at 1.82:1 on its own background and every `text-success` at 1.90:1, against 4.5:1 for AA. Measured on `base-100`, on a soft badge and on `base-200`, nothing is below 4.60:1 now. The dark theme keeps the Aurora values, where they measure 5.33:1 and up.
+- **README** : a « CSS » section for the base layer, and « DaisyUI themes » for the palettes.
+
 **🧩 The provider stack can be mounted without the chrome**
 
 - **Reported from a consuming application**, which had copied the whole stack — ten providers, the splash overlay and the version check — into a file of its own, because `Application` mounts its `Dashboard` too and reads this package's own settings. Its root layout needs the contracts without a sidebar : its public pages (a login, an activation, an invitation) must not pay for a chrome they do not show, and the authenticated layout adds its own contexts above them.
