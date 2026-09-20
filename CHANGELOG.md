@@ -8,6 +8,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🧰 The build scripts are published as commands**
+
+- **Reported from a consuming application**, which carried a byte-for-byte copy of `generate-splash.js` and `cache-size.js`, a copy of the two service-worker templates, and a copy of `inject-version.js` that had moved ahead — it also stamped the deployed commit into `version.json`, which a deploy healthcheck reads to tell which release is actually being served.
+- **`files` now ships the three host-facing scripts and the two templates**, and `bin` exposes them as `oihana-inject-version`, `oihana-cache-size` and `oihana-generate-splash` — prefixed, since `node_modules/.bin` is shared by every dependency. The scripts that drive this package's own release stay unpublished.
+- **`inject-version` gained the commit** (`SOURCE_COMMIT`, then `git rev-parse`, then `'unknown'`) and **reads its service-worker templates beside itself** rather than in the host's `scripts/` : run from `node_modules/.bin`, it would otherwise have looked for templates the host no longer has to keep.
+- **README** : a « Scripts » section with what each command writes and the `package.json` it expects.
+
 **🌐 The default label bundles can be imported**
 
 - **Reported from a consuming application**, which copied nine of the bundles under `src/@locale/components` into its own i18n source — the only way to give the components their French labels — and had drifted from them : `pagination` without `perPage` / `pageNumber` (so a French list read « Per page »), `modal` without `agreeBusy`, `picker` without the `disabled` names, `buttons/fullscreen` and `buttons/theme` missing altogether (two icon buttons with no accessible name and no tooltip), and a `buttons/inputClear` removed here long ago.

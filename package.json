@@ -32,11 +32,21 @@
   "type": "module",
   "files": [
     "src",
+    "scripts/cache-size.js",
+    "scripts/generate-splash.js",
+    "scripts/inject-version.js",
+    "scripts/sw.minimal.template.js",
+    "scripts/sw.offline.template.js",
     "package.json",
     "README.md",
     "CHANGELOG.md",
     "LICENSE"
   ],
+  "bin": {
+    "oihana-cache-size": "./scripts/cache-size.js",
+    "oihana-generate-splash": "./scripts/generate-splash.js",
+    "oihana-inject-version": "./scripts/inject-version.js"
+  },
   "exports": {
     "./package.json": "./package.json",
     "./README.md": "./README.md",

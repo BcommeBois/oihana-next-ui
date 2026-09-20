@@ -55,6 +55,31 @@ which component to reach for, and the recipes that span several of them. So far 
 [`components/metrics`](wiki/components/metrics/README.md) and
 [`components/scheduler`](wiki/components/scheduler/README.md).
 
+### Scripts
+
+Three build-time scripts ship with the package, as commands run from the root of
+the host application :
+
+| Command | What it writes |
+|:--|:--|
+| `oihana-inject-version` | `src/version.js`, `public/version.json` (`version` and the deployed `commit`) and `public/sw.js`, from `version` and the `pwa` block of your `package.json` (`offline`, `cachePrefix`) |
+| `oihana-cache-size` | nothing — it reports the weight of `.next` and its Turbopack caches (`--all` for the full breakdown) |
+| `oihana-generate-splash` | the iOS splash screens under `public/assets/splash` (`--bg`, `--landscape`, `--force`) ; requires `sharp` in the host |
+
+```json
+{
+  "scripts": {
+    "dev": "oihana-inject-version && next dev",
+    "predev": "oihana-cache-size",
+    "generate-splash": "oihana-generate-splash --bg \"#ffffff\""
+  },
+  "pwa": { "offline": true, "cachePrefix": "my-app" }
+}
+```
+
+The service-worker templates come from the package, so a host keeps no copy of
+its own.
+
 ### Default labels
 
 Components read their labels — button names, tooltips, `aria-label`s — from the

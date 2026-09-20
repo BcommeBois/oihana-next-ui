@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 /**
  * Reports the weight of the Next build folder, and says so when one of the
  * Turbopack caches has gone out of proportion.

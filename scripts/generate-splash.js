@@ -1,12 +1,14 @@
+#!/usr/bin/env node
+
 /**
  * Script to generate placeholder splash screen images for iOS PWA.
  *
  * Usage:
- *   node scripts/generate-splash.js
- *   node scripts/generate-splash.js --landscape
+ *   oihana-generate-splash
+ *   oihana-generate-splash --landscape
  *
  * Prerequisites:
- *   bun add sharp --dev
+ *   bun add sharp --dev   (in the host application)
  *
  * Customize the `LOGO_PATH`, `BG_COLOR`, and `OUTPUT_DIR` constants below.
  */
