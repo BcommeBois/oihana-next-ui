@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🧩 The provider stack can be mounted without the chrome**
+
+- **Reported from a consuming application**, which had copied the whole stack — ten providers, the splash overlay and the version check — into a file of its own, because `Application` mounts its `Dashboard` too and reads this package's own settings. Its root layout needs the contracts without a sidebar : its public pages (a login, an activation, an invitation) must not pay for a chrome they do not show, and the authenticated layout adds its own contexts above them.
+- **New `display/ApplicationProviders`** : the same stack in the same order, every setting a prop — `config` (whose `defaultLang`, `version` and `versionCheck` are read here), `languages`, `locale`, `navigation`, `navigationMode`, `navigationStorageKey`, `splashScreen`, `initialLang`. Nothing falls back on this package's own configuration : a host that forgets a prop gets the provider's own defaults, never the lab's navigation or labels. Without `splashScreen`, no overlay is rendered.
+- **`display/Application` is now written on top of it** : it feeds it the settings shipped here and wraps the children in `Dashboard`. It renders exactly as before, with one fix — the splash overlay is `pointer-events-none`, as it already was, and now says why : a veil fading out must not swallow a click.
+
 **🧰 The build scripts are published as commands**
 
 - **Reported from a consuming application**, which carried a byte-for-byte copy of `generate-splash.js` and `cache-size.js`, a copy of the two service-worker templates, and a copy of `inject-version.js` that had moved ahead — it also stamped the deployed commit into `version.json`, which a deploy healthcheck reads to tell which release is actually being served.
