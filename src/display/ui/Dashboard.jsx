@@ -51,6 +51,7 @@ export const TOP   = 'top' ;
  * @param {React.ReactNode} props.children                     - Page content.
  * @param {string}          [props.configPath='ui.dashboard']  - Config context path.
  * @param {DashboardLayout} [props.layout='aside']             - Navbar layout mode.
+ * @param {Object}          [props.navbarProps]                - Handed to the `Navbar` as-is — `right` for the application's own controls, `controls` for the visibility of the built-in three, `center`, and anything else it takes. Applied after `left` and `titleClassName`, so it can override them.
  * @param {Object|boolean} [props.scrollReset]                - Forwarded to the `Drawer` — `{ behavior , disabled , ignore }`, or `false`. `ignore` names the query parameters that do not move the page, which is a fact about the application rather than about any one page : it is usually read from `ui.dashboard` in the config rather than passed here.
  * @param {string}          [props.titleClassName]             - Additional class names forwarded to the navbar title.
  */
@@ -60,6 +61,7 @@ const Dashboard =
     children ,
     configPath  = 'ui.dashboard' ,
     layout : layoutProp ,
+    navbarProps ,
     scrollReset : scrollResetProp ,
     titleClassName  ,
 }) =>
@@ -91,7 +93,7 @@ const Dashboard =
         </button>
     ) ;
 
-    const navbar  = showNavbar  && <Navbar left={ openButton } titleClassName={ titleClassName } /> ;
+    const navbar  = showNavbar  && <Navbar left={ openButton } titleClassName={ titleClassName } { ...navbarProps } /> ;
     const sidebar = showSidebar && <Sidebar onAction = { closeDrawer } /> ;
 
     if ( layout === TOP ) // navbar full-width on the top

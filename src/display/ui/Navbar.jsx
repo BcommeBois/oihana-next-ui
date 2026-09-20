@@ -34,6 +34,7 @@ from '../../themes/components/navbar' ;
  * @param {React.ReactNode} [props.children] - Children (replaces default layout).
  * @param {string} [props.className] - Additional class names.
  * @param {string} [props.configPath='navbar'] - Config context path.
+ * @param {Object} [props.controls] - Visibility of the three end-section controls, keyed `fullscreen`, `lang` and `theme`. Each value is `true` (shown, the default), `false` (not rendered), or a class name applied to a wrapper — `'hidden lg:inline-flex'` keeps a control off a hand-held screen without this component knowing the application's breakpoint. Ignored when `children` replaces the layout.
  * @param {React.ReactNode} [props.left] - Extra content in the start section.
  * @param {import('../layout/position').PositionValue} [props.position] - CSS position.
  * @param {React.Ref} [props.ref] - Forwarded ref.
@@ -49,6 +50,7 @@ const Navbar =
      children ,
      className : classNameProp ,
      configPath = 'ui.navbar' ,
+     controls ,
      left ,
      position : positionProp ,
      ref ,
@@ -68,6 +70,26 @@ const Navbar =
     = useConfig( configPath ) ?? {} ;
 
     Component = Component ?? 'nav' ;
+
+    /**
+     * Renders one end-section control according to its `controls` entry :
+     * absent or `true` renders it, `false` drops it, and a string wraps it so
+     * the caller can hide it at a width of its own choosing.
+     *
+     * @param {string} key - `fullscreen`, `lang` or `theme`.
+     * @param {React.ReactElement} control
+     * @returns {?React.ReactElement}
+     */
+    const renderControl = ( key , control ) =>
+    {
+        const setting = controls?.[ key ] ?? true ;
+
+        if ( setting === false ) { return null ; }
+
+        return typeof setting === 'string'
+            ? <span key={ key } className={ setting }>{ control }</span>
+            : control ;
+    } ;
 
     const { title } = useI18n() ;
 
@@ -93,10 +115,17 @@ const Navbar =
     return (
         <Component className={ classNames } ref={ ref } { ...rest }>
 
-            <div className={ cn( NAVBAR_START , 'gap-2 mx-1' ) }>
+            {/* `min-w-0` and `truncate` together : a flex item refuses to
+                shrink below its content unless it is told it may, so without
+                the first the long title pushes the controls off the bar
+                instead of being cut. `truncate` sits on the ANCHOR, which the
+                flex container blockifies : on the inline span inside, the
+                ellipsis has no box to clip against and the text runs over the
+                controls. */}
+            <div className={ cn( NAVBAR_START , 'gap-2 mx-1 min-w-0' ) }>
                 { left }
                 <Link
-                    className = "text-md font-heading"
+                    className = "text-md font-heading min-w-0 truncate"
                     href      = "/"
                 >
                     <span className={ titleClassName }>
@@ -113,11 +142,11 @@ const Navbar =
 
             <div className={ cn(  NAVBAR_END , 'gap-1 mx-2' ) }>
 
-                <FullscreenButton tooltipAlign="end" tooltipPosition="bottom" />
+                { renderControl( 'fullscreen' , <FullscreenButton tooltipAlign="end" tooltipPosition="bottom" /> ) }
 
-                <LangDropDown tooltipAlign="end" tooltipPosition="bottom" />
+                { renderControl( 'lang' , <LangDropDown tooltipAlign="end" tooltipPosition="bottom" /> ) }
 
-                <ThemeButton tooltipAlign="end" tooltipPosition="bottom" />
+                { renderControl( 'theme' , <ThemeButton tooltipAlign="end" tooltipPosition="bottom" /> ) }
 
                 { right }
 

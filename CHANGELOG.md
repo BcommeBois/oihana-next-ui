@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🧭 The navbar's end section can be composed**
+
+- **Reported from a consuming application**, which kept two forks for it : one of `Navbar`, because the three end controls — fullscreen, language, theme — are written in place and no prop removes one, and `children` replaces the whole layout ; and one of `Dashboard`, only to hand the navbar a `right` slot for its own cart and profile controls. Its reason : on a hand-held screen, the two controls that are *preferences* leave the bar for a profile sheet, since the top-right corner is the hardest place to reach with a thumb — while fullscreen, reached for in the moment, stays.
+- **`Navbar` takes `controls`** : `{ fullscreen , lang , theme }`, each `true` (shown, the default), `false` (not rendered) or a class name applied to a wrapper — `'hidden lg:inline-flex'` keeps a control off a narrow screen without this package knowing the application's breakpoint. Omitted, the bar renders exactly as before.
+- **`Dashboard` takes `navbarProps`**, handed to the navbar as-is, after `left` and `titleClassName` so an existing call is untouched.
+- **A long title is now cut instead of pushing the controls off the bar** : the start section gets `min-w-0` — a flex item refuses to shrink below its content until it is told it may — and the title `truncate`.
+- Lab : « Navbar — end section » on the layout page, with a control dropped, two kept for a wide screen, and a bar narrow enough to cut its title.
+
 **🎨 The base layer and the themes are files of their own**
 
 - **Reported from a consuming application**, whose `globals.css` carried a byte-for-byte copy of this package's base layer — and had to, since three pieces of the library take it for granted : `ThemesProvider` warns at startup when the `theme-dark` variant is missing, `Arrow` draws its tip with `rotate-225` and `InputAddressSearch` raises its suggestion list with `z-1000`, two scales Tailwind 4 does not have (and the rotations write `transform` where Tailwind writes `rotate`).
