@@ -10,7 +10,7 @@ import getButtonClassNames from '../themes/components/button' ;
 import notEmpty            from 'vegas-js-core/src/strings/notEmpty' ;
 import parseHtml           from '../helpers/parseHtml' ;
 
-import { HORIZONTAL, VERTICAL } from '../themes/components/alert' ;
+import { ALIGN_START , HORIZONTAL , VERTICAL } from '../themes/components/alert' ;
 
 import { ERROR, INFO, SUCCESS, WARNING } from '../themes/colors' ;
 
@@ -34,6 +34,7 @@ import { ERROR, INFO, SUCCESS, WARNING } from '../themes/colors' ;
  * ```
  *
  * @param {Object} props
+ * @param {import('../themes/components/alert').AlertAlign} [props.align='center'] - Where the icon and the close button sit : `'center'` on the middle of the content, `'start'` on its first line — for a message that wraps, whose icon would otherwise float halfway down the block.
  * @param {import('react').ReactNode} props.children - Alert content
  * @param {string} [props.className] - Container class name
  * @param {string} [props.closeLabel] - Name of the close cross. Defaults to the i18n `close` key read at `path`.
@@ -57,6 +58,7 @@ import { ERROR, INFO, SUCCESS, WARNING } from '../themes/colors' ;
 const Alert =
 ({
     children ,
+    align ,
     className ,
     closeLabel ,
     color ,
@@ -99,11 +101,14 @@ const Alert =
 
     const SelectedIcon = iconMap[ level ] || Icon ;
 
+    const start = align === ALIGN_START ;
+
     // Alert styles
     const alertClasses = getAlertClassNames({
         beforeClassName : cn
         (
-            'w-full flex! justify-between! items-center! gap-4! text-pretty text-start hyphens-auto' ,
+            'w-full flex! justify-between! gap-4! text-pretty text-start hyphens-auto' ,
+            start ? 'items-start!' : 'items-center!' ,
 
             // DaisyUI lays an alert out as a grid, this one forces flex to push the
             // option to the far edge — so the direction has to be said again in flex
@@ -122,7 +127,8 @@ const Alert =
     // No color on what the alert contains : the container already carries the one
     // its color and its variant call for, and anything set here would override it.
     const iconElement = showIcon && SelectedIcon && (
-        <SelectedIcon className={ cn( 'size-6 shrink-0' , iconClassName ) } />
+        // `mt-0.5` drops a 24px icon onto the first line of a text-base content.
+        <SelectedIcon className={ cn( 'size-6 shrink-0' , start && 'mt-0.5' , iconClassName ) } />
     ) ;
 
     const content = notEmpty( children ) && html ? parseHtml( children ) : children ;

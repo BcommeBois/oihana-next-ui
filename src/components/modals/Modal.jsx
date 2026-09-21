@@ -539,15 +539,14 @@ const Modal = ( props ) =>
 
                             { showAgree && (
                                 <Button
-                                    busy     = { isBusy }
-                                    color    = { agreeColor }
-                                    onClick  = { handleAgreeClick }
-                                    disabled = { disabled || agreeDisabled }
+                                    color        = { agreeColor }
+                                    disabled     = { disabled || agreeDisabled }
+                                    loading      = { isBusy }
+                                    loadingLabel = { agreeBusyText }
+                                    onClick      = { handleAgreeClick }
                                 >
-                                    { isBusy
-                                        ? <span aria-hidden="true" className="loading loading-spinner loading-xs" />
-                                        : agreeIcon }
-                                    { isBusy ? agreeBusyText : agreeLabel }
+                                    { agreeIcon }
+                                    { agreeLabel }
                                 </Button>
                             )}
                         </div>

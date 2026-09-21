@@ -159,6 +159,24 @@ const AlertDemo = () =>
                 </div>
             </div>
 
+            {/* Alignment */}
+            <div className="card bg-base-200 shadow-xl">
+                <div className="card-body">
+                    <h2 className="card-title">Alignement</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <Alert level={ WARNING } onClose={ () => {} }>
+                            Centré (par défaut) : sur un message de plusieurs lignes, l&apos;icône et la croix flottent
+                            au milieu du bloc, loin de la phrase qu&apos;elles accompagnent. Relisez ce texte avant
+                            d&apos;envoyer le document.
+                        </Alert>
+                        <Alert align="start" level={ WARNING } onClose={ () => {} }>
+                            <code>align=&quot;start&quot;</code> : l&apos;icône et la croix se posent sur la première
+                            ligne, là où commence la lecture. Relisez ce texte avant d&apos;envoyer le document.
+                        </Alert>
+                    </div>
+                </div>
+            </div>
+
             {/* Arbitrary colors */}
             <div className="card bg-base-200 shadow-xl">
                 <div className="card-body">

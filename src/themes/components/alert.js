@@ -37,6 +37,7 @@ import {
  * @typedef {'accent' | 'error' | 'info' | 'neutral' | 'primary' | 'secondary' | 'success' | 'warning'} AlertColor
  * @typedef {'dash' | 'outline' | 'soft'} AlertStyle
  * @typedef {'horizontal' | 'vertical'} AlertDirection
+ * @typedef {'center' | 'start'} AlertAlign
  */
 
 // Colors
@@ -123,6 +124,27 @@ export const VERTICAL   = 'vertical' ;
  * @type {AlertDirection[]}
  */
 export const directions = [ HORIZONTAL , VERTICAL ] ;
+
+// Alignments
+
+/**
+ * The icon and the close button sit on the vertical middle of the content.
+ * @type {AlertAlign}
+ */
+export const ALIGN_CENTER = 'center' ;
+
+/**
+ * The icon and the close button sit on the FIRST line of the content — the
+ * reading of a message that wraps over several lines.
+ * @type {AlertAlign}
+ */
+export const ALIGN_START = 'start' ;
+
+/**
+ * Valid alert alignments.
+ * @type {AlertAlign[]}
+ */
+export const alignments = [ ALIGN_CENTER , ALIGN_START ] ;
 
 /**
  * Alert direction class mapping.

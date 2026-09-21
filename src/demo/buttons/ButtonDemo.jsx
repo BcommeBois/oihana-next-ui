@@ -31,6 +31,7 @@ const ButtonDemo = () =>
 
     const [ busy         , setBusy         ] = useState( false ) ;
     const [ disabledBusy , setDisabledBusy ] = useState( false ) ;
+    const [ loading      , setLoading      ] = useState( false ) ;
     const [ mounts  , setMounts  ] = useState( 0 ) ;
     const lastNode = useRef( null ) ;
 
@@ -55,6 +56,12 @@ const ButtonDemo = () =>
     {
         setDisabledBusy( true ) ;
         setTimeout( () => setDisabledBusy( false ) , BUSY_DELAY ) ;
+    } ;
+
+    const runLoading = () =>
+    {
+        setLoading( true ) ;
+        setTimeout( () => setLoading( false ) , BUSY_DELAY ) ;
     } ;
 
     return (
@@ -113,6 +120,43 @@ const ButtonDemo = () =>
                         <span className="text-sm tabular-nums text-base-content/70">
                             Bouton « busy » recréé : { Math.max( mounts - 1 , 0 ) } fois
                         </span>
+                    </div>
+                </div>
+            </div>
+
+            {/* Loading button : busy, and says so */}
+            <div className="card bg-base-200 shadow-xl">
+                <div className="card-body gap-3">
+                    <h2 className="card-title">Bouton en chargement : loading</h2>
+                    <p className="text-sm text-base-content/70">
+                        <code>loading</code> fait tout ce que fait <code>busy</code> — focus gardé, clics et Entrée
+                        ignorés, infobulle éteinte — et remplace l&apos;icône par un indicateur. <code>loadingLabel</code>
+                        change le texte le temps de l&apos;action. Un bouton rond seulement occupé garde
+                        <code>busy</code> : son icône ne change pas.
+                    </p>
+                    <div className="flex flex-wrap items-center gap-4">
+                        <Button
+                            color        = "primary"
+                            icon         = { MdSave }
+                            loading      = { loading }
+                            loadingLabel = "Enregistrement…"
+                            onClick      = { runLoading }
+                            tooltip      = "Enregistrer"
+                        >
+                            Enregistrer
+                        </Button>
+                        { SIZES.map( size => (
+                            <Button
+                                key     = { size }
+                                color   = "secondary"
+                                icon    = { MdSave }
+                                loading = { loading }
+                                onClick = { runLoading }
+                                size    = { size }
+                            >
+                                { size }
+                            </Button>
+                        ) ) }
                     </div>
                 </div>
             </div>

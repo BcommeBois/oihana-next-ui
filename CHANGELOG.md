@@ -8,6 +8,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**⏳ `Button` can say that its action is running, and `Alert` can sit on its first line**
+
+- **Reported from a consuming application**, which drew a spinner inside twelve buttons by hand — two conditional children and a `loading loading-spinner` class, on native `<button>`s that also lost the keyboard focus while disabled — and forced `items-start!` plus an `mt-0.5` on the icon of nineteen alerts whose message wraps.
+- **`Button` takes `loading`** (default `false`) : everything `busy` does — focusable, `aria-busy`, clicks and Enter / Space ignored, tooltip hidden — plus a spinner in place of the icon, one size below the button, as the icon it replaces is. **`loadingLabel`** replaces the content while it runs ; omitted, the content does not change.
+- **`loading` is kept apart from `busy` on purpose** : a round icon button that is only busy keeps its icon, where a spinner would change what it looks like.
+- **`Modal`'s standard footer uses it** : the agree button's hand-drawn spinner goes, nothing changes on screen.
+- **`Alert` takes `align`** : `'center'` (the default, as before) or `'start'`, which puts the icon and the close button on the first line of a message that wraps instead of halfway down the block. New constants `ALIGN_CENTER`, `ALIGN_START` and `alignments` in `themes/components/alert`.
+- Lab : « Bouton en chargement : loading » on the buttons page (every size), « Alignement » on the alerts page.
+
 ## [0.20.0] — 2026-09-20
 
 **🧭 The navbar's end section can be composed**

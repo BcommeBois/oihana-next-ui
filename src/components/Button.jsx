@@ -27,6 +27,9 @@
  * // Busy while its action runs : looks disabled, ignores clicks, KEEPS the keyboard focus
  * <Button icon={MdSave} color="primary" busy={ saving } onClick={ save } tooltip="Save" />
  *
+ * // Loading : busy, plus a spinner in place of the icon and an optional label
+ * <Button icon={MdSave} color="primary" loading={ saving } loadingLabel="Saving…" onClick={ save }>Save</Button>
+ *
  * // Circle icon button
  * // Icon only : `title` becomes the aria-label, and without it the button has no name
  * <Button icon={MdSearch} shape="circle" size="sm" title="Search" />
@@ -42,6 +45,23 @@ import Tooltip from './Tooltip' ;
 import useI18n from '../contexts/locale/useI18n' ;
 
 import getButtonClassNames from '../themes/components/button' ;
+import getLoadingClassNames , { SPINNER } from '../themes/components/loading' ;
+
+import { LG , MD , SM , XL , XS } from '../themes/sizing/sizes' ;
+
+/**
+ * The spinner that fits each button size — one step below it, as the icon it
+ * replaces is.
+ * @type {Object<string,string>}
+ */
+const SPINNER_SIZES =
+{
+    [ XS ] : XS ,
+    [ SM ] : XS ,
+    [ MD ] : SM ,
+    [ LG ] : MD ,
+    [ XL ] : LG ,
+} ;
 
 /**
  * Button component for DaisyUI with icon, tooltip and i18n support.
@@ -55,6 +75,8 @@ import getButtonClassNames from '../themes/components/button' ;
  * @param {string} [props.className] - Additional class name.
  * @param {import('../themes/components/button').ButtonColorValue} [props.color] - Button color.
  * @param {boolean} [props.busy=false] - Temporarily unavailable while an action runs. Rendered with `aria-disabled` and `aria-busy` instead of the native `disabled` : it looks disabled (DaisyUI styles `[aria-disabled=true]` like `:disabled`), ignores clicks and the Enter / Space activation, hides its tooltip — but stays focusable. A native `disabled` makes the browser drop the focus of the button that holds it, so a keyboard user who pressed it would land on the page. Prefer it to `disabled` for anything that is only busy.
+ * @param {boolean} [props.loading=false] - The action is running AND says so : everything `busy` does (focusable, `aria-busy`, clicks and Enter / Space ignored, tooltip hidden), plus a spinner in place of the icon. Kept apart from `busy` on purpose : a round icon button that is only busy keeps its icon, where a spinner would change what it looks like.
+ * @param {React.ReactNode} [props.loadingLabel] - Content shown while `loading`, in place of `children`. Omitted, the content does not change.
  * @param {boolean} [props.disabled] - Disabled state. A disabled button shows no tooltip, but keeps the tooltip wrapper : only the bubble goes out, so toggling `disabled` never swaps the element React renders — the button is not destroyed and recreated. The browser still takes the focus away from a button that becomes `disabled` : for a button that is only busy, use `busy`.
  * @param {boolean} [props.glass] - Glass effect.
  * @param {React.ReactNode} [props.icon] - Icon component.
@@ -86,7 +108,7 @@ const Button =
     animation ,
     as ,
     children ,
-    busy = false ,
+    busy : busyProp = false ,
     className ,
     color ,
     disabled ,
@@ -95,6 +117,8 @@ const Button =
     iconClassName ,
     iconStyle ,
     join ,
+    loading = false ,
+    loadingLabel ,
     onClick ,
     path ,
     ref ,
@@ -122,6 +146,8 @@ const Button =
     const resolvedColor   = active ? activeColor : color ;
 
     const Component = as || 'button' ;
+
+    const busy = busyProp || loading ;
 
     // Busy is inert for the pointer (DaisyUI puts `pointer-events: none` on
     // `[aria-disabled=true]`) but not for the keyboard : Enter and Space still
@@ -173,16 +199,18 @@ const Button =
                 { ...rest }
             >
                 {
-                    showIcon &&
-                    <IconBox
-                        className = { iconClassName }
-                        disabled  = { unavailable }
-                        icon      = { icon }
-                        size      = { size }
-                        style     = { iconStyle }
-                    />
+                    loading
+                        ? <span aria-hidden="true" className={ getLoadingClassNames( { animation : SPINNER , size : SPINNER_SIZES[ size ] ?? XS } ) } />
+                        : showIcon &&
+                            <IconBox
+                                className = { iconClassName }
+                                disabled  = { unavailable }
+                                icon      = { icon }
+                                size      = { size }
+                                style     = { iconStyle }
+                            />
                 }
-                { children ?? i18n?.label }
+                { loading && loadingLabel !== undefined ? loadingLabel : ( children ?? i18n?.label ) }
             </Component>
         </Tooltip>
     ) ;
