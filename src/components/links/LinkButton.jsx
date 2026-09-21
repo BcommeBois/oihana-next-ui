@@ -45,6 +45,7 @@ import getButtonClassNames from '../../themes/components/button'
  * @param {string} [props.className] - Additional class name.
  * @param {import('../../themes/components/button').ButtonColorValue} [props.color='ghost'] - Button color.
  * @param {boolean} [props.disabled] - Disabled state.
+ * @param {boolean} [props.exact=true] - Light the link on its page only, or — `false` — on the page and everything below it (a section link). A click is blocked only on the very page, so a section link stays usable from below.
  * @param {boolean} [props.glass] - Glass effect.
  * @param {string|Object} props.href - Destination URL or route object.
  * @param {Function} [props.icon] - Icon component.
@@ -75,6 +76,7 @@ const LinkButton =
     className ,
     color = 'ghost' ,
     disabled ,
+    exact = true ,
     glass ,
     href ,
     icon ,
@@ -100,7 +102,7 @@ const LinkButton =
 {
     const i18n = useI18n( path , {} , false ) ;
 
-    const { isActive : isCurrentPage , handleClick } = useActiveLink( href ) ;
+    const { ariaCurrent , handleClick } = useActiveLink( href , { exact } ) ;
 
     const resolvedColor   = active ? activeColor : color ;
     const resolvedLabel   = children ?? i18n?.label ;
@@ -117,7 +119,7 @@ const LinkButton =
             tip       = { resolvedTooltip }
         >
             <NextLink
-                aria-current = { isCurrentPage ? 'page' : undefined }
+                aria-current = { ariaCurrent }
                 aria-label   = { resolvedTitle }
                 className    =
                 {

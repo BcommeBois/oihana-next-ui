@@ -30,6 +30,7 @@ import { getDockItemClasses , DOCK_LABEL } from '../../themes/components/dock' ;
  * @param {boolean} [props.active] - Force the active state (overrides pathname auto-detection).
  * @param {import('react').ReactNode} [props.children] - Label content (used when `label` is absent).
  * @param {string} [props.className] - Additional classes for the item.
+ * @param {boolean} [props.exact=true] - Light the link on its page only, or — `false` — on the page and everything below it (a section link). A click is blocked only on the very page, so a section link stays usable from below.
  * @param {import('next/link').LinkProps['href']} [props.href] - Destination. When omitted the item is a `<button>`.
  * @param {import('react').ReactNode} [props.icon] - Item icon.
  * @param {import('react').ReactNode} [props.label] - Item label (rendered inside `.dock-label`).
@@ -41,6 +42,7 @@ const DockItem =
     active ,
     children ,
     className ,
+    exact = true ,
     href ,
     icon ,
     label ,
@@ -50,7 +52,7 @@ const DockItem =
     ...rest
 }) =>
 {
-    const { handleClick , isActive } = useActiveLink( href ) ;
+    const { ariaCurrent , handleClick , isActive } = useActiveLink( href , { exact } ) ;
 
     const resolvedActive = active ?? isActive ;
 
@@ -77,7 +79,7 @@ const DockItem =
     {
         return (
             <NextLink
-                aria-current = { resolvedActive ? 'page' : undefined }
+                aria-current = { active === undefined ? ariaCurrent : ( active ? 'page' : undefined ) }
                 aria-label   = { hiddenName }
                 className    = { classes }
                 href         = { href }

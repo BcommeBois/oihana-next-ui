@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🔗 A link can be lit for a whole section**
+
+- **Reported from a consuming application**, whose tab bar re-implemented the active test by hand, and the other way round : a tab lights up for its whole section by default (`/customers/12/quotes` lights « Quotes »), `exact` being the exception. `useActiveLink` only knew the exact page.
+- **New pure helper `helpers/routes/isPathActive( pathname , href , { exact = true } )`**, callable where a hook cannot be — a tab bar resolving every tab in one pass. With `exact : false` it matches the page and everything below it, stopping at a path segment (`/customers` never lights on `/customersX`), and `/` is always judged exactly.
+- **`useActiveLink( href , { exact } )`** is built on it and now returns two answers, kept apart : `isActive` (lit, per `exact`) and **`isCurrent`** (the very page). **Only `isCurrent` blocks the click** — widening `isActive` alone would have made a section link dead from every sub-page. It also returns **`ariaCurrent`** : `'page'` on the page itself, `'true'` on a section link lit from below.
+- **`Link`, `LinkButton` and `DockItem` take `exact`** (default `true`), and use `ariaCurrent`. With the defaults, no existing call changes behaviour.
+- Lab : « Liens actifs : exact ou section » on the buttons page, judged against the page itself.
+
 **⏳ `Button` can say that its action is running, and `Alert` can sit on its first line**
 
 - **Reported from a consuming application**, which drew a spinner inside twelve buttons by hand — two conditional children and a `loading loading-spinner` class, on native `<button>`s that also lost the keyboard focus while disabled — and forced `items-start!` plus an `mt-0.5` on the icon of nineteen alerts whose message wraps.
