@@ -18,6 +18,11 @@
  * - `minMax`         — bounding a set of events without sorting it.
  * - `isoWeek`        — ISO week numbers, used by week-bounded recurrences.
  *
+ * And two for writing an instant in a named time zone
+ * ({@link module:helpers/date/formatDate}) :
+ * - `utc`      — the base `timezone` builds on.
+ * - `timezone` — `dayjs( value ).tz( 'Europe/Paris' )`.
+ *
  * Locales (fr / en) are loaded in `@locale/index.js` and the active one is set
  * globally by the LangProvider (`dayjs.locale(lang)`).
  *
@@ -34,6 +39,8 @@ import isoWeek        from 'dayjs/plugin/isoWeek' ;
 import localeData      from 'dayjs/plugin/localeData' ;
 import localizedFormat from 'dayjs/plugin/localizedFormat' ;
 import minMax          from 'dayjs/plugin/minMax' ;
+import timezone        from 'dayjs/plugin/timezone' ;
+import utc             from 'dayjs/plugin/utc' ;
 import weekday        from 'dayjs/plugin/weekday' ;
 
 dayjs.extend( localeData ) ;
@@ -44,6 +51,10 @@ dayjs.extend( isSameOrAfter ) ;
 dayjs.extend( isSameOrBefore ) ;
 dayjs.extend( isoWeek ) ;
 dayjs.extend( minMax ) ;
+
+// `timezone` reads the offsets `utc` computes : the order matters.
+dayjs.extend( utc ) ;
+dayjs.extend( timezone ) ;
 
 // `L` `LL` `LLL` `LT` — without it those tokens are not formats, they are the
 // letters themselves, and a date reads « jeudi LL ». They are the only way to

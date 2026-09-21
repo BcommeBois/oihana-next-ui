@@ -8,6 +8,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🕰 Dates written in a named time zone**
+
+- **Reported from a consuming application**, whose server runs UTC while its readers sit in Paris : a date written without a zone read « 08:32 » in the server render and « 10:32 » after hydration, and React threw the render away. It kept five date helpers of its own, three of them the same dayjs call with a zone.
+- **New `helpers/date/formatDate( value , lang , { pattern = 'LL' , timeZone } )`** : the instant written in the zone given, in the dayjs locale given. `null` on anything empty or unreadable. Without a `timeZone`, the machine's own — as before.
+- **dayjs rather than `Intl.DateTimeFormat`, on purpose** : dayjs patterns are code, identical on the server and in every browser ; `Intl` reads its patterns from each engine's data, which differ between versions.
+- **`configureDayjs` registers `utc` and `timezone`.** Nothing else changes : the calendar and scheduler operations were compared with and without them, under UTC, Paris and New York, and give the same results.
+- **New `hooks/useDateFormat()`** : `{ formatDate , lang , timeZone }`, bound to the language on screen and to the application's zone, read in its config at `intl.timeZone`. Outside a provider it falls back rather than throws.
+- **⚠️ Not covered yet : the scheduler** writes its hours (`HH:mm`) and places its blocks in the machine's zone. A named zone there touches every date it reads, not only what it prints ; it is a separate piece of work.
+- Lab : `intl.timeZone` in its config ; dates page, « useDateFormat » — four instants in the application's zone, in UTC and in the machine's zone (two of them either side of midnight in Paris), five patterns in both languages, and the empty values.
+
 **🔢 Shared number formatters, with the locale named by the application**
 
 - **Reported from a consuming application**, which built its number formatters by hand : twenty-seven copies of the same language → locale table, thirteen percentage formatters, a compact-amount helper. One of the percentage formatters tested `ratio < 0.1` for its two-decimal case, so every NEGATIVE ratio took two decimals — « -12,34 % » beside « 25 % ».
