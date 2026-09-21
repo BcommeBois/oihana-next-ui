@@ -8,6 +8,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**⏱ Shallow URL parameters, and one busy state per screen**
+
+- **Reported from a consuming application**, which carried both as five files of its own and used them across a dozen screens.
+- **New `hooks/useShallowParam( name , initial )`** : a URL parameter the server does not read — a sort, a client-side page, a view toggle. It writes through `history.replaceState`, so the address bar changes and the link stays shareable, but the router is not touched and **nothing is fetched again** (a `router.push` re-runs the whole Server Component tree). The value is replaced, not pushed : the history does not fill with every sort tried. A parameter back at its default leaves the URL, and the `#fragment` is written back rather than dropped.
+- **New `contexts/busyNavigation`** (`context`, `provider`, `useBusyNavigation`) : **one transition per screen**. Every control navigates through `navigate( href )` — a `router.push` with `scroll : false` inside a shared `useTransition` — so the data they reload can know it is being replaced, instead of each control greying out alone while stale figures stay on screen. `busy` is held for a floor (`minimumVisible`, 400 ms by default) : a fast answer otherwise flickers too briefly to be seen. Outside a provider, `navigate` is `null` and `busy` is `false`.
+- **New `components/BusySurface`** : its content fades back, is `inert` and `pointer-events-none` while `busy`. Controls are meant to stay outside it.
+- **An address written in place no longer scrolls the page to the top.** Next syncs `useSearchParams` on a `history.replaceState`, so the shell's `useResetScroll` read every shallow write — and every in-place `navigate` — as a new page and jumped to the top : a sort button sent the reader away from the list they were sorting. The only cure was to name each such parameter in `ignore`, a hand-kept list that fails silently when one is forgotten, and that ignores a generic name (`page`, `year`) on every screen once it is ignored on one. Now the WRITE is marked instead of the name : new `helpers/routes/inPlaceNavigation` (`markInPlace`, `consumeInPlace`) remembers the exact address `useShallowParam` and `navigate` are about to write, and `useResetScroll` skips that move and that move only — any other navigation, even to the same parameters, still goes back to the top. The mark is spent by the next move, matched or not. `ignore` stays, for parameters written by other means.
+- Lab, pagination page : a shallow sort beside a navigation greying its surface.
+
 **🎛 `Dropdown` can be driven from outside**
 
 - **Reported from a consuming application**, whose profile menu re-implemented the whole dropdown — outside click, Escape, the panel — for three reasons : one open state had to drive two presentations (a dropdown on a wide screen, a bottom sheet on a hand-held one, swapped live when the window is resized), its links had to close the menu, and « Sign out » had to be a plain `<a>` : a `next/link` would prefetch the sign-out route and sign the user out on its own.

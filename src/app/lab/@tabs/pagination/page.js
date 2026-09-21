@@ -2,6 +2,7 @@
 
 import PaginationDemo  from '@/demo/paginations/PaginationDemo' ;
 import ResetScrollDemo from '@/demo/paginations/ResetScrollDemo' ;
+import ShallowParamDemo from '@/demo/paginations/ShallowParamDemo' ;
 import Container from '@/display/Container' ;
 import Divider   from '@/components/Divider' ;
 import Page           from '@/display/Page' ;
@@ -27,6 +28,10 @@ const PaginationShowcase = ({ path = 'app.test' }) =>
             <Divider />
 
             <ResetScrollDemo />
+
+            <Divider />
+
+            <ShallowParamDemo />
 
         </Page>
     ) ;

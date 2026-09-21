@@ -9,6 +9,8 @@
 import { useEffect , useMemo , useRef }     from 'react' ;
 import { usePathname , useSearchParams }    from 'next/navigation' ;
 
+import { consumeInPlace } from '../helpers/routes/inPlaceNavigation' ;
+
 /**
  * Where the reset lands when no ref is given.
  * @type {string}
@@ -75,7 +77,7 @@ const signatureOf = ( pathname , searchParams , ignored ) =>
  * @param {Object|boolean} [options] - The options below. **A boolean is the deprecated form** — `useResetScroll( ref , true )` still means `disabled`, along with the third and fourth arguments, for one more minor.
  * @param {ScrollBehavior} [options.behavior='auto'] - Scroll behavior. An instant jump by default : on a route change the outgoing, longer page is still mounted while the incoming RSC arrives, so a `'smooth'` animation would reveal an unpainted band below the new content mid-scroll. Pass `'smooth'` only for an intra-page reset where the height does not change.
  * @param {boolean} [options.disabled=false] - Turns the reset off entirely. Coarse — prefer `ignore`.
- * @param {string[]} [options.ignore] - Query parameters whose change does not move the page.
+ * @param {string[]} [options.ignore] - Query parameters whose change does not move the page. Rarely needed now : an address written in place through `useShallowParam` or a busy-navigation `navigate` is recognised on its own (see {@link module:helpers/routes/inPlaceNavigation}) ; keep this for parameters written by other means.
  * @param {string} [options.scrollClassName='drawer-content'] - Class of the fallback scroll container.
  *
  * @example
@@ -114,6 +116,7 @@ const useResetScroll = ( ref , options , legacyScrollClassName , legacyBehavior 
 
     const previous = useRef( null ) ;
 
+    // biome-ignore lint/correctness/useExhaustiveDependencies: `signature` already carries the path and the query ; the effect runs on a move, not on each new `searchParams` object.
     useEffect( () =>
     {
         // The route moving is what resets the scroll — not the effect running.
@@ -127,7 +130,17 @@ const useResetScroll = ( ref , options , legacyScrollClassName , legacyBehavior 
         // navigation, and should not act as though it were one.
         previous.current = signature ;
 
-        if ( disabled || !moved )
+        if ( !moved )
+        {
+            return ;
+        }
+
+        // An address written IN PLACE — a shallow parameter, a navigation that
+        // swaps a list where it stands — is not a new page. Asked on every move,
+        // so the mark is spent whether or not it matched.
+        const inPlace = consumeInPlace( pathname , searchParams ) ;
+
+        if ( disabled || inPlace )
         {
             return ;
         }
