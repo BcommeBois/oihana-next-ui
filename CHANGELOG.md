@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**📝 `FormModal`, and the `ModalFooter` it is built on**
+
+- **Reported from a consuming application**, which carried both as three files of its own — a form shell, a form footer, a close-only footer — imported by forty-two dialogs.
+- **New `components/modals/ModalFooter`**, for `Modal`'s `footerNode` : `start` and a truncated `status` on the left, `disagree` / `agree` on the right, in the vocabulary of `Modal`. **A button is drawn only when its handler is given** : `onAgree` alone is a single « Close ». **`busy`** turns the agree button `loading` (focusable, spinner, `agreeBusyLabel`) and disables the disagree one, as in `Modal`'s standard footer. `agreeColor` (`primary`), `agreeDisabled`, `size` (`sm`).
+- **New `components/modals/FormModal`** : a form in a dialog. It opens on mount ; **closing is a request** — the footer's cancel, its own header close button, the backdrop and `Escape` are refused while saving, ask « discard changes? » when the form is dirty, and close straight away otherwise ; **`onSave` closes the dialog by returning truthy**, and stays open on its errors otherwise ; **`onClose` is called once**, whichever path closed it. `extra`, `statusText`, `headerOptions` (before the close button), `exit` (the confirmation's wording), `maxWidth`, `modalBoxClassName`, `fullScreenBreakpoint` (`md`).
+- **New labels : `components.modal.form`** (`agree`, `agreeBusy`, `exit.{ title , agree , disagree , description }`), fr and en, beside the `alert`, `confirm` and `input` presets ; cancel and close come from the root of `components.modal`, defined once. Each label can still be passed as a prop.
+- Lab, modals page : « FormModal & ModalFooter » — a form to rename, with the exit question, the locked save, a server that refuses, a count of `onClose` ; and a read-only dialog with a single « Close ».
+
 **🗂 `Card` : an icon, the end of the title, pinned actions**
 
 - **Reported from a consuming application**, which wrapped the card shell in a section card of its own, used by thirty-seven screens, for the three things below.

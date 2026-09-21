@@ -2,6 +2,7 @@
 
 import AsyncConfirmModalDemo from '@/demo/modals/AsyncConfirmModalDemo' ;
 import CRUDDemo             from '@/demo/modals/CRUDModalDemo';
+import FormModalDemo        from '@/demo/modals/FormModalDemo' ;
 import InputModalDemo       from '@/demo/modals/InputModalDemo';
 import ModalDemo            from '@/demo/modals/ModalDemo';
 import MountedOpenModalDemo from '@/demo/modals/MountedOpenModalDemo';
@@ -38,6 +39,8 @@ const ModalShowcase = ({ path = 'app.test' }) =>
             <InputModalDemo />
 
             <MountedOpenModalDemo />
+
+            <FormModalDemo />
 
         </Page>
     ) ;

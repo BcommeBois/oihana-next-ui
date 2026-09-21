@@ -2,6 +2,7 @@
  * Default labels of the modal family.
  *
  * `Modal` reads the root keys (`agree`, `agreeBusy`, `disagree`, `close`) ; each preset
+ * (`alert`, `confirm`, `input`, `form`)
  * reads its own sub-block for the labels that differ from the base — and
  * only those, so `disagree` and `close` stay defined in a single place.
  *
@@ -27,6 +28,19 @@ const modal =
             agree : 'Confirmer' ,
         } ,
 
+        form     :
+        {
+            agree     : 'Enregistrer' ,
+            agreeBusy : 'Enregistrement…' ,
+            exit      :
+            {
+                agree       : 'Abandonner' ,
+                description : 'Vos modifications seront perdues.' ,
+                disagree    : 'Continuer la saisie' ,
+                title       : 'Abandonner les modifications ?' ,
+            } ,
+        } ,
+
         input    :
         {
             action : 'Parcourir' ,
@@ -49,6 +63,19 @@ const modal =
         confirm  :
         {
             agree : 'Confirm' ,
+        } ,
+
+        form     :
+        {
+            agree     : 'Save' ,
+            agreeBusy : 'Saving…' ,
+            exit      :
+            {
+                agree       : 'Discard' ,
+                description : 'Your changes will be lost.' ,
+                disagree    : 'Keep editing' ,
+                title       : 'Discard changes?' ,
+            } ,
         } ,
 
         input    :
