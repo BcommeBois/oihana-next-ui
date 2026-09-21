@@ -13,7 +13,15 @@ import cn from '@/themes/helpers/cn' ;
 
 import { sizes , sideBreakpoints , styles } from '@/themes/components/card' ;
 
-import { MdCheck as CheckIcon , MdPlayArrow as PlayIcon } from 'react-icons/md' ;
+import
+{
+    MdCheck        as CheckIcon ,
+    MdInventory2   as StockIcon ,
+    MdLocalShipping as ShippingIcon ,
+    MdPlayArrow    as PlayIcon ,
+    MdSell         as PriceIcon ,
+}
+from 'react-icons/md' ;
 
 const BLURB = 'Une carte a une figure, un corps, et dans le corps un titre et une rangée d\'actions.' ;
 
@@ -398,6 +406,77 @@ const SelectableSection = () =>
 SelectableSection.displayName = 'SelectableSection' ;
 
 /**
+ * Three cards of different lengths in one grid row : an icon in each title, a
+ * count or a button at the end of it, and the actions pinned to the bottom so
+ * the three rows of buttons line up.
+ *
+ * The paragraphs are wrapped : daisyUI gives every `<p>` directly inside
+ * `card-body` a `flex-grow: 1`, which would stretch them to fill the card and
+ * push the actions down on their own — hiding what `pinActions` does.
+ */
+const SECTION_CARDS =
+[
+    { icon : PriceIcon    , id : 'price'    , lines : 1 , title : 'Tarifs'    , end : <Badge size="sm">3</Badge> } ,
+    { icon : StockIcon    , id : 'stock'    , lines : 4 , title : 'Stock par dépôt, sur une ligne assez longue pour passer à la ligne' , end : <Badge size="sm">12</Badge> } ,
+    { icon : ShippingIcon , id : 'shipping' , lines : 2 , title : 'Livraison' , end : <Button size="xs" style="ghost">Gérer</Button> } ,
+] ;
+
+const HeaderSection = () =>
+{
+    const [ pinned , setPinned ] = useState( true ) ;
+
+    return (
+        <Container className="flex flex-col gap-6 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-7xl">
+
+            <h2 className="text-3xl font-bold">Icône, fin de titre, pied épinglé</h2>
+
+            <p className="text-sm text-base-content/70">
+                <code className="badge badge-sm">icon</code> prend un composant, dimensionné et encré par
+                la carte ; <code className="badge badge-sm">titleEnd</code> pose un compteur ou un bouton au
+                bout du titre ; <code className="badge badge-sm">pinActions</code> colle le pied en bas :
+                dans une rangée de grille, les boutons s'alignent quelle que soit la longueur du corps.
+            </p>
+
+            <label className="flex items-center gap-2 text-sm">
+                <input
+                    checked   = { pinned }
+                    className = "toggle toggle-sm"
+                    onChange  = { event => setPinned( event.target.checked ) }
+                    type      = "checkbox"
+                />
+                pinActions = { String( pinned ) }
+            </label>
+
+            <div className="grid gap-4 md:grid-cols-3">
+                { SECTION_CARDS.map( ( { end , icon , id , lines , title } ) => (
+                    <Card
+                        key        = { id }
+                        actions    = { <Button size="sm" style="soft">Modifier</Button> }
+                        className  = "bg-base-100 shadow-sm"
+                        icon       = { icon }
+                        pinActions = { pinned }
+                        size       = "sm"
+                        style      = "border"
+                        title      = { title }
+                        titleAs    = "h3"
+                        titleEnd   = { end }
+                    >
+                        <div className="flex flex-col gap-2">
+                            { Array.from( { length : lines } , ( _ , index ) => (
+                                <p key={ index } className="text-sm">{ BLURB }</p>
+                            ) ) }
+                        </div>
+                    </Card>
+                ) ) }
+            </div>
+
+        </Container>
+    ) ;
+} ;
+
+HeaderSection.displayName = 'HeaderSection' ;
+
+/**
  * Demo: `Card` — the DaisyUI card shell, driven by slots.
  *
  * @returns {React.JSX.Element}
@@ -410,6 +489,7 @@ const CardDemo = () =>
             <SizeSection />
             <FigureSection />
             <HeadingSection />
+            <HeaderSection />
             <SelectableSection />
         </>
     ) ;

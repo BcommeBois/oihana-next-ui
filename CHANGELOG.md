@@ -8,6 +8,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🗂 `Card` : an icon, the end of the title, pinned actions**
+
+- **Reported from a consuming application**, which wrapped the card shell in a section card of its own, used by thirty-seven screens, for the three things below.
+- **`icon`** : a component, drawn left of the title at one size and one ink (`size-4.5 opacity-60 shrink-0`, `aria-hidden`), overridable through `iconClassName`. A component rather than an element, so a page of cards cannot drift into as many sizes as it has call sites. Not drawn without a `title`.
+- **`titleEnd`** : a count, a button at the far end of the title row, which wraps rather than squeezes the title. Without it, the title is rendered exactly as before.
+- **`pinActions`** : the actions row sits at the bottom of the card, above a separator. Cards side by side in a grid row stretch to the same height, so their buttons line up whatever the length of each body.
+- **`Card` no longer carries `'use client'`** : it has no state and no hook. A Server Component can render it and hand it an `icon` component, which could not cross into a client component. Nothing changes for a client caller.
+- Lab, card page : « Icône, fin de titre, pied épinglé » — three cards of different lengths in one grid row, with `pinActions` toggled live.
+
 **🕰 Dates written in a named time zone**
 
 - **Reported from a consuming application**, whose server runs UTC while its readers sit in Paris : a date written without a zone read « 08:32 » in the server render and « 10:32 » after hydration, and React threw the render away. It kept five date helpers of its own, three of them the same dayjs call with a zone.
