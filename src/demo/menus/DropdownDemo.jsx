@@ -25,6 +25,8 @@ export default function DropdownDemo()
 {
     const [ last , setLast ] = useState( '—' ) ;
 
+    const [ controlledOpen , setControlledOpen ] = useState( false ) ;
+
     const actionItems =
     [
         { id : 'file' , type : 'title' , label : 'Fichier' } ,
@@ -43,8 +45,75 @@ export default function DropdownDemo()
         { id : 'logout' , label : 'Déconnexion' , icon : <LogoutIcon /> , onClick : () => setLast( 'Déconnexion' ) } ,
     ] ;
 
+    // `native` : a full page load and no prefetch — the reload is what shows it
+    // here, the lab going through its splash screen again.
+    const nativeItems =
+    [
+        { id : 'next'   , label : 'Lien next/link (navigation client)' , href : '/lab/buttons' } ,
+        { id : 'native' , label : 'Lien native (rechargement complet)' , href : '/lab/buttons' , native : true , icon : <LogoutIcon /> } ,
+    ] ;
+
     return (
         <>
+
+            {/* Controlled : the open state lives outside */}
+            <div className="card bg-base-200 shadow-xl">
+                <div className="card-body gap-3">
+                    <h2 className="card-title text-sm">Dropdown — piloté (open + onOpenChange)</h2>
+                    <div className="flex flex-wrap items-center gap-3">
+                        <button
+                            className = "btn btn-sm btn-outline"
+                            onClick   = { () => setControlledOpen( value => !value ) }
+                            type      = "button"
+                        >
+                            { controlledOpen ? 'Fermer de l’extérieur' : 'Ouvrir de l’extérieur' }
+                        </button>
+                        <Dropdown
+                            items        = { actionItems }
+                            label        = "Menu piloté"
+                            onOpenChange = { setControlledOpen }
+                            open         = { controlledOpen }
+                            placement    = "start"
+                        />
+                    </div>
+                    <p className="text-xs opacity-70">État tenu par la page : <span className="font-mono">{ String( controlledOpen ) }</span></p>
+                </div>
+            </div>
+
+            {/* Free content that closes the menu */}
+            <div className="card bg-base-200 shadow-xl">
+                <div className="card-body gap-3">
+                    <h2 className="card-title text-sm">Dropdown — contenu libre ( children( {'{ close }'} ) )</h2>
+                    <Dropdown label="Contenu libre" placement="start">
+                        { ( { close } ) => (
+                            <>
+                                <li className="menu-title">Contenu libre</li>
+                                <li>
+                                    <button
+                                        onClick = { () => { setLast( 'Contenu libre' ) ; close() ; } }
+                                        type    = "button"
+                                    >
+                                        Agir puis refermer
+                                    </button>
+                                </li>
+                            </>
+                        ) }
+                    </Dropdown>
+                    <p className="text-xs opacity-70">Dernière action : <span className="font-mono">{ last }</span></p>
+                </div>
+            </div>
+
+            {/* native : a real <a> */}
+            <div className="card bg-base-200 shadow-xl">
+                <div className="card-body gap-3">
+                    <h2 className="card-title text-sm">Dropdown — entrée native (&lt;a&gt;, sans préchargement)</h2>
+                    <Dropdown label="Liens" items={ nativeItems } placement="start" />
+                    <p className="text-xs opacity-70">
+                        La seconde entrée recharge toute la page : c&apos;est ce qu&apos;il faut à une route qui agit,
+                        comme une déconnexion, qu&apos;un préchargement déclencherait toute seule.
+                    </p>
+                </div>
+            </div>
 
             {/* Basic actions (title + divider + disabled) */}
             <div className="card bg-base-200 shadow-xl">

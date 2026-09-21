@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🎛 `Dropdown` can be driven from outside**
+
+- **Reported from a consuming application**, whose profile menu re-implemented the whole dropdown — outside click, Escape, the panel — for three reasons : one open state had to drive two presentations (a dropdown on a wide screen, a bottom sheet on a hand-held one, swapped live when the window is resized), its links had to close the menu, and « Sign out » had to be a plain `<a>` : a `next/link` would prefetch the sign-out route and sign the user out on its own.
+- **`open`** : given, the caller owns the open state — the way `value` works on an input — and the trigger, an outside click, Escape and an item select only ASK, through `onOpenChange`. Omitted, the menu keeps its own state, as before. A controlled menu opened from outside works its `autoPosition` out on opening.
+- **`children` can be a function** receiving `{ open , toggle , close }`, as `trigger` already could : free content can close the menu.
+- **Item `native : true`** : with `href`, the row is a native `<a>` rather than a `next/link` — no prefetch, a full page load. For a route that acts rather than shows.
+- Lab, menus page : a menu driven by an outside button with its state shown, free content that closes itself, and a `next/link` row beside a `native` one.
+
 **🔗 A link can be lit for a whole section**
 
 - **Reported from a consuming application**, whose tab bar re-implemented the active test by hand, and the other way round : a tab lights up for its whole section by default (`/customers/12/quotes` lights « Quotes »), `exact` being the exception. `useActiveLink` only knew the exact page.

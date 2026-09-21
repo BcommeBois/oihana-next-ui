@@ -4,8 +4,12 @@
  * Generic dropdown menu.
  *
  * Composes the DaisyUI `dropdown` shell with a `<ul class="dropdown-content menu">`
- * panel, driven by a small controlled open state (toggle on trigger,
- * close on outside click / Escape / item select). Items are data-driven
+ * panel, driven by an open state (toggle on trigger, close on outside click /
+ * Escape / item select). That state is the component's own, unless the caller
+ * passes `open` : then the caller owns it — the way `value` works on an input —
+ * and every one of those gestures only ASKS, through `onOpenChange`. It is what
+ * a menu needs when something else must stay in step with it, such as a sheet
+ * that shows the same entries on a small screen. Items are data-driven
  * and reuse the native menu modifiers: `menu-active` for the active row,
  * `menu-disabled` for a disabled one, and `menu-title` for a section
  * heading.
@@ -62,6 +66,7 @@ const DIRECTION_OFFSET =
  * @property {React.ReactNode} [label] - Row text.
  * @property {React.ReactNode} [icon] - Leading icon element.
  * @property {string} [href] - When set, the row is a `next/link`.
+ * @property {boolean} [native=false] - With `href`, render a native `<a>` instead of a `next/link` : no prefetch, and a full page load. For a route that ACTS rather than shows — a sign-out, which a prefetch would trigger on its own.
  * @property {Function} [onClick] - Click handler (also fired for links).
  * @property {boolean} [active] - Applies `menu-active`.
  * @property {boolean} [disabled] - Applies `menu-disabled` and disables the control.
@@ -71,7 +76,7 @@ const DIRECTION_OFFSET =
 /**
  * @param {Object} props
  * @param {DropdownItem[]} [props.items] - Menu items. Ignored when `children` is provided.
- * @param {React.ReactNode} [props.children] - Raw `<li>` content, overrides `items`.
+ * @param {React.ReactNode | ((state: { open: boolean, toggle: Function, close: Function }) => React.ReactNode)} [props.children] - Raw `<li>` content, overrides `items`. A function receives the open state, so free content can close the menu — a link inside it calling `close`.
  * @param {React.ReactNode | ((state: { open: boolean, toggle: Function, close: Function }) => React.ReactNode)} [props.trigger] - Custom trigger. A node is wrapped in a `role="button"` element; a function receives the open state.
  * @param {React.ReactNode} [props.label] - Text for the default `btn` trigger (used when no `trigger`).
  * @param {React.ReactNode} [props.triggerIcon] - Leading icon for the default trigger.
@@ -85,7 +90,8 @@ const DIRECTION_OFFSET =
  * @param {number} [props.panelWidth=208] - Estimated panel width for autoPosition (w-52 = 208px).
  * @param {number} [props.panelHeight=200] - Estimated panel height for autoPosition.
  * @param {boolean} [props.closeOnSelect=true] - Close the panel after an item click.
- * @param {(open: boolean) => void} [props.onOpenChange] - Notified whenever the open state changes.
+ * @param {boolean} [props.open] - Makes the menu CONTROLLED : the caller owns the open state, and the trigger, an outside click, Escape and an item select call `onOpenChange` instead of changing it. Omitted, the menu keeps its own state.
+ * @param {(open: boolean) => void} [props.onOpenChange] - Notified whenever the open state changes — or, when `open` is given, asked to change it.
  *
  * @returns {React.JSX.Element}
  */
@@ -107,10 +113,14 @@ const Dropdown =
     panelHeight  = 200 ,
     closeOnSelect = true ,
     onOpenChange ,
+    open : openProp ,
 }) =>
 {
-    const [ open , setOpen ] = useState( false ) ;
-    const manualRef          = useRef( null ) ;
+    const [ openState , setOpenState ] = useState( false ) ;
+    const manualRef                    = useRef( null ) ;
+
+    const controlled = openProp !== undefined ;
+    const open       = controlled ? !!openProp : openState ;
 
     // -------- autoPosition
 
@@ -128,13 +138,16 @@ const Dropdown =
 
     // -------- Handlers
 
-    const setOpenState = next =>
+    const requestOpen = next =>
     {
-        setOpen( next ) ;
+        if ( !controlled )
+        {
+            setOpenState( next ) ;
+        }
         onOpenChange?.( next ) ;
     } ;
 
-    const close  = () => setOpenState( false ) ;
+    const close  = () => requestOpen( false ) ;
 
     const toggle = () =>
     {
@@ -143,8 +156,20 @@ const Dropdown =
             auto.recalculate() ;
         }
 
-        setOpenState( !open ) ;
+        requestOpen( !open ) ;
     } ;
+
+    // Opened from outside, a controlled menu has not been through `toggle` :
+    // its position is worked out here instead.
+    // biome-ignore lint/correctness/useExhaustiveDependencies: on the open transition only.
+    useEffect( () =>
+    {
+        if ( controlled && open && autoPosition )
+        {
+            auto.recalculate() ;
+        }
+    }
+    , [ open ] ) ;
 
     // -------- Close on click outside
 
@@ -221,7 +246,7 @@ const Dropdown =
 
     const renderItem = ( item , index ) =>
     {
-        const { id , type = 'item' , label : itemLabel , icon , href , onClick , active , disabled , className : itemClassName } = item ;
+        const { id , type = 'item' , label : itemLabel , icon , href , native = false , onClick , active , disabled , className : itemClassName } = item ;
 
         const key = id ?? `item-${ index }` ;
 
@@ -268,7 +293,18 @@ const Dropdown =
 
         return (
             <li key={ key } className={ cn( disabled && 'menu-disabled' ) }>
-                { href && !disabled
+                { href && !disabled && native
+                    ? (
+                        <a
+                            href         = { href }
+                            className    = { rowClasses }
+                            onClick      = { handleClick }
+                            aria-current = { active ? 'page' : undefined }
+                        >
+                            { content }
+                        </a>
+                    )
+                    : href && !disabled
                     ? (
                         <NextLink
                             href        = { href }
@@ -338,7 +374,9 @@ const Dropdown =
 
             { open &&
                 <ul className={ menuClasses }>
-                    { children ?? items?.map( renderItem ) }
+                    { typeof children === 'function'
+                        ? children( { open , toggle , close } )
+                        : children ?? items?.map( renderItem ) }
                 </ul>
             }
 
