@@ -6,6 +6,8 @@
  * @module helpers/storage/displayStorageKey
  */
 
+import createStorageKey from './createStorageKey' ;
+
 /**
  * Prefix applied to all display preference storage keys.
  * @type {string}
@@ -18,6 +20,6 @@ export const DISPLAY_STORAGE_PREFIX = 'display__' ;
  * @param {string} pageKey - e.g. 'products' or 'app.products'
  * @returns {string}       - e.g. 'display__products'
  */
-const getDisplayStorageKey = pageKey => `${ DISPLAY_STORAGE_PREFIX }${ pageKey }` ;
+const getDisplayStorageKey = createStorageKey( DISPLAY_STORAGE_PREFIX ) ;
 
 export default getDisplayStorageKey ;

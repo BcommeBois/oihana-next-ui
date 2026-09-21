@@ -8,6 +8,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🍪 Cookies are written encoded, and a storage key family is one line**
+
+- **Reported from a consuming application**, which kept twelve key files of the same shape (a prefix, a one-line getter, a one-year max-age, often a decoder), wrote cookies by hand in five places, and lost a remembered search holding a `%` on every reload : Next's `cookies().get( key ).value` is ALREADY decoded, and decoding it a second time throws on a bare `%` — swallowed, the value came back empty.
+- **`setCookie` now encodes the value** (`encodeURIComponent( String( value ) )`), the mirror of what the server does on the way back. A raw space, `;` or `%` used to write a malformed pair, which the server's parser drops without a word. **Behaviour change for a caller that encoded its value itself** : it should stop, or the value is encoded twice. The values this package writes (a language code, a display mode) are unaffected.
+- `setCookie` takes `{ maxAge }` as its third argument ; a number there — the previous form — still works.
+- **`writeStorage` writes its cookie through `setCookie`**, and inherits the encoding.
+- **New `removeCookie( key )`**, which `removeStorage` now uses ; **new `COOKIE_MAX_AGE`** (`helpers/storage/cookieMaxAge`, one year), the default of the three.
+- **New `createStorageKey( prefix )`**, returning `( pageKey ) => prefix + pageKey` ; `getDisplayStorageKey` is built with it.
+- The JSDoc of each says it : server side, read `cookies().get( key ).value` as it is — never decode it again.
+- Lab, layout page : « Cookies », five values a raw write would have broken, each read back identical.
+
 **⏱ Shallow URL parameters, and one busy state per screen**
 
 - **Reported from a consuming application**, which carried both as five files of its own and used them across a dozen screens.
