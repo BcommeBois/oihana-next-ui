@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.21.0] — 2026-09-21
+
 **📝 `FormModal`, and the `ModalFooter` it is built on**
 
 - **Reported from a consuming application**, which carried both as three files of its own — a form shell, a form footer, a close-only footer — imported by forty-two dialogs.
