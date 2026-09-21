@@ -8,6 +8,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🔢 Shared number formatters, with the locale named by the application**
+
+- **Reported from a consuming application**, which built its number formatters by hand : twenty-seven copies of the same language → locale table, thirteen percentage formatters, a compact-amount helper. One of the percentage formatters tested `ratio < 0.1` for its two-decimal case, so every NEGATIVE ratio took two decimals — « -12,34 % » beside « 25 % ».
+- **New `helpers/numbers/`** : `formatNumber( value , locale , options )`, `formatPercent( ratio , locale , { maximumFractionDigits = 1 , signDisplay , smallBelow } )` and `formatCompact( value , locale , { currency , maximumFractionDigits = 1 } )`. Anything that is not a finite number gives `''`. The formatters are cached by locale and options.
+- **The locale is always named.** A missing one falls back to `DEFAULT_LOCALE` (`en`), never to the runtime's own, which is the server's on the first render and the browser's on the next.
+- **`smallBelow` is judged on the absolute value** : below it, a share takes two decimals, whatever its sign.
+- **`formatPercent` and `formatCompact` set both fraction bounds** : given only a maximum, an engine infers the minimum, and Node and the browsers infer it differently under compact notation (« 168,0 k € » against « 168 k € »).
+- **New `resolveLocale( lang , locales )`** : an application names its number conventions once, in its config at `intl.locales` (`{ fr : 'fr-FR' , en : 'en-GB' }`) ; a language missing from the table is used as it is. Pure, for a Server Component.
+- **New `hooks/useNumberFormat()`** : `{ locale , formatNumber , formatPercent , formatCompact }` bound to the language on screen, through that table. Outside a `LangProvider` or a `ConfigProvider` it falls back rather than throws.
+- **⚠️ Compact abbreviations are engine data.** In `en-GB`, Node 22 writes « €168K » where Chrome writes « €168k » ; no option reaches that. A compact number rendered on the server and hydrated in the browser can mismatch in such a locale : draw it where one engine does all the work. The JSDoc of `formatCompact` says so.
+- Lab : `intl.locales` in its config ; metrics page, « useNumberFormat » — the language on screen, the old `ratio < 0.1` beside `formatPercent`, and four locales side by side.
+
 **🍪 Cookies are written encoded, and a storage key family is one line**
 
 - **Reported from a consuming application**, which kept twelve key files of the same shape (a prefix, a one-line getter, a one-year max-age, often a decoder), wrote cookies by hand in five places, and lost a remembered search holding a `%` on every reload : Next's `cookies().get( key ).value` is ALREADY decoded, and decoding it a second time throws on a bare `%` — swallowed, the value came back empty.

@@ -10,6 +10,7 @@ import CategoryBarDemo  from '@/demo/metrics/CategoryBarDemo' ;
 import DeltaDemo        from '@/demo/metrics/DeltaDemo' ;
 import MetricLegendDemo from '@/demo/metrics/MetricLegendDemo' ;
 import MetricScaleDemo  from '@/demo/metrics/MetricScaleDemo' ;
+import NumberFormatDemo from '@/demo/metrics/NumberFormatDemo' ;
 import SparklineDemo    from '@/demo/metrics/SparklineDemo' ;
 import TrackerDemo      from '@/demo/metrics/TrackerDemo' ;
 
@@ -35,6 +36,7 @@ const SECTIONS =
     { Demo : DeltaDemo        , id : 'delta'        , label : 'Delta'        } ,
     { Demo : MetricLegendDemo , id : 'metricLegend' , label : 'MetricLegend' } ,
     { Demo : MetricScaleDemo  , id : 'metricScale'  , label : 'MetricScale'  } ,
+    { Demo : NumberFormatDemo , id : 'numberFormat' , label : 'useNumberFormat' } ,
 ] ;
 
 /**

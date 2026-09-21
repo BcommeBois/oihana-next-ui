@@ -1,6 +1,7 @@
 import debug      from './debug'
 import env        from './env'
 import html       from './html'
+import intl       from './intl'
 import languages  from './languages'
 import navigation from './navigation'
 import ui         from './ui'
@@ -35,6 +36,7 @@ const config =
     // ---- Dependencies
 
     html       , // Html sanitize settings
+    intl       , // Number conventions per language
     navigation , // Navigation
     ui         , // UI settings : sidebar, splashScreen, etc.
 
