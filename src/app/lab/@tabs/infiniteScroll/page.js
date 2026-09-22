@@ -3,6 +3,7 @@
 import Page               from '@/display/Page' ;
 import Container          from '@/display/Container' ;
 import InfiniteScrollDemo from '@/demo/layouts/InfiniteScrollDemo' ;
+import PagedSearchDemo    from '@/demo/layouts/PagedSearchDemo' ;
 
 /**
  * InfiniteScroll showcase page.
@@ -19,6 +20,10 @@ const InfiniteScrollPage = () =>
 
         <Container maxWidth="max-w-3xl">
             <InfiniteScrollDemo />
+        </Container>
+
+        <Container maxWidth="max-w-3xl">
+            <PagedSearchDemo />
         </Container>
     </Page>
 ) ;

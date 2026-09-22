@@ -33,6 +33,8 @@ export const DEFAULT_THRESHOLD = 0 ;
  * can call it again before `loading` flips — guard with a synchronous ref
  * (`if ( loadingRef.current ) return ; loadingRef.current = true ;`) to avoid
  * loading the same page twice (which yields duplicate React keys).
+ * {@link module:hooks/usePagedSearch} does all of it for a searchable list
+ * loaded page by page.
  *
  * @param {Object} [options]
  * @param {boolean}  [options.hasMore=true]                  - Whether more items can be loaded.
