@@ -6,6 +6,7 @@ import Page             from '@/display/Page' ;
 import Container        from '@/display/Container' ;
 import FilterParamsDemo from '@/demo/filters/FilterParamsDemo' ;
 import FiltersDemo      from '@/demo/filters/FiltersDemo' ;
+import ToolbarDisclosureDemo from '@/demo/filters/ToolbarDisclosureDemo' ;
 
 /**
  * Filters showcase page.
@@ -21,6 +22,12 @@ const FiltersPage = () =>
 
         <Container maxWidth="max-w-3xl">
             <FiltersDemo />
+        </Container>
+
+        <Container maxWidth="max-w-3xl">
+            <Suspense>
+                <ToolbarDisclosureDemo />
+            </Suspense>
         </Container>
 
         <Container maxWidth="max-w-3xl">

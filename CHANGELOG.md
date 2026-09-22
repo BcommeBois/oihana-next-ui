@@ -8,6 +8,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🧰 The toolbar of a list : `UrlSearch`, `UrlPagination`, `ToolbarDisclosure`**
+
+- **Reported from a consuming application**, where the URL mechanics around `InputSearch` and `Pagination` had been written once and grown into three components every list imported.
+- **New `components/inputs/UrlSearch`** — a search field whose value lives in `?search=` (`paramName`). It runs on `useFilterParams` : the query is mirrored to the `search__<pageKey>` cookie when `persist` is on, the pagination is dropped (a new query starts on page 1), the push does not scroll and goes through the screen's shared transition when there is one, and clearing refreshes — the bare URL's server render depends on the cookie just expired. ⚠️ The placeholder is resolved here, live, because the native attribute takes a string and not a node ; the caller's bundle is read first (`path` → `search.placeholder`), then the new generic `components.input.search.placeholder`.
+- **New `components/paginations/UrlPagination`** — `Pagination` over the URL : the offset in `offsetParam` (dropped on page 1, so the address stays bare), `limitParam` pinned only on `alwaysSetLimit`, the « Page n / m » counter and its spinner on the right (`showLabel`, `showLoading`), and the screen's shared transition when a `BusyNavigationProvider` is there. Its look is the caller's : `activeColor`, `color`, `compactBelow`, `jumpMode`.
+  - 🚨 **It sends the page back to the top on purpose** — page 4 of a full-page list opens on its first row — and **`scrollToTop={ false }`** is there for a list that is a SECTION of a longer page : the move is then marked in place, since `scroll : false` alone does not stop the shell's own reset.
+- **New `components/panels/ToolbarDisclosure`** — what stays on a list's toolbar and what folds away : a row holding the search field and a toggle (funnel, label, count of applied criteria, turning chevron), and under it the criteria in a fold animated in pure CSS (`grid-template-rows: 0fr ↔ 1fr`), two-way, with nothing measured. `defaultOpen` is the SERVER's answer — a bar opening after hydration flashes — and the reader's own choice is remembered in the `filters__<pageKey>` cookie. It never touches the URL : which criteria are SHOWN is not what the list is filtered on.
+- **New `helpers/storage/searchStorageKey`** and **`helpers/storage/filtersStorageKey`** (with `decodeFiltersOpen`, which answers `null` when nothing is stored — the caller's own default then wins), beside `displayStorageKey`.
+- **`useFilterParams` fix** : outside a `BusyNavigationProvider` its push was not marked in place, so applying a criterion sent the reader back to the top of the list they were reading — `scroll : false` speaks to the router, not to the shell's scroll reset. `navigate` already marked it ; the plain push now does too.
+- `components.filter` gains `toolbar` (the name of the bar, where `title` names the act of filtering) ; `components.input` gains `search.placeholder`.
+- Lab : « Pagination » page, a paged list reading `?labOffset=` with a second bar on its own parameter ; « Filters » page, a toolbar whose search writes `?search=` and its cookie, and whose criteria fold away and are remembered.
+
 **↩️ Going back : `previousPath`, `BackLink smart` ; `DisplayDropDown` drives itself ; `PageHeader` folds**
 
 - **Reported from a consuming application**, whose record pages linked back to a list that had lost its page and its criteria on the way.

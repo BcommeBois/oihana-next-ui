@@ -8,6 +8,10 @@
  * silently tells nobody why. They sit here rather than in bundles of their own
  * because they belong to the same family.
  *
+ * `search.placeholder` is the generic placeholder of `UrlSearch`, read only
+ * when the calling screen's own bundle offers none — a list says what it
+ * searches (« Search an article… »), and falls back here when it does not.
+ *
  * The rest are `aria-label` (and `title`) values only : nothing there is visible
  * copy. They were hardcoded English in each signature and never passed by any
  * host, so a screen reader announced them in English on an otherwise French
@@ -41,6 +45,11 @@ const input =
             hide : 'Masquer le mot de passe' ,
             show : 'Afficher le mot de passe' ,
         } ,
+
+        search :
+        {
+            placeholder : 'Rechercher…' ,
+        } ,
     } ,
 
     en :
@@ -68,6 +77,11 @@ const input =
         {
             hide : 'Hide password' ,
             show : 'Show password' ,
+        } ,
+
+        search :
+        {
+            placeholder : 'Search…' ,
         } ,
     } ,
 } ;

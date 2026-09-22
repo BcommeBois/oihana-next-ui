@@ -7,6 +7,9 @@
  * OVER this one — a key the criterion leaves out falls back here. `unknown`
  * names an option that has no name : `{0}` is its id.
  *
+ * `toolbar` names the toggle of `ToolbarDisclosure` — the bar itself, where
+ * `title` names the act of filtering on a criterion's panel.
+ *
  * `clearFilters` and `remove` are read by `ClearFiltersChip` and `FilterChip` ;
  * `min` and `max` by `RangeFilterPanel` ; the `settings` block by
  * `FilterSettingsButton` ; the `period` block by `PeriodFilterPanel`.
@@ -28,6 +31,7 @@ const filter =
         retry     : 'Réessayer' ,
         search    : 'Rechercher…' ,
         title     : 'Filtrer' ,
+        toolbar   : 'Filtres' ,
         unknown   : '{0}' ,
 
         period :
@@ -80,6 +84,7 @@ const filter =
         retry     : 'Retry' ,
         search    : 'Search…' ,
         title     : 'Filter' ,
+        toolbar   : 'Filters' ,
         unknown   : '{0}' ,
 
         period :

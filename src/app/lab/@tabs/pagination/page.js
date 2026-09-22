@@ -1,8 +1,11 @@
 'use client' ;
 
+import { Suspense } from 'react' ;
+
 import PaginationDemo  from '@/demo/paginations/PaginationDemo' ;
 import ResetScrollDemo from '@/demo/paginations/ResetScrollDemo' ;
 import ShallowParamDemo from '@/demo/paginations/ShallowParamDemo' ;
+import UrlPaginationDemo from '@/demo/paginations/UrlPaginationDemo' ;
 import Container from '@/display/Container' ;
 import Divider   from '@/components/Divider' ;
 import Page           from '@/display/Page' ;
@@ -24,6 +27,12 @@ const PaginationShowcase = ({ path = 'app.test' }) =>
             </Container>
 
             <PaginationDemo />
+
+            <Divider />
+
+            <Suspense>
+                <UrlPaginationDemo />
+            </Suspense>
 
             <Divider />
 

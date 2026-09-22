@@ -15,7 +15,11 @@
  *   4. `router.push` without scrolling — through the SCREEN's shared transition
  *      when there is one, so applying a criterion greys the list rather than
  *      nothing at all (`contexts/busyNavigation`) ; outside a provider, a plain
- *      push ;
+ *      push, with the address marked in place
+ *      (`helpers/routes/inPlaceNavigation`) : a criterion narrows the rows
+ *      already on screen, and `scroll : false` alone does not stop the shell's
+ *      own reset, which reads any change of address as a new page. `navigate`
+ *      marks it for us ;
  *   5. `router.refresh()` **when nothing is left selected** — the destination is
  *      then the bare URL, whose server render depends on the cookie we just
  *      expired ; without the refresh Next serves the cached, still-filtered
@@ -58,6 +62,8 @@ import { useCallback } from 'react' ;
 import { usePathname , useRouter , useSearchParams } from 'next/navigation' ;
 
 import useBusyNavigation from '../contexts/busyNavigation/useBusyNavigation' ;
+
+import { markInPlace } from '../helpers/routes/inPlaceNavigation' ;
 
 import removeCookie from '../helpers/storage/removeCookie' ;
 import setCookie    from '../helpers/storage/setCookie' ;
@@ -162,8 +168,15 @@ const useFilterParams = (
         const query = params.toString() ;
         const href  = query ? `${ pathname }?${ query }` : pathname ;
 
-        if ( typeof navigate === 'function' ) { navigate( href ) ; }
-        else                                  { router.push( href , { scroll : false } ) ; }
+        if ( typeof navigate === 'function' )
+        {
+            navigate( href ) ;
+        }
+        else
+        {
+            markInPlace( href ) ;
+            router.push( href , { scroll : false } ) ;
+        }
 
         if ( !hasValue )
         {
