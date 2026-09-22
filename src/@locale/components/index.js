@@ -1,6 +1,7 @@
 import alert      from './alert'
 import buttons    from './buttons'
 import dropdowns  from './dropdowns'
+import filter     from './filter'
 import input      from './input'
 import map        from './map'
 import modal      from './modal'
@@ -15,6 +16,7 @@ const components =
     alert ,
     buttons ,
     dropdowns,
+    filter ,
     input ,
     map ,
     modal ,

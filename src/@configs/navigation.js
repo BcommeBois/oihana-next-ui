@@ -74,6 +74,7 @@ import { FaBarsProgress         as ProgressIcon       } from "react-icons/fa6";
 import { RiProgress5Line        as RadialProgressIcon } from "react-icons/ri";
 import { IoMdRadioButtonOn      as RadioIcon          } from "react-icons/io";
 import { TbHandFinger           as ChoosePickerIcon   } from "react-icons/tb";
+import { TbFilter               as FilterCriterionIcon } from "react-icons/tb";
 import { LuSlidersHorizontal    as RangeIcon          } from "react-icons/lu";
 import { MdOutlineStarRate      as RatingIcon         } from "react-icons/md";
 import { VscListSelection       as SelectIcon         } from "react-icons/vsc" ;
@@ -190,6 +191,7 @@ const navigation =
                     { id : 'checkboxes' , type : LINK  , Icon : CheckBoxIcon  , path  : '/lab/checkboxes' } ,
                     { id : 'colors'     , type : LINK  , Icon : ColorIcon     , path  : '/lab/colors'     } ,
                     { id : 'dates'      , type : LINK  , Icon : DatesIcon     , path  : '/lab/dates'      } ,
+                    { id : 'filters'    , type : LINK  , Icon : FilterCriterionIcon , path  : '/lab/filters' } ,
                     { id : 'times'      , type : LINK  , Icon : TimesIcon     , path  : '/lab/times'      } ,
                     { id : 'inputs'     , type : LINK  , Icon : InputIcon     , path  : '/lab/inputs'     } ,
                     { id : 'pickers'    , type : LINK  , Icon : ChoosePickerIcon , path  : '/lab/pickers'    } ,

@@ -8,6 +8,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🔎 The filter criteria : `OptionFilterPicker`, `RemoteFilterPicker`, `FilterOption`**
+
+- **Reported from a consuming application**, whose filter bars ran on two criteria of its own, already free of any domain rule.
+- **New `components/filters/`**, both criteria on `AnchoredPanel` — a dropdown on `md`+, a sheet below :
+  - `OptionFilterPicker` — a closed set held in hand, searched in the browser (accent-folded through `foldText`, or a `fold` of the caller's), matching a name or an id. Single-select applies on the click ; `multiple` drafts, with a « Clear / Apply (n) » footer. A multi-select emits in the OPTIONS' order, never the click order, so two identical selections give the same value ; a search narrows what is shown, never what is selected. The search and the draft rewind at each opening. `countCaption` names what the numbers count.
+  - `RemoteFilterPicker` — a collection searched on the server (`usePagedSearch`), bound to the reader's perimeter by the caller's `loader`. Counted `buckets` open it ; typing switches to the paged search, back at the top at each new search. The two never show together. `getKey` / `getLabel` read a result.
+  - `FilterOption` — the row both use : a tick (`single`) or a box (`multiple`) as a GLYPH — the row is a button, an `<input>` inside it would be invalid —, the label, a count through `useNumberFormat`, and the `muted` « All » look.
+- **Labels** : a new `components.filter` bundle ; a criterion's own bundle, passed as `path`, is read over it (`useFilterLabels`), so it names itself and leaves « Apply » or « Retry » to the family.
+- Lab : a new « Filters » page — « Colour » (multiple, caption, an option with no name), « Country » (single, accents), « Member » (buckets, server search, « the server fails »), and what each emitted.
+
 **🧭 `AnchoredPanel`, and a `Popover` that picks its own side**
 
 - **Reported from a consuming application**, whose filter criteria were all « a dropdown under the button on a desktop, a full-screen sheet on a phone », written through one shell of its own and a copy of `useDropdownPosition`'s computation.
