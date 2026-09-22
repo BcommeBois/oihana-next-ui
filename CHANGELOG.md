@@ -8,6 +8,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🧭 `AnchoredPanel`, and a `Popover` that picks its own side**
+
+- **Reported from a consuming application**, whose filter criteria were all « a dropdown under the button on a desktop, a full-screen sheet on a phone », written through one shell of its own and a copy of `useDropdownPosition`'s computation.
+- **New `themes/helpers/resolveDropdownPosition( rect , { panelWidth , panelHeight , … } )`** → `{ direction , placement }` : the computation `useDropdownPosition` kept inside, now a pure function. `useDropdownPosition` runs on it — 247 104 cases compared, identical.
+- **`Popover` takes `autoPosition`, with `panelWidth` / `panelHeight`** : at the opening, before paint, the dropdown resolves its side from the anchor — below when the panel fits, else above, else the roomier side ; aligned against the edge that has room. The judgement runs on an ESTIMATE of the full panel : a list loaded after the opening measures empty, and a panel judged on it would open downward and overflow a moment later. The clamp on screen still measures the real box. Without `autoPosition`, nothing changes.
+- **New `components/panels/AnchoredPanel`** : a `Popover` with `autoPosition` on `md`+, a full-screen `Modal` below — the same `<dialog>` as every other modal, a title, a round close button, a sticky footer. `isOpen` stays the caller's. `footer( { surface , size } )` is called with `'dropdown'` and `'btn-sm'`, or `'sheet'` and `null` : the footer is not the same object on the two surfaces. `sheetFooter` replaces the sheet's footer alone. The body is wrapped by the caller.
+- **`Popover`'s full-screen close button loses its native `title`** ; its `aria-label` stays.
+- Lab, panels page : a filter bar of three criteria and a « More » menu, rendered at the top of the card and again after a tall gap, so the panels open downward, then upward.
+
 **🎯 The choosing family : `PickerTrigger`, `OptionPickerModal`, `PagedPickerModal`, `PickerOption`**
 
 - **Reported from a consuming application**, where these four already ran without a line of domain code : a form shows what is chosen and a « Change » button, the choosing happens in a modal of its own — an inline list makes a form scroll twice and grow as the results arrive.

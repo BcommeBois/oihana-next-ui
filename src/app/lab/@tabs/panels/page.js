@@ -1,7 +1,8 @@
 'use client' ;
 
-import SidePanelDemo  from '@/demo/panels/SidePanelDemo' ;
-import SplitPanelDemo from '@/demo/panels/SplitPanelDemo' ;
+import AnchoredPanelDemo from '@/demo/panels/AnchoredPanelDemo' ;
+import SidePanelDemo     from '@/demo/panels/SidePanelDemo' ;
+import SplitPanelDemo    from '@/demo/panels/SplitPanelDemo' ;
 
 import Container from '@/display/Container' ;
 import Divider   from '@/components/Divider' ;
@@ -12,6 +13,7 @@ import Page      from '@/display/Page' ;
  *
  * `SidePanel` — off-canvas overlay (placements, widths, pinned footer, stacking).
  * `SplitPanel` — inline side region sharing the width with its content.
+ * `AnchoredPanel` — a dropdown anchored to its trigger on `md`+, a sheet below.
  *
  * @param {Object} props
  */
@@ -25,6 +27,10 @@ const PanelShowcase = () =>
                     Panel Components
                 </h1>
             </Container>
+
+            <Divider>AnchoredPanel — liste déroulante / feuille</Divider>
+
+            <AnchoredPanelDemo />
 
             <Divider>SidePanel — overlay</Divider>
 

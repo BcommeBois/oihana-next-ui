@@ -9,7 +9,8 @@ import cn from '../themes/helpers/cn' ;
 import useI18n   from '../contexts/locale/useI18n' ;
 import NO_LOCALE from '../contexts/locale/noLocale' ;
 
-import useBreakpoint from '../themes/hooks/useBreakpoint' ;
+import resolveDropdownPosition from '../themes/helpers/resolveDropdownPosition' ;
+import useBreakpoint           from '../themes/hooks/useBreakpoint' ;
 
 import Portal from './Portal' ;
 
@@ -40,6 +41,17 @@ const GAP = 6 ;
  *
  * `display='responsive'` (default) picks dropdown on `md`+ and modal below.
  *
+ * **`autoPosition`** lets the dropdown choose its own side instead of taking
+ * `direction` / `placement` : at the opening, before paint, it reads the
+ * anchor's rect and resolves them with
+ * {@link module:themes/helpers/resolveDropdownPosition} — below if the panel
+ * fits there, else above, else the roomier side ; aligned against the edge that
+ * has room. The judgement runs on `panelWidth` / `panelHeight`, an ESTIMATE of
+ * the full panel : a list that loads after the opening measures empty at that
+ * moment, and a panel judged on it would open downward and overflow a moment
+ * later. The fine clamp that keeps the panel on screen still measures the real
+ * box.
+ *
  * When the trigger sits inside an open `<dialog>` (a {@link Modal}),
  * the panel portals **into that dialog** instead of `document.body` : body-level
  * content under a modal dialog is inert and paints below the top layer, so the
@@ -62,8 +74,11 @@ const GAP = 6 ;
  * @param {boolean} props.isOpen - Open state.
  * @param {() => void} props.onClose - Close handler.
  * @param {'responsive'|'dropdown'|'modal'} [props.display='responsive'] - Display mode.
- * @param {'top'|'bottom'} [props.direction='bottom'] - Opening direction (from useDropdownPosition).
- * @param {'start'|'center'|'end'} [props.placement='start'] - Horizontal alignment (from useDropdownPosition).
+ * @param {'top'|'bottom'} [props.direction='bottom'] - Opening direction (from useDropdownPosition). Ignored with `autoPosition`.
+ * @param {'start'|'center'|'end'} [props.placement='start'] - Horizontal alignment (from useDropdownPosition). Ignored with `autoPosition`.
+ * @param {boolean} [props.autoPosition=false] - **Dropdown only.** Resolve `direction` and `placement` from the anchor at the opening, on the estimated panel size.
+ * @param {number} [props.panelWidth=288] - With `autoPosition` : the estimated panel width, in px.
+ * @param {number} [props.panelHeight=360] - With `autoPosition` : the estimated FULL panel height, in px — its content loaded. An over-estimate flips it for nothing.
  * @param {string} [props.panelClassName] - Extra classes for the panel.
  * @param {React.ReactNode} [props.title] - **Full-screen only.** Heading of the panel, beside the close button.
  * @param {string} [props.closeLabel] - Close button label. Defaults to the i18n `close` key read at `path`, then `'Close'`.
@@ -89,6 +104,9 @@ const Popover =
     display = RESPONSIVE ,
     direction = 'bottom' ,
     placement = 'start' ,
+    autoPosition = false ,
+    panelWidth   = 288 ,
+    panelHeight  = 360 ,
     panelClassName ,
     closeLabel ,
     fullScreen = false ,
@@ -179,10 +197,15 @@ const Popover =
         const vw   = window.innerWidth ;
         const vh   = window.innerHeight ;
 
-        let top = direction === 'top' ? rect.top - GAP - ph : rect.bottom + GAP ;
-        let left = placement === 'end'
+        // The side is judged on the ESTIMATED panel ; the clamp below on the real one.
+        const side = autoPosition
+            ? resolveDropdownPosition( rect , { panelWidth , panelHeight , viewportWidth : vw , viewportHeight : vh } )
+            : { direction , placement } ;
+
+        let top = side.direction === 'top' ? rect.top - GAP - ph : rect.bottom + GAP ;
+        let left = side.placement === 'end'
             ? rect.right - pw
-            : placement === 'center'
+            : side.placement === 'center'
                 ? rect.left + rect.width / 2 - pw / 2
                 : rect.left ;
 
@@ -191,7 +214,7 @@ const Popover =
 
         setCoords({ top , left }) ;
     }
-    , [ isOpen , asModal , anchorRef , direction , placement , panel ] ) ;
+    , [ isOpen , asModal , anchorRef , direction , placement , autoPosition , panelWidth , panelHeight , panel ] ) ;
 
     // ---- Dismiss : outside click, Escape, scroll / resize (dropdown only).
     useEffect( () =>
@@ -404,7 +427,6 @@ const Popover =
                                     type       = "button"
                                     className  = "btn btn-ghost btn-sm btn-square"
                                     onClick    = { onClose }
-                                    title      = { closeText }
                                     aria-label = { closeText }
                                 >
                                     <span aria-hidden="true" className="text-lg leading-none">×</span>
