@@ -1,6 +1,6 @@
 'use client' ;
 
-import { useState } from 'react' ;
+import { useEffect , useRef , useState } from 'react' ;
 
 import Badge     from '@/components/Badge' ;
 import Button    from '@/components/Button' ;
@@ -208,14 +208,30 @@ let mountSequence = 0 ;
 
 /**
  * Shows in which order its panel was first rendered — the only way to see `lazy` work.
+ *
+ * 🚨 **The number is taken in an effect, not while rendering.** Counting in a
+ * `useState` initializer is a side effect in the render : the server counts for
+ * its request and the client starts over, so the two texts differ and React
+ * throws the server render away (hydration mismatch) ; StrictMode, which runs
+ * the initializer twice, was also spending two numbers per panel. The ref keeps
+ * the first number through StrictMode's double effect ; « reset » works
+ * because the `key` above remounts the panels.
  */
 const MountStamp = ({ name }) =>
 {
-    const [ order ] = useState( () => ++mountSequence ) ;
+    const [ order , setOrder ] = useState( null ) ;
+
+    const taken = useRef( null ) ;
+
+    useEffect( () =>
+    {
+        if ( taken.current === null ) { taken.current = ++mountSequence ; }
+        setOrder( taken.current ) ;
+    } , [] ) ;
 
     return (
         <div className="p-4">
-            <Badge color="accent">{ name } — rendu n° { order }</Badge>
+            <Badge color="accent">{ name } — rendu n° { order ?? '—' }</Badge>
         </div>
     ) ;
 } ;

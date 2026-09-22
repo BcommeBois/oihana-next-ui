@@ -14,6 +14,16 @@
  * `menu-disabled` for a disabled one, and `menu-title` for a section
  * heading.
  *
+ * **Two ways to head a group of rows.** A `title` is a bare `menu-title` row
+ * among its siblings — right for a wide panel, where sections run the full
+ * width and follow one another. A `section` puts its heading AND its rows in
+ * ONE `<li>`, the rows in a nested `<ul>` : daisyUI indents them and draws a
+ * guide beside them, so inside a narrow menu a section stays told apart from
+ * the rows that follow it — which a flat heading does not.
+ *
+ * A row may carry a `count`, a small badge at its end, formatted through
+ * `hooks/useNumberFormat`.
+ *
  * Unlike the bespoke `LangDropDown` / `DisplayDropDown` (which render a
  * `card` panel of buttons), this one is a reusable menu-in-a-dropdown.
  *
@@ -33,6 +43,18 @@
  *         { id: 'sep' , type: 'divider' } ,
  *         { id: 'del' , label: 'Supprimer' , onClick: handleDelete , disabled: true } ,
  *     ]}
+ *
+ * // A section : its heading and its rows share one <li>, the rows nested.
+ * <Dropdown
+ *     label = "Reports"
+ *     items = {[
+ *         { id : 'daily' , label : 'Daily' , href : '/reports/daily' , count : 12 } ,
+ *         { id : 'exports' , type : 'section' , label : 'Exports' , items : [
+ *             { id : 'csv' , label : 'CSV' , href : '/reports/csv' } ,
+ *             { id : 'pdf' , label : 'PDF' , href : '/reports/pdf' } ,
+ *         ] } ,
+ *     ]}
+ * />
  *     placement = "end"
  * />
  * ```
@@ -41,6 +63,8 @@
 import { useEffect , useRef , useState } from 'react' ;
 
 import NextLink from 'next/link' ;
+
+import useNumberFormat from '../../hooks/useNumberFormat' ;
 
 import cn                    from '../../themes/helpers/cn' ;
 import getDropdownClassNames from '../../themes/components/dropdown' ;
@@ -62,8 +86,10 @@ const DIRECTION_OFFSET =
 /**
  * @typedef {Object} DropdownItem
  * @property {string} [id] - Stable key.
- * @property {'item'|'divider'|'title'} [type='item'] - Item kind.
+ * @property {'item'|'divider'|'title'|'section'} [type='item'] - Item kind. A `section` is a heading over its own `items`, nested.
  * @property {React.ReactNode} [label] - Row text.
+ * @property {number} [count] - A small badge at the end of the row.
+ * @property {DropdownItem[]} [items] - A `section`'s rows.
  * @property {React.ReactNode} [icon] - Leading icon element.
  * @property {string} [href] - When set, the row is a `next/link`.
  * @property {boolean} [native=false] - With `href`, render a native `<a>` instead of a `next/link` : no prefetch, and a full page load. For a route that ACTS rather than shows — a sign-out, which a prefetch would trigger on its own.
@@ -118,6 +144,8 @@ const Dropdown =
 {
     const [ openState , setOpenState ] = useState( false ) ;
     const manualRef                    = useRef( null ) ;
+
+    const { formatNumber } = useNumberFormat() ;
 
     const controlled = openProp !== undefined ;
     const open       = controlled ? !!openProp : openState ;
@@ -246,7 +274,7 @@ const Dropdown =
 
     const renderItem = ( item , index ) =>
     {
-        const { id , type = 'item' , label : itemLabel , icon , href , native = false , onClick , active , disabled , className : itemClassName } = item ;
+        const { id , type = 'item' , label : itemLabel , icon , href , native = false , onClick , active , disabled , count , items : sectionItems , className : itemClassName } = item ;
 
         const key = id ?? `item-${ index }` ;
 
@@ -271,6 +299,23 @@ const Dropdown =
             ) ;
         }
 
+        if ( type === 'section' )
+        {
+            return (
+                <li key={ key } className={ itemClassName }>
+                    <h2 className="menu-title">
+                        { icon
+                            ? <span className="flex flex-row items-center gap-2">{ icon }{ itemLabel }</span>
+                            : itemLabel
+                        }
+                    </h2>
+                    <ul>
+                        { ( sectionItems ?? [] ).map( renderItem ) }
+                    </ul>
+                </li>
+            ) ;
+        }
+
         const handleClick = e =>
         {
             onClick?.( e ) ;
@@ -283,13 +328,22 @@ const Dropdown =
 
         const rowClasses = cn( active && 'menu-active' , itemClassName ) ;
 
-        const content =
-        (
-            <>
-                { icon }
-                { itemLabel }
-            </>
-        ) ;
+        const content = typeof count === 'number'
+            ? (
+                <>
+                    { icon }
+                    <span className="flex-1">{ itemLabel }</span>
+                    <span className="badge badge-ghost badge-soft badge-xs tabular-nums">
+                        { formatNumber( count , { maximumFractionDigits : 0 } ) }
+                    </span>
+                </>
+            )
+            : (
+                <>
+                    { icon }
+                    { itemLabel }
+                </>
+            ) ;
 
         return (
             <li key={ key } className={ cn( disabled && 'menu-disabled' ) }>

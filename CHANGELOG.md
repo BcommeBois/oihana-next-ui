@@ -8,6 +8,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🔗 `LinkTabs`, tabs that navigate ; `Dropdown` sections and counts**
+
+- **Reported from a consuming application**, whose two navigating tab bars — one read by path, one by a query parameter — already planned to become one.
+- **New `components/tabs/LinkTabs`** — not `Tabs`, which switches panels : each tab is a link, and the active one is read from the URL.
+  - **By path** (default) : a tab is active on its `href` **and below it**, at a segment boundary (`isPathActive`) ; `exact : true` keeps it to its own page. The reverse of `Link`'s default, on purpose : a record's tab stays lit on its sub-pages.
+  - **By query parameter** : with `paramName`, a tab's `value` sets the parameter (`null` removes it), the others are kept, `resetParams` drops some on every switch, and the page does not scroll. That mode alone reads `useSearchParams` : a bar read by path never asks for a `Suspense` boundary.
+  - `isActive( tab , { pathname , value } )` replaces either reading.
+  - **Groups** : a tab with `children` opens a controlled `Dropdown` styled as a tab, lit whenever one of its destinations is, at any depth, folded back on a route change ; a child with children is a section of the menu.
+  - A sliding underline (`motion`, shared `layoutId`, unique per bar unless `indicatorId` is given) and a `count` badge per tab, through `useNumberFormat`.
+- **`Dropdown`** gains a **`section`** item — a heading and its own `items` in ONE `<li>`, the rows in a nested `<ul>`, which daisyUI indents and guides : in a narrow menu a section stays told apart from the rows that follow, where a flat `title` does not — and a **`count`** badge per row. `title` is unchanged.
+- Lab, « Tabs » page : a bar by path over the lab's own pages, with a group and a section, and a bar by `?statut=` with counts.
+- **Lab fix, deferred-mounting demo** : its stamp counted in a `useState` initializer — a side effect in the render. The server counted for its request and the client started over, so React threw the server render away (hydration mismatch), and StrictMode spent two numbers per panel (3, 5, 7). The number is now taken in an effect, held in a ref : 1, 2, 3, and no mismatch.
+
 ## [0.22.0] — 2026-09-22
 
 **🩹 `DualRange` : lint**
