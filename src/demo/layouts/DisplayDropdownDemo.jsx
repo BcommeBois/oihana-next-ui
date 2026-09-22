@@ -2,6 +2,8 @@
 
 import { useState } from 'react' ;
 
+import { useSearchParams } from 'next/navigation' ;
+
 import Layout, { FLEX, GRID, MASONRY } from '@/components/layouts/Layout' ;
 import Container                       from '@/display/Container' ;
 import DisplayDropDown                 from '@/components/dropDowns/DisplayDropDown' ;
@@ -18,25 +20,25 @@ import { RiLayoutMasonryLine as TbMasonryIcon } from "react-icons/ri";
 
 const ITEMS =
 [
-    { id : 1 , title : 'Abrasif STF D125 P120'  , tall : false } ,
-    { id : 2 , title : 'Abrasif STF D150 P80'   , tall : true  } ,
-    { id : 3 , title : 'Adhésif Delta Inside'    , tall : false } ,
-    { id : 4 , title : 'Adaptateur AD-3/8 FF'    , tall : false } ,
-    { id : 5 , title : 'Abrasif Wing Grain 120'  , tall : true  } ,
-    { id : 6 , title : 'Adheflex 295 Dispenser'  , tall : false } ,
+    { id : 1 , title : 'Aurore boréale'      , tall : false } ,
+    { id : 2 , title : 'Dune au crépuscule'  , tall : true  } ,
+    { id : 3 , title : 'Ruelle sous la pluie', tall : false } ,
+    { id : 4 , title : 'Pont de fer'         , tall : false } ,
+    { id : 5 , title : 'Forêt de brume'      , tall : true  } ,
+    { id : 6 , title : 'Phare au matin'      , tall : false } ,
 ] ;
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
 /**
- * Fake product card.
+ * Fake gallery card.
  */
 const DemoItem = ({ title , tall = false }) =>
 (
     <div className={ `bg-base-300 border border-base-content/10 rounded-lg p-4 flex flex-col gap-1 ${ tall ? 'pb-12' : '' }` }>
         <div className="w-full aspect-video bg-accent/20 rounded mb-2" />
         <p className="font-semibold text-sm">{ title }</p>
-        <p className="text-xs text-base-content/50">Festool — Libre service</p>
+        <p className="text-xs text-base-content/50">Galerie — 1920 × 1080</p>
     </div>
 ) ;
 
@@ -117,6 +119,26 @@ const AutoCell = ({ label , justify , align , value , onChange , computed }) =>
         </div>
     </div>
 ) ;
+
+/**
+ * The self-driving dropdown : it writes `?display=` and remembers the mode.
+ *
+ * `value` is read back from the URL, which is what a server-rendered page does
+ * with its own search parameters.
+ */
+const UrlCell = () =>
+{
+    const searchParams = useSearchParams() ;
+
+    const value = searchParams.get( 'display' ) ?? 'flex' ;
+
+    return (
+        <div className="flex items-center gap-4">
+            <DisplayDropDown autoPosition pageKey="lab-display" value={ value } />
+            <span className="badge badge-neutral font-mono text-xs">{ `?display=${ searchParams.get( 'display' ) ?? '—' }` }</span>
+        </div>
+    ) ;
+} ;
 
 // ─── Demo ─────────────────────────────────────────────────────────────────────
 
@@ -457,6 +479,27 @@ const DisplayDropDownDemo = () =>
                     Les panels haut ouvrent vers le bas, les panels bas ouvrent vers le haut.
                     Les panels gauche/droite s'adaptent selon l'espace horizontal.
                 </p>
+
+            </section>
+
+            <div className="divider" />
+
+            {/* ════════════════════════════════ pageKey ════════════════════════════ */}
+
+            <section className="flex flex-col gap-4">
+
+                <h4 className="text-base font-semibold text-base-content/70 uppercase tracking-wide">
+                    pageKey — il se pilote tout seul
+                </h4>
+
+                <p className="text-xs text-base-content/40">
+                    Avec <span className="font-mono">pageKey</span>, le mode choisi part dans l'URL
+                    (<span className="font-mono">?display=</span>) et reste mémorisé pour cette page :
+                    rechargez, le mode revient. Le <span className="font-mono">value</span> est lu de
+                    l'URL ici, comme le ferait une page rendue côté serveur.
+                </p>
+
+                <UrlCell />
 
             </section>
 

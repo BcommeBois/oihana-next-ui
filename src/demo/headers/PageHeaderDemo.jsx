@@ -398,6 +398,100 @@ const PageHeaderDemo = () =>
                 </div>
             </div>
 
+            <Divider />
+
+            {/* icon as an element */}
+            <div className="flex flex-col gap-4">
+                <h3 className="text-xl font-semibold border-b-2 border-primary pb-2">
+                    icon — composant ou élément
+                </h3>
+
+                <p className="text-sm text-base-content/60">
+                    Un Server Component ne peut pas passer un TYPE de composant à un Client Component.
+                    Il rend donc l'icône lui-même et transmet le nœud : <code className="badge badge-xs">icon</code> accepte les deux.
+                </p>
+
+                <div className="bg-base-100 rounded-box p-4 flex flex-col gap-4">
+                    <PageHeader
+                        icon  = { MdFolder }
+                        title = "Composant — icon={ MdFolder }"
+                    />
+                    <PageHeader
+                        icon  = { <MdFolder className="size-5 text-primary" /> }
+                        title = "Élément — icon={ <MdFolder className=… /> }"
+                    />
+                </div>
+
+                <div className="mockup-code text-xs">
+                    <pre data-prefix="1"><code>&lt;PageHeader icon={'{ MdFolder }'} title="…" /&gt;</code></pre>
+                    <pre data-prefix="2"><code>&lt;PageHeader icon={'{ <MdFolder className="size-5 text-primary" /> }'} title="…" /&gt;</code></pre>
+                </div>
+            </div>
+
+            <Divider />
+
+            {/* stackBelow */}
+            <div className="flex flex-col gap-4">
+                <h3 className="text-xl font-semibold border-b-2 border-secondary pb-2">
+                    stackBelow — la zone droite passe à la ligne
+                </h3>
+
+                <p className="text-sm text-base-content/60">
+                    Sous le point de rupture, les actions prennent une ligne à elles. Sans cela, la colonne
+                    du titre — qui peut se réduire à zéro — se plie en quatre lignes autour des boutons au
+                    lieu de les pousser dessous.
+                </p>
+
+                <p className="text-sm text-base-content/60">
+                    Le premier en-tête est réglé sur <code className="badge badge-xs">2xl</code> : il se plie
+                    déjà sur cet écran. Le deuxième garde le défaut <code className="badge badge-xs">sm</code> —
+                    rétrécissez la fenêtre sous 640 px pour le voir faire. Le troisième est à
+                    <code className="badge badge-xs">false</code> : il ne se plie jamais.
+                </p>
+
+                <div className="bg-base-100 rounded-box p-4 flex flex-col gap-6">
+
+                    <PageHeader
+                        icon        = { MdNotifications }
+                        title       = "stackBelow = 2xl"
+                        description = "Un titre assez long pour disputer la place aux boutons de droite."
+                        right       = {
+                            <div className="flex items-center gap-2">
+                                <Button color="ghost"   icon={ MdRefresh } size="sm" />
+                                <Button color="primary" icon={ MdAdd }     size="sm">Ajouter</Button>
+                            </div>
+                        }
+                        stackBelow  = "2xl"
+                    />
+
+                    <PageHeader
+                        icon        = { MdNotifications }
+                        title       = "stackBelow = sm (défaut)"
+                        description = "Un titre assez long pour disputer la place aux boutons de droite."
+                        right       = {
+                            <div className="flex items-center gap-2">
+                                <Button color="ghost"   icon={ MdRefresh } size="sm" />
+                                <Button color="primary" icon={ MdAdd }     size="sm">Ajouter</Button>
+                            </div>
+                        }
+                    />
+
+                    <PageHeader
+                        icon        = { MdNotifications }
+                        title       = "stackBelow = false"
+                        description = "Un titre assez long pour disputer la place aux boutons de droite."
+                        right       = {
+                            <div className="flex items-center gap-2">
+                                <Button color="ghost"   icon={ MdRefresh } size="sm" />
+                                <Button color="primary" icon={ MdAdd }     size="sm">Ajouter</Button>
+                            </div>
+                        }
+                        stackBelow  = { false }
+                    />
+
+                </div>
+            </div>
+
         </Container>
     ) ;
 } ;

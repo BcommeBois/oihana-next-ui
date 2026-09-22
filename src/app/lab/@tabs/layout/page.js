@@ -1,5 +1,7 @@
 'use client' ;
 
+import { Suspense } from 'react' ;
+
 import Page      from '@/display/Page' ;
 import Container from '@/display/Container' ;
 
@@ -23,7 +25,9 @@ const LayoutPage = () =>
 
         <LayoutDemo />
 
-        <DisplayDropdownDemo />
+        <Suspense>
+            <DisplayDropdownDemo />
+        </Suspense>
 
         <CookieDemo />
 

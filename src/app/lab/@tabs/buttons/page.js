@@ -6,6 +6,7 @@ import I18nMetas  from '@/components/i18n/I18nMetas';
 import Page       from '@/display/Page' ;
 import LinkDemo   from '@/demo/links/LinkDemo' ;
 import ActiveLinkDemo from '@/demo/links/ActiveLinkDemo' ;
+import SmartBackLinkDemo from '@/demo/links/SmartBackLinkDemo' ;
 import useI18n    from '@/contexts/locale/useI18n';
 
 export default function ButtonsPage( { path = 'app.lab.buttons' })
@@ -35,6 +36,11 @@ export default function ButtonsPage( { path = 'app.lab.buttons' })
             {/* Active links */}
             <Container maxWidth="max-w-6xl">
                 <ActiveLinkDemo />
+            </Container>
+
+            {/* Smart back link */}
+            <Container maxWidth="max-w-6xl">
+                <SmartBackLinkDemo />
             </Container>
 
             {/* Buttons Showcase */}
