@@ -31,6 +31,11 @@
  * `limit` means there is nothing left. It cannot loop, even when a server's
  * `total` is wrong.
  *
+ * **Back to the top** : `generation` grows each time the list starts over —
+ * the first page of a new search, a new `loader`, a `reload` — never on an
+ * appended page. Hand it to `InfiniteScroll`'s `resetKey` : the viewport
+ * returns to the first row instead of staying mid-list.
+ *
  * **Keys** : `getKey( item )` defaults to `item._key ?? item.id`. A row with no
  * key is kept — it simply cannot be de-duplicated — rather than dropped.
  *
@@ -59,23 +64,24 @@ const defaultGetKey = item => item?._key ?? item?.id ;
  * @param {Function} [options.getKey]            - `( item ) => key`, for the de-duplication. Defaults to `_key`, then `id`.
  *
  * @returns {{
- *   items    : Object[],
- *   total    : number,
- *   loading  : boolean,
- *   hasMore  : boolean,
- *   error    : boolean,
- *   loadMore : () => void,
- *   reload   : () => Promise<boolean>,
- *   retry    : () => void
- * }} `reload` starts over and resolves `true` on success ; `retry` fetches the failed page again.
+ *   items      : Object[],
+ *   total      : number,
+ *   loading    : boolean,
+ *   hasMore    : boolean,
+ *   error      : boolean,
+ *   generation : number,
+ *   loadMore   : () => void,
+ *   reload     : () => Promise<boolean>,
+ *   retry      : () => void
+ * }} `reload` starts over and resolves `true` on success ; `retry` fetches the failed page again ; `generation` grows at each start over.
  *
  * @example
  * ```jsx
  * const loader = useCallback( ( { search , limit , offset } ) => searchPeople( { search , limit , offset } ) , [] ) ;
  *
- * const { items , loading , hasMore , error , loadMore , retry } = usePagedSearch( { loader , search } ) ;
+ * const { items , loading , hasMore , error , generation , loadMore , retry } = usePagedSearch( { loader , search } ) ;
  *
- * <InfiniteScroll hasMore={ hasMore } loading={ loading } onLoadMore={ loadMore }>
+ * <InfiniteScroll hasMore={ hasMore } loading={ loading } onLoadMore={ loadMore } resetKey={ generation } scrollable>
  *     { items.map( item => <Row key={ item._key } item={ item } /> ) }
  * </InfiniteScroll>
  * ```
@@ -90,11 +96,12 @@ const usePagedSearch = (
     getKey     = defaultGetKey ,
 } = {} ) =>
 {
-    const [ items      , setItems        ] = useState( [] ) ;
+    const [ items      , setItems      ] = useState( [] ) ;
     const [ total      , setTotal      ] = useState( 0 ) ;
     const [ loading    , setLoading    ] = useState( false ) ;
     const [ reachedEnd , setReachedEnd ] = useState( false ) ;
     const [ error      , setError      ] = useState( false ) ;
+    const [ generation , setGeneration ] = useState( 0 ) ;
 
     const offsetRef   = useRef( 0 ) ;     // next page offset
     const inflightRef = useRef( false ) ; // synchronous single-flight lock
@@ -147,6 +154,8 @@ const usePagedSearch = (
                 } ) ] ;
             } ) ;
 
+            if ( reset ) { setGeneration( value => value + 1 ) ; } // lands with the new rows
+
             offsetRef.current = offset + list.length ;
             setTotal( typeof count === 'number' ? count : 0 ) ;
             setError( false ) ;
@@ -161,7 +170,7 @@ const usePagedSearch = (
         {
             if ( token === tokenRef.current )
             {
-                if ( reset ) { setItems( [] ) ; setTotal( 0 ) ; }
+                if ( reset ) { setItems( [] ) ; setTotal( 0 ) ; setGeneration( value => value + 1 ) ; }
                 // Stop loading so the sentinel does not hammer a failing page.
                 // The offset was not advanced : `retry` asks for the same page.
                 setError( true ) ;
@@ -221,7 +230,7 @@ const usePagedSearch = (
         run( false ) ;
     } , [ run ] ) ;
 
-    return { items , total , loading , hasMore : !reachedEnd , error , loadMore , reload , retry } ;
+    return { items , total , loading , hasMore : !reachedEnd , error , generation , loadMore , reload , retry } ;
 } ;
 
 export default usePagedSearch ;

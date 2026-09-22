@@ -14,8 +14,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - **New `hooks/usePagedSearch( { loader , search , limit = 30 , debounceMs = 250 , enabled = true , getKey } )`** → `{ items , total , loading , hasMore , error , loadMore , reload , retry }`. It debounces the search, starts over when the search or the `loader` identity changes (a new data set clears the rows at once), appends the next page on `loadMore`, and on a failed page raises `error` and stops — `retry` asks for the same page again.
 - **It solves the double load `useInfiniteScroll` warns about** : a synchronous lock (a second append is skipped, a reset never is), a « latest wins » token, and a de-duplication on append. The end is judged on the page size, never on `total`, so a wrong `total` cannot loop.
 - **`getKey`** defaults to `item._key ?? item.id`, the convention of `MapRoute` and `useMapCluster`. A row with no key is kept, not dropped — the application's version silently lost every keyless row after the first page.
+- **A new search opens on its first results.** The hook returns a `generation` counter that grows each time the list starts over (a new search, a new `loader`, `reload`), never on an appended page. **`InfiniteScroll` takes a `resetKey`** : when it changes, a `scrollable` container scrolls back to its start before the new rows are painted (the newest row in `reverse` mode ; the first render never scrolls). Before, a search typed after scrolling left the list mid-way through the new results.
 - `useInfiniteScroll`'s JSDoc points to it.
-- Lab, infinite scroll page : a fake server of 137 rows, a search, counters of rows, duplicates and calls, and « the server fails » with « Retry ».
+- Lab, infinite scroll page : a fake server of 137 rows, a search, counters of rows, duplicates, calls and start overs, and « the server fails » with « Retry ».
 
 ## [0.21.0] — 2026-09-21
 

@@ -6,7 +6,8 @@
  * A fake server of 137 rows answers after a delay. The counters are the point :
  * « duplicates » must stay at 0 however fast the list is scrolled, StrictMode
  * included. « The server fails » makes the next page throw : the list stops,
- * says so, and « Retry » asks for the same page again.
+ * says so, and « Retry » asks for the same page again. Scroll down, then type :
+ * the list opens on its first results (`resetKey={ generation }`).
  *
  * @module demo/layouts/PagedSearchDemo
  */
@@ -49,7 +50,7 @@ const PagedSearchDemo = () =>
         return { result : matching.slice( offset , offset + limit ) , total : matching.length } ;
     } , [] ) ;
 
-    const { items , total , loading , hasMore , error , loadMore , retry } = usePagedSearch( { loader , search , limit : 20 } ) ;
+    const { items , total , loading , hasMore , error , generation , loadMore , retry } = usePagedSearch( { loader , search , limit : 20 } ) ;
 
     const duplicates = items.length - new Set( items.map( item => item._key ) ).size ;
 
@@ -76,6 +77,7 @@ const PagedSearchDemo = () =>
                     <Badge color="primary">lignes { items.length } / { total }</Badge>
                     <Badge color={ duplicates === 0 ? 'success' : 'error' }>doublons { duplicates }</Badge>
                     <Badge color="neutral">appels { calls }</Badge>
+                    <Badge color="neutral">départs { generation }</Badge>
                 </div>
 
                 <InfiniteScroll
@@ -84,6 +86,7 @@ const PagedSearchDemo = () =>
                     hasMore    = { hasMore }
                     loading    = { loading }
                     onLoadMore = { loadMore }
+                    resetKey   = { generation }
                     scrollable
                 >
                     { items.map( item => <div key={ item._key } className="px-2 py-1 text-sm">{ item.name }</div> ) }

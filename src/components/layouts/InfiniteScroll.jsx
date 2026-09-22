@@ -1,6 +1,6 @@
 'use client' ;
 
-import { useRef } from 'react' ;
+import { useLayoutEffect , useRef } from 'react' ;
 
 import Loading from '../Loading' ;
 
@@ -49,6 +49,13 @@ export const REVERSE_CLASS = 'flex flex-col-reverse' ;
  * indicators. Loading is paused while `loading` is true and stops once
  * `hasMore` becomes false.
  *
+ * **Back to the top** : when `resetKey` changes, a `scrollable` container
+ * returns to its start — the first row, or the newest one in `reverse` mode.
+ * Pass the counter of a list that starts over (`usePagedSearch`'s
+ * `generation`, a search string) : a new search then opens on its first
+ * results instead of mid-list. The first render never scrolls. Without
+ * `scrollable` the page owns the scroll and nothing moves.
+ *
  * @module components/layouts/InfiniteScroll
  *
  * @param {Object} props
@@ -60,6 +67,7 @@ export const REVERSE_CLASS = 'flex flex-col-reverse' ;
  * @param {React.ReactNode}   [props.loader]             - Custom loading indicator (defaults to `<Loading />`).
  * @param {boolean}           [props.loading=false]      - Loading-in-flight state.
  * @param {Function}          [props.onLoadMore]         - Called when the sentinel is reached. Should be stable (`useCallback`).
+ * @param {*}                 [props.resetKey]           - When it changes, a `scrollable` container scrolls back to its start.
  * @param {boolean}           [props.reverse=false]      - Reverse / chat mode : lays children out bottom-to-top (`flex flex-col-reverse`) and loads older items when scrolling up. Children must be ordered newest-first.
  * @param {string}            [props.rootMargin]         - Pre-load distance before the sentinel is reached.
  * @param {boolean}           [props.scrollable=false]   - When true, the container is the scroll viewport and the observer root.
@@ -90,6 +98,18 @@ export const REVERSE_CLASS = 'flex flex-col-reverse' ;
  *     { rows }
  * </InfiniteScroll>
  *
+ * // A searchable list : a new search returns to the first row
+ * <InfiniteScroll
+ *     scrollable
+ *     className="max-h-96"
+ *     hasMore={ hasMore }
+ *     loading={ loading }
+ *     onLoadMore={ loadMore }
+ *     resetKey={ generation }
+ * >
+ *     { rows }
+ * </InfiniteScroll>
+ *
  * // Reverse / chat mode (older messages load when scrolling up).
  * // `flex flex-col-reverse` is applied automatically ; pass messages newest-first.
  * <InfiniteScroll
@@ -114,6 +134,7 @@ const InfiniteScroll =
     loader ,
     loading    = false ,
     onLoadMore ,
+    resetKey ,
     reverse    = false ,
     rootMargin ,
     scrollable = false ,
@@ -134,6 +155,21 @@ const InfiniteScroll =
         rootMargin ,
         threshold ,
     }) ;
+
+    // --------- Back to the top
+    //
+    // A layout effect : the container moves before the new rows are painted.
+    // `scrollTop = 0` is the start in both directions — in `reverse` mode the
+    // flex-col-reverse container has its origin at the bottom, the newest row.
+
+    const resetKeyRef = useRef( resetKey ) ;
+
+    useLayoutEffect( () =>
+    {
+        if ( Object.is( resetKeyRef.current , resetKey ) ) { return ; }
+        resetKeyRef.current = resetKey ;
+        if ( scrollable && rootRef.current ) { rootRef.current.scrollTop = 0 ; }
+    } , [ resetKey , scrollable ] ) ;
 
     // --------- Building blocks
 
