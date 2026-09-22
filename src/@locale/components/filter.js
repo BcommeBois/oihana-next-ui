@@ -8,7 +8,8 @@
  * names an option that has no name : `{0}` is its id.
  *
  * `clearFilters` and `remove` are read by `ClearFiltersChip` and `FilterChip` ;
- * the `settings` block by `FilterSettingsButton`.
+ * `min` and `max` by `RangeFilterPanel` ; the `settings` block by
+ * `FilterSettingsButton` ; the `period` block by `PeriodFilterPanel`.
  */
 const filter =
 {
@@ -21,11 +22,33 @@ const filter =
         close     : 'Fermer' ,
         empty     : 'Aucune option.' ,
         loadError : 'Le chargement a échoué.' ,
+        max       : 'Max' ,
+        min       : 'Min' ,
         remove    : 'Retirer le filtre' ,
         retry     : 'Réessayer' ,
         search    : 'Rechercher…' ,
         title     : 'Filtrer' ,
         unknown   : '{0}' ,
+
+        period :
+        {
+            clearField   : 'Effacer la date' ,
+            from         : 'Du' ,
+            hint         : 'Laissez une borne vide pour une période ouverte.' ,
+            inverted     : 'La date de fin précède la date de début.' ,
+            openCalendar : 'Ouvrir le calendrier' ,
+            title        : 'Filtrer par période' ,
+            to           : 'Au' ,
+
+            presets :
+            {
+                last30    : '30 derniers jours' ,
+                lastMonth : 'Le mois dernier' ,
+                lastYear  : 'L’année dernière' ,
+                quarter   : 'Ce trimestre' ,
+                year      : 'Cette année' ,
+            } ,
+        } ,
 
         settings :
         {
@@ -51,11 +74,33 @@ const filter =
         close     : 'Close' ,
         empty     : 'No option.' ,
         loadError : 'Failed to load.' ,
+        max       : 'Max' ,
+        min       : 'Min' ,
         remove    : 'Remove filter' ,
         retry     : 'Retry' ,
         search    : 'Search…' ,
         title     : 'Filter' ,
         unknown   : '{0}' ,
+
+        period :
+        {
+            clearField   : 'Clear date' ,
+            from         : 'From' ,
+            hint         : 'Leave one end empty for an open-ended period.' ,
+            inverted     : 'The end date precedes the start date.' ,
+            openCalendar : 'Open calendar' ,
+            title        : 'Filter by period' ,
+            to           : 'To' ,
+
+            presets :
+            {
+                last30    : 'Last 30 days' ,
+                lastMonth : 'Last month' ,
+                lastYear  : 'Last year' ,
+                quarter   : 'This quarter' ,
+                year      : 'This year' ,
+            } ,
+        } ,
 
         settings :
         {

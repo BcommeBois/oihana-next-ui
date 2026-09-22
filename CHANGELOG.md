@@ -8,6 +8,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**📏 Open ranges : `DualRangeInput`, `RangeFilterPanel`, `PeriodFilterPanel`**
+
+- **Reported from a consuming application**, whose amount, measure and period criteria each wrote their open-ended ranges by hand.
+- **New `components/ranges/DualRangeInput`** : two number fields and a `DualRange`, where an EMPTY field means « no bound » — « from 50 », « up to 200 », « between the two ». The fields are the source of truth, kept as text by the caller so typing stays fluid. A handle pushed to an extreme clears that bound ; a value typed beyond the slider's ceiling is kept, the handle pinned — the ceiling is a convenience, never a cap. The slider writes clean stepped figures (`digits`). Two layouts : a row of two fields, or a labelled row with its `unit`, compact fields and a `note`.
+- **New `helpers/numbers/parseBound( raw , { floor , includeFloor } )`** — the text of a range field to a number or `null` ; `includeFloor : false` for a measure where 0 means « not filled in » — and **`helpers/numbers/niceCeil`**, a data maximum rounded up to two significant figures for a slider's ceiling (`4200.49 → 4300`).
+- **New `components/filters/RangeFilterPanel`**, on `AnchoredPanel` : one `DualRangeInput` per field over a draft rewound at each opening ; « Apply » emits the ranges that carry a bound. One field reads « Clear / Apply », several « Apply (n) ».
+- **New `components/filters/PeriodFilterPanel`** : five shortcuts applied on the click (computed at click time), then « From » / « To » as two `InputDatePicker`, each optional — `InputDateRangePicker` only parses when both dates are valid, so it cannot say « from 1 July ». An inverted window applies and is flagged. It emits ISO days built from LOCAL parts, through the new **`helpers/date/toIsoDay`**.
+- `components.filter` gains `min`, `max` and a `period` block.
+- Lab, « Filters » page : « Price » (one field, 0 a real bound), « Format » (three image measures, decimals), « Date » (shortcuts, open ends).
+
 **🏷️ The filter bar's last pieces : `FilterChip`, `ClearFiltersChip`, `FilterSettingsButton`, `useFilterParams`**
 
 - **Reported from a consuming application**, whose five filter bars wrote their active-filter pills by hand (21 copies) and shared a URL + cookie hook of their own.

@@ -33,6 +33,8 @@ export const FILTER_LABELS =
     close     : 'Close' ,
     empty     : 'No option.' ,
     loadError : 'Failed to load.' ,
+    max       : 'Max' ,
+    min       : 'Min' ,
     remove    : 'Remove filter' ,
     retry     : 'Retry' ,
     search    : 'Search…' ,

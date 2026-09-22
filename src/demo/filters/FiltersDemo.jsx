@@ -18,6 +18,12 @@
  *  - « Taille » — `ChecklistPanel` whose `header` (a fit) belongs to
  *    the same draft : « Effacer » resets it, closing without applying forgets it.
  *
+ *  - « Prix » — `RangeFilterPanel`, one field, open bounds, `0` a real bound ;
+ *  - « Format » — `RangeFilterPanel`, three fields of an image with units and
+ *    decimals, `0` meaning « not filled in » ;
+ *  - « Date » — `PeriodFilterPanel` : shortcuts, and « From » / « To » each
+ *    optional.
+ *
  * Under the bar, one `FilterChip` per applied value — the label reopens the
  * criterion, the « × » clears it — and `ClearFiltersChip` from two on. The
  * `FilterSettingsButton` at the head of the bar hides criteria ; an applied one
@@ -32,16 +38,20 @@
 
 import { useCallback , useRef , useState } from 'react' ;
 
-import { MdBookmark , MdLabel , MdPalette , MdPeople , MdPublic , MdStraighten } from 'react-icons/md' ;
+import { MdAspectRatio , MdBookmark , MdEvent , MdEuro , MdLabel , MdPalette , MdPeople , MdPublic , MdStraighten } from 'react-icons/md' ;
 
 import ChecklistPanel       from '@/components/filters/ChecklistPanel' ;
 import ClearFiltersChip     from '@/components/filters/ClearFiltersChip' ;
 import FilterChip           from '@/components/filters/FilterChip' ;
 import FilterSettingsButton from '@/components/filters/FilterSettingsButton' ;
 import OptionFilterPicker from '@/components/filters/OptionFilterPicker' ;
+import PeriodFilterPanel  from '@/components/filters/PeriodFilterPanel' ;
+import RangeFilterPanel   from '@/components/filters/RangeFilterPanel' ;
 import RemoteFilterPicker from '@/components/filters/RemoteFilterPicker' ;
 
 import { resolveVisibleFilters } from '@/helpers/filters/hiddenFilters' ;
+
+import niceCeil from '@/helpers/numbers/niceCeil' ;
 
 import cn from '@/themes/helpers/cn' ;
 
@@ -127,6 +137,36 @@ const FITS = [ { id : 'any' , name : 'Toutes' } , { id : 'slim' , name : 'Ajust�
 const ANY            = 'any' ;
 
 /**
+ * The highest fake price : the slider's ceiling is taken from it.
+ * @type {number}
+ */
+const HIGHEST_PRICE = 4200.49 ;
+
+/**
+ * The fields of « Format », an image's : measures where 0 means « not filled in ».
+ * @type {Object[]}
+ */
+const FORMAT_FIELDS =
+[
+    { id : 'width'  , label : 'Largeur' , unit : 'px' , max : 8000 , step : 10  , includeFloor : false , note : '412 images renseignées' } ,
+    { id : 'height' , label : 'Hauteur' , unit : 'px' , max : 6000 , step : 10  , includeFloor : false , note : '398 images renseignées' } ,
+    { id : 'size'   , label : 'Poids'   , unit : 'Mo' , max : 25   , step : 0.1 , includeFloor : false , note : '377 images renseignées' } ,
+] ;
+
+/**
+ * A range → its chip text : « 50 – 200 », « ≥ 50 », « ≤ 200 ».
+ *
+ * @param {{ min : ?number , max : ?number }} range
+ * @param {string} [unit]
+ * @returns {string}
+ */
+const rangeText = ( { min , max } , unit = '' ) =>
+{
+    const text = min != null && max != null ? `${ min } – ${ max }` : min != null ? `≥ ${ min }` : `≤ ${ max }` ;
+    return unit ? `${ text } ${ unit }` : text ;
+} ;
+
+/**
  * How long the fake server takes, in milliseconds.
  * @type {number}
  */
@@ -149,6 +189,13 @@ const FiltersDemo = () =>
     const [ sizes    , setSizes    ] = useState( [] ) ;
     const [ fit      , setFit      ] = useState( ANY ) ;
     const [ hidden   , setHidden   ] = useState( [] ) ;
+    const [ price    , setPrice    ] = useState( null ) ;
+    const [ format   , setFormat   ] = useState( {} ) ;
+    const [ period   , setPeriod   ] = useState( { from : null , to : null } ) ;
+
+    const priceRef  = useRef( null ) ;
+    const formatRef = useRef( null ) ;
+    const periodRef = useRef( null ) ;
     const [ draftFit , setDraftFit ] = useState( ANY ) ;
 
     const statusRef = useRef( null ) ;
@@ -179,6 +226,9 @@ const FiltersDemo = () =>
         status  : () => setStatuses( [] ) ,
         label   : () => setTags( [] ) ,
         size    : () => { setSizes( [] ) ; setFit( ANY ) ; } ,
+        price   : () => setPrice( null ) ,
+        format  : () => setFormat( {} ) ,
+        period  : () => setPeriod( { from : null , to : null } ) ,
     } ;
 
     const criteria =
@@ -189,6 +239,9 @@ const FiltersDemo = () =>
         { id : 'status'  , label : 'Statut'    , icon : MdBookmark   , active : statuses.length > 0 } ,
         { id : 'label'   , label : 'Étiquette' , icon : MdLabel      , active : tags.length > 0 } ,
         { id : 'size'    , label : 'Taille'    , icon : MdStraighten , active : sizes.length > 0 || fit !== ANY } ,
+        { id : 'price'   , label : 'Prix'      , icon : MdEuro        , active : !!price } ,
+        { id : 'format'  , label : 'Format'    , icon : MdAspectRatio , active : Object.keys( format ).length > 0 } ,
+        { id : 'period'  , label : 'Date'      , icon : MdEvent       , active : !!( period.from || period.to ) } ,
     ] ;
 
     const active  = criteria.filter( item => item.active ).map( item => item.id ) ;
@@ -205,6 +258,9 @@ const FiltersDemo = () =>
         ...statuses.map( id => ( { key : `status:${ id }` , label : nameOf( STATUSES , id ) , color : STATUSES.find( item => item.id === id )?.color , count : STATUSES.find( item => item.id === id )?.count , onOpen : () => setOpen( 'status' ) , onClear : () => setStatuses( list => list.filter( item => item !== id ) ) } ) ) ,
         ...tags.map( id => ( { key : `label:${ id }` , label : id === NO_LABEL ? 'Sans étiquette' : nameOf( LABELS , id ) , icon : MdLabel , onOpen : () => setOpen( 'label' ) , onClear : () => setTags( list => list.filter( item => item !== id ) ) } ) ) ,
         ...sizes.map( id => ( { key : `size:${ id }` , label : nameOf( SIZES , id ) , icon : MdStraighten , onOpen : () => setOpen( 'size' ) , onClear : () => setSizes( list => list.filter( item => item !== id ) ) } ) ) ,
+        ...( price ? [ { key : 'price' , label : rangeText( price , '€' ) , icon : MdEuro , onOpen : () => setOpen( 'price' ) , onClear : clearers.price } ] : [] ) ,
+        ...FORMAT_FIELDS.filter( field => format[ field.id ] ).map( field => ( { key : `format:${ field.id }` , label : `${ field.label } ${ rangeText( format[ field.id ] , field.unit ) }` , icon : MdAspectRatio , onOpen : () => setOpen( 'format' ) , onClear : () => setFormat( ( { [ field.id ] : _ , ...rest } ) => rest ) } ) ) ,
+        ...( period.from || period.to ? [ { key : 'period' , label : period.from && period.to ? `${ period.from } → ${ period.to }` : period.from ? `depuis ${ period.from }` : `jusqu’au ${ period.to }` , icon : MdEvent , onOpen : () => setOpen( 'period' ) , onClear : clearers.period } ] : [] ) ,
         ...( fit !== ANY ? [ { key : `fit:${ fit }` , label : FITS.find( item => item.id === fit )?.name , icon : MdStraighten , onOpen : () => setOpen( 'size' ) , onClear : () => setFit( ANY ) } ] : [] ) ,
     ] ;
 
@@ -241,6 +297,9 @@ const FiltersDemo = () =>
                     { shows( 'member' )  && trigger( 'member'  , memberRef  , 'Membre' , !!member ) }
                     { shows( 'status' )  && trigger( 'status'  , statusRef  , statuses.length > 0 ? `Statut · ${ statuses.length }` : 'Statut' , statuses.length > 0 ) }
                     { shows( 'label' )   && trigger( 'label'   , labelRef   , tags.length > 0 ? `Étiquette · ${ tags.length }` : 'Étiquette' , tags.length > 0 ) }
+                    { shows( 'price' )   && trigger( 'price'   , priceRef   , 'Prix' , !!price ) }
+                    { shows( 'format' )  && trigger( 'format'  , formatRef  , Object.keys( format ).length > 0 ? `Format · ${ Object.keys( format ).length }` : 'Format' , Object.keys( format ).length > 0 ) }
+                    { shows( 'period' )  && trigger( 'period'  , periodRef  , 'Date' , !!( period.from || period.to ) ) }
                     { shows( 'size' )    && trigger( 'size'    , sizeRef    , sizes.length > 0 || fit !== ANY ? `Taille · ${ sizes.length }` : 'Taille' , sizes.length > 0 || fit !== ANY ) }
                 </div>
 
@@ -271,7 +330,7 @@ const FiltersDemo = () =>
                 </label>
 
                 <code className="rounded-box bg-base-100 p-2 text-xs">
-                    { JSON.stringify( { colours , country , member , statuses , tags , sizes , fit } ) }
+                    { JSON.stringify( { colours , country , member , statuses , tags , sizes , fit , price , format , period } ) }
                 </code>
 
                 <OptionFilterPicker
@@ -352,6 +411,34 @@ const FiltersDemo = () =>
                     onClear       = { () => setDraftFit( ANY ) }
                     onClose       = { close }
                     onOpen        = { () => setDraftFit( fit ) }
+                />
+
+                <RangeFilterPanel
+                    anchorRef = { priceRef }
+                    fields    = { [ { id : 'price' , max : niceCeil( HIGHEST_PRICE ) , step : 50 } ] }
+                    isOpen    = { open === 'price' }
+                    path      = "demo.filters.price"
+                    selected  = { { price } }
+                    onApply   = { ranges => setPrice( ranges.price ?? null ) }
+                    onClose   = { close }
+                />
+
+                <RangeFilterPanel
+                    anchorRef = { formatRef }
+                    fields    = { FORMAT_FIELDS }
+                    isOpen    = { open === 'format' }
+                    path      = "demo.filters.format"
+                    selected  = { format }
+                    onApply   = { setFormat }
+                    onClose   = { close }
+                />
+
+                <PeriodFilterPanel
+                    anchorRef = { periodRef }
+                    isOpen    = { open === 'period' }
+                    selected  = { period }
+                    onApply   = { setPeriod }
+                    onClose   = { close }
                 />
 
                 <RemoteFilterPicker

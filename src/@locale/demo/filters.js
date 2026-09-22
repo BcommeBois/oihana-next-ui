@@ -38,6 +38,16 @@ const filters =
             title  : 'Étiquette' ,
         } ,
 
+        format :
+        {
+            title : 'Format' ,
+        } ,
+
+        price :
+        {
+            title : 'Prix' ,
+        } ,
+
         size :
         {
             title : 'Taille' ,
@@ -81,6 +91,16 @@ const filters =
             empty  : 'No label.' ,
             search : 'Search a label…' ,
             title  : 'Label' ,
+        } ,
+
+        format :
+        {
+            title : 'Format' ,
+        } ,
+
+        price :
+        {
+            title : 'Price' ,
         } ,
 
         size :
