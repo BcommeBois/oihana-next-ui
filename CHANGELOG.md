@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.22.0] — 2026-09-22
+
 **🩹 `DualRange` : lint**
 
 - The effect that follows a controlled value now lists `isControlled` among its dependencies, and says why it leaves the dragged pair out — a change of the parent's value re-aligns the handles, a drag tick does not. Its `eslint-disable` comment, which Biome does not read, becomes a justified `biome-ignore`. No change of behaviour.
