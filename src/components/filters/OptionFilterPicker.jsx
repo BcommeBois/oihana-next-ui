@@ -8,10 +8,10 @@
  * hold, searched on the server.
  *
  * **Two modes, one control.** Single-select by default — a click applies and
- * closes, there being nothing to batch. `multiple` turns the rows into boxes
- * over a LOCAL draft, committed by an « Apply » footer : « these three
- * options » is one question, and applying on each click would spend three
- * navigations to ask it.
+ * closes, there being nothing to batch. `multiple` hands over to
+ * `ChecklistPanel` with its « All » row : boxes over a LOCAL draft, committed by
+ * an « Apply » footer — « these three options » is one question, and applying on
+ * each click would spend three navigations to ask it.
  *
  * Both surfaces come from `AnchoredPanel` : an anchored dropdown on `md`+, a
  * full-screen sheet below.
@@ -24,16 +24,11 @@
  *   - an « All » row that clears the filter (or empties the draft), hidden while
  *     searching, then one `FilterOption` per option.
  *
- * ⚠️ **A multi-select emits in the OPTIONS' order, never the click order** : two
- * identical selections must produce the same value whatever path was taken to
- * reach them — the same URL, when it lands there.
+ * ⚠️ **A multi-select emits in the OPTIONS' order, never the click order**, and
+ * **a search narrows what is SHOWN, never what is selected** — both held by
+ * `ChecklistPanel`.
  *
- * ⚠️ **A search narrows what is SHOWN, never what is selected** : the draft is
- * committed against the whole list, so searching for a fourth option cannot
- * drop the three already ticked.
- *
- * The search and the draft rewind at each opening : a stale query never leaks
- * in, and a selection abandoned by closing the panel does not come back.
+ * The search rewinds at each opening : a stale query never leaks in.
  *
  * Labels : the criterion's bundle at `path`, over `components.filter` — see
  * `useFilterLabels`.
@@ -47,14 +42,13 @@ import { MdSearch } from 'react-icons/md' ;
 
 import format from 'vegas-js-core/src/strings/fastformat' ;
 
-import AnchoredPanel from '../panels/AnchoredPanel' ;
-import FilterOption , { MULTIPLE , SINGLE } from './FilterOption' ;
-import ModalFooter   from '../modals/ModalFooter' ;
+import AnchoredPanel   from '../panels/AnchoredPanel' ;
+import ChecklistPanel  from './ChecklistPanel' ;
+import FilterOption    from './FilterOption' ;
+import ModalFooter     from '../modals/ModalFooter' ;
 import useFilterLabels from './useFilterLabels' ;
 
 import foldText from '../../helpers/strings/foldText' ;
-
-import cn from '../../themes/helpers/cn' ;
 
 /**
  * @typedef {Object} FilterOptionEntry
@@ -64,39 +58,12 @@ import cn from '../../themes/helpers/cn' ;
  */
 
 /**
- * @param {Object}              props
- * @param {React.RefObject}     props.anchorRef          - The trigger : the dropdown's anchor.
- * @param {string}              [props.countCaption]     - What the numbers count ; omitted, no caption.
- * @param {boolean}             [props.error=false]      - The options failed to load.
- * @param {Function}            [props.fold]             - `( text ) => string`, applied to the query and to each option's name and id. Defaults to `helpers/strings/foldText`.
- * @param {boolean}             props.isOpen             - Whether the panel is open ; owned by the caller.
- * @param {boolean}             [props.loading=false]    - The options are loading.
- * @param {boolean}             [props.multiple=false]   - Draft several options and commit them through the footer.
- * @param {Function}            [props.onApply]          - `multiple` : called with the ids, in the options' order.
- * @param {Function}            props.onClose            - Dismiss the panel.
- * @param {Function}            [props.onReload]         - Retry the options load ; without it, the error has no button.
- * @param {Function}            [props.onSelect]         - `single` : called with the id, or `null` to clear.
- * @param {FilterOptionEntry[]} [props.options=[]]       - The options, in the order to show and to emit.
- * @param {number}              [props.panelHeight]      - Estimated full dropdown height ; defaults to 420, 470 in `multiple` mode (the footer).
- * @param {string}              [props.path]             - The criterion's own i18n bundle.
- * @param {?string}             [props.selectedId='']    - `single` : the applied id.
- * @param {string[]}            [props.selectedIds=[]]   - `multiple` : the applied ids.
+ * The single-select body : a click applies and closes.
  *
- * @example
- * ```jsx
- * <OptionFilterPicker
- *     multiple
- *     anchorRef   = { anchorRef }
- *     isOpen      = { isOpen }
- *     options     = { [ { id : 'red' , name : 'Red' , count : 42 } , … ] }
- *     path        = "app.filters.colour"
- *     selectedIds = { colours }
- *     onApply     = { setColours }
- *     onClose     = { () => setOpen( false ) }
- * />
- * ```
+ * @param {Object} props - See `OptionFilterPicker`.
+ * @returns {React.ReactElement}
  */
-const OptionFilterPicker =
+const SingleOptionFilter =
 ({
     anchorRef ,
     countCaption ,
@@ -104,8 +71,6 @@ const OptionFilterPicker =
     fold     = foldText ,
     isOpen ,
     loading  = false ,
-    multiple = false ,
-    onApply ,
     onClose ,
     onReload ,
     onSelect ,
@@ -113,25 +78,15 @@ const OptionFilterPicker =
     panelHeight ,
     path ,
     selectedId  = '' ,
-    selectedIds = [] ,
 }) =>
 {
     const labels = useFilterLabels( path ) ;
 
     const [ query , setQuery ] = useState( '' ) ;
 
-    // The multi-select draft : ticked but not yet committed. Unused in single
-    // mode, where a click IS the commit.
-    const [ draft , setDraft ] = useState( () => new Set( selectedIds ) ) ;
-
-    // biome-ignore lint/correctness/useExhaustiveDependencies: resets on the open transition only ; `selectedIds` (a fresh array each render) must not retrigger it.
     useEffect( () =>
     {
-        if ( isOpen )
-        {
-            setQuery( '' ) ;
-            setDraft( new Set( selectedIds ) ) ;
-        }
+        if ( isOpen ) { setQuery( '' ) ; }
     } , [ isOpen ] ) ;
 
     const searching = query.trim().length > 0 ;
@@ -155,27 +110,6 @@ const OptionFilterPicker =
         onSelect?.( id ) ;
         onClose?.() ;
     } ;
-
-    const toggle = ( id ) => setDraft( previous =>
-    {
-        const next = new Set( previous ) ;
-
-        if ( next.has( id ) ) { next.delete( id ) ; }
-        else                  { next.add( id ) ; }
-
-        return next ;
-    } ) ;
-
-    // In the OPTIONS' order, read against the WHOLE list : see the module doc.
-    const apply = () =>
-    {
-        onApply?.( options.map( option => option.id ).filter( id => draft.has( id ) ) ) ;
-        onClose?.() ;
-    } ;
-
-    const isChecked    = ( id ) => multiple ? draft.has( id ) : id === selectedId ;
-    const isAllChecked = multiple ? draft.size === 0 : !selectedId ;
-    const mode         = multiple ? MULTIPLE : SINGLE ;
 
     const searchBox = (
         <div className="border-b border-base-300/60 p-2">
@@ -229,10 +163,9 @@ const OptionFilterPicker =
                     { !searching && (
                         <FilterOption
                             muted
-                            checked = { isAllChecked }
+                            checked = { !selectedId }
                             label   = { labels.all }
-                            mode    = { mode }
-                            onClick = { () => multiple ? setDraft( new Set() ) : select( null ) }
+                            onClick = { () => select( null ) }
                         />
                     ) }
 
@@ -241,11 +174,11 @@ const OptionFilterPicker =
                         : visible.map( option => (
                             <FilterOption
                                 key     = { option.id }
-                                checked = { isChecked( option.id ) }
+                                checked = { option.id === selectedId }
+                                color   = { option.color }
                                 count   = { option.count }
                                 label   = { option.name ?? format( labels.unknown , option.id ) }
-                                mode    = { mode }
-                                onClick = { () => multiple ? toggle( option.id ) : select( option.id ) }
+                                onClick = { () => select( option.id ) }
                             />
                         ) )
                     }
@@ -254,42 +187,16 @@ const OptionFilterPicker =
         </>
     ) ;
 
-    // The two buttons of the multiple mode ; single mode has none, only a
-    // « Close » bar on the sheet.
-    const footer = ( { size } ) => (
-        <>
-            <button
-                type      = "button"
-                className = { cn( 'btn btn-ghost' , size ) }
-                disabled  = { draft.size === 0 }
-                onClick   = { () => setDraft( new Set() ) }
-            >
-                { labels.clearAll }
-            </button>
-            <button
-                type      = "button"
-                className = { cn( 'btn btn-primary' , size ) }
-                onClick   = { apply }
-            >
-                { draft.size > 0 ? format( '{0} ({1})' , labels.apply , draft.size ) : labels.apply }
-            </button>
-        </>
-    ) ;
-
     return (
         <AnchoredPanel
             anchorRef   = { anchorRef }
             closeLabel  = { labels.close }
-            footer      = { multiple ? footer : undefined }
             isOpen      = { isOpen }
             onClose     = { onClose }
-            panelHeight = { panelHeight ?? ( multiple ? 470 : 420 ) }
+            panelHeight = { panelHeight ?? 420 }
             panelWidth  = { 288 }
             title       = { labels.title }
-            sheetFooter = { multiple
-                ? undefined
-                : <ModalFooter agree={ labels.close } agreeColor="neutral" size="md" onAgree={ () => onClose?.() } />
-            }
+            sheetFooter = { <ModalFooter agree={ labels.close } agreeColor="neutral" size="md" onAgree={ () => onClose?.() } /> }
         >
             { searchBox }
             { caption }
@@ -297,6 +204,54 @@ const OptionFilterPicker =
         </AnchoredPanel>
     ) ;
 } ;
+
+SingleOptionFilter.displayName = 'SingleOptionFilter' ;
+
+/**
+ * @param {Object}              props
+ * @param {React.RefObject}     props.anchorRef          - The trigger : the dropdown's anchor.
+ * @param {string}              [props.countCaption]     - What the numbers count ; omitted, no caption.
+ * @param {boolean}             [props.error=false]      - The options failed to load.
+ * @param {Function}            [props.fold]             - `( text ) => string`, applied to the query and to each option's name and id. Defaults to `helpers/strings/foldText`.
+ * @param {boolean}             props.isOpen             - Whether the panel is open ; owned by the caller.
+ * @param {boolean}             [props.loading=false]    - The options are loading.
+ * @param {boolean}             [props.multiple=false]   - Draft several options and commit them through the footer (`ChecklistPanel`).
+ * @param {Function}            [props.onApply]          - `multiple` : called with the ids, in the options' order.
+ * @param {Function}            props.onClose            - Dismiss the panel.
+ * @param {Function}            [props.onReload]         - Retry the options load ; without it, the error has no button.
+ * @param {Function}            [props.onSelect]         - `single` : called with the id, or `null` to clear.
+ * @param {FilterOptionEntry[]} [props.options=[]]       - The options, in the order to show and to emit.
+ * @param {number}              [props.panelHeight]      - Estimated full dropdown height ; defaults to 420, 470 in `multiple` mode (the footer).
+ * @param {string}              [props.path]             - The criterion's own i18n bundle.
+ * @param {?string}             [props.selectedId='']    - `single` : the applied id.
+ * @param {string[]}            [props.selectedIds=[]]   - `multiple` : the applied ids.
+ *
+ * @example
+ * ```jsx
+ * <OptionFilterPicker
+ *     multiple
+ *     anchorRef   = { anchorRef }
+ *     isOpen      = { isOpen }
+ *     options     = { [ { id : 'red' , name : 'Red' , count : 42 } , … ] }
+ *     path        = "app.filters.colour"
+ *     selectedIds = { colours }
+ *     onApply     = { setColours }
+ *     onClose     = { () => setOpen( false ) }
+ * />
+ * ```
+ */
+const OptionFilterPicker = ( { multiple = false , onApply , panelHeight , selectedIds = [] , ...rest } ) =>
+    multiple
+        ? (
+            <ChecklistPanel
+                { ...rest }
+                showAll
+                panelHeight = { panelHeight ?? 470 }
+                selectedIds = { selectedIds }
+                onApply     = { onApply }
+            />
+          )
+        : <SingleOptionFilter { ...rest } panelHeight={ panelHeight } /> ;
 
 OptionFilterPicker.displayName = 'OptionFilterPicker' ;
 

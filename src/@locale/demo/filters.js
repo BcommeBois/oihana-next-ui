@@ -30,6 +30,23 @@ const filters =
             title   : 'Membre' ,
             unknown : 'Membre {0}' ,
         } ,
+
+        label :
+        {
+            empty  : 'Aucune étiquette.' ,
+            search : 'Rechercher une étiquette…' ,
+            title  : 'Étiquette' ,
+        } ,
+
+        size :
+        {
+            title : 'Taille' ,
+        } ,
+
+        status :
+        {
+            title : 'Statut' ,
+        } ,
     } ,
 
     en :
@@ -57,6 +74,23 @@ const filters =
             search  : 'Search a member…' ,
             title   : 'Member' ,
             unknown : 'Member {0}' ,
+        } ,
+
+        label :
+        {
+            empty  : 'No label.' ,
+            search : 'Search a label…' ,
+            title  : 'Label' ,
+        } ,
+
+        size :
+        {
+            title : 'Size' ,
+        } ,
+
+        status :
+        {
+            title : 'Status' ,
         } ,
     } ,
 } ;

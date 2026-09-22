@@ -11,6 +11,9 @@
  * interactive element inside a button is invalid HTML — and a second focus
  * stop on every row. In `multiple` mode the row carries `aria-pressed`.
  *
+ * `color` puts a dot before the label — the colour of the badge the same value
+ * wears elsewhere, so the row and the badge read as one thing.
+ *
  * `muted` is the look of the « All » row : italic, dimmed, it resets rather
  * than selects. The count goes through `hooks/useNumberFormat`, never a bare
  * `toLocaleString()`, whose result depends on the environment.
@@ -40,6 +43,7 @@ export const MULTIPLE = 'multiple' ;
  * @param {Object}          props
  * @param {boolean}         [props.checked=false] - The row is selected (or drafted).
  * @param {string}          [props.className]     - Additional class names for the row.
+ * @param {string}          [props.color]         - A CSS colour : a dot before the label.
  * @param {number}          [props.count]         - The number shown on the right ; omitted, nothing is shown.
  * @param {React.ReactNode} props.label           - What the row is.
  * @param {'single'|'multiple'} [props.mode='single'] - The mark : a tick or a box.
@@ -52,7 +56,7 @@ export const MULTIPLE = 'multiple' ;
  * <FilterOption checked={ value === 'red' } count={ 42 } label="Red" onClick={ () => pick( 'red' ) } />
  * ```
  */
-const FilterOption = ( { checked = false , className , count , label , mode = SINGLE , muted = false , onClick } ) =>
+const FilterOption = ( { checked = false , className , color , count , label , mode = SINGLE , muted = false , onClick } ) =>
 {
     const { formatNumber } = useNumberFormat() ;
 
@@ -77,6 +81,14 @@ const FilterOption = ( { checked = false , className , count , label , mode = SI
                     : checked && <MdCheck size={ 16 } className="text-primary" />
                 }
             </span>
+
+            { color && (
+                <span
+                    aria-hidden = "true"
+                    className   = "size-2.5 shrink-0 rounded-full"
+                    style       = { { backgroundColor : color } }
+                />
+            ) }
 
             <span className={ cn( 'min-w-0 flex-1 truncate text-sm' , muted && 'italic text-base-content/70' ) }>
                 { label }

@@ -8,6 +8,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**☑️ `ChecklistPanel` : a filter criterion where several values are picked**
+
+- **Reported from a consuming application**, whose three multi-select criteria wrote the same draft, the same footer and the same counts three times — and did not agree on the order they emitted.
+- **New `components/filters/ChecklistPanel`**, on `AnchoredPanel` : boxes over a LOCAL draft rewound at each opening, a « Clear / Apply (n) » footer.
+  - **It emits in the OPTIONS' order** — `options`, then `extraOptions`, then any applied id neither lists, kept rather than dropped — so two identical selections give the same value, whatever the clicks.
+  - A search (accent-folded, or `fold`) narrows what is shown, never what is selected ; `showSearch` / `searchThreshold` leave it out of a list one reads whole.
+  - `pageSize` shows a long list by slices as it scrolls ; `extraOptions` are pinned under the list and hidden while searching (a « none » value) ; `showAll` adds an « All » row ; `countCaption` names what the numbers count ; `listClassName` caps the list on the dropdown.
+  - **A `header` of the caller's joins the same question** : `extraDirty` keeps « Clear » enabled, `onClear` resets it with the draft, `onOpen` rewinds it at each opening.
+- **`OptionFilterPicker`'s `multiple` mode now runs on `ChecklistPanel`** (with `showAll`) : one footer instead of two. Its search field gains a clear button, and an applied id missing from the options is kept.
+- **`FilterOption` takes `color`** : a dot before the label, the colour of the badge the same value wears elsewhere.
+- Lab, « Filters » page : « Status » (no search, colour dots), « Label » (120 values by slices of 25, « No label » pinned), « Size » (a fit `header` in the same draft).
+
 **🔎 The filter criteria : `OptionFilterPicker`, `RemoteFilterPicker`, `FilterOption`**
 
 - **Reported from a consuming application**, whose filter bars ran on two criteria of its own, already free of any domain rule.
