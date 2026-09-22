@@ -8,6 +8,20 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🎯 The choosing family : `PickerTrigger`, `OptionPickerModal`, `PagedPickerModal`, `PickerOption`**
+
+- **Reported from a consuming application**, where these four already ran without a line of domain code : a form shows what is chosen and a « Change » button, the choosing happens in a modal of its own — an inline list makes a form scroll twice and grow as the results arrive.
+- **New `components/pickers/`** :
+  - `PickerTrigger` — the field : label, the selection on up to three lines with flag chips (or any `content`), a placeholder, `disabled`. The « Change » label hides under `sm` and stays the button's accessible name.
+  - `OptionPickerModal` — options held in hand, searched in memory past `searchThreshold` (8) options, accent-folded, matched on an option's own `search` when it has one ; `fold` replaces the folding with a function of the caller's ; `pinned` options sit above the search and are never filtered.
+  - `PagedPickerModal` — a collection searched on the server and loaded page by page (`usePagedSearch` + `InfiniteScroll`, and back to the top on a new search). `renderTitle`, `renderSubtitle`, `renderAvatar`, `renderRight` draw the row, `getKey` identifies it, `clearLabel` adds a pinned row answering `null`. The count goes through `useNumberFormat`.
+  - `PickerOption` — the radio row of the first, also usable on its own.
+- Both modals are portalled and opened by `useModal( { openOnMount : true } )`, the two mechanics a modal over a modal needs, and close on the click : only the host form writes.
+- **New `themes/components/choiceCard`** : the look of a choosable row — rest, hover, chosen, disabled — for a radio row, a checkbox row or a plain button row alike. The layout stays with the row. It replaces a `Radio` card variant, which would have fitted radio rows only.
+- **New `helpers/strings/foldText`** : for in-memory search — vegas-js-core's `deburr` for the letters with no decomposition (`Ł`, `Ø`, `ß`, `Œ`), then NFD for every remaining mark (`ș`, `ộ`), lower-cased.
+- **Labels** in `components.picker` : `trigger.change`, the `option` and `paged` blocks, and `close` at the root ; every label also has its prop.
+- Lab : a new « Pickers » page — a city picker, a member picker on a fake server (« the server fails » included), a disabled field, a lone `PickerOption` and the four choice card states. The infinite scroll demo's rows are now generic.
+
 **📜 `usePagedSearch` : a searchable list loaded page by page**
 
 - **Reported from a consuming application**, whose seven pickers and filter lists all ran on a hook of its own.

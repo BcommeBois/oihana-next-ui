@@ -73,6 +73,7 @@ import { TbListNumbers              as StepsIcon      } from "react-icons/tb";
 import { FaBarsProgress         as ProgressIcon       } from "react-icons/fa6";
 import { RiProgress5Line        as RadialProgressIcon } from "react-icons/ri";
 import { IoMdRadioButtonOn      as RadioIcon          } from "react-icons/io";
+import { TbHandFinger           as ChoosePickerIcon   } from "react-icons/tb";
 import { LuSlidersHorizontal    as RangeIcon          } from "react-icons/lu";
 import { MdOutlineStarRate      as RatingIcon         } from "react-icons/md";
 import { VscListSelection       as SelectIcon         } from "react-icons/vsc" ;
@@ -191,6 +192,7 @@ const navigation =
                     { id : 'dates'      , type : LINK  , Icon : DatesIcon     , path  : '/lab/dates'      } ,
                     { id : 'times'      , type : LINK  , Icon : TimesIcon     , path  : '/lab/times'      } ,
                     { id : 'inputs'     , type : LINK  , Icon : InputIcon     , path  : '/lab/inputs'     } ,
+                    { id : 'pickers'    , type : LINK  , Icon : ChoosePickerIcon , path  : '/lab/pickers'    } ,
                     { id : 'radios'     , type : LINK  , Icon : RadioIcon     , path  : '/lab/radios'     } ,
                     { id : 'ranges'     , type : LINK  , Icon : RangeIcon     , path  : '/lab/ranges'     } ,
                     { id : 'rating'     , type : LINK  , Icon : RatingIcon    , path  : '/lab/rating'     } ,

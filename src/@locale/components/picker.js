@@ -9,6 +9,10 @@
  * rather than a `Popover`, so it reads `apply` / `cancel` here itself — the
  * picker wording (« Appliquer ») is not the modal one (« OK »).
  *
+ * The choosing family (`PickerTrigger`, `OptionPickerModal`, `PagedPickerModal`)
+ * reads the `trigger`, `option` and `paged` sub-blocks, and `close` at the root
+ * for its modals' footer.
+ *
  * `clear` and `open` at the root are last resorts for a variant that declares
  * neither ; prefer naming the target in the sub-block, an aria-label saying
  * « Effacer » alone tells a screen reader nothing.
@@ -57,6 +61,26 @@ const picker =
             clear    : 'Effacer le mois' ,
             disabled : 'Ce mois n’est pas disponible' ,
             open     : 'Ouvrir le sélecteur de mois' ,
+        } ,
+
+        option :
+        {
+            empty       : 'Aucun résultat pour « {0} »' ,
+            search      : 'Rechercher…' ,
+            searchClear : 'Effacer la recherche' ,
+        } ,
+
+        paged :
+        {
+            empty  : 'Aucun résultat.' ,
+            error  : 'Le chargement a échoué.' ,
+            retry  : 'Réessayer' ,
+            search : 'Rechercher…' ,
+        } ,
+
+        trigger :
+        {
+            change : 'Changer' ,
         } ,
 
         time :
@@ -116,6 +140,26 @@ const picker =
             clear    : 'Clear month' ,
             disabled : 'This month is not available' ,
             open     : 'Open month picker' ,
+        } ,
+
+        option :
+        {
+            empty       : 'No result for « {0} »' ,
+            search      : 'Search…' ,
+            searchClear : 'Clear search' ,
+        } ,
+
+        paged :
+        {
+            empty  : 'No result.' ,
+            error  : 'Loading failed.' ,
+            retry  : 'Retry' ,
+            search : 'Search…' ,
+        } ,
+
+        trigger :
+        {
+            change : 'Change' ,
         } ,
 
         time :

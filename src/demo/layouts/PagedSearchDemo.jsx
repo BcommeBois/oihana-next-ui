@@ -23,7 +23,7 @@ import usePagedSearch from '@/hooks/usePagedSearch' ;
  * The fake data set.
  * @type {Object[]}
  */
-const ROWS = Array.from( { length : 137 } , ( _ , index ) => ( { _key : `k${ index + 1 }` , name : `Essence n° ${ index + 1 }` } ) ) ;
+const ROWS = Array.from( { length : 137 } , ( _ , index ) => ( { _key : `k${ index + 1 }` , name : `Élément n° ${ index + 1 }` } ) ) ;
 
 /**
  * How long the fake server takes, in milliseconds.
