@@ -1,8 +1,11 @@
 'use client' ;
 
-import Page        from '@/display/Page' ;
-import Container   from '@/display/Container' ;
-import FiltersDemo from '@/demo/filters/FiltersDemo' ;
+import { Suspense } from 'react' ;
+
+import Page             from '@/display/Page' ;
+import Container        from '@/display/Container' ;
+import FilterParamsDemo from '@/demo/filters/FilterParamsDemo' ;
+import FiltersDemo      from '@/demo/filters/FiltersDemo' ;
 
 /**
  * Filters showcase page.
@@ -18,6 +21,12 @@ const FiltersPage = () =>
 
         <Container maxWidth="max-w-3xl">
             <FiltersDemo />
+        </Container>
+
+        <Container maxWidth="max-w-3xl">
+            <Suspense>
+                <FilterParamsDemo />
+            </Suspense>
         </Container>
     </Page>
 ) ;

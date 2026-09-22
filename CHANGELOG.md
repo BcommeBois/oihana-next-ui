@@ -8,6 +8,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🏷️ The filter bar's last pieces : `FilterChip`, `ClearFiltersChip`, `FilterSettingsButton`, `useFilterParams`**
+
+- **Reported from a consuming application**, whose five filter bars wrote their active-filter pills by hand (21 copies) and shared a URL + cookie hook of their own.
+- **New `components/filters/FilterChip`** : an applied filter under its bar — an optional colour dot or icon, a label that reopens the criterion (`onOpen`), a count through `useNumberFormat`, a round « × » (`onClear`, named by `clearLabel` or `remove`). The label is free (a path « A › B » passes) ; it pops in with `motions/Jump`, again on each new value when keyed on it, unless `animate={ false }`.
+- **New `components/filters/ClearFiltersChip`** : « Clear all » in the error colour, rendered from TWO applied filters on (`count`) — with one, that chip's own « × » is the same gesture.
+- **New `components/filters/FilterSettingsButton`** : a square trigger (`aria-label` and `Tooltip`) opening a modal with one box per criterion. Unticking an applied criterion clears it, and the modal says how many filters « Apply » will remove before it happens. Labels in the new `components.filter.settings` block.
+- **New `helpers/filters/hiddenFilters`**, pure, for the server render as for the client : `parseHiddenFilters` (never throws on a crafted value), `serializeHiddenFilters`, `isFilterSettingsOffered( count , min = 4 )`, and `resolveVisibleFilters` — below the threshold the preference is ignored, and an applied criterion always shows.
+- **New `hooks/useFilterParams( { pageKey , persist , resetParams = [ 'offset' ] } )`** → `{ pushParam , pushParams , clearParams , writeCookie }` : a criterion written to its cookie AND its URL parameter, the pagination dropped, a push without scrolling (through `busyNavigation` when a provider is there), and a `router.refresh()` when nothing is left selected — the bare URL's server render depends on the cookie just expired. Several entries travel in ONE navigation.
+- `components.filter` gains `clearFilters` and `remove`.
+- Lab, « Filters » page : chips under the bar, « Clear all », a settings button hiding criteria, and a `useFilterParams` card writing to this page's own URL and cookies.
+
 **☑️ `ChecklistPanel` : a filter criterion where several values are picked**
 
 - **Reported from a consuming application**, whose three multi-select criteria wrote the same draft, the same footer and the same counts three times — and did not agree on the order they emitted.

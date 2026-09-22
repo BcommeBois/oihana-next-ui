@@ -18,6 +18,11 @@
  *  - « Taille » — `ChecklistPanel` whose `header` (a fit) belongs to
  *    the same draft : « Effacer » resets it, closing without applying forgets it.
  *
+ * Under the bar, one `FilterChip` per applied value — the label reopens the
+ * criterion, the « × » clears it — and `ClearFiltersChip` from two on. The
+ * `FilterSettingsButton` at the head of the bar hides criteria ; an applied one
+ * stays visible (`resolveVisibleFilters`), and unticking it clears it.
+ *
  * Each criterion names itself through `path` (`demo.filters.*`) and takes the
  * rest from `components.filter`. The line under the bar shows what each one
  * emitted.
@@ -27,9 +32,16 @@
 
 import { useCallback , useRef , useState } from 'react' ;
 
-import ChecklistPanel     from '@/components/filters/ChecklistPanel' ;
+import { MdBookmark , MdLabel , MdPalette , MdPeople , MdPublic , MdStraighten } from 'react-icons/md' ;
+
+import ChecklistPanel       from '@/components/filters/ChecklistPanel' ;
+import ClearFiltersChip     from '@/components/filters/ClearFiltersChip' ;
+import FilterChip           from '@/components/filters/FilterChip' ;
+import FilterSettingsButton from '@/components/filters/FilterSettingsButton' ;
 import OptionFilterPicker from '@/components/filters/OptionFilterPicker' ;
 import RemoteFilterPicker from '@/components/filters/RemoteFilterPicker' ;
+
+import { resolveVisibleFilters } from '@/helpers/filters/hiddenFilters' ;
 
 import cn from '@/themes/helpers/cn' ;
 
@@ -135,7 +147,8 @@ const FiltersDemo = () =>
     const [ statuses , setStatuses ] = useState( [] ) ;
     const [ tags     , setTags     ] = useState( [] ) ;
     const [ sizes    , setSizes    ] = useState( [] ) ;
-    const [ fit    , setFit    ] = useState( ANY ) ;
+    const [ fit      , setFit      ] = useState( ANY ) ;
+    const [ hidden   , setHidden   ] = useState( [] ) ;
     const [ draftFit , setDraftFit ] = useState( ANY ) ;
 
     const statusRef = useRef( null ) ;
@@ -157,6 +170,44 @@ const FiltersDemo = () =>
     const toggle = ( id ) => setOpen( current => ( current === id ? null : id ) ) ;
     const close  = () => setOpen( null ) ;
 
+    // What clears each criterion : shared by its chips, « clear all » and the settings.
+    const clearers =
+    {
+        colour  : () => setColours( [] ) ,
+        country : () => setCountry( null ) ,
+        member  : () => setMember( null ) ,
+        status  : () => setStatuses( [] ) ,
+        label   : () => setTags( [] ) ,
+        size    : () => { setSizes( [] ) ; setFit( ANY ) ; } ,
+    } ;
+
+    const criteria =
+    [
+        { id : 'colour'  , label : 'Couleur'   , icon : MdPalette    , active : colours.length > 0 } ,
+        { id : 'country' , label : 'Pays'      , icon : MdPublic     , active : !!country } ,
+        { id : 'member'  , label : 'Membre'    , icon : MdPeople     , active : !!member } ,
+        { id : 'status'  , label : 'Statut'    , icon : MdBookmark   , active : statuses.length > 0 } ,
+        { id : 'label'   , label : 'Étiquette' , icon : MdLabel      , active : tags.length > 0 } ,
+        { id : 'size'    , label : 'Taille'    , icon : MdStraighten , active : sizes.length > 0 || fit !== ANY } ,
+    ] ;
+
+    const active  = criteria.filter( item => item.active ).map( item => item.id ) ;
+    const visible = resolveVisibleFilters( { offered : criteria.map( item => item.id ) , hidden , active } ) ;
+    const shows   = id => visible.includes( id ) ;
+
+    const nameOf = ( list , id ) => list.find( item => item.id === id )?.name ?? id ;
+
+    const chips =
+    [
+        ...colours.map( id => ( { key : `colour:${ id }` , label : nameOf( COLOURS , id ) , icon : MdPalette , onOpen : () => setOpen( 'colour' ) , onClear : () => setColours( list => list.filter( item => item !== id ) ) } ) ) ,
+        ...( country ? [ { key : `country:${ country }` , label : nameOf( COUNTRIES , country ) , icon : MdPublic , onOpen : () => setOpen( 'country' ) , onClear : clearers.country } ] : [] ) ,
+        ...( member ? [ { key : `member:${ member }` , label : MEMBERS.find( item => item._key === member )?.name , icon : MdPeople , onOpen : () => setOpen( 'member' ) , onClear : clearers.member } ] : [] ) ,
+        ...statuses.map( id => ( { key : `status:${ id }` , label : nameOf( STATUSES , id ) , color : STATUSES.find( item => item.id === id )?.color , count : STATUSES.find( item => item.id === id )?.count , onOpen : () => setOpen( 'status' ) , onClear : () => setStatuses( list => list.filter( item => item !== id ) ) } ) ) ,
+        ...tags.map( id => ( { key : `label:${ id }` , label : id === NO_LABEL ? 'Sans étiquette' : nameOf( LABELS , id ) , icon : MdLabel , onOpen : () => setOpen( 'label' ) , onClear : () => setTags( list => list.filter( item => item !== id ) ) } ) ) ,
+        ...sizes.map( id => ( { key : `size:${ id }` , label : nameOf( SIZES , id ) , icon : MdStraighten , onOpen : () => setOpen( 'size' ) , onClear : () => setSizes( list => list.filter( item => item !== id ) ) } ) ) ,
+        ...( fit !== ANY ? [ { key : `fit:${ fit }` , label : FITS.find( item => item.id === fit )?.name , icon : MdStraighten , onOpen : () => setOpen( 'size' ) , onClear : () => setFit( ANY ) } ] : [] ) ,
+    ] ;
+
     const trigger = ( id , ref , label , active ) => (
         <button
             ref       = { ref }
@@ -175,13 +226,44 @@ const FiltersDemo = () =>
                 <h2 className="card-title">OptionFilterPicker · RemoteFilterPicker</h2>
 
                 <div className="flex flex-wrap items-center gap-2">
-                    { trigger( 'colour'  , colourRef  , colours.length > 0 ? `Couleur · ${ colours.length }` : 'Couleur' , colours.length > 0 ) }
-                    { trigger( 'country' , countryRef , country ? `Pays · ${ COUNTRIES.find( item => item.id === country )?.name }` : 'Pays' , !!country ) }
-                    { trigger( 'member'  , memberRef  , member ? `Membre · ${ MEMBERS.find( item => item._key === member )?.name }` : 'Membre' , !!member ) }
-                    { trigger( 'status'  , statusRef  , statuses.length > 0 ? `Statut · ${ statuses.length }` : 'Statut' , statuses.length > 0 ) }
-                    { trigger( 'label'   , labelRef   , tags.length > 0 ? `Étiquette · ${ tags.length }` : 'Étiquette' , tags.length > 0 ) }
-                    { trigger( 'size'    , sizeRef    , sizes.length > 0 || fit !== ANY ? `Taille · ${ sizes.length }` : 'Taille' , sizes.length > 0 || fit !== ANY ) }
+                    <FilterSettingsButton
+                        active  = { active }
+                        hidden  = { hidden }
+                        options = { criteria }
+                        onApply = { ( hiddenIds , clearedIds ) =>
+                        {
+                            setHidden( hiddenIds ) ;
+                            for ( const id of clearedIds ) { clearers[ id ]?.() ; }
+                        } }
+                    />
+                    { shows( 'colour' )  && trigger( 'colour'  , colourRef  , colours.length > 0 ? `Couleur · ${ colours.length }` : 'Couleur' , colours.length > 0 ) }
+                    { shows( 'country' ) && trigger( 'country' , countryRef , 'Pays' , !!country ) }
+                    { shows( 'member' )  && trigger( 'member'  , memberRef  , 'Membre' , !!member ) }
+                    { shows( 'status' )  && trigger( 'status'  , statusRef  , statuses.length > 0 ? `Statut · ${ statuses.length }` : 'Statut' , statuses.length > 0 ) }
+                    { shows( 'label' )   && trigger( 'label'   , labelRef   , tags.length > 0 ? `Étiquette · ${ tags.length }` : 'Étiquette' , tags.length > 0 ) }
+                    { shows( 'size' )    && trigger( 'size'    , sizeRef    , sizes.length > 0 || fit !== ANY ? `Taille · ${ sizes.length }` : 'Taille' , sizes.length > 0 || fit !== ANY ) }
                 </div>
+
+                { chips.length > 0 && (
+                    <div className="flex flex-wrap items-center gap-1.5">
+                        { chips.map( chip => (
+                            <FilterChip
+                                key     = { chip.key }
+                                color   = { chip.color }
+                                count   = { chip.count }
+                                icon    = { chip.icon }
+                                onClear = { chip.onClear }
+                                onOpen  = { chip.onOpen }
+                            >
+                                { chip.label }
+                            </FilterChip>
+                        ) ) }
+                        <ClearFiltersChip
+                            count   = { chips.length }
+                            onClick = { () => { for ( const clear of Object.values( clearers ) ) { clear() ; } } }
+                        />
+                    </div>
+                ) }
 
                 <label className="flex items-center gap-2 text-sm">
                     <input checked={ fail } className="toggle toggle-sm" onChange={ event => setFail( event.target.checked ) } type="checkbox" />

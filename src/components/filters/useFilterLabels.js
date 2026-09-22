@@ -26,12 +26,14 @@ export const FILTER_LABELS_PATH = 'components.filter' ;
  */
 export const FILTER_LABELS =
 {
-    all       : 'All' ,
-    apply     : 'Apply' ,
-    clearAll  : 'Clear' ,
+    all          : 'All' ,
+    apply        : 'Apply' ,
+    clearAll     : 'Clear' ,
+    clearFilters : 'Clear all' ,
     close     : 'Close' ,
     empty     : 'No option.' ,
     loadError : 'Failed to load.' ,
+    remove    : 'Remove filter' ,
     retry     : 'Retry' ,
     search    : 'Search…' ,
     title     : 'Filter' ,
