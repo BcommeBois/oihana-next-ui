@@ -100,6 +100,7 @@ const DualRange =
 
     // Reconcile external (controlled) changes ; the parent echoes back the pair we
     // just emitted, so this is a no-op during an ongoing drag.
+    // biome-ignore lint/correctness/useExhaustiveDependencies: `raw` is left out on purpose — the effect answers a change of the PARENT's value only ; re-running on each drag tick would snap the handle back to a parent that transforms the value.
     useEffect( () =>
     {
         if ( !isControlled ) return ;
@@ -108,8 +109,7 @@ const DualRange =
         {
             setRaw( sortPair( controlledValue ) ) ;
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [ controlledValue?.[ 0 ], controlledValue?.[ 1 ] ]) ;
+    }, [ controlledValue?.[ 0 ], controlledValue?.[ 1 ], isControlled ]) ;
 
     const commit = ( next ) =>
     {
