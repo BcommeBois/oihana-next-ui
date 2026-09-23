@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.23.0] — 2026-09-23
+
 **🗂️ The item of a list : `LinkCard` and `ItemsLayout`**
 
 - **Reported from a consuming application**, whose list item and list container had grown around two helpers of its own and could not be used outside it.
