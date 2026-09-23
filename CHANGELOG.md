@@ -8,6 +8,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🗂️ The item of a list : `LinkCard` and `ItemsLayout`**
+
+- **Reported from a consuming application**, whose list item and list container had grown around two helpers of its own and could not be used outside it.
+- **New `components/links/LinkCard`** — the card of one item, which is a link when there is somewhere to go. Two shapes chosen by `display` : a row (`flex`) with a rectangular thumbnail stretched to the row's height, or a card (`grid`, `masonry`) with its cover on top. Six slots (`top`, `left`, `before`, `after`, `right`, `cornerTopRight`, the last scoped to the card so it never floats over the page's own furniture), the four corners of the image, `accentColor` as an inline style — never a class built at runtime —, `coverGradient`, `lazyMount` / `priority`, `disabled`, and the entry animation.
+  - 🔑 **It takes an `href`, already resolved.** Turning a record into an address is the application's business — its API, its routes, its identifiers — and a card that went looking for one would drag all of it into the library.
+  - ⚠️ **`navigable={ false }` is how a forbidden destination is said**, rather than a callback returning nothing : the same card without the pointer, the hover and the promise. A caller that has to know whether the card links reads a boolean, instead of comparing a function to a sentinel — an identity test that breaks the first time someone wraps it.
+  - `title` is a title. `titleClassName` replaces the default truncation, `titleExtraClassName` is appended to it.
+- **New `components/layouts/ItemsLayout`** — a collection rendered through one component : the layout, the stagger of the entry animation, the first item loaded eagerly for the largest paint, and the action each row carries (a remove button, or the caller's own `option`). `getKey` names an item, `layoutKey` forces a re-render, `itemProps` carries the context a row needs beyond its own value.
+  - 🚨 **`ItemComponent` is a component, not a `renderItem` function.** A page rendered on the server names the component its rows are made of : a CLIENT component reference crosses the server → client boundary, an arbitrary function does not — a callback would forbid the very callers this exists for.
+  - ⚠️ **`itemPropName` names the prop each item receives its own value under** (`item` by default). An application whose row components already speak of something else says so once, rather than renaming every component it owns.
+- Lab, « Layout » page : one gallery read three ways, a row that is shown but not opened, and the remove button each item carries.
+
 **🧰 The toolbar of a list : `UrlSearch`, `UrlPagination`, `ToolbarDisclosure`**
 
 - **Reported from a consuming application**, where the URL mechanics around `InputSearch` and `Pagination` had been written once and grown into three components every list imported.

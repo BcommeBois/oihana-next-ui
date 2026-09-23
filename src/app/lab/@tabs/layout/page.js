@@ -7,6 +7,7 @@ import Container from '@/display/Container' ;
 
 import LayoutDemo          from '@/demo/layouts/LayoutDemo' ;
 import DisplayDropdownDemo from '@/demo/layouts/DisplayDropdownDemo';
+import ItemsLayoutDemo     from '@/demo/layouts/ItemsLayoutDemo' ;
 import NavbarDemo          from '@/demo/layouts/NavbarDemo' ;
 import CookieDemo          from '@/demo/layouts/CookieDemo' ;
 
@@ -24,6 +25,8 @@ const LayoutPage = () =>
         </Container>
 
         <LayoutDemo />
+
+        <ItemsLayoutDemo />
 
         <Suspense>
             <DisplayDropdownDemo />
