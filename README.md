@@ -187,6 +187,7 @@ This project follows [Semantic Versioning](https://semver.org/) — `MAJOR.MINOR
 ### Prerequisites
 
 - Logged in to npm — `npm whoami` should print your username (otherwise `npm login`).
+- **A second factor the registry accepts** — a publish is refused without one, whatever `npm whoami` says. See [Publishing credentials](#publishing-credentials).
 - A git remote named `origin-ssh` configured (the `release` script pushes there with `--follow-tags`).
 - A clean working tree, ideally — `release:*` will otherwise commit any pending change as `chore: prepare release` before bumping the version.
 
@@ -219,6 +220,71 @@ This project follows [Semantic Versioning](https://semver.org/) — `MAJOR.MINOR
    5. `postversion` script (auto-run by `npm version`) → `release` :
       - `npm publish --access public` publishes to npm,
       - `git push origin-ssh --follow-tags` pushes the commit and the tag to GitHub.
+
+### Publishing credentials
+
+`npm profile get` prints what the account requires. With **`two-factor auth: auth-and-writes`**, every
+publish needs a second factor, and there are two ways to give one.
+
+**A one-time code**, from the authenticator registered on the account :
+
+```bash
+npm publish --access public --otp=123456
+```
+
+The code lives about thirty seconds — read it right before running the command.
+
+**A granular access token that bypasses 2FA**, which is what a publish run from a script needs. On
+npmjs.com → *Access Tokens* → *Generate New Token* → *Granular Access Token* :
+
+- scope it to **this package alone**, permission **Read and write** — never « all packages » ;
+- enable the option letting the token bypass two-factor authentication, or the publish is refused
+  just the same ;
+- set the longest expiry offered, **and write the date down** ;
+- copy the token — it is shown once — into your own `~/.npmrc`, never the repository's :
+
+  ```
+  //registry.npmjs.org/:_authToken=npm_xxxxxxxx
+  ```
+
+🚨 **`npm login` overwrites the token.** Both write the SAME line of `~/.npmrc`, so signing in —
+in any form, web included — replaces a granular token with an ordinary session token, which does
+*not* bypass two-factor authentication. A publish that worked a minute earlier then fails with the
+403 below, and nothing on screen connects the two. Once the token is installed, **do not run
+`npm login` again** unless you mean to put the token back afterwards.
+
+🚨 **A token expires, and the day it does the publish stops with an error that says nothing about
+expiry.** It is the likeliest reason a release that worked last month fails today. Check the token's
+date before looking anywhere else.
+
+⚠️ npm is restricting bypass-2FA tokens — account changes since August 2026, direct publishing from
+January 2027. An authenticator or a passkey is the answer that will still be there afterwards.
+
+### When a publish fails
+
+**The version has already been bumped by then.** `npm version` commits and tags *before* `postversion`
+runs the publish, so a failed publish leaves `package.json`, `src/version.js`, the release commit and
+the tag all correct and only the registry behind. **Do not run `release:*` again** — it would bump a
+second time and leave an orphan tag. Fix the cause, then publish that same version on its own :
+
+```bash
+npm publish --access public
+```
+
+| What npm prints | What it means | What to do |
+|:--|:--|:--|
+| `E404 … Not Found - PUT` | **Not authenticated.** On a publish the registry answers 404 rather than 401, so it never reveals whether a package exists. The message is misleading on purpose. | `npm whoami` — it fails too. Then `npm login`. |
+| `E403 … Two-factor authentication or granular access token with bypass 2fa enabled is required` | Authenticated, but no second factor was given. Either the token expired, or an `npm login` overwrote it. | See [Publishing credentials](#publishing-credentials) — and check that `~/.npmrc` still holds the granular token, not a session one. |
+| `EPRIVATE … This package has been marked as private` | **You are in the wrong repository.** npm checks that flag before uploading anything, so nothing left the machine. | `npm pkg get name` before anything else. Leave the `private` flag where it is — it is a guard, and it just did its job. |
+| `E403 … you do not have permission` | The account does not own the package, or the token's scope leaves it out. | `npm owner ls oihana-next-ui`, then check the token's package list. |
+
+What the registry actually holds — the answer, not the attempt :
+
+```bash
+npm view oihana-next-ui version --prefer-online
+```
+
+`--prefer-online` matters : the local cache will otherwise happily show yesterday's version.
 
 ### Manual / pre-release version
 
