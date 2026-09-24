@@ -8,6 +8,20 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🧩 Quatre pièces d'affichage : `SegmentedControl`, `TableSortHeader`, `RetryState`, `Measure`**
+
+- **Reported from a consuming application**, where none of the four was a component : four shapes written by hand, several times each, and never named.
+- **New `components/SegmentedControl`** — two or three joined buttons choosing HOW the same content is read : a running total or a month by month, a week or a day.
+  - 🔑 **It is not a tab bar, and the difference is not cosmetic.** `Tabs` implements the WAI-ARIA tabs pattern — `role="tablist"`, `aria-selected`, roving focus, panels — which describes a set of PANELS one of which is shown. A segmented control has no panel : it changes a reading in place, and its shape is a group of toggles.
+  - 🚨 **`aria-pressed` is not optional**, and it is why this exists : of the three groups it was gathered from, only one carried it. Without it the group is three ordinary buttons, none of which announces being the chosen one — it works for a reader who can see the highlight and for nobody else.
+- **New `components/layouts/TableSortHeader`** — a column header that sorts, and says so.
+  - 🚨 **`aria-sort` belongs on the `<th>`, never on the button inside it.** WAI-ARIA defines the attribute on `columnheader` and `rowheader` only : on a `<button>` it is simply ignored, so a table looks sorted to anyone who can see the arrow and to nobody else. It was written that way where it came from, eight times in one file, and the component exists to stop it being written again. `ASCENDING` / `DESCENDING` / `NONE` are named rather than spelled out in a nested ternary.
+- **New `components/RetryState`** — what a block shows when what it had to read could not be read. 🔑 **A failure and an absence are different sentences.** Served as an empty list, a failed read says « there is nothing here » — a statement about the subject, invented out of a network problem. Without `onRetry` it re-runs the server components at the SAME url inside a transition, so the page keeps every piece of url state it was carrying ; `showRetry={ false }` says a failure nobody can act on.
+- **New `components/labels/Measure`** — a figure, or the reason it is missing. 🚨 **A dash carries WHY** : between a row showing a figure and the row under it showing a dash, nothing on screen tells « nothing was ever published » from « the application has a bug », and `hint` is what settles it. 🔑 **A missing measure is never a zero** — `0` would claim the measure was taken and came out empty. Only a finite number is written ; `null`, `undefined`, `NaN` and both infinities fall through to `MEASURE_PLACEHOLDER`, exported so a host stops declaring its own em dash.
+- `components.retry` : what a failed read says when the screen names nothing. It deliberately says nothing about WHAT failed — a block knows its subject, the library does not.
+- Lab : « Buttons » gains the group of toggles, across sizes, colours, icons alone and a choice shown but not offered ; « Table » gains a sortable table whose missing measures carry their reason ; « EmptyState » gains the failed read, with its own retry and without one.
+
+
 **📅 Écrire une date : `DateLabel`, `MetaDates`**
 
 - **Reported from a consuming application**, where the date of a record was written by a label taking an object and the name of a field, and where the relative form read the clock during the render.

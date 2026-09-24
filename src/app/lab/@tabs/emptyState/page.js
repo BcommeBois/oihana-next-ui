@@ -1,6 +1,7 @@
 'use client' ;
 
 import EmptyStateDemo from '@/demo/EmptyStateDemo' ;
+import RetryStateDemo from '@/demo/RetryStateDemo' ;
 
 import Container from '@/display/Container' ;
 import Page      from '@/display/Page' ;
@@ -25,6 +26,8 @@ const EmptyStateShowcase = () =>
             </Container>
 
             <EmptyStateDemo />
+
+            <RetryStateDemo />
 
         </Page>
     ) ;

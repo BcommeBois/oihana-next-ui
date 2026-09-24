@@ -5,6 +5,7 @@ import Container from '@/display/Container' ;
 import TableDemo from '@/demo/layouts/TableDemo' ;
 
 import SortableTableDemo from '@/demo/layouts/SortableTableDemo' ;
+import TableSortHeaderDemo from '@/demo/layouts/TableSortHeaderDemo' ;
 
 /**
  * Table showcase page.
@@ -21,6 +22,10 @@ const TablePage = () =>
 
         <Container maxWidth="max-w-6xl">
             <TableDemo />
+        </Container>
+
+        <Container maxWidth="max-w-6xl">
+            <TableSortHeaderDemo />
         </Container>
 
         <Container className="text-center" maxWidth="max-w-4xl">
