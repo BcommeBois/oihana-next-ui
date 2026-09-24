@@ -1,4 +1,5 @@
 import alert      from './alert'
+import badges     from './badges'
 import buttons    from './buttons'
 import dropdowns  from './dropdowns'
 import filter     from './filter'
@@ -14,6 +15,7 @@ import splitPanel from './splitPanel'
 const components =
 {
     alert ,
+    badges ,
     buttons ,
     dropdowns,
     filter ,

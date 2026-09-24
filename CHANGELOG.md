@@ -8,6 +8,22 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**📋 Copier une valeur : `CopyBadge`, `ContactBadge`, et `useClipboard` qui rappelle**
+
+- **Reported from a consuming application**, where copying a value had been written five times in three different shapes — three components watching the clipboard state from an effect, and two writing to `navigator.clipboard` by hand with their own timers.
+- **`useClipboard` gains `onSuccess` and `onError`**, and still takes the timeout alone : `useClipboard( 2000 )` and `useClipboard( { timeout , onSuccess , onError } )` are both read, so nothing written against the older signature changes.
+  - 🔑 **The state is for what is SHOWN, the callbacks for what HAPPENS ONCE.** A host that toasted from an effect on the state had to explain to its linter why the toast was not a dependency, and had to ignore both the mount and the reset back to `ready` — three chances to get it wrong, written again at every call site.
+  - The `ready` / `success` / `error` constants had their three doc comments rotated by one — `ERROR` was documented as « ready to copy ». Corrected, and `DEFAULT_CLIPBOARD_TIMEOUT` is now a named export rather than a bare `1500`.
+- **New `components/CopyBadge`** — a value in a badge, copied on click. The glyph flips to a check, the badge borrows the outcome's colour for a moment, then goes back. ⚠️ The click is stopped before it travels : a badge inside a card or a row that is itself a link must copy, not navigate. Nothing is rendered without a value.
+- **New `components/ContactBadge`** — a way of reaching someone : a pill that acts on a URI scheme (`tel:`, `fax:`, `mailto:`) and a copy button beside it, because neither replaces the other — a number on a machine with no telephony handler is a number to copy. `icon` + `scheme` reach any other channel.
+  - 🔑 **What is shown is not what is dialled.** The value keeps its separators, because that is how a reader recognises it ; the `href` keeps only the digits and a leading `+`, because that is what a handler can act on. An e-mail, having no such notion, is used verbatim.
+  - `disabled` keeps the pill and takes the action away ; `copyable={ false }` takes the copy button away.
+- 🚨 **Neither badge toasts.** They call `onCopy` / `onCopyError` and leave the wording to the screen : a library component that pops its own toast forces a `ToastProvider` on every host and picks a form of feedback nobody asked for. What was copied is known there ; what to say about it is not.
+- Both are built on `getBadgeClassNames` rather than on colour / size / style tables of their own — the size `xl` comes for free, and a colour added to the theme reaches them.
+- `components.badges` : the copy control's word, and what each contact channel promises to do. The toast that follows a copy is deliberately absent — the badges call back rather than speak.
+- Lab, « Badges » page : both badges across sizes, colours and variants, an empty value rendering nothing, a pill shown but not actionable, and a channel reached through `icon` + `scheme`.
+
+
 **🔐 A new password : the meter, the checklist and the couple**
 
 - **Reported from a consuming application**, where four screens asked for a new password and the fourth had copied the bar and the list rather than import them.

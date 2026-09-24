@@ -3,6 +3,7 @@
 import I18nMetas      from '@/components/i18n/I18nMetas.jsx';
 import useI18n        from '@/contexts/locale/useI18n.js';
 import BadgeDemo      from '@/demo/BadgeDemo';
+import CopyBadgeDemo  from '@/demo/CopyBadgeDemo';
 import LabelBadgeDemo from '@/demo/LabelBadgeDemo';
 import Container      from '@/display/Container';
 import Divider        from '@/components/Divider' ;
@@ -38,6 +39,10 @@ const BadgeShowcase = ( { path = 'app.lab.badges' } ) =>
             <Divider />
 
             <LabelBadgeDemo />
+
+            <Divider />
+
+            <CopyBadgeDemo />
 
         </Page>
     ) ;
