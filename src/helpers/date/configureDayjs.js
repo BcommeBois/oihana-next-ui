@@ -17,6 +17,7 @@
  * - `isSameOrAfter`  — idem.
  * - `minMax`         — bounding a set of events without sorting it.
  * - `isoWeek`        — ISO week numbers, used by week-bounded recurrences.
+ * - `relativeTime`   — « an hour ago », for a date written against now.
  *
  * And two for writing an instant in a named time zone
  * ({@link module:helpers/date/formatDate}) :
@@ -39,6 +40,7 @@ import isoWeek        from 'dayjs/plugin/isoWeek' ;
 import localeData      from 'dayjs/plugin/localeData' ;
 import localizedFormat from 'dayjs/plugin/localizedFormat' ;
 import minMax          from 'dayjs/plugin/minMax' ;
+import relativeTime    from 'dayjs/plugin/relativeTime' ;
 import timezone        from 'dayjs/plugin/timezone' ;
 import utc             from 'dayjs/plugin/utc' ;
 import weekday        from 'dayjs/plugin/weekday' ;
@@ -51,6 +53,10 @@ dayjs.extend( isSameOrAfter ) ;
 dayjs.extend( isSameOrBefore ) ;
 dayjs.extend( isoWeek ) ;
 dayjs.extend( minMax ) ;
+
+// `fromNow` — « an hour ago », in the active locale. Read by
+// {@link module:components/labels/DateLabel} when it writes a date relatively.
+dayjs.extend( relativeTime ) ;
 
 // `timezone` reads the offsets `utc` computes : the order matters.
 dayjs.extend( utc ) ;

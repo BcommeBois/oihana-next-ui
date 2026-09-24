@@ -6,6 +6,7 @@ import Page      from '@/display/Page' ;
 
 import DateDemo           from '@/demo/dates/DateDemo' ;
 import DateFormatDemo     from '@/demo/dates/DateFormatDemo' ;
+import DateLabelDemo      from '@/demo/dates/DateLabelDemo' ;
 import MonthYearDemo      from '@/demo/dates/MonthYearDemo' ;
 import PickersInModalDemo from '@/demo/dates/PickersInModalDemo' ;
 import PickersInPopoverDemo from '@/demo/dates/PickersInPopoverDemo' ;
@@ -31,6 +32,10 @@ const Dates = () =>
         <Divider />
 
         <DateDemo />
+
+        <Divider />
+
+        <DateLabelDemo />
 
         <Divider />
 

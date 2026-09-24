@@ -1,6 +1,7 @@
 import alert      from './alert'
 import badges     from './badges'
 import buttons    from './buttons'
+import dates      from './dates'
 import dropdowns  from './dropdowns'
 import filter     from './filter'
 import input      from './input'
@@ -17,6 +18,7 @@ const components =
     alert ,
     badges ,
     buttons ,
+    dates ,
     dropdowns,
     filter ,
     input ,

@@ -8,6 +8,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**📅 Écrire une date : `DateLabel`, `MetaDates`**
+
+- **Reported from a consuming application**, where the date of a record was written by a label taking an object and the name of a field, and where the relative form read the clock during the render.
+- **New `components/labels/DateLabel`** — a date written for a reader : an icon, and the date itself, in full or against the clock. It is written in the application's time zone (`useDateFormat`), never the machine's.
+  - 🚨 **The relative form is not rendered on the server.** `fromNow()` reads the clock, and a server and a browser never read the same one : « 59 minutes ago » on one side, « an hour ago » on the other, and React reports the difference as a hydration mismatch. The label writes the date **in full** while `useNow` still answers `null` — on the server and through the hydration pass, the two renders that must agree — and switches to the relative form once mounted. It then follows the clock rather than freezing at the first paint ; `tick` sets the pace.
+  - 🔑 **It takes the date, already read.** Handing it a record and the name of a field would make a label do a lookup that belongs to its caller — the same reason `LinkCard` takes an `href` rather than a record.
+  - ⚠️ **A missing date writes nothing**, and `empty` is what stands in when a screen wants something there. `dayjs( undefined )` is *today*, valid and all — a label that only tested validity would answer a record with no date by printing today's, which is not an omission but a lie.
+- **New `components/labels/MetaDates`** — when a record was created and when it was last touched, as the quiet line at the foot of a page. It reads two fields, so it takes the record ; `createdMember` / `modifiedMember` name them when they are called something else. ⚠️ **The pair wraps** : each date keeps its own line and the two fall onto two rows when they must — a full-height rule between them turns into a stray vertical bar the moment a label breaks.
+- **`relativeTime` joins `configureDayjs`**, beside the ten plugins already registered there : a component writing a date against now had to extend dayjs itself, at the top of its own module.
+- `components.dates` : the sentence a date is written into, its pattern, and the two sentences of the pair — whose own pattern carries the hour, because « who touched this, and when » is rarely answered by a day. There is deliberately no `empty` : a missing date writes nothing rather than a dash nobody asked for.
+- Lab, « Dates » page : a date in full and in a sentence, the relative form turning over after hydration, a missing and an unreadable date, the pair wrapping inside 260 px, and a record carrying neither date rendering nothing.
+
+
 **📋 Copier une valeur : `CopyBadge`, `ContactBadge`, et `useClipboard` qui rappelle**
 
 - **Reported from a consuming application**, where copying a value had been written five times in three different shapes — three components watching the clipboard state from an effect, and two writing to `navigator.clipboard` by hand with their own timers.
