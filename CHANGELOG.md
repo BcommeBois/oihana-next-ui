@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.25.0] — 2026-09-24
+
 **🖥️ Un panneau flottant ne se cache plus derrière le plein écran**
 
 - **Reported from a consuming application**, where the month popover of a card opened BEHIND that card as soon as the page was put fullscreen.
