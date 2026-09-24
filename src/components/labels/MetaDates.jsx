@@ -17,7 +17,10 @@
  * something else.
  *
  * Both dates go through `DateLabel`, so `relative` carries its guarantee :
- * written in full on the server, against the clock once mounted.
+ * written in full on the server, against the clock once mounted — and so does
+ * `datePattern` : a date served alone (`2026-05-31`, often a creation date
+ * carried over from an older system) is written without the hour of
+ * `pattern`, when a pattern for it is set.
  *
  * @module components/labels/MetaDates
  *
@@ -56,10 +59,11 @@ export const META_DATES_I18N_PATH = 'components.dates.meta' ;
  * @param {Object}   props
  * @param {string}   [props.className]              - Additional class names for the row.
  * @param {React.ElementType} [props.CreatedIcon]   - The icon of the creation date.
+ * @param {string}   [props.datePattern]            - The pattern of a date served alone. Read from the bundle when absent ; unset, `pattern` is used.
  * @param {string}   [props.createdMember='created'] - Which field carries the creation date.
  * @param {React.ElementType} [props.ModifiedIcon]  - The icon of the modification date.
  * @param {string}   [props.modifiedMember='modified'] - Which field carries the modification date.
- * @param {string}   [props.path='components.dates.meta'] - i18n path holding `created`, `modified` and `pattern`.
+ * @param {string}   [props.path='components.dates.meta'] - i18n path holding `created`, `modified`, `pattern` and `datePattern`.
  * @param {boolean}  [props.relative=false]         - Write both dates against now, once past hydration.
  * @param {boolean}  [props.showCreated=true]       - Whether the creation date is written.
  * @param {boolean}  [props.showIcon=true]          - Whether both dates carry their icon.
@@ -72,6 +76,7 @@ const MetaDates =
     className ,
     CreatedIcon = DefaultCreatedIcon ,
     createdMember = 'created' ,
+    datePattern : datePatternFromProps ,
     ModifiedIcon = DefaultModifiedIcon ,
     modifiedMember = 'modified' ,
     path = META_DATES_I18N_PATH ,
@@ -83,7 +88,9 @@ const MetaDates =
     value ,
 }) =>
 {
-    const { created , modified , pattern } = useI18n( path , NO_LOCALE , false ) ;
+    const { created , datePattern , modified , pattern } = useI18n( path , NO_LOCALE , false ) ;
+
+    const dayPattern = datePatternFromProps ?? datePattern ;
 
     if ( !value ) { return null ; }
 
@@ -93,28 +100,30 @@ const MetaDates =
     const createdElement = showCreated && createdValue != null &&
     (
         <DateLabel
-            className = "whitespace-nowrap"
-            Icon      = { CreatedIcon }
-            label     = { created }
-            pattern   = { pattern }
-            relative  = { relative }
-            showIcon  = { showIcon }
-            tick      = { tick }
-            value     = { createdValue }
+            className   = "whitespace-nowrap"
+            datePattern = { dayPattern }
+            Icon        = { CreatedIcon }
+            label       = { created }
+            pattern     = { pattern }
+            relative    = { relative }
+            showIcon    = { showIcon }
+            tick        = { tick }
+            value       = { createdValue }
         />
     ) ;
 
     const modifiedElement = showModified && modifiedValue != null &&
     (
         <DateLabel
-            className = "whitespace-nowrap"
-            Icon      = { ModifiedIcon }
-            label     = { modified }
-            pattern   = { pattern }
-            relative  = { relative }
-            showIcon  = { showIcon }
-            tick      = { tick }
-            value     = { modifiedValue }
+            className   = "whitespace-nowrap"
+            datePattern = { dayPattern }
+            Icon        = { ModifiedIcon }
+            label       = { modified }
+            pattern     = { pattern }
+            relative    = { relative }
+            showIcon    = { showIcon }
+            tick        = { tick }
+            value       = { modifiedValue }
         />
     ) ;
 

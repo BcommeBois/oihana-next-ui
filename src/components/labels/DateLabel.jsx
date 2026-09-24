@@ -19,7 +19,14 @@
  * rather than a record.
  *
  * The date is written in the application's time zone
- * ({@link module:hooks/useDateFormat}), never the machine's.
+ * ({@link module:hooks/useDateFormat}), never the machine's — a string served
+ * with no zone at all included, which is read as a time of that zone
+ * ({@link module:helpers/date/formatDate}).
+ *
+ * **A date alone** (`2026-05-31`) names a day, not an instant : written with
+ * the hour of `pattern` it reads « 31/05/2026 at 00:00:00 », an hour nobody
+ * stated. `datePattern` — a prop, or a key of the bundle — is the pattern
+ * used for such a value (`L`, `LL`…). Unset, it is written like any other.
  *
  * Renders nothing at all when there is no date and no `empty` text to stand
  * in for it.
@@ -36,6 +43,8 @@
  *
  * // Wrapped in a sentence the bundle owns :
  * <DateLabel label="Published : {0}" value={ article.published } />
+ * // A day served alone keeps no hour :
+ * <DateLabel datePattern="L" pattern="L LTS" value="2026-05-31" />
  * ```
  */
 
@@ -47,7 +56,8 @@ import notEmpty from 'vegas-js-core/src/strings/notEmpty' ;
 import NO_LOCALE from '../../contexts/locale/noLocale' ;
 import useI18n   from '../../contexts/locale/useI18n' ;
 
-import dayjs from '../../helpers/date/configureDayjs' ;
+import dayjs      from '../../helpers/date/configureDayjs' ;
+import isDateOnly from '../../helpers/date/isDateOnly' ;
 
 import useDateFormat from '../../hooks/useDateFormat' ;
 import useNow        from '../../hooks/useNow' ;
@@ -65,6 +75,7 @@ export const DATE_I18N_PATH = 'components.dates' ;
  * @param {React.ReactNode}   [props.after]          - Rendered after the text.
  * @param {React.ReactNode}   [props.before]         - Rendered between the icon and the text.
  * @param {string}            [props.className]      - Additional class names for the row.
+ * @param {string}            [props.datePattern]    - The pattern of a date served alone (`YYYY-MM-DD`). Read from the bundle when absent ; unset, `pattern` is used.
  * @param {string}            [props.empty]          - Stands in for a missing or unreadable date. Absent, nothing is written.
  * @param {React.ReactNode}   [props.icon]           - An icon already rendered, used instead of `Icon`.
  * @param {React.ElementType} [props.Icon]           - The icon to render. Defaults to a calendar.
@@ -73,7 +84,7 @@ export const DATE_I18N_PATH = 'components.dates' ;
  * @param {string}            [props.labelClassName] - Additional class names for the text.
  * @param {Object}            [props.labelProps]     - Forwarded to the text element.
  * @param {string}            [props.pattern]        - A dayjs pattern. Read from the bundle when absent.
- * @param {string}            [props.path='components.dates'] - i18n path holding `empty`, `label` and `pattern`.
+ * @param {string}            [props.path='components.dates'] - i18n path holding `empty`, `label`, `pattern` and `datePattern`.
  * @param {boolean}           [props.relative=false] - Write the date against now, once past hydration.
  * @param {boolean}           [props.showIcon=true]  - Whether the icon is rendered.
  * @param {boolean}           [props.showLabel=true] - Whether the text is rendered.
@@ -85,6 +96,7 @@ const DateLabel =
     after ,
     before ,
     className ,
+    datePattern : datePatternFromProps ,
     empty : emptyFromProps ,
     icon ,
     Icon = DefaultDateIcon ,
@@ -101,7 +113,7 @@ const DateLabel =
     value ,
 }) =>
 {
-    const { empty , label , pattern } = useI18n( path , NO_LOCALE , false ) ;
+    const { datePattern , empty , label , pattern } = useI18n( path , NO_LOCALE , false ) ;
 
     const { formatDate , lang } = useDateFormat() ;
 
@@ -124,9 +136,12 @@ const DateLabel =
 
         if ( value != null && moment.isValid() )
         {
+            // A day served alone keeps no hour, when a pattern for it is set.
+            const dayPattern = isDateOnly( value ) ? ( datePatternFromProps ?? datePattern ) : null ;
+
             written = relative && now !== null
                 ? moment.locale( lang ?? dayjs.locale() ).from( now )
-                : formatDate( value , { pattern : patternFromProps ?? pattern } ) ;
+                : formatDate( value , { pattern : dayPattern ?? patternFromProps ?? pattern } ) ;
         }
         else if ( notEmpty( emptyText ) )
         {

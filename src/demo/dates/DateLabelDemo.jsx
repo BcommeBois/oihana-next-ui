@@ -42,6 +42,13 @@ const RECORD =
 } ;
 
 /**
+ * A day served alone — no hour, no zone — as some APIs send a date that only
+ * ever was a day.
+ * @type {string}
+ */
+const DAY_ALONE = '2017-05-31' ;
+
+/**
  * A date taken after mount, so it starts at « a few seconds ago » and moves
  * while it is watched.
  *
@@ -78,6 +85,21 @@ const DateLabelDemo = () =>
         <div className="flex flex-col gap-2">
             <DateLabel Icon={ MdOutlineFlag } label="Opened : {0}" value={ RECORD.openedAt } />
             <DateLabel Icon={ MdOutlineInventory2 } label="Last counted : {0}" pattern="L" value={ RECORD.modified } />
+        </div>
+
+        <Divider>A day served alone</Divider>
+
+        <p className="text-sm text-base-content/70 max-w-2xl">
+            « { DAY_ALONE } » names a day, with no hour and no zone. It is read in the application&apos;s
+            time zone, so a server running UTC and a browser elsewhere write the same text. With a
+            pattern carrying the hour it still reads midnight — an hour nobody stated ; <code>datePattern</code> writes
+            such a value without it.
+        </p>
+
+        <div className="flex flex-col gap-2">
+            <DateLabel label="Created : {0}" pattern="L LTS" value={ DAY_ALONE } />
+            <DateLabel datePattern="L" label="Created : {0}" pattern="L LTS" value={ DAY_ALONE } />
+            <MetaDates datePattern="L" value={ { created : DAY_ALONE , modified : RECORD.modified } } />
         </div>
 
         <Divider>Against the clock</Divider>

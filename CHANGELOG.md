@@ -8,9 +8,21 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.25.1] — 2026-09-24
+
+**🕛 A date served without a time zone no longer breaks hydration**
+
+- **Reported from a consuming application**, where every record page lost its theme on reload once deployed : React threw a hydration mismatch (#418) on the creation date of `MetaDates`, `05/31/2017 2:00:00 AM` from the server against `05/31/2017 12:00:00 AM` in the browser. Invisible in development, where the server and the browser share one time zone.
+- 🚨 **`helpers/date/formatDate` reads a string with neither `Z` nor an offset AS A TIME OF `timeZone`.** An API may serve a calendar day (`2017-05-31`) or a wall time (`2017-05-31T09:00:00`) with no zone at all. Parsed as usual, dayjs took it in the zone of the MACHINE — midnight UTC on a server running UTC, midnight in Paris in a Paris browser — and then converted it : two hours apart, one text each. With a `timeZone`, such a string is now parsed with `dayjs.tz( value , timeZone )` : the same text on every machine. A value carrying its zone, a timestamp or a `Date` is an instant and is converted as before ; without a `timeZone`, nothing changes.
+  - It reaches every date written through `useDateFormat`, `DateLabel` and `MetaDates` — the pickers do not go through it.
+  - ⚠️ **Why it surfaced now** : since `DateLabel` writes a relative date in full until the page is hydrated, a record page renders its creation date WITH ITS HOUR on the server. "9 years ago" was the same text on both sides ; `05/31/2017 2:00:00 AM` is not.
+- **New `datePattern` on `DateLabel` and `MetaDates`** — the pattern of a date served ALONE (`YYYY-MM-DD`), a prop or a key of the bundle. Such a value names a day, not an instant : written with the hour of `pattern` it reads "12:00:00 AM", an hour nobody stated. **Off by default** : unset, the value is written with `pattern`, as before.
+- **New `helpers/date/isDateOnly`** — whether a value is a `YYYY-MM-DD` string alone.
+- Lab, "Dates" page : a day served alone, written with `pattern`, with `datePattern`, and through `MetaDates`.
+
 ## [0.25.0] — 2026-09-24
 
-**🖥️ Un panneau flottant ne se cache plus derrière le plein écran**
+**🖥️ A floating panel no longer hides behind fullscreen**
 
 - **Reported from a consuming application**, where the month popover of a card opened BEHIND that card as soon as the page was put fullscreen.
 - 🚨 **`Portal` now aims at the element currently fullscreen**, and at `document.body` only when there is none. An element put fullscreen is promoted to the browser's **top layer**, which does not belong to the document's stacking order : a panel painted in `document.body` cannot come above it, **whatever its `z-index`**. It was not hidden — it was painted underneath, which reads as a panel half-opening behind the page.
@@ -24,7 +36,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [0.24.0] — 2026-09-24
 
-**🧩 Quatre pièces d'affichage : `SegmentedControl`, `TableSortHeader`, `RetryState`, `Measure`**
+**🧩 Four display pieces : `SegmentedControl`, `TableSortHeader`, `RetryState`, `Measure`**
 
 - **Reported from a consuming application**, where none of the four was a component : four shapes written by hand, several times each, and never named.
 - **New `components/SegmentedControl`** — two or three joined buttons choosing HOW the same content is read : a running total or a month by month, a week or a day.
@@ -38,7 +50,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Lab : « Buttons » gains the group of toggles, across sizes, colours, icons alone and a choice shown but not offered ; « Table » gains a sortable table whose missing measures carry their reason ; « EmptyState » gains the failed read, with its own retry and without one.
 
 
-**📅 Écrire une date : `DateLabel`, `MetaDates`**
+**📅 Writing a date : `DateLabel`, `MetaDates`**
 
 - **Reported from a consuming application**, where the date of a record was written by a label taking an object and the name of a field, and where the relative form read the clock during the render.
 - **New `components/labels/DateLabel`** — a date written for a reader : an icon, and the date itself, in full or against the clock. It is written in the application's time zone (`useDateFormat`), never the machine's.
@@ -51,7 +63,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Lab, « Dates » page : a date in full and in a sentence, the relative form turning over after hydration, a missing and an unreadable date, the pair wrapping inside 260 px, and a record carrying neither date rendering nothing.
 
 
-**📋 Copier une valeur : `CopyBadge`, `ContactBadge`, et `useClipboard` qui rappelle**
+**📋 Copying a value : `CopyBadge`, `ContactBadge`, and a `useClipboard` that calls back**
 
 - **Reported from a consuming application**, where copying a value had been written five times in three different shapes — three components watching the clipboard state from an effect, and two writing to `navigator.clipboard` by hand with their own timers.
 - **`useClipboard` gains `onSuccess` and `onError`**, and still takes the timeout alone : `useClipboard( 2000 )` and `useClipboard( { timeout , onSuccess , onError } )` are both read, so nothing written against the older signature changes.

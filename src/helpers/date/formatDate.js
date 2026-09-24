@@ -1,6 +1,12 @@
 import dayjs from './configureDayjs' ;
 
 /**
+ * An ISO date, or date and time, carrying neither `Z` nor an offset.
+ * @type {RegExp}
+ */
+const ZONELESS = /^\d{4}-\d{2}-\d{2}(?:[T ]\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?)?$/ ;
+
+/**
  * Writes an instant for a reader : a date, or a date and an hour, in a named
  * time zone.
  *
@@ -10,6 +16,16 @@ import dayjs from './configureDayjs' ;
  * « 08:32 » and « 10:32 » for the same instant, and React reports the
  * difference as a hydration mismatch. A zone is also a business choice — an
  * appointment at 10 h is at 10 h for every reader, wherever they read from.
+ *
+ * 🚨 **A string with neither `Z` nor an offset is read IN that zone.** An API
+ * may serve a calendar day (`2026-05-31`) or a wall time
+ * (`2026-05-31T09:00:00`) with no zone at all. Parsed as usual, dayjs takes it
+ * in the zone of the machine : midnight UTC on a server running UTC, midnight
+ * in Paris in a Paris browser — two hours apart, one text each, and the same
+ * hydration mismatch. With a `timeZone`, such a string is read as a time OF
+ * that zone (`dayjs.tz( value , timeZone )`) : the same text on both sides. A
+ * value carrying its zone, a timestamp or a `Date` is an instant, and is
+ * converted as before.
  *
  * Formatted by dayjs, whose patterns are plain code : the same on the server
  * and in every browser. `Intl.DateTimeFormat` reads its patterns from each
@@ -31,9 +47,11 @@ import dayjs from './configureDayjs' ;
  * ```js
  * formatDate( '2026-09-17T08:32:00Z' , 'fr' , { pattern : 'LLL' , timeZone : 'Europe/Paris' } ) ; // '17 septembre 2026 10:32'
  * formatDate( '2026-09-17T08:32:00Z' , 'en' , { timeZone : 'Europe/Paris' } ) ;                   // 'September 17, 2026'
+ * formatDate( '2026-05-31' , 'fr' , { pattern : 'L LT' , timeZone : 'Europe/Paris' } ) ;          // '31/05/2026 00:00', on any server
  * formatDate( null , 'fr' ) ;                                                                     // null
  * ```
  */
+
 const formatDate = ( value , lang , { pattern = 'LL' , timeZone } = {} ) =>
 {
     if ( value === null || value === undefined || value === '' )
@@ -41,16 +59,25 @@ const formatDate = ( value , lang , { pattern = 'LL' , timeZone } = {} ) =>
         return null ;
     }
 
-    let moment = dayjs( value ) ;
-
-    if ( !moment.isValid() )
+    // Checked first : `dayjs.tz` throws on a string it cannot read.
+    if ( !dayjs( value ).isValid() )
     {
         return null ;
     }
 
+    const zoneless = typeof value === 'string' && ZONELESS.test( value.trim() ) ;
+
+    let moment ;
+
     if ( timeZone )
     {
-        moment = moment.tz( timeZone ) ;
+        // A zoneless string is a time OF the zone ; anything else an instant
+        // to convert into it. See the note above.
+        moment = zoneless ? dayjs.tz( value.trim() , timeZone ) : dayjs( value ).tz( timeZone ) ;
+    }
+    else
+    {
+        moment = dayjs( value ) ;
     }
 
     if ( lang )
