@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.24.0] — 2026-09-24
+
 **🧩 Quatre pièces d'affichage : `SegmentedControl`, `TableSortHeader`, `RetryState`, `Measure`**
 
 - **Reported from a consuming application**, where none of the four was a component : four shapes written by hand, several times each, and never named.
