@@ -39,6 +39,12 @@ import Portal from './Portal' ;
  * @param {string} [props.color='neutral'] - Fill of the bubble.
  * @param {number} [props.delay=400] - Milliseconds a pointer must dwell.
  * @param {React.ElementType} [props.as='div'] - Trigger element type.
+ *
+ * ⚠️ **A trigger that is a direct flex or grid item is stretched by its
+ * parent.** The wrapper carries `inline-block` so it hugs what it wraps, but
+ * a flex item is blockified and `align-items: stretch` then makes it span the
+ * line — the bubble is measured against that box, so it lands centred on the
+ * column rather than over the trigger. Wrap it, or give it `w-fit`.
  * @param {boolean} [props.open] - Hold the bubble open, hover or no hover. It then follows the page on scroll and resize, having no hover to be closed by.
  * @param {import('../themes/components/tooltip').TooltipPosition} [props.position='top'] - The side of the trigger the bubble opens on, **by preference**.
  * @param {React.ReactNode} [props.tip] - What the bubble says. Nothing means no tooltip.

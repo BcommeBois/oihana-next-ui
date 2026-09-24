@@ -8,6 +8,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🖥️ Un panneau flottant ne se cache plus derrière le plein écran**
+
+- **Reported from a consuming application**, where the month popover of a card opened BEHIND that card as soon as the page was put fullscreen.
+- 🚨 **`Portal` now aims at the element currently fullscreen**, and at `document.body` only when there is none. An element put fullscreen is promoted to the browser's **top layer**, which does not belong to the document's stacking order : a panel painted in `document.body` cannot come above it, **whatever its `z-index`**. It was not hidden — it was painted underneath, which reads as a panel half-opening behind the page.
+- **One file heals four.** `Popover`, `FloatingTip`, `ChartTooltip` and `InputAddressSearch` all carry the same host lookup (`closest( 'dialog[open], [popover]:popover-open' )`, then the body), so they had the same blind spot in the same place, written four times. None of them is touched : the target they hand to `Portal` still wins, so a panel inside an open dialog keeps portalling into it.
+  - ⚠️ **A modal was never affected** and still is not : a `<dialog>` opened with `showModal()` joins that same top layer, after the fullscreen element, hence above it. The demo shows it beside the others so a regression would surface there rather than on another page.
+- **New `hooks/useFullscreenElement`** — the element displayed fullscreen, or `null`. It reads the document rather than the `FullscreenProvider`, which **throws** outside itself : a primitive has to work with no context mounted above it. The subscription goes through `useSyncExternalStore`, not an effect — an effect cannot tell a hydration render from a plain client mount, the very argument `Portal` already carries for `useIsHydrated`. Both spellings of the event are listened to, for the WebKit builds that only fire the prefixed one.
+  - ⚠️ **Changing target unmounts what is portalled.** React reconciles a portal against its container, so entering or leaving fullscreen while a panel is open destroys and rebuilds it, its own state with it. A panel opened after the change is unaffected, which is every panel in practice.
+- Lab, « Modals » page : the four floating surfaces side by side with a fullscreen switch, and a line naming the target `Portal` is currently aiming at.
+- `FloatingTip` documents a trap its `as` prop cannot guard against : a trigger that is a direct flex or grid item is blockified and stretched by its parent, so the `inline-block` it carries is neutralised and the bubble is measured against the whole line. Wrap it, or give it `w-fit`.
+
+
 ## [0.24.0] — 2026-09-24
 
 **🧩 Quatre pièces d'affichage : `SegmentedControl`, `TableSortHeader`, `RetryState`, `Measure`**

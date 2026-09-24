@@ -2,7 +2,8 @@
 
 import { createPortal } from 'react-dom' ;
 
-import useIsHydrated from '../hooks/useIsHydrated' ;
+import useFullscreenElement from '../hooks/useFullscreenElement' ;
+import useIsHydrated        from '../hooks/useIsHydrated' ;
 
 /**
  * Portal component for rendering children in a different DOM node.
@@ -12,6 +13,18 @@ import useIsHydrated from '../hooks/useIsHydrated' ;
  * @param {React.RefObject<HTMLElement>} [props.containerRef] - Ref to container element
  * @param {boolean} [props.disabled=false] - Disable portal (render normally)
  * @param {string} [props.portalKey] - Key for the portal
+ *
+ * 🚨 **Without a `containerRef`, the target is the element currently
+ * fullscreen, and `document.body` only when there is none.** An element put
+ * fullscreen is promoted to the browser's **top layer**, which does not belong
+ * to the document's stacking order : a panel painted in `document.body` cannot
+ * come above it, whatever its `z-index`. It is not hidden — it is painted
+ * underneath, which looks like a panel that half-opens behind the page.
+ *
+ * ⚠️ **Changing target unmounts what is portalled.** React reconciles a portal
+ * against its container, so entering or leaving fullscreen while a panel is
+ * open destroys and rebuilds it — its own state goes with it. A panel opened
+ * after the change is unaffected, which is every panel in practice.
  *
  * @returns {React.ReactPortal|React.ReactNode}
  *
@@ -58,6 +71,8 @@ const Portal =
     // there is lost in silence.
     const hydrated = useIsHydrated() ;
 
+    const fullscreen = useFullscreenElement() ;
+
     if ( disabled )
     {
         return children ;
@@ -68,7 +83,7 @@ const Portal =
         return null ;
     }
 
-    const container = containerRef?.current ?? document.body ;
+    const container = containerRef?.current ?? fullscreen ?? document.body ;
 
     if ( !container )
     {
