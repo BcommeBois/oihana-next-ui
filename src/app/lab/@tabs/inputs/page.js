@@ -22,6 +22,7 @@ import InputSearchDemo     from '@/demo/inputs/InputSearchDemo' ;
 import InputSizesDemo      from '@/demo/inputs/InputSizesDemo' ;
 import InputPasswordDemo   from '@/demo/inputs/InputPasswordDemo' ;
 import InputPinDemo        from '@/demo/inputs/InputPinDemo' ;
+import PasswordStrengthDemo from '@/demo/passwords/PasswordStrengthDemo' ;
 import InputTimeDemo       from '@/demo/inputs/InputTimeDemo' ;
 import InputTransformDemo  from '@/demo/inputs/InputTransformDemo' ;
 import InputUrlEmailDemo   from '@/demo/inputs/InputUrlEmailDemo' ;
@@ -38,6 +39,7 @@ import {
     MdLock ,
     MdPercent ,
     MdPin ,
+    MdPassword ,
     MdPlaylistAdd ,
     MdPlusOne ,
     MdSearch ,
@@ -173,6 +175,14 @@ const Inputs = ({ path = 'app.test' }) =>
             description : 'Password input with show/hide toggle' ,
             category    : 'Security' ,
             component   : <InputPasswordDemo /> ,
+        } ,
+        {
+            key         : 'password-strength' ,
+            label       : 'Strength' ,
+            icon        : MdPassword ,
+            description : 'Strength meter, rule checklist and the new/confirm couple' ,
+            category    : 'Security' ,
+            component   : <PasswordStrengthDemo /> ,
         } ,
         {
             key         : 'pin' ,

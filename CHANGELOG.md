@@ -8,6 +8,21 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🔐 A new password : the meter, the checklist and the couple**
+
+- **Reported from a consuming application**, where four screens asked for a new password and the fourth had copied the bar and the list rather than import them.
+- **New `components/passwords/PasswordStrengthBar`** — a thin coloured bar and a word, under a password field, saying how far a password is from satisfying the complexity rules. It renders **nothing while the field is empty** : a form opening with a red bar and « Faible » under an untouched field tells a reader they did something wrong before they typed a character.
+- **New `components/passwords/PasswordRuleList`** — the checklist of what is missing, one ticked line per rule, plus a « both passwords match » line rendered **only when a `matches` boolean is passed** : a screen with no confirm field simply omits it.
+  - 🔑 **The two go together.** The bar says how far, the checklist says what is missing — a meter on its own leaves a reader adding characters at random until the colour changes. Give them the same `path`, or they read two bundles and disagree.
+- **New `helpers/passwords/evaluatePassword`**, **`computePasswordStrength`** and **`passwordStrengthLevels`** (`WEAK`, `MEDIUM`, `STRONG`, `PASSWORD_RULES_COUNT`, `STRENGTH_BAR_COLOR`, `DEFAULT_PASSWORD_MIN_LENGTH`) : five rules — length, an uppercase letter, a lowercase letter, a digit, a symbol — and the bucket a score falls into.
+  - 🚨 **Visual only.** This says what to show a reader while they type ; it decides nothing. The server that stores the password remains the authority and may refuse one that passes every rule here — a password found in a breach list, one reused from the account's own history, a policy rule these five know nothing about.
+  - ⚠️ **`minLength` is the only rule a host can move** (8 by default), because it is the only one that differs from one identity provider to the next. The other four are either asked for or ignored, and a host that ignores one says so in its own copy rather than hiding a line — a reader who satisfies a hidden rule still deserves to see it tick.
+- **New `hooks/usePasswordPair`** — the state and the handlers of a « new password / confirm » couple : two controlled values, two error slots, handlers that clear an error as the reader fixes it, the mismatch raised **on leaving** the confirm field and never while typing, and the two booleans a submit button is gated on. `reset()` empties the couple once the call has gone through.
+  - 🚨 **Pass the same `minLength` to the hook and to the two components.** The hook decides whether the form may be submitted, the components decide what is shown : give them different lengths and the checklist ticks every line while the button stays disabled, with nothing on screen saying why.
+- `components.input.password` gains `rules` and `strength`, beside the show / hide labels it already carried — one field, one bundle. The `rules.length` line carries a `{0}` filled with the length the host asks for : a label saying « 8 » next to a field refusing anything under 12 is worse than no label.
+- Lab, « Inputs » page, new « Strength » entry : a sign-up form whose button unlocks, the same couple on a twelve-character policy, and a lone field with no confirmation.
+
+
 ## [0.23.0] — 2026-09-23
 
 **🗂️ The item of a list : `LinkCard` and `ItemsLayout`**
