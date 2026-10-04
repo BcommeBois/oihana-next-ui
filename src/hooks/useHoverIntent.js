@@ -20,6 +20,16 @@ import { useCallback , useEffect , useRef , useState } from 'react' ;
  * button underneath. Opening on touch would put a bubble between the reader and
  * what they meant to press.
  *
+ * 🚨 **And a focus nobody asked for must not open anything.** `focus` is
+ * not only what a `Tab` produces : a native `<dialog>` opened with `showModal()`
+ * hands the focus to its first focusable descendant all by itself, so a tooltip
+ * on that element used to appear the instant the dialog did, with no reader
+ * anywhere near it. The same goes for every other programmatic focus. Only a
+ * focus that FOLLOWS A KEY PRESS opens the bubble, which is what « a reader who
+ * tabbed to a control » meant all along — and it is read from what the reader
+ * last did rather than from `:focus-visible`, whose match on a programmatic
+ * focus is a browser heuristic and not a rule.
+ *
  * @module hooks/useHoverIntent
  *
  * @param {Object} [props]
@@ -38,6 +48,43 @@ import { useCallback , useEffect , useRef , useState } from 'react' ;
  * { isOpen && <Bubble anchor={ anchorRef.current } /> }
  * ```
  */
+/**
+ * Whether the last thing the reader did was press a key.
+ *
+ * Module-level on purpose : it describes the reader, not a trigger, and every
+ * trigger on the page asks the same question. One pair of listeners answers it
+ * for all of them.
+ *
+ * @type {boolean}
+ */
+let keyboardLast = false ;
+
+/**
+ * Whether the pair above is already attached.
+ * @type {boolean}
+ */
+let watching = false ;
+
+/**
+ * Starts watching what the reader uses, once per document.
+ *
+ * Both listeners are passive and on the capture phase, so nothing downstream
+ * can stop them being told — a handler calling `stopPropagation` on a keydown
+ * would otherwise leave the flag stale.
+ */
+const watchModality = () =>
+{
+    if ( watching || typeof document === 'undefined' )
+    {
+        return ;
+    }
+
+    watching = true ;
+
+    document.addEventListener( 'keydown'     , () => { keyboardLast = true  ; } , { capture : true , passive : true } ) ;
+    document.addEventListener( 'pointerdown' , () => { keyboardLast = false ; } , { capture : true , passive : true } ) ;
+} ;
+
 const useHoverIntent = ( props = {} ) =>
 {
     const { delay = 400 , disabled = false , onOpenChange } = props ;
@@ -122,6 +169,10 @@ const useHoverIntent = ( props = {} ) =>
 
     useEffect( () => () => clearTimeout( timer.current ) , [] ) ;
 
+    // In an effect rather than during the render : a module-level side effect
+    // would run on the server, where there is no document to listen to.
+    useEffect( watchModality , [] ) ;
+
     const triggerProps =
     {
         // A finger produces `pointerenter` too, immediately before its tap. The
@@ -129,7 +180,7 @@ const useHoverIntent = ( props = {} ) =>
         onPointerEnter : ( look ) => { if ( look.pointerType !== 'touch' ) { open( false ) ; } } ,
         onPointerLeave : close ,
         onPointerDown  : close ,
-        onFocus        : () => open( true ) ,
+        onFocus        : () => { if ( keyboardLast ) { open( true ) ; } } ,
         onBlur         : close ,
     } ;
 
