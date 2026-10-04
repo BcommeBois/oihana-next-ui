@@ -97,6 +97,7 @@ const SPINNER_SIZES =
  * @param {import('../themes/components/tooltip').TooltipAlignment} [props.tooltipAlign] - Tooltip alignment ('start' | 'center' | 'end').
  * @param {string} [props.tooltipClassName] - Tooltip class name.
  * @param {import('../themes/components/tooltip').TooltipColorValue} [props.tooltipColor] - Tooltip color.
+ * @param {boolean} [props.tooltipFloat=false] - Draw the bubble as a portaled element instead of a pseudo-element. **Needed wherever an ancestor hides its overflow** — a modal header, a table cell, a scrolling list — since a pseudo-element cannot leave the box that clips it, and no `z-index` or placement can lift it out. See `Tooltip`'s own note : it also opens on focus, never on touch, and carries no rich `tooltip-content`.
  * @param {import('../themes/components/tooltip').TooltipPosition} [props.tooltipPosition] - Tooltip position.
  * @param {boolean} [props.wide] - Wide button modifier.
  * @param {Object} props.rest - Other props passed to Button
@@ -133,6 +134,7 @@ const Button =
     tooltipAlign ,
     tooltipClassName ,
     tooltipColor ,
+    tooltipFloat = false ,
     tooltipPosition ,
     wide ,
 
@@ -163,6 +165,7 @@ const Button =
             align     = { tooltipAlign }
             className = { tooltipClassName }
             color     = { tooltipColor }
+            float     = { tooltipFloat }
             // The wrapper stays while the button is disabled or busy : `show={ false }`
             // would render the bare button, and React would destroy and recreate it on
             // every toggle. Without `data-tip` DaisyUI draws no bubble, so dropping

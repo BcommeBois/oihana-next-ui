@@ -8,6 +8,30 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🗂️ Four modals that ask for something : a typed confirmation, a revealed secret, a question, a payload**
+
+- **Gathered from a consuming application**, where the four were not components : 768 lines of dialog written by hand, each one carrying a decision worth keeping and none of them saying so.
+- **New `components/modals/ConfirmTypedModal`** — a confirmation whose agree button stays locked until the reader has typed the value the caller declared, compared trimmed and case-insensitively. For an action that is irreversible and where one misclick does real harm ; not for a soft delete, where an ordinary confirmation says enough.
+  - 🚨 **The typed value is cleared whenever `expected` changes.** One instance commonly serves a whole list, re-aimed from row to row. Without this, a value typed for a row the reader then LEFT keeps the button unlocked for the next one — six lines that stop the wrong entity being deleted.
+  - 🔑 **A preset, not a flag on `ConfirmModal`.** `ConfirmModal` is used everywhere ; giving it a field, a piece of state and a reset effect would make every one of its callers carry a variant none of them asked for.
+  - `agreeDisabled` is applied AFTER the caller's own props, so a stray one cannot loosen the gate.
+- **New `components/modals/SecretRevealModal`** — a value an API returns exactly once, with a download and a copy, either of which unlocks the confirmation.
+  - 🚨 **`saved` is a LATCH, not the passing state of `useClipboard`.** The hook returns to `ready` a second and a half after a successful write — that is what makes an icon flip back. Gating the confirmation on it would RE-LOCK the dialog under a reader who had copied their secret and gone to paste it somewhere.
+  - 🔑 **The secret itself is the trigger.** `null` renders nothing, a value opens the dialog with both gates reset. A host holds one piece of state rather than a secret AND an open flag that can disagree.
+- **New `components/modals/PromptModal`** — the small dialog that asks WHY before an action is carried out, and hands the answer back trimmed.
+  - 🔑 **Mounting it IS the request to open it.** It takes no ref : a host renders it when it wants to ask and unmounts it afterwards. A permanently mounted dialog held shut by a ref keeps the text of the last question alive between two unrelated gestures.
+  - 🔑 **`onAgree` receives the TEXT, not the click event** — the one place this family departs from `Modal`'s vocabulary, because the text is the entire point. `onCancel` fires ONCE, from the dialog's own `close`, so the button, the backdrop and `Escape` all reach a host that unmounts from it.
+  - ⚠️ **Optional by default.** `required` is there, but these are gestures made in a hurry : a mandatory field is answered with « . » or with the name of the action itself, which is worse than no answer at all.
+- **New `components/modals/JsonViewerModal`** — a read-only look at a payload, with one click to copy it : what a screen was rendered from, when a field does not appear and the question is whether it ever arrived.
+  - 🔑 **It takes the VALUE, not a string.** An object is pretty-printed by the exported `toJsonText`, degrading to `String()` on the cyclic case rather than throwing inside a dialog opened to investigate a defect. A string passes through untouched.
+  - Drawn with `MockupCodeBlock` rather than `CodeBlock`, so no syntax highlighter is pulled into the page's bundle for the many readers who never open it ; that block's hover-only copy button is off in favour of an always-visible one in the header, a hover affordance being invisible on a touch screen.
+- ⚠️ **`ConfirmTypedModal` and `PromptModal` portal by default**, unlike `Modal`. The trigger of either is almost always a row action, and a row is almost always a link : without the portal, a click on « Cancel » or on the backdrop bubbles up the DOM and navigates to the very row the reader was trying not to destroy.
+- ⚠️ **None of the four reaches for a toast.** `useToast` throws outside its provider, and a primitive cannot require one to be mounted above it. A clipboard write or a download that fails is reported IN PLACE, where the reader is already looking.
+- **New `helpers/net/forceDownload`** — hands a blob to the browser as a file to save. ⚠️ The anchor is attached to the document before the click and removed after : a detached link is not reliably clickable everywhere, and older Firefox builds ignored it and downloaded nothing, silently. Those two lines are the whole reason it is a helper rather than four lines written inline.
+- ⚠️ **New `tooltipFloat` on `Button`**, which fills a hole the modals above surfaced : daisyUI draws its bubble in a pseudo-element of the trigger, which **cannot leave an ancestor that hides its overflow** — a modal header, a table cell, a scrolling list — whatever its `z-index`. `Tooltip` has carried `float` for that case all along, and `Button` did not forward it, so until now no button of this library could show a tooltip inside anything that clips. Portalling the surrounding dialog does not help : it moves the bubble along with it, into the same clipping box somewhere else.
+- `components.modal` gains `json`, `secret` and `typed`, each carrying only the labels of its own making — `agree`, `disagree` and the close button stay defined once, at the root, which is what keeps a forgotten label from surfacing in the wrong language.
+- Lab, « Modals » page : the four side by side, on two disposable records and a secret generated in the browser. The first card is one confirmation re-aimed at two rows, so the reset above is what the card is actually demonstrating ; the second says to wait for the copy icon to flip back, so the latch is too.
+
 **🗺️ The map engine moves to 6, and the application serves its worker**
 
 - **Reported by a dependency audit**, which flagged a critical advisory on `maplibre-gl` : a sanitizer bypass in `DOM.sanitize()` (GHSA-jrc7-96c5-q579 / CVE-2026-85061), covering every version up to and including 6.4.0.

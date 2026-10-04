@@ -5,6 +5,7 @@ import CRUDDemo             from '@/demo/modals/CRUDModalDemo';
 import FormModalDemo        from '@/demo/modals/FormModalDemo' ;
 import InputModalDemo       from '@/demo/modals/InputModalDemo';
 import ModalDemo            from '@/demo/modals/ModalDemo';
+import ModalPresetsDemo     from '@/demo/modals/ModalPresetsDemo' ;
 import PortalFullscreenDemo from '@/demo/PortalFullscreenDemo' ;
 import MountedOpenModalDemo from '@/demo/modals/MountedOpenModalDemo';
 import ToastOverModalDemo   from '@/demo/modals/ToastOverModalDemo';
@@ -32,6 +33,8 @@ const ModalShowcase = ({ path = 'app.test' }) =>
             <PortalFullscreenDemo />
 
             <ModalDemo />
+
+            <ModalPresetsDemo />
 
             <ToastOverModalDemo />
 
