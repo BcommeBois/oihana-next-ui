@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.26.0] — 2026-10-04
+
 **🗂️ Four modals that ask for something : a typed confirmation, a revealed secret, a question, a payload**
 
 - **Gathered from a consuming application**, where the four were not components : 768 lines of dialog written by hand, each one carrying a decision worth keeping and none of them saying so.
