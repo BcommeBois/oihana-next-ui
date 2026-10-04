@@ -8,6 +8,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🗺️ The map engine moves to 6, and the application serves its worker**
+
+- **Reported by a dependency audit**, which flagged a critical advisory on `maplibre-gl` : a sanitizer bypass in `DOM.sanitize()` (GHSA-jrc7-96c5-q579 / CVE-2026-85061), covering every version up to and including 6.4.0.
+- 🚨 **There is no fix on the 5 line.** The first patched version is 6.4.1, and 5.24.0 is the last 5.x ever published — staying there means staying vulnerable. The peer range becomes `^6.4.1`, the floor of the advisory rather than a pin, and it deliberately stops accepting 5 : a range keeping both would let a consumer resolve the vulnerable one. The lab runs `^6.12.0`.
+- 🔑 **Not one component had to change.** `components/maps/engine` is the only module that names the engine, and it names the stylesheet and `@vis.gl/react-maplibre` — never `maplibre-gl` itself. So the headline break of 6, an ESM-only distribution that retires the default import, reaches nothing here. The one piece that talks to the engine directly, `MapDraw`, imports `terra-draw` and its adapter, which hold no import of it either.
+- ⚠️ **A consuming application has one step to add : serve the worker.** From 6 the engine loads its worker from a real URL instead of building one from a Blob, and a bundler's module graph is not where that URL resolves. **Next is a documented exception on top of that**, in both of its bundler modes : it emits the worker as a hashed asset WITHOUT the `maplibre-gl-shared.mjs` sibling the worker imports on its first line.
+  - 🚨 **The failure is silent, which is the whole reason this is written down.** A map whose worker never started still mounts, still draws its controls, and never requests a tile. Nothing on the page says why.
+  - **New `oihana-copy-maplibre-worker`** copies both files into `public/maplibre/` on a `predev` and a `prebuild` hook. It reads them from `node_modules`, so a lockfile bump cannot leave a stale worker behind ; `postinstall` would not do, since package managers skip lifecycle scripts when an install has no work to do. It exits `0` when `maplibre-gl` is absent — an optional peer, and an application with no map must not fail its build over a worker it will never load — and `1`, naming the installed version, when that version is older than 6 and ships no worker at all.
+  - **New `MAPLIBRE_WORKER_URL`** in `components/maps/engine`, and a `workerUrl` on `Map` defaulting to it. An application under a `basePath` prefixes it and hands the result over.
+- ⚠️ **The peer floor of `@vis.gl/react-maplibre` moves to `^8.1.2`**, which `^8.0.0` was too loose to express : 6 removed the public `map.transform`, and 8.1.2 is the version whose shim reads the camera without it. A consumer pairing 8.0.x with 6 would have broken on the first pan.
+- ⚠️ **WebGL2 is now required**, WebGL1 having been removed. Where it is unavailable the engine **throws** `GPUInitializationError` from the constructor instead of returning a map, so a fallback has to catch rather than test.
+- ⚠️ `zoomLevelsToOverscale` now defaults to 4, which changes the placement of dense labels and the results of `queryRenderedFeatures` ; `undefined` restores the previous behaviour.
+
 **⬆️ Dependency refresh**
 
 - `@maskito/core`, `@maskito/kit` and `@maskito/react` 5.4 → 5.6, `motion` 13.4 → 13.5.1, `sanitize-html` 2.17.7 → 2.18.0.

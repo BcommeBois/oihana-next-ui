@@ -26,10 +26,43 @@
  *   the map instance — `flyTo`, `fitBounds`, the whole imperative surface a
  *   picker needs. Wrapping it would throw that away for no gain.
  *
+ * ### The worker is served by the application
+ *
+ * See `MAPLIBRE_WORKER_URL` below.
+ *
  * @module components/maps/engine
  */
 
 import 'maplibre-gl/dist/maplibre-gl.css' ;
+
+/**
+ * Where the application serves the engine's worker from.
+ *
+ * 🚨 **A map whose worker never starts looks almost right.** It mounts, it
+ * draws its controls, and it never requests a tile — and nothing on the page
+ * says why. That is the failure this constant exists to prevent, so a wrong
+ * value here is invisible until someone looks at the network panel.
+ *
+ * From version 6 the engine ships as ES modules only and loads its worker from
+ * a real URL, resolved through `import.meta.url`. Inside a bundler's module
+ * graph that does not reliably point at the file, so the url has to be named
+ * once. Next is a documented exception on top of that : it emits the worker as
+ * a hashed asset WITHOUT its `maplibre-gl-shared.mjs` sibling, which the worker
+ * imports by relative path on its first line. Both files are therefore served
+ * from `public/` instead, by `oihana-copy-maplibre-worker` on a `predev` /
+ * `prebuild` hook.
+ *
+ * ⚠️ **An application under a `basePath` must prefix it** and hand the result
+ * to `Map`'s `workerUrl` — this one is read from the root of the origin, which
+ * is where the folder is served without one.
+ *
+ * It mirrors `DESTINATION` in `scripts/copy-maplibre-worker.js` : the folder
+ * and the url it is served at are one decision, written once on each side
+ * because nothing can be imported across them.
+ *
+ * @type {string}
+ */
+export const MAPLIBRE_WORKER_URL = '/maplibre/maplibre-gl-worker.mjs' ;
 
 export {
     FullscreenControl ,

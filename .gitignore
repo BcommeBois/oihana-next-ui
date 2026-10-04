@@ -62,3 +62,6 @@ pnpm-lock.yaml
 # Working notes — plans, audits and decisions kept as a local backup of the
 # project memories. Never committed : they are drafts, not documentation.
 /todo
+
+# Map engine worker, served from public/ by oihana-copy-maplibre-worker
+/public/maplibre/

@@ -12,7 +12,7 @@ import { withoutPointFields } from '../../helpers/geo/pointFields' ;
 
 import MapInstanceContext from './context' ;
 
-import { MapGL } from './engine' ;
+import { MAPLIBRE_WORKER_URL , MapGL } from './engine' ;
 
 import MapControls from './MapControls' ;
 import MapFrame    from './MapFrame' ;
@@ -127,6 +127,12 @@ const toCorners = ( bounds ) =>
  * **Anything not exposed goes through `mapProps`**, spread last onto the
  * engine's `Map` — the same escape hatch the charts keep with `nivoProps`.
  *
+ * 🚨 **A host application has one thing to set up : the engine's worker.**
+ * It is served from its own `public/` folder, by `oihana-copy-maplibre-worker`
+ * on a `predev` and a `prebuild` hook. Without it the map mounts, draws its
+ * controls and never requests a tile, with nothing on the page saying why —
+ * see `MAPLIBRE_WORKER_URL` in `components/maps/engine`.
+ *
  * @param {Object} props
  * @param {string} [props.ariaLabel] - Text alternative for the frame.
  * @param {string|number} [props.aspect] - CSS aspect ratio. Takes precedence over `height`.
@@ -148,6 +154,7 @@ const toCorners = ( bounds ) =>
  * @param {string|{ light : string , dark : string }} props.mapStyle - Style URL. Required — a map without one has nothing to draw.
  * @param {number|string} [props.maxHeight] - Ceiling on the frame's height.
  * @param {Object} [props.ref] - Ref on the map instance (`flyTo`, `fitBounds`, …), not on the frame.
+ * @param {string} [props.workerUrl] - Where the engine's worker is served from. Defaults to `MAPLIBRE_WORKER_URL` ; an application under a `basePath` prefixes it.
  * @param {number} [props.zoom=13] - Opening zoom.
  *
  * @example
@@ -189,6 +196,7 @@ const Map =
     maxHeight ,
     onLoad ,
     ref ,
+    workerUrl = MAPLIBRE_WORKER_URL ,
     zoom = DEFAULT_ZOOM ,
     ...rest
 }) =>
@@ -250,6 +258,7 @@ const Map =
                         mapStyle           = { style }
                         onLoad             = { handleLoad }
                         ref                = { ref }
+                        workerUrl          = { workerUrl }
                         { ...mapProps }
                     >
                         <MapInstanceContext value={ instance }>
