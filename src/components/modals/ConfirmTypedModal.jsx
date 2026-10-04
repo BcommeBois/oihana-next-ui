@@ -11,11 +11,17 @@
  * an external identity provider. Not for a soft delete, an archive, or anywhere
  * an ordinary confirmation says enough.
  *
- * 🚨 **The typed value is cleared whenever `expected` changes.** One instance
- * commonly serves a whole list, re-aimed from row to row, and without this a
- * value typed for the previous row would still match nothing — but a value
- * typed for a row the reader then LEFT would keep the button unlocked for the
- * next one. Six lines that stop the wrong entity being deleted.
+ * 🚨 **The typed value is cleared on both doors : a new `expected`, and the
+ * dialog closing.** One instance commonly serves a whole list, re-aimed from row
+ * to row, and a value typed for a row the reader then LEFT would keep the button
+ * unlocked for the next one.
+ *
+ * Clearing it on a change of `expected` is not enough, and that is the subtle
+ * half : `Modal` calls `onCancel` from the disagree and close BUTTONS only — the
+ * backdrop and `Escape` go through the dialog's own closing. Dismissed by either
+ * of those and reopened on the SAME row, the field still held its value and the
+ * agree button was already unlocked. So the reset hangs off `onClose`, which
+ * every door passes through.
  *
  * ⚠️ **It portals by default**, unlike `Modal`. The trigger of a destructive
  * confirmation is almost always a row action, and a row is almost always a
@@ -45,7 +51,8 @@
  * @param {React.ReactNode} [props.expectedLabel]          - Label of the field. Defaults to the bundle's `label`.
  * @param {string}          [props.inputPlaceholder]       - Placeholder of the field. Defaults to `expected` itself, as a visible hint.
  * @param {Function}        [props.onAgree]                - Called when the reader agrees. Never called while the gate is closed.
- * @param {Function}        [props.onCancel]               - Called when the reader backs out.
+ * @param {Function}        [props.onCancel]               - Called when the reader backs out through the disagree or close button.
+ * @param {Function}        [props.onClose]                - Called when the dialog closes, whichever door was used. Chained after the reset.
  * @param {string}          [props.path='components.modal.typed'] - i18n path the field's own labels are read from.
  * @param {boolean}         [props.portal=true]            - Render through a portal on `document.body`.
  * @param {Object}          [props.ref]                    - Ref on the underlying `<dialog>`.
@@ -94,6 +101,7 @@ const ConfirmTypedModal =
     inputPlaceholder ,
     onAgree ,
     onCancel ,
+    onClose ,
     path          = 'components.modal.typed' ,
     portal        = true ,
     ref ,
@@ -129,6 +137,14 @@ const ConfirmTypedModal =
         onCancel?.() ;
     } ;
 
+    // Every door passes through here — the two buttons, the backdrop, `Escape` —
+    // which is why the reset hangs off it and not off `onCancel` alone.
+    const handleClose = ( event ) =>
+    {
+        setTyped( '' ) ;
+        onClose?.( event ) ;
+    } ;
+
     return (
         <ConfirmModal
             ref           = { ref }
@@ -136,6 +152,7 @@ const ConfirmTypedModal =
             portal        = { portal }
             onAgree       = { handleAgree }
             onCancel      = { handleCancel }
+            onClose       = { handleClose }
             { ...props }
             agreeDisabled = { blocked }
         >

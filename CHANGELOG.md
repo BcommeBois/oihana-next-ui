@@ -8,6 +8,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🔧 The gaps 0.26.0 left in the four modals, and a cap that hid what was typed**
+
+- **Reported from the consuming application that migrated onto them**, which is where every one of them showed : a dialog it could not migrate, three acknowledgements it lost, and a helper it had to import from a JSON viewer. All five were answerable by sweeping that application's call sites BEFORE the components were written rather than after.
+- 🚨 **`ConfirmTypedModal` cleared the typed value on a change of `expected` ONLY.** `Modal` calls `onCancel` from the disagree and close BUTTONS ; the backdrop and `Escape` go through the dialog's own closing. Dismissed by either of those and reopened on the SAME row, the field still held its value and the agree button was already unlocked — the exact hazard the reset exists to prevent, through the two doors it did not cover. It now hangs off `onClose`, which every door passes through ; a caller's own `onClose` is chained after it.
+- 🚨 **`SecretRevealModal` let the backdrop and `Escape` dismiss an unsaved secret**, which made its own promise false : the confirmation was gated and nothing else was. A stray click beside the dialog, or a reflex `Escape`, and a value shown once was gone for good. `disableBackdropClick` and `disableEscapeKeyDown` now hold until a download or a copy succeeds, and unlock with the button.
+- **The two modals that copy now tell their host** — `onCopySuccess` / `onCopyError`, plus `onDownloadSuccess` / `onDownloadError` on the secret one. The library still never toasts, `useToast` throwing outside its provider, but an application that wants a toast now gets the event and says it in its own words. Three acknowledgements a consuming application had, and lost on the way in.
+- **`PromptModal` takes `textAreaProps`**, spread last onto its field — the escape hatch the charts keep with `nivoProps`. Without it an autosizing prompt could not be expressed at all, and one such dialog had to stay hand-written where it was.
+- **`toJsonText` moves to `helpers/strings/toJsonText`**, re-exported from `JsonViewerModal` so nothing breaks. A value is pretty-printed in plenty of places that open no dialog, and a host that needed it had to import a JSON viewer to get it.
+- 🚨 **`TextArea` hid the text past its `autosize` cap instead of scrolling to it.** `overflow` was `hidden` for the whole of an autosizing box, which is right WHILE IT GROWS — a scrollbar would flicker in and out on every keystroke as the height is measured — and wrong the moment `maxRows` stops it growing : from there, what was typed could neither be seen nor reached. It was typed into nothing. The cap now decides, read from state so a re-render cannot put `hidden` back. **Found through `PromptModal`'s new field, but it reaches every autosizing box with a `maxRows`** — nine of them in the application this came from, each one a description someone could not read back past five lines.
+- Lab, « Modals » : each card now says what to try — dismissing the typed confirmation with `Escape` and reopening the SAME row, `Escape` on an unsaved secret, the callbacks reported as a badge, the prompt's field growing with what is typed and then scrolling, and — on the two that copy — a toast raised by the DEMO from the library's callbacks, which is the whole point of them.
+
 ## [0.26.0] — 2026-10-04
 
 **🗂️ Four modals that ask for something : a typed confirmation, a revealed secret, a question, a payload**

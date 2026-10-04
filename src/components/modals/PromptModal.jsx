@@ -46,7 +46,8 @@
  * @param {string}          [props.path='components.modal'] - i18n path the `agree` / `disagree` labels are read from.
  * @param {string}          [props.placeholder]      - Placeholder of the field.
  * @param {boolean}         [props.required=false]   - Gate the agree button on a non-empty value. Read the warning above first.
- * @param {number}          [props.rows=3]           - Height of the field, in rows.
+ * @param {number}          [props.rows=3]           - Height of the field, in rows. Ignored by an autosizing field.
+ * @param {Object}          [props.textAreaProps]    - Spread last onto the `TextArea` — `autosize`, `minRows`, `maxRows`, a counter. The escape hatch the charts keep with `nivoProps`.
  * @param {React.ReactNode} [props.title]            - Title of the dialog.
  *
  * @example
@@ -92,6 +93,7 @@ const PromptModal =
     placeholder ,
     required     = false ,
     rows         = 3 ,
+    textAreaProps ,
     title ,
     ...props
 }
@@ -145,6 +147,7 @@ const PromptModal =
                     maxLength   = { maxLength }
                     placeholder = { placeholder }
                     rows        = { rows }
+                    { ...textAreaProps }
                     value       = { value }
                     onChange    = { ( next ) => setValue( next ) }
                 />

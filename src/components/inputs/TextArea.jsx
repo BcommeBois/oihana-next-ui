@@ -1,6 +1,6 @@
 'use client' ;
 
-import { useEffect, useRef, useId } from 'react'
+import { useEffect, useRef, useId, useState } from 'react'
 
 import cn from '../../themes/helpers/cn' ;
 
@@ -35,7 +35,7 @@ import useMergeRefs       from '../../hooks/useMergeRefs'
  * @param {string} [props.resize='vertical'] - CSS resize
  * @param {boolean} [props.autosize=false] - Auto-resize based on content
  * @param {number} [props.minRows=3] - Minimum rows when autosize enabled
- * @param {number} [props.maxRows] - Maximum rows when autosize enabled
+ * @param {number} [props.maxRows] - Maximum rows when autosize enabled. Reached, the box stops growing and scrolls — without it there is no cap and no scrollbar.
  * @param {string|number} [props.defaultValue] - Default value
  * @param {string|number} [props.value] - Controlled value
  * @param {Function} [props.onChange] - Change handler. **Receives the value, not the DOM event** —
@@ -131,10 +131,23 @@ const TextArea =
         textareaClassName
     ) ;
 
+    /**
+     * Whether the autosizing height has reached its `maxRows` cap.
+     * @type {boolean}
+     */
+    const [ capped , setCapped ] = useState( false ) ;
+
+    // 🚨 An autosizing box hides its overflow WHILE IT GROWS — otherwise a
+    // scrollbar flickers in and out on every keystroke as the height is
+    // measured. But once the height is capped by `maxRows` the box stops
+    // growing, and keeping it hidden there means the text past the cap can
+    // neither be seen nor reached : it is typed into nothing. So the cap is
+    // what decides, and it is read from state rather than written on the node,
+    // so a re-render cannot put `overflow: hidden` back.
     const resizeStyles =
     {
-        resize   : autosize ? 'none'   : resize ,
-        overflow : autosize ? 'hidden' : undefined
+        resize   : autosize ? 'none' : resize ,
+        overflow : autosize ? ( capped ? 'auto' : 'hidden' ) : undefined ,
     } ;
 
     // --------- Value management
@@ -181,6 +194,8 @@ const TextArea =
         const newHeight = Math.min( Math.max( textarea.scrollHeight, minH ), maxH ) ;
 
         textarea.style.height = `${newHeight}px` ;
+
+        setCapped( newHeight >= maxH ) ;
 
     }, [ displayValue, autosize, minRows, maxRows ]) ;
 

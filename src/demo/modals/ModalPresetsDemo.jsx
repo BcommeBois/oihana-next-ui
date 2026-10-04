@@ -14,6 +14,8 @@ import SecretRevealModal from '@/components/modals/SecretRevealModal' ;
 
 import Container from '@/display/Container' ;
 
+import useToast , { ERROR , SUCCESS } from '@/contexts/toasts/useToast' ;
+
 /**
  * Two rows a single confirmation is re-aimed at, which is the whole point of
  * the card : the typed value must not survive the change of target.
@@ -98,6 +100,10 @@ const ModalPresetsDemo = () =>
     const [ asking , setAsking ] = useState( false ) ;
     const [ answer , setAnswer ] = useState( null ) ;
 
+    const [ said , setSaid ] = useState( null ) ;
+
+    const { toast } = useToast() ;
+
     const confirmRef = useRef( null ) ;
     const jsonRef    = useRef( null ) ;
 
@@ -129,7 +135,7 @@ const ModalPresetsDemo = () =>
                 <Case
                     icon     = { MdDelete }
                     title    = "ConfirmTypedModal"
-                    subtitle = "One instance, re-aimed from row to row. Type one id, close, then open the other row : the field is empty again, and the button is locked."
+                    subtitle = "One instance, re-aimed from row to row. Type an id then dismiss with Escape or a click beside the dialog, and reopen THE SAME row : the field is empty again, and the button is locked."
                 >
                     <div className="flex flex-col gap-2">
                         { ROWS.map( ( row ) => (
@@ -152,17 +158,20 @@ const ModalPresetsDemo = () =>
                 <Case
                     icon     = { MdKey }
                     title    = "SecretRevealModal"
-                    subtitle = "The value IS the trigger : there is no open flag. Copy it, then wait a couple of seconds — the icon goes back to the clipboard, and the button stays unlocked."
+                    subtitle = "The value IS the trigger : there is no open flag. Nothing dismisses it while it is unsaved — try Escape. Copy it, then wait a couple of seconds : the icon goes back to the clipboard, and the button stays unlocked. The toast is the host reacting to a callback, not the library."
                 >
-                    <Button color="primary" size="sm" onClick={ () => setSecret( makeSecret() ) }>
-                        Reveal a value
-                    </Button>
+                    <div className="flex flex-wrap items-center gap-2">
+                        <Button color="primary" size="sm" onClick={ () => { setSaid( null ) ; setSecret( makeSecret() ) ; } }>
+                            Reveal a value
+                        </Button>
+                        { said && <Badge color="success" style="soft">{ said }</Badge> }
+                    </div>
                 </Case>
 
                 <Case
                     icon     = { MdQuestionAnswer }
                     title    = "PromptModal"
-                    subtitle = "Mounting it is the request to open it. It hands back the trimmed text, and an empty string when nothing was typed."
+                    subtitle = "Mounting it is the request to open it. It hands back the trimmed text, and an empty string when nothing was typed. Its field grows with what is typed, through textAreaProps."
                 >
                     <div className="flex flex-wrap items-center gap-2">
                         <Button color="primary" size="sm" onClick={ () => setAsking( true ) }>
@@ -179,11 +188,14 @@ const ModalPresetsDemo = () =>
                 <Case
                     icon     = { MdDataObject }
                     title    = "JsonViewerModal"
-                    subtitle = "It takes the value, not a string : the payload is pretty-printed here, and the copy button sits in the header where a touch screen can reach it."
+                    subtitle = "It takes the value, not a string : the payload is pretty-printed here, and the copy button sits in the header where a touch screen can reach it. It tells its host about the copy rather than toasting — and the host, here, toasts."
                 >
-                    <Button color="neutral" size="sm" style="outline" onClick={ () => jsonRef.current?.showModal() }>
-                        Show the payload
-                    </Button>
+                    <div className="flex flex-wrap items-center gap-2">
+                        <Button color="neutral" size="sm" style="outline" onClick={ () => { setSaid( null ) ; jsonRef.current?.showModal() ; } }>
+                            Show the payload
+                        </Button>
+                        { said && <Badge color="success" style="soft">{ said }</Badge> }
+                    </div>
                 </Case>
 
             </div>
@@ -201,8 +213,12 @@ const ModalPresetsDemo = () =>
             <SecretRevealModal
                 contentType = "application/json"
                 fileName    = "example-key.json"
-                secret      = { secret }
-                onAgree     = { () => setSecret( null ) }
+                secret            = { secret }
+                onAgree           = { () => setSecret( null ) }
+                onCopyError       = { () => toast( 'The value could not be copied.' , ERROR ) }
+                onCopySuccess     = { () => { setSaid( 'onCopySuccess' ) ; toast( 'Value copied to the clipboard.' , SUCCESS ) ; } }
+                onDownloadError   = { () => toast( 'The download could not be started.' , ERROR ) }
+                onDownloadSuccess = { name => { setSaid( 'onDownloadSuccess' ) ; toast( `Saved as ${ name }.` , SUCCESS ) ; } }
             >
                 <p className="text-sm">
                     <span className="text-base-content/60">Example : </span>
@@ -216,16 +232,19 @@ const ModalPresetsDemo = () =>
                     body        = "The text is handed back trimmed, and nothing is required."
                     label       = "Anything you like"
                     placeholder = "A line of text"
-                    title       = "What should be recorded?"
-                    onAgree     = { ( value ) => { setAnswer( value ) ; setAsking( false ) ; } }
-                    onCancel    = { () => setAsking( false ) }
+                    textAreaProps = { { autosize : true , maxRows : 6 , minRows : 2 } }
+                    title         = "What should be recorded?"
+                    onAgree       = { ( value ) => { setAnswer( value ) ; setAsking( false ) ; } }
+                    onCancel      = { () => setAsking( false ) }
                 />
             ) }
 
             <JsonViewerModal
-                ref      = { jsonRef }
-                subtitle = "The payload this card was rendered from."
-                value    = { PAYLOAD }
+                ref           = { jsonRef }
+                subtitle      = "The payload this card was rendered from."
+                value         = { PAYLOAD }
+                onCopyError   = { () => toast( 'The payload could not be copied.' , ERROR ) }
+                onCopySuccess = { () => { setSaid( 'onCopySuccess' ) ; toast( 'Payload copied to the clipboard.' , SUCCESS ) ; } }
             />
 
         </Container>

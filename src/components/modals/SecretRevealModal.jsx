@@ -24,10 +24,18 @@
  * A host therefore holds one piece of state — the secret it has just been
  * handed — rather than a secret AND an open flag that can disagree.
  *
+ * 🚨 **Nothing dismisses it while the secret is unsaved — not the backdrop,
+ * not `Escape`.** Gating the confirmation alone left both of those open, which
+ * made the promise above false : a stray click beside the dialog, or a reflex
+ * `Escape`, and the value was gone for good. They unlock together with the
+ * button, the moment either gesture succeeds.
+ *
  * ⚠️ **A failure is reported in place, never through a toast.** `useToast`
  * throws outside its provider, and a library primitive cannot require one to be
  * mounted above it. A clipboard write that fails turns the hint line into the
- * reason, where the reader is already looking.
+ * reason, where the reader is already looking — and a host that wants a toast
+ * of its own passes the four callbacks below : the library says WHAT happened,
+ * the application says it in its own words.
  *
  * What a host adds through `children` is whatever identifies the secret — the
  * name of the service, the id of the key — rendered above it.
@@ -39,7 +47,11 @@
  * @param {React.ReactNode} [props.children]     - What identifies the secret, rendered between the warning and the secret.
  * @param {string}          [props.contentType='text/plain'] - Media type of the download. `'application/json'` for a secret that is a document.
  * @param {string}          [props.fileName='secret.txt'] - The name the download is saved under.
- * @param {Function}        [props.onAgree]      - Called when the reader confirms having saved the secret.
+ * @param {Function}        [props.onAgree]           - Called when the reader confirms having saved the secret.
+ * @param {Function}        [props.onCopyError]       - Called with the error when the clipboard write failed.
+ * @param {Function}        [props.onCopySuccess]     - Called with the copied text.
+ * @param {Function}        [props.onDownloadError]   - Called with the error when the download could not be started.
+ * @param {Function}        [props.onDownloadSuccess] - Called with the file name once the download is handed to the browser.
  * @param {string}          [props.path='components.modal.secret'] - i18n path the labels are read from.
  * @param {string}          [props.secret]       - The text to reveal. `null` renders nothing ; a new value reopens the dialog with both gates reset.
  * @param {React.ReactNode} [props.title]        - Title of the dialog. Defaults to the bundle's `title`.
@@ -96,6 +108,10 @@ const SecretRevealModal =
     contentType = DEFAULT_SECRET_CONTENT_TYPE ,
     fileName    = DEFAULT_SECRET_FILENAME ,
     onAgree ,
+    onCopyError ,
+    onCopySuccess ,
+    onDownloadError ,
+    onDownloadSuccess ,
     path     = 'components.modal.secret' ,
     secret ,
     title ,
@@ -134,8 +150,17 @@ const SecretRevealModal =
 
     const [ , copy ] = useClipboard
     ({
-        onError   : () => setFailure( t.copyFailed ?? 'Unable to copy to the clipboard.' ) ,
-        onSuccess : () => { setFailure( null ) ; setCopied( true ) ; } ,
+        onError : ( error , text ) =>
+        {
+            setFailure( t.copyFailed ?? 'Unable to copy to the clipboard.' ) ;
+            onCopyError?.( error , text ) ;
+        } ,
+        onSuccess : ( text ) =>
+        {
+            setFailure( null ) ;
+            setCopied( true ) ;
+            onCopySuccess?.( text ) ;
+        } ,
     }) ;
 
     if ( !secret ) { return null ; }
@@ -150,10 +175,12 @@ const SecretRevealModal =
             forceDownload( fileName , URL.createObjectURL( blob ) , true ) ;
             setFailure( null ) ;
             setDownloaded( true ) ;
+            onDownloadSuccess?.( fileName ) ;
         }
-        catch
+        catch ( error )
         {
             setFailure( t.downloadFailed ?? 'Download failed. Use the copy button instead.' ) ;
+            onDownloadError?.( error , fileName ) ;
         }
     } ;
 
@@ -165,6 +192,8 @@ const SecretRevealModal =
         <ConfirmModal
             agree                = { agree ?? t.agree ?? 'I have saved this value' }
             agreeColor           = "primary"
+            disableBackdropClick = { !saved }
+            disableEscapeKeyDown = { !saved }
             fullScreenBreakpoint = "md"
             portal
             ref                  = { modalRef }

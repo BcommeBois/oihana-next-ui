@@ -13,9 +13,10 @@
  * as it was given, so a caller holding an already-formatted payload hands it
  * straight over.
  *
- * ⚠️ **A copy failure is reported in place, never through a toast** — see
- * {@link SecretRevealModal} for the reason : `useToast` throws outside its
- * provider, which a primitive cannot require.
+ * ⚠️ **It reports a copy in place and never toasts** — `useToast` throws
+ * outside its provider, which a primitive cannot require. A host that wants a
+ * toast of its own passes `onCopySuccess` / `onCopyError` : the library says
+ * WHAT happened, the application says it in its own words.
  *
  * It is drawn with `MockupCodeBlock` rather than `CodeBlock` on purpose : no
  * syntax highlighter is pulled into the page's bundle for the many readers who
@@ -41,6 +42,8 @@
  *
  * @param {Object}          props
  * @param {React.ReactNode} [props.agree]    - Close button label. Defaults to the bundle's `agree`.
+ * @param {Function}        [props.onCopyError]   - Called with the error when the clipboard write failed.
+ * @param {Function}        [props.onCopySuccess] - Called with the copied text. For a toast of the host's own.
  * @param {string}          [props.path='components.modal.json'] - i18n path the labels are read from.
  * @param {Object}          [props.ref]      - Ref on the underlying `<dialog>`.
  * @param {React.ReactNode} [props.subtitle] - A line above the payload saying where it comes from. Defaults to the bundle's `subtitle`.
@@ -62,35 +65,25 @@ import NO_LOCALE from '../../contexts/locale/noLocale' ;
 
 import useClipboard , { ERROR } from '../../hooks/useClipboard' ;
 
+import toJsonText from '../../helpers/strings/toJsonText' ;
+
 import CopyButton      from '../buttons/CopyButton' ;
 import MockupCodeBlock from '../typography/markdown/MockupCodeBlock' ;
 
 import Modal from './Modal' ;
 
 /**
- * Pretty-prints a payload, and never throws inside a dialog that was opened to
- * look at a defect.
- *
- * @param {*} value - Any value. A string is returned untouched.
- * @returns {string}
+ * Re-exported for the hosts that imported it from here before it moved to
+ * `helpers/strings/toJsonText`. Prefer the helper : a payload is formatted in
+ * plenty of places that open no dialog at all.
  */
-export const toJsonText = ( value ) =>
-{
-    if ( typeof value === 'string' ) { return value ; }
-
-    try
-    {
-        return JSON.stringify( value , null , 2 ) ;
-    }
-    catch
-    {
-        return String( value ) ;
-    }
-} ;
+export { default as toJsonText } from '../../helpers/strings/toJsonText' ;
 
 const JsonViewerModal =
 ({
     agree ,
+    onCopyError ,
+    onCopySuccess ,
     path = 'components.modal.json' ,
     ref ,
     subtitle ,
@@ -101,7 +94,11 @@ const JsonViewerModal =
 {
     const t = useI18n( path , NO_LOCALE , false ) ?? {} ;
 
-    const [ state , copy ] = useClipboard() ;
+    const [ state , copy ] = useClipboard
+    ({
+        onError   : ( error , text ) => onCopyError?.( error , text ) ,
+        onSuccess : ( text ) => onCopySuccess?.( text ) ,
+    }) ;
 
     const json = useMemo( () => toJsonText( value ) , [ value ] ) ;
 
