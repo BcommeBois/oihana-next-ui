@@ -2,6 +2,10 @@
 
 import { useState } from 'react' ;
 
+import format from 'vegas-js-core/src/strings/fastformat' ;
+
+import useI18n from '@/contexts/locale/useI18n' ;
+
 import Button       from '@/components/Button' ;
 import ConfirmModal from '@/components/modals/ConfirmModal' ;
 import useModal     from '@/components/modals/hooks/useModal' ;
@@ -19,9 +23,14 @@ const CALL_DELAY = 1500 ;
  * on the agree button, disagree and close disabled, `Escape` and backdrop
  * without effect. The caller closes it on success, and keeps it open with an
  * error on failure.
+ *
+ * @param {Object} props
+ * @param {string} [props.path='demo.modals.asyncConfirm'] - Dot notation path to the demo locale.
  */
-const AsyncConfirmModalDemo = () =>
+const AsyncConfirmModalDemo = ( { path = 'demo.modals.asyncConfirm' } = {} ) =>
 {
+    const t = useI18n( path ) ;
+
     const { modalRef , open , close } = useModal() ;
 
     const [ fails  , setFails  ] = useState( false ) ;
@@ -47,40 +56,36 @@ const AsyncConfirmModalDemo = () =>
 
         if ( fails )
         {
-            setError( 'Le serveur a refusé l’archivage. Réessayez ou annulez.' ) ;
+            setError( t.failure ) ;
             return ;
         }
 
-        setResult( `Archivé à ${ new Date().toLocaleTimeString() }` ) ;
+        setResult( format( t.archived , new Date().toLocaleTimeString() ) ) ;
         close() ;
     } ;
 
     return (
         <Container className="flex flex-col gap-4 bg-base-200/60 p-4 sm:p-8 rounded-box" maxWidth="max-w-5xl">
 
-            <h2 className="text-3xl font-bold">Confirmation asynchrone</h2>
-            <p className="text-sm opacity-70">
-                La modale reste ouverte pendant l’action : bouton « En cours… », Annuler et la croix désactivés,
-                Échap et le fond sans effet. Elle se ferme quand l’action réussit, et reste ouverte avec une erreur
-                quand elle échoue.
-            </p>
+            <h2 className="text-3xl font-bold">{ t.title }</h2>
+            <p className="text-sm opacity-70">{ t.description }</p>
 
             <div className="flex flex-wrap items-center gap-3">
-                <Button color="primary" onClick={ () => openWith( false ) }>Archiver (réussite)</Button>
-                <Button color="warning" onClick={ () => openWith( true ) }>Archiver (échec)</Button>
-                <span className="text-sm opacity-70">{ result ?? 'Aucun archivage' }</span>
+                <Button color="primary" onClick={ () => openWith( false ) }>{ t.succeed }</Button>
+                <Button color="warning" onClick={ () => openWith( true ) }>{ t.fail }</Button>
+                <span className="text-sm opacity-70">{ result ?? t.idle }</span>
             </div>
 
             <ConfirmModal
                 ref          = { modalRef }
-                agree        = "Archiver"
+                agree        = { t.agree }
                 busy         = { busy }
                 closeOnAgree = { false }
                 onAgree      = { archive }
-                title        = "Archiver le document ?"
+                title        = { t.modal }
             >
                 <div className="flex flex-col gap-3 p-2">
-                    <p>Le document ne sera plus proposé dans les listes.</p>
+                    <p>{ t.body }</p>
                     { error && <p className="text-sm text-error">{ error }</p> }
                 </div>
             </ConfirmModal>

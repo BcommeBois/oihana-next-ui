@@ -2,6 +2,10 @@
 
 import { useState, useMemo } from 'react' ;
 
+import format from 'vegas-js-core/src/strings/fastformat' ;
+
+import useI18n from '@/contexts/locale/useI18n' ;
+
 import useAddModal    from '@/components/modals/hooks/useAddModal' ;
 import useEditModal   from '@/components/modals/hooks/useEditModal' ;
 import useRemoveModal from '@/components/modals/hooks/useRemoveModal' ;
@@ -17,8 +21,10 @@ import Modal        from '@/components/modals/Modal' ;
 
 import { MdAdd, MdEdit, MdDelete, MdPerson, MdWork } from 'react-icons/md' ;
 
-const CRUDDemo = () =>
+const CRUDDemo = ( { path = 'demo.modals.crud' } = {} ) =>
 {
+    const t = useI18n( path ) ;
+
     const [ users, setUsers ] = useState([
         { id: 1, name: 'Alice Johnson', email: 'alice@example.com', phone: '555-0101', role: 'Developer' },
         { id: 2, name: 'Bob Smith', email: 'bob@example.com', phone: '555-0102', role: 'Designer' },
@@ -79,10 +85,8 @@ const CRUDDemo = () =>
 
             <div className="flex justify-between items-center">
                 <div>
-                    <h2 className="text-3xl font-bold">CRUD Hooks Demo</h2>
-                    <p className="text-base-content/70 mt-2">
-                        useAddModal, useEditModal, useRemoveModal
-                    </p>
+                    <h2 className="text-3xl font-bold">{ t.title }</h2>
+                    <p className="text-base-content/70 mt-2">{ t.description }</p>
                 </div>
                 <Button
                     color="primary"
@@ -90,19 +94,17 @@ const CRUDDemo = () =>
                     className="gap-2"
                 >
                     <MdAdd size={20} />
-                    Add User
+                    { t.add }
                 </Button>
             </div>
 
             <Divider />
-
-            {/* Stats */}
             <div className="stats shadow">
                 <div className="stat">
                     <div className="stat-figure text-primary">
                         <MdPerson size={40} />
                     </div>
-                    <div className="stat-title">Total Users</div>
+                    <div className="stat-title">{ t.stats.total }</div>
                     <div className="stat-value text-primary">{ users.length }</div>
                 </div>
 
@@ -110,7 +112,7 @@ const CRUDDemo = () =>
                     <div className="stat-figure text-secondary">
                         <MdWork size={40} />
                     </div>
-                    <div className="stat-title">Developers</div>
+                    <div className="stat-title">{ t.stats.developers }</div>
                     <div className="stat-value text-secondary">
                         { users.filter( u => u.role === 'Developer' ).length }
                     </div>
@@ -120,33 +122,30 @@ const CRUDDemo = () =>
                     <div className="stat-figure text-accent">
                         <MdEdit size={40} />
                     </div>
-                    <div className="stat-title">Designers</div>
+                    <div className="stat-title">{ t.stats.designers }</div>
                     <div className="stat-value text-accent">
                         { users.filter( u => u.role === 'Designer' ).length }
                     </div>
                 </div>
             </div>
-
-            {/* Users Table */}
             <div className="card bg-base-100 shadow-xl">
                 <div className="card-body p-0">
                     <div className="overflow-x-auto">
                         <table className="table">
                             <thead>
                                 <tr>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Phone</th>
-                                    <th>Role</th>
-                                    <th>Actions</th>
+                                    <th>{ t.columns.name }</th>
+                                    <th>{ t.columns.email }</th>
+                                    <th>{ t.columns.phone }</th>
+                                    <th>{ t.columns.role }</th>
+                                    <th>{ t.columns.actions }</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {/* Uses sortedUsers rather than users */}
                                 { sortedUsers.length === 0 ? (
                                     <tr>
                                         <td colSpan={5} className="text-center py-8 text-base-content/50">
-                                            No users yet. Click "Add User" to get started!
+                                            { t.empty }
                                         </td>
                                     </tr>
                                 ) : (
@@ -188,7 +187,7 @@ const CRUDDemo = () =>
                                                         className="gap-1"
                                                     >
                                                         <MdEdit size={16} />
-                                                        Edit
+                                                        { t.edit }
                                                     </Button>
                                                     <Button
                                                         size="sm"
@@ -197,7 +196,7 @@ const CRUDDemo = () =>
                                                         className="gap-1"
                                                     >
                                                         <MdDelete size={16} />
-                                                        Delete
+                                                        { t.remove }
                                                     </Button>
                                                 </div>
                                             </td>
@@ -211,47 +210,38 @@ const CRUDDemo = () =>
             </div>
 
             <Divider />
-
-            {/* Hook States */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {/* Add Modal State */}
                 <div className="card bg-base-100 shadow">
                     <div className="card-body">
-                        <h3 className="card-title text-sm">useAddModal State</h3>
+                        <h3 className="card-title text-sm">useAddModal</h3>
                         <div className="text-xs space-y-1 font-mono">
                             <div>valid: { isAddValid ? '✓' : '✗' }</div>
                         </div>
                     </div>
                 </div>
-
-                {/* Edit Modal State */}
                 <div className="card bg-base-100 shadow">
                     <div className="card-body">
-                        <h3 className="card-title text-sm">useEditModal State</h3>
+                        <h3 className="card-title text-sm">useEditModal</h3>
                         <div className="text-xs space-y-1 font-mono">
                             <div>hasChanges: { editModal.hasChanges ? '✓' : '✗' }</div>
                             <div>valid: { isEditValid ? '✓' : '✗' }</div>
                         </div>
                     </div>
                 </div>
-
-                {/* Remove Modal State */}
                 <div className="card bg-base-100 shadow">
                     <div className="card-body">
-                        <h3 className="card-title text-sm">useRemoveModal State</h3>
+                        <h3 className="card-title text-sm">useRemoveModal</h3>
                         <div className="text-xs space-y-1 font-mono">
                             <div>ready: ✓</div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            {/* ==================== ADD MODAL ==================== */}
             <Modal
                 ref={ addModal.modalRef }
-                title="Add New User"
+                title={ t.addModal.title }
                 icon={ <MdAdd size={30} className="text-primary" /> }
-                agree="Add User"
+                agree={ t.addModal.agree }
                 agreeColor="primary"
                 agreeIcon={ <MdAdd size={20} /> }
                 agreeDisabled={ !isAddValid }
@@ -260,33 +250,31 @@ const CRUDDemo = () =>
             >
                 <div className="flex flex-col gap-4 py-4">
                     <Input
-                        label="Name"
-                        placeholder="Enter full name"
+                        label={ t.fields.name }
+                        placeholder={ t.fields.namePlaceholder }
                         value={ addModal.item?.name || '' }
                         onChange={ (value) => addModal.setItem({ ...addModal.item, name: value }) }
-                        error={ !addModal.item?.name ? 'Name is required' : '' }
+                        error={ !addModal.item?.name ? t.fields.nameRequired : '' }
                     />
 
                     <Input
-                        label="Email"
+                        label={ t.fields.email }
                         type="email"
                         placeholder="user@example.com"
                         value={ addModal.item?.email || '' }
                         onChange={ (value) => addModal.setItem({ ...addModal.item, email: value }) }
-                        error={ !addModal.item?.email ? 'Email is required' : '' }
+                        error={ !addModal.item?.email ? t.fields.emailRequired : '' }
                     />
 
                     <Input
-                        label="Phone"
+                        label={ t.fields.phone }
                         placeholder="555-0100"
                         value={ addModal.item?.phone || '' }
                         onChange={ (value) => addModal.setItem({ ...addModal.item, phone: value }) }
                     />
-
-                    {/* Role Select - DaisyUI 5 */}
                     <div className="flex flex-col gap-1">
                         <label className="label">
-                            <span className="label-text">Role</span>
+                            <span className="label-text">{ t.fields.role }</span>
                         </label>
                         <select
                             className="select select-primary w-full"
@@ -300,13 +288,11 @@ const CRUDDemo = () =>
                     </div>
                 </div>
             </Modal>
-
-            {/* ==================== EDIT MODAL ==================== */}
             <Modal
                 ref={ editModal.modalRef }
-                title="Edit User"
+                title={ t.editModal.title }
                 icon={ <MdEdit size={30} className="text-info" /> }
-                agree="Save Changes"
+                agree={ t.editModal.agree }
                 agreeColor="info"
                 agreeIcon={ <MdEdit size={20} /> }
                 agreeDisabled={ !editModal.hasChanges || !isEditValid }
@@ -326,38 +312,36 @@ const CRUDDemo = () =>
                 <div className="flex flex-col gap-4 py-4">
                     { editModal.hasChanges && (
                         <div className="alert alert-warning">
-                            <span className="text-sm">You have unsaved changes</span>
+                            <span className="text-sm">{ t.editModal.dirty }</span>
                         </div>
                     )}
 
                     <Input
-                        label="Name"
-                        placeholder="Enter full name"
+                        label={ t.fields.name }
+                        placeholder={ t.fields.namePlaceholder }
                         value={ editModal.item?.name || '' }
                         onChange={ (value) => editModal.setItem({ ...editModal.item, name: value }) }
-                        error={ !editModal.item?.name ? 'Name is required' : '' }
+                        error={ !editModal.item?.name ? t.fields.nameRequired : '' }
                     />
 
                     <Input
-                        label="Email"
+                        label={ t.fields.email }
                         type="email"
                         placeholder="user@example.com"
                         value={ editModal.item?.email || '' }
                         onChange={ (value) => editModal.setItem({ ...editModal.item, email: value }) }
-                        error={ !editModal.item?.email ? 'Email is required' : '' }
+                        error={ !editModal.item?.email ? t.fields.emailRequired : '' }
                     />
 
                     <Input
-                        label="Phone"
+                        label={ t.fields.phone }
                         placeholder="555-0100"
                         value={ editModal.item?.phone || '' }
                         onChange={ (value) => editModal.setItem({ ...editModal.item, phone: value }) }
                     />
-
-                    {/* Role Select - DaisyUI 5 */}
                     <div className="flex flex-col gap-1">
                         <label className="label">
-                            <span className="label-text">Role</span>
+                            <span className="label-text">{ t.fields.role }</span>
                         </label>
                         <select
                             className="select select-info w-full"
@@ -371,20 +355,16 @@ const CRUDDemo = () =>
                     </div>
                 </div>
             </Modal>
-
-            {/* ==================== REMOVE MODAL ==================== */}
             <ConfirmModal
                 ref={ removeModal.modalRef }
-                title="Delete User"
+                title={ t.removeModal.title }
                 icon={ <MdDelete size={40} className="text-error" /> }
-                agree="Delete"
+                agree={ t.removeModal.agree }
                 agreeIcon={ <MdDelete size={20} /> }
                 onAgree={ removeModal.handleRemove }
             >
                 <div className="py-4 space-y-4">
-                    <p>
-                        Are you sure you want to delete <strong>{ removeModal.item?.name }</strong>?
-                    </p>
+                    <p>{ format( t.removeModal.question , removeModal.item?.name ?? '' ) }</p>
 
                     { removeModal.item && (
                         <div className="card bg-base-200">
@@ -412,7 +392,7 @@ const CRUDDemo = () =>
 
                     <div className="alert alert-warning">
                         <MdDelete />
-                        <span>This action cannot be undone.</span>
+                        <span>{ t.removeModal.warning }</span>
                     </div>
                 </div>
             </ConfirmModal>

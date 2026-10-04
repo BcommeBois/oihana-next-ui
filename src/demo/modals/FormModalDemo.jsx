@@ -16,6 +16,10 @@
 
 import { useState } from 'react' ;
 
+import format from 'vegas-js-core/src/strings/fastformat' ;
+
+import useI18n from '@/contexts/locale/useI18n' ;
+
 import Badge       from '@/components/Badge' ;
 import Button      from '@/components/Button' ;
 import FormModal   from '@/components/modals/FormModal' ;
@@ -34,11 +38,12 @@ const SAVE_DELAY = 1200 ;
 /**
  * @param {Object}   props
  * @param {string}   props.initial  - The saved name.
+ * @param {Object}   props.i18n     - The demo's bundle.
  * @param {Function} props.onClose  - Unmounts the form.
  * @param {Function} props.onSaved  - Receives the new name.
  * @param {boolean}  props.refuse   - Whether the fake server refuses the save.
  */
-const NameForm = ( { initial , onClose , onSaved , refuse } ) =>
+const NameForm = ( { i18n , initial , onClose , onSaved , refuse } ) =>
 {
     const [ name   , setName   ] = useState( initial ) ;
     const [ saving , setSaving ] = useState( false ) ;
@@ -56,7 +61,7 @@ const NameForm = ( { initial , onClose , onSaved , refuse } ) =>
 
         if ( refuse )
         {
-            setError( 'Refusé par le serveur — la modale reste ouverte.' ) ;
+            setError( i18n.refused ) ;
             return false ;
         }
 
@@ -64,7 +69,7 @@ const NameForm = ( { initial , onClose , onSaved , refuse } ) =>
         return true ;
     } ;
 
-    const status = error ?? ( !valid ? 'Le nom est obligatoire.' : dirty ? 'Modifications non enregistrées' : null ) ;
+    const status = error ?? ( !valid ? i18n.required : dirty ? i18n.dirty : null ) ;
 
     return (
         <FormModal
@@ -74,10 +79,10 @@ const NameForm = ( { initial , onClose , onSaved , refuse } ) =>
             saveDisabled = { !valid || !dirty }
             saving       = { saving }
             statusText   = { status }
-            title        = "Renommer l'essence"
+            title        = { i18n.formTitle }
         >
             <label className="floating-label">
-                <span>Nom</span>
+                <span>{ i18n.nameLabel }</span>
                 <input
                     className = "input w-full"
                     onChange  = { event => setName( event.target.value ) }
@@ -90,10 +95,16 @@ const NameForm = ( { initial , onClose , onSaved , refuse } ) =>
 
 NameForm.displayName = 'NameForm' ;
 
-const FormModalDemo = () =>
+/**
+ * @param {Object} props
+ * @param {string} [props.path='demo.modals.form'] - Dot notation path to the demo locale.
+ */
+const FormModalDemo = ( { path = 'demo.modals.form' } = {} ) =>
 {
+    const t = useI18n( path ) ;
+
     const [ open    , setOpen    ] = useState( false ) ;
-    const [ name    , setName    ] = useState( 'Chêne' ) ;
+    const [ name    , setName    ] = useState( t.initial ) ;
     const [ refuse  , setRefuse  ] = useState( false ) ;
     const [ closes  , setCloses  ] = useState( 0 ) ;
 
@@ -108,16 +119,13 @@ const FormModalDemo = () =>
     return (
         <Container className="flex flex-col gap-6 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-7xl">
 
-            <h2 className="text-3xl font-bold">FormModal &amp; ModalFooter</h2>
+            <h2 className="text-3xl font-bold">{ t.title }</h2>
 
-            <p className="text-sm text-base-content/70">
-                Modifiez le nom puis fermez : la question est posée. Enregistrez : le bouton attend,
-                tout est verrouillé, puis la modale se ferme — sauf si le serveur refuse.
-            </p>
+            <p className="text-sm text-base-content/70">{ t.description }</p>
 
             <div className="flex flex-wrap items-center gap-4">
-                <Button color="primary" onClick={ () => setOpen( true ) } type="button">Ouvrir le formulaire</Button>
-                <Button onClick={ openInfo } style="soft" type="button">Ouvrir une fiche en lecture</Button>
+                <Button color="primary" onClick={ () => setOpen( true ) } type="button">{ t.openForm }</Button>
+                <Button onClick={ openInfo } style="soft" type="button">{ t.openInfo }</Button>
                 <label className="flex items-center gap-2 text-sm">
                     <input
                         checked   = { refuse }
@@ -125,17 +133,18 @@ const FormModalDemo = () =>
                         onChange  = { event => setRefuse( event.target.checked ) }
                         type      = "checkbox"
                     />
-                    Le serveur refuse
+                    { t.refuse }
                 </label>
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
-                <Badge color="primary">nom = { name }</Badge>
-                <Badge color="neutral">onClose × { closes }</Badge>
+                <Badge color="primary">{ format( t.nameBadge , name ) }</Badge>
+                <Badge color="neutral">{ format( t.closeBadge , closes ) }</Badge>
             </div>
 
             { open ? (
                 <NameForm
+                    i18n    = { t }
                     initial = { name }
                     onClose = { handleClose }
                     onSaved = { setName }
@@ -145,17 +154,17 @@ const FormModalDemo = () =>
 
             <Modal
                 ref        = { modalRef }
-                title      = "Fiche en lecture"
+                title      = { t.infoTitle }
                 footerNode = {
                     <ModalFooter
-                        agree      = "Fermer"
+                        agree      = { t.infoClose }
                         agreeColor = "neutral"
                         onAgree    = { closeInfo }
-                        status     = "Aucune décision à prendre ici."
+                        status     = { t.infoStatus }
                     />
                 }
             >
-                <p className="py-4">Un pied donné <code className="badge badge-sm">onAgree</code> seul n'a qu'un bouton.</p>
+                <p className="py-4">{ t.infoBody }</p>
             </Modal>
 
         </Container>

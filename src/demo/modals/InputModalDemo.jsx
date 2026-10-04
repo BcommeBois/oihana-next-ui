@@ -2,6 +2,8 @@
 
 import { useState } from 'react' ;
 
+import useI18n from '@/contexts/locale/useI18n' ;
+
 import InputModal from '@/components/modals/InputModal' ;
 import Container from '@/display/Container' ;
 import Divider from '@/components/Divider' ;
@@ -17,8 +19,10 @@ import
 }
 from 'react-icons/md' ;
 
-const InputModalDemo = () =>
+const InputModalDemo = ( { path = 'demo.modals.input' } = {} ) =>
 {
+    const t = useI18n( path ) ;
+
     // ==================== COLOR PICKER ====================
     const [ color, setColor ] = useState( '#3b82f6' ) ;
     const [ tempColor, setTempColor ] = useState( '#3b82f6' ) ;
@@ -96,33 +100,25 @@ const InputModalDemo = () =>
         <Container className="flex flex-col gap-6 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-5xl">
 
             <div>
-                <h2 className="text-3xl font-bold">InputModal - Open on Focus Demo</h2>
-                <p className="text-base-content/70 mt-2">
-                    Click on the input or use the button to open the modal
-                </p>
+                <h2 className="text-3xl font-bold">{ t.title }</h2>
+                <p className="text-base-content/70 mt-2">{ t.description }</p>
             </div>
 
             <Divider />
-
-            {/* Comparison Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-                {/* ==================== WITH openOnFocus ==================== */}
                 <div className="card bg-base-100 shadow">
                     <div className="card-body">
                         <h3 className="card-title">
-                            With <Badge color="success">openOnFocus</Badge>
+                            { t.withFocus } <Badge color="success">openOnFocus</Badge>
                         </h3>
                         <p className="text-sm text-base-content/70 mb-4">
                             Click the input field or the button to open
                         </p>
-
-                        {/* Color Picker */}
                         <InputModal
-                            label       = "Color"
+                            label       = { t.color.label }
                             value       = { color }
-                            modalTitle  = "Choose a Color"
-                            actionLabel = "Pick"
+                            modalTitle  = { t.color.modal }
+                            actionLabel = { t.color.action }
                             actionIcon  = { <MdColorLens size={20} /> }
                             icon        = { <MdColorLens size={20} /> }
                             openOnFocus = { true }
@@ -137,7 +133,7 @@ const InputModalDemo = () =>
                                     className = "w-full h-32 rounded"
                                 />
                                 <Input
-                                    label    = "Hex Value"
+                                    label    = { t.color.hex }
                                     value    = { tempColor }
                                     onChange = { setTempColor }
                                 />
@@ -159,13 +155,11 @@ const InputModalDemo = () =>
                                 { color }
                             </p>
                         </div>
-
-                        {/* Date Picker */}
                         <InputModal
-                            label       = "Date"
+                            label       = { t.date.label }
                             value       = { date }
-                            modalTitle  = "Select Date"
-                            actionLabel = "Calendar"
+                            modalTitle  = { t.date.modal }
+                            actionLabel = { t.date.action }
                             actionIcon  = { <MdCalendarToday size={20} /> }
                             icon        = { <MdCalendarToday size={20} /> }
                             openOnFocus = { true }
@@ -211,13 +205,11 @@ const InputModalDemo = () =>
                                 </div>
                             </div>
                         </InputModal>
-
-                        {/* Time Picker */}
                         <InputModal
-                            label       = "Time"
+                            label       = { t.time.label }
                             value       = { time }
-                            modalTitle  = "Select Time"
-                            actionLabel = "Clock"
+                            modalTitle  = { t.time.modal }
+                            actionLabel = { t.time.action }
                             actionIcon  = { <MdAccessTime size={20} /> }
                             icon        = { <MdAccessTime size={20} /> }
                             openOnFocus = { true }
@@ -255,23 +247,19 @@ const InputModalDemo = () =>
                         </InputModal>
                     </div>
                 </div>
-
-                {/* ==================== WITHOUT openOnFocus ==================== */}
                 <div className="card bg-base-100 shadow">
                     <div className="card-body">
                         <h3 className="card-title">
-                            Without <Badge color="neutral">openOnFocus</Badge>
+                            { t.withoutFocus } <Badge color="neutral">openOnFocus</Badge>
                         </h3>
                         <p className="text-sm text-base-content/70 mb-4">
                             Only the button opens the modal
                         </p>
-
-                        {/* Location Picker */}
                         <InputModal
-                            label       = "Location"
+                            label       = { t.location.label }
                             value       = { location }
-                            modalTitle  = "Select Location"
-                            actionLabel = "Choose"
+                            modalTitle  = { t.location.modal }
+                            actionLabel = { t.location.action }
                             actionIcon  = { <MdLocationOn size={20} /> }
                             icon        = { <MdLocationOn size={20} /> }
                             openOnFocus = { false }
@@ -304,43 +292,33 @@ const InputModalDemo = () =>
             </div>
 
             <Divider />
-
-            {/* Use Cases */}
             <div className="card bg-base-100 shadow">
                 <div className="card-body">
-                    <h3 className="card-title">When to use openOnFocus?</h3>
+                    <h3 className="card-title">{ t.useCases.title }</h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                         <div>
-                            <h4 className="font-bold text-success mb-2">✅ Good for:</h4>
+                            <h4 className="font-bold text-success mb-2">{ t.useCases.good }</h4>
                             <ul className="list-disc list-inside space-y-1 text-sm">
-                                <li>Date pickers</li>
-                                <li>Time pickers</li>
-                                <li>Color pickers</li>
-                                <li>Single-click selections</li>
-                                <li>Read-only inputs</li>
+                                { t.useCases.goodList.map( item => <li key={ item }>{ item }</li> ) }
                             </ul>
                         </div>
 
                         <div>
-                            <h4 className="font-bold text-error mb-2">❌ Avoid for:</h4>
+                            <h4 className="font-bold text-error mb-2">{ t.useCases.avoid }</h4>
                             <ul className="list-disc list-inside space-y-1 text-sm">
-                                <li>Complex forms</li>
-                                <li>Multi-step selections</li>
-                                <li>When typing is needed</li>
-                                <li>File uploads</li>
-                                <li>Editable inputs</li>
+                                { t.useCases.avoidList.map( item => <li key={ item }>{ item }</li> ) }
                             </ul>
                         </div>
                     </div>
 
                     <div className="mockup-code mt-4">
-                        <pre data-prefix="1"><code>// ✅ Pattern correct avec état temporaire</code></pre>
+                        <pre data-prefix="1"><code>{ t.sample.pattern }</code></pre>
                         <pre data-prefix="2"><code>const [value, setValue] = useState(initial) ;</code></pre>
                         <pre data-prefix="3"><code>const [tempValue, setTempValue] = useState(initial) ;</code></pre>
                         <pre data-prefix="4"><code></code></pre>
                         <pre data-prefix="5"><code>&lt;InputModal</code></pre>
-                        <pre data-prefix="6"><code>  value={`{value}`}  // Affiche finale</code></pre>
+                        <pre data-prefix="6"><code>{ `  value={value}  ` }{ t.sample.shown }</code></pre>
                         <pre data-prefix="7"><code>  onModalOpen={`{() => setTempValue(value)}`}</code></pre>
                         <pre data-prefix="8"><code>  onAgree={`{() => setValue(tempValue)}`}</code></pre>
                         <pre data-prefix="9"><code>&gt;</code></pre>
@@ -349,24 +327,21 @@ const InputModalDemo = () =>
                     </div>
                 </div>
             </div>
-
-            {/* Additional Options */}
             <div className="card bg-base-100 shadow">
                 <div className="card-body">
-                    <h3 className="card-title">Additional Options</h3>
+                    <h3 className="card-title">{ t.options.title }</h3>
 
                     <div className="space-y-4">
-                        {/* Hide Action Button */}
                         <div>
-                            <h4 className="font-bold mb-2">Hide Action Button</h4>
+                            <h4 className="font-bold mb-2">{ t.options.hideAction }</h4>
                             <p className="text-sm text-base-content/70 mb-2">
                                 Use <code className="badge badge-sm">showActionButton={`{false}`}</code> to hide the button
                             </p>
 
                             <InputModal
-                                label            = "Auto-open Input"
+                                label            = { t.options.autoOpen }
                                 value            = { date }
-                                modalTitle       = "Select Date"
+                                modalTitle       = { t.date.modal }
                                 openOnFocus      = { true }
                                 showActionButton = { false }
                                 icon             = { <MdCalendarToday size={20} /> }
@@ -381,18 +356,16 @@ const InputModalDemo = () =>
                                 />
                             </InputModal>
                         </div>
-
-                        {/* Custom onFocus */}
                         <div>
-                            <h4 className="font-bold mb-2">Custom onFocus Handler</h4>
+                            <h4 className="font-bold mb-2">{ t.options.customName }</h4>
                             <p className="text-sm text-base-content/70 mb-2">
                                 Combine with your own focus handler
                             </p>
 
                             <InputModal
-                                label       = "With Custom Handler"
+                                label       = { t.options.customBody }
                                 value       = { time }
-                                modalTitle  = "Select Time"
+                                modalTitle  = { t.time.modal }
                                 openOnFocus = { true }
                                 onFocus     = {() => console.log( 'Input focused!' )}
                                 icon        = { <MdAccessTime size={20} /> }

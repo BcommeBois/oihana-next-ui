@@ -2,6 +2,8 @@
 
 import { useRef , useState } from 'react' ;
 
+import format from 'vegas-js-core/src/strings/fastformat' ;
+
 import { MdDataObject , MdDelete , MdKey , MdQuestionAnswer } from 'react-icons/md' ;
 
 import Badge  from '@/components/Badge' ;
@@ -14,18 +16,16 @@ import SecretRevealModal from '@/components/modals/SecretRevealModal' ;
 
 import Container from '@/display/Container' ;
 
+import useI18n from '@/contexts/locale/useI18n' ;
 import useToast , { ERROR , SUCCESS } from '@/contexts/toasts/useToast' ;
 
 /**
- * Two rows a single confirmation is re-aimed at, which is the whole point of
- * the card : the typed value must not survive the change of target.
- * @type {{ id : string , label : string }[]}
+ * The ids a single confirmation is re-aimed at, which is the whole point of the
+ * card : the typed value must not survive the change of target. Their labels
+ * come from the bundle, in the same order.
+ * @type {string[]}
  */
-const ROWS =
-[
-    { id : 'record-4817' , label : 'First record'  } ,
-    { id : 'record-9052' , label : 'Second record' } ,
-] ;
+const ROW_IDS = [ 'record-4817' , 'record-9052' ] ;
 
 /**
  * A payload with enough shapes in it to be worth looking at : nesting, a list,
@@ -82,7 +82,10 @@ Case.displayName = 'Case' ;
 
 /**
  * Demo : the four presets of the modal family that ask for something before
- * they let go — a typed confirmation, a secret shown once, a question, and a
+ * they let go.
+ *
+ * @param {Object} props
+ * @param {string} [props.path='demo.modals.presets'] - Dot notation path to the demo locale. — a typed confirmation, a secret shown once, a question, and a
  * payload.
  *
  * Each card is self-contained and destroys nothing : the « records » are two
@@ -90,8 +93,12 @@ Case.displayName = 'Case' ;
  *
  * @returns {React.JSX.Element}
  */
-const ModalPresetsDemo = () =>
+const ModalPresetsDemo = ( { path = 'demo.modals.presets' } = {} ) =>
 {
+    const t = useI18n( path ) ;
+
+    const rows = ROW_IDS.map( ( id , index ) => ( { id , label : t.rows?.[ index ] ?? id } ) ) ;
+
     const [ target  , setTarget  ] = useState( null ) ;
     const [ removed , setRemoved ] = useState( [] ) ;
 
@@ -123,30 +130,27 @@ const ModalPresetsDemo = () =>
     return (
         <Container className="flex flex-col gap-6 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-7xl">
 
-            <h2 className="text-3xl font-bold">Four presets that ask before they let go</h2>
+            <h2 className="text-3xl font-bold">{ t.title }</h2>
 
-            <p className="text-sm text-base-content/70">
-                A confirmation typed back, a value shown once, a question asked in passing, and a payload
-                read only. Nothing here is destroyed : the two rows are entries in an array.
-            </p>
+            <p className="text-sm text-base-content/70">{ t.description }</p>
 
             <div className="grid gap-4 lg:grid-cols-2">
 
                 <Case
                     icon     = { MdDelete }
                     title    = "ConfirmTypedModal"
-                    subtitle = "One instance, re-aimed from row to row. Type an id then dismiss with Escape or a click beside the dialog, and reopen THE SAME row : the field is empty again, and the button is locked."
+                    subtitle = { t.typed?.subtitle }
                 >
                     <div className="flex flex-col gap-2">
-                        { ROWS.map( ( row ) => (
+                        { rows.map( ( row ) => (
                             <div className="flex items-center gap-2" key={ row.id }>
                                 <code className="badge badge-sm badge-ghost">{ row.id }</code>
                                 <span className="text-sm">{ row.label }</span>
                                 { removed.includes( row.id )
-                                    ? <Badge color="error" style="soft">removed</Badge>
+                                    ? <Badge color="error" style="soft">{ t.typed?.removed }</Badge>
                                     : (
                                         <Button color="error" size="sm" style="outline" onClick={ () => aimAt( row ) }>
-                                            Delete
+                                            { t.typed?.delete }
                                         </Button>
                                     )
                                 }
@@ -158,11 +162,11 @@ const ModalPresetsDemo = () =>
                 <Case
                     icon     = { MdKey }
                     title    = "SecretRevealModal"
-                    subtitle = "The value IS the trigger : there is no open flag. Nothing dismisses it while it is unsaved — try Escape. Copy it, then wait a couple of seconds : the icon goes back to the clipboard, and the button stays unlocked. The toast is the host reacting to a callback, not the library."
+                    subtitle = { t.secret?.subtitle }
                 >
                     <div className="flex flex-wrap items-center gap-2">
                         <Button color="primary" size="sm" onClick={ () => { setSaid( null ) ; setSecret( makeSecret() ) ; } }>
-                            Reveal a value
+                            { t.secret?.reveal }
                         </Button>
                         { said && <Badge color="success" style="soft">{ said }</Badge> }
                     </div>
@@ -171,15 +175,15 @@ const ModalPresetsDemo = () =>
                 <Case
                     icon     = { MdQuestionAnswer }
                     title    = "PromptModal"
-                    subtitle = "Mounting it is the request to open it. It hands back the trimmed text, and an empty string when nothing was typed. Its field grows with what is typed, through textAreaProps."
+                    subtitle = { t.prompt?.subtitle }
                 >
                     <div className="flex flex-wrap items-center gap-2">
                         <Button color="primary" size="sm" onClick={ () => setAsking( true ) }>
-                            Ask a question
+                            { t.prompt?.ask }
                         </Button>
                         { answer !== null && (
                             <Badge color={ answer === '' ? 'warning' : 'success' } style="soft">
-                                { answer === '' ? 'answered with nothing' : answer }
+                                { answer === '' ? t.prompt?.empty : answer }
                             </Badge>
                         ) }
                     </div>
@@ -188,11 +192,11 @@ const ModalPresetsDemo = () =>
                 <Case
                     icon     = { MdDataObject }
                     title    = "JsonViewerModal"
-                    subtitle = "It takes the value, not a string : the payload is pretty-printed here, and the copy button sits in the header where a touch screen can reach it. It tells its host about the copy rather than toasting — and the host, here, toasts."
+                    subtitle = { t.json?.subtitle }
                 >
                     <div className="flex flex-wrap items-center gap-2">
                         <Button color="neutral" size="sm" style="outline" onClick={ () => { setSaid( null ) ; jsonRef.current?.showModal() ; } }>
-                            Show the payload
+                            { t.json?.show }
                         </Button>
                         { said && <Badge color="success" style="soft">{ said }</Badge> }
                     </div>
@@ -201,11 +205,11 @@ const ModalPresetsDemo = () =>
             </div>
 
             <ConfirmTypedModal
-                agree       = "Delete"
-                description = { target ? `This removes ${ target.label } from the list below.` : null }
+                agree       = { t.typed?.delete }
+                description = { target ? format( t.typed?.description , target.label ) : null }
                 expected    = { target?.id }
                 ref         = { confirmRef }
-                title       = "Delete this record?"
+                title       = { t.typed?.modalTitle }
                 onAgree     = { remove }
                 onCancel    = { () => setTarget( null ) }
             />
@@ -215,25 +219,25 @@ const ModalPresetsDemo = () =>
                 fileName    = "example-key.json"
                 secret            = { secret }
                 onAgree           = { () => setSecret( null ) }
-                onCopyError       = { () => toast( 'The value could not be copied.' , ERROR ) }
-                onCopySuccess     = { () => { setSaid( 'onCopySuccess' ) ; toast( 'Value copied to the clipboard.' , SUCCESS ) ; } }
-                onDownloadError   = { () => toast( 'The download could not be started.' , ERROR ) }
-                onDownloadSuccess = { name => { setSaid( 'onDownloadSuccess' ) ; toast( `Saved as ${ name }.` , SUCCESS ) ; } }
+                onCopyError       = { () => toast( t.secret?.copyFailed , ERROR ) }
+                onCopySuccess     = { () => { setSaid( 'onCopySuccess' ) ; toast( t.secret?.copied , SUCCESS ) ; } }
+                onDownloadError   = { () => toast( t.secret?.downloadKo , ERROR ) }
+                onDownloadSuccess = { name => { setSaid( 'onDownloadSuccess' ) ; toast( format( t.secret?.downloaded , name ) , SUCCESS ) ; } }
             >
                 <p className="text-sm">
-                    <span className="text-base-content/60">Example : </span>
-                    <span className="font-semibold">a value an API would return exactly once</span>
+                    <span className="text-base-content/60">{ t.secret?.exampleLead }</span>
+                    <span className="font-semibold">{ t.secret?.example }</span>
                 </p>
             </SecretRevealModal>
 
             { asking && (
                 <PromptModal
-                    agree       = "Send"
-                    body        = "The text is handed back trimmed, and nothing is required."
-                    label       = "Anything you like"
-                    placeholder = "A line of text"
+                    agree         = { t.prompt?.agree }
+                    body          = { t.prompt?.body }
+                    label         = { t.prompt?.label }
+                    placeholder   = { t.prompt?.placeholder }
                     textAreaProps = { { autosize : true , maxRows : 6 , minRows : 2 } }
-                    title         = "What should be recorded?"
+                    title         = { t.prompt?.modalTitle }
                     onAgree       = { ( value ) => { setAnswer( value ) ; setAsking( false ) ; } }
                     onCancel      = { () => setAsking( false ) }
                 />
@@ -241,10 +245,10 @@ const ModalPresetsDemo = () =>
 
             <JsonViewerModal
                 ref           = { jsonRef }
-                subtitle      = "The payload this card was rendered from."
+                subtitle      = { t.json?.modalSub }
                 value         = { PAYLOAD }
-                onCopyError   = { () => toast( 'The payload could not be copied.' , ERROR ) }
-                onCopySuccess = { () => { setSaid( 'onCopySuccess' ) ; toast( 'Payload copied to the clipboard.' , SUCCESS ) ; } }
+                onCopyError   = { () => toast( t.json?.copyFailed , ERROR ) }
+                onCopySuccess = { () => { setSaid( 'onCopySuccess' ) ; toast( t.json?.copied , SUCCESS ) ; } }
             />
 
         </Container>

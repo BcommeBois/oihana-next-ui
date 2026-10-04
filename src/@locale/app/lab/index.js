@@ -9,6 +9,7 @@ import mapsRoutes     from './mapsRoutes'
 import mapsZones      from './mapsZones'
 import mapsView       from './mapsView'
 import metrics        from './metrics'
+import modals         from './modals'
 import scheduler      from './scheduler'
 import schedulerModel from './schedulerModel'
 import schedulerMonth from './schedulerMonth'
@@ -29,6 +30,7 @@ const lab =
     mapsZones      ,
     mapsView       ,
     metrics        ,
+    modals         ,
     scheduler      ,
     schedulerModel ,
     schedulerMonth ,

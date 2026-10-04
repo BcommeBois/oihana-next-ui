@@ -30,13 +30,18 @@ import useModal from '@/components/modals/hooks/useModal' ;
 import useFullscreen        from '@/contexts/fullscreen/useFullscreen' ;
 import useFullscreenElement from '@/hooks/useFullscreenElement' ;
 
+import useI18n from '@/contexts/locale/useI18n' ;
+
 import Container from '@/display/Container' ;
 
-/** Something to look at inside the popover, tall enough to overlap what follows. */
-const PANEL_ITEMS = [ 'January' , 'February' , 'March' , 'April' , 'May' , 'June' ] ;
-
-const PortalFullscreenDemo = () =>
+/**
+ * @param {Object} props
+ * @param {string} [props.path='demo.modals.portalFullscreen'] - Dot notation path to the demo locale.
+ */
+const PortalFullscreenDemo = ( { path = 'demo.modals.portalFullscreen' } = {} ) =>
 {
+    const t = useI18n( path ) ;
+
     const { isFullscreen , toggleFullscreen } = useFullscreen() ;
 
     const fullscreenElement = useFullscreenElement() ;
@@ -50,24 +55,20 @@ const PortalFullscreenDemo = () =>
     return (
         <Container className="flex flex-col gap-6 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-7xl">
 
-            <h2 className="text-3xl font-bold">Portal and the fullscreen top layer</h2>
+            <h2 className="text-3xl font-bold">{ t.title }</h2>
 
-            <p className="text-sm text-base-content/70 max-w-2xl">
-                Open each surface below, then switch to fullscreen and open them again. All four have
-                to sit above the page in both states — a panel that half-opens behind this card is a
-                portal aiming at <code>document.body</code> while the top layer is somewhere else.
-            </p>
+            <p className="text-sm text-base-content/70 max-w-2xl">{ t.description }</p>
 
             <div className="flex flex-wrap items-center gap-3">
                 <Button color="primary" onClick={ toggleFullscreen } size="sm">
-                    { isFullscreen ? 'Leave fullscreen' : 'Enter fullscreen' }
+                    { isFullscreen ? t.leave : t.enter }
                 </Button>
                 <span className="text-sm text-base-content/60">
-                    portal target : <code>{ fullscreenElement ? 'the fullscreen element' : 'document.body' }</code>
+                    { t.target } <code>{ fullscreenElement ? t.onFull : t.onBody }</code>
                 </span>
             </div>
 
-            <Divider>A popover on a trigger</Divider>
+            <Divider>{ t.popoverDivider }</Divider>
 
             <div className="flex flex-wrap items-center gap-3">
                 <button
@@ -76,18 +77,18 @@ const PortalFullscreenDemo = () =>
                     ref       = { anchor }
                     type      = "button"
                 >
-                    Choose a month
+                    { t.popoverTrigger }
                 </button>
 
                 <Popover
                     anchorRef = { anchor }
-                    ariaLabel = "Choose a month"
+                    ariaLabel = { t.popoverTrigger }
                     isOpen    = { isOpen }
                     onClose   = { () => setOpen( false ) }
                     placement = "start"
                 >
                     <ul className="grid grid-cols-3 gap-2 w-64">
-                        { PANEL_ITEMS.map( month => (
+                        { t.months.map( month => (
                             <li key={ month }>
                                 <button className="btn btn-ghost btn-sm w-full" onClick={ () => setOpen( false ) } type="button">
                                     { month }
@@ -98,41 +99,30 @@ const PortalFullscreenDemo = () =>
                 </Popover>
             </div>
 
-            <Divider>A floating tooltip</Divider>
+            <Divider>{ t.tipDivider }</Divider>
 
             <div className="flex flex-wrap items-center gap-3">
-                <FloatingTip tip="This bubble is portalled too — it has to clear the page in both states.">
-                    <span className="btn btn-sm btn-outline">Hover me</span>
+                <FloatingTip tip={ t.tip }>
+                    <span className="btn btn-sm btn-outline">{ t.tipTrigger }</span>
                 </FloatingTip>
             </div>
 
-            <Divider>A modal</Divider>
+            <Divider>{ t.modalDivider }</Divider>
 
-            <p className="text-sm text-base-content/70 max-w-2xl">
-                This one was never affected : a <code>&lt;dialog&gt;</code> opened with
-                <code> showModal() </code> enters the top layer by itself. It is here so a regression
-                would show up beside the others rather than on another page.
-            </p>
+            <p className="text-sm text-base-content/70 max-w-2xl">{ t.modalNote }</p>
 
             <div>
-                <Button onClick={ open } size="sm">Open the modal</Button>
+                <Button onClick={ open } size="sm">{ t.modalTrigger }</Button>
 
-                <Modal ref={ modalRef } title="Above everything">
-                    <p className="text-sm">
-                        A modal dialog joins the top layer after the fullscreen element, so it paints
-                        above it. Close this, and try the popover again without leaving fullscreen.
-                    </p>
+                <Modal ref={ modalRef } title={ t.modalTitle }>
+                    <p className="text-sm">{ t.modalBody }</p>
                 </Modal>
             </div>
 
-            <Divider>What sits underneath</Divider>
+            <Divider>{ t.fillerDivider }</Divider>
 
             <div className="rounded-box border border-base-300 bg-base-100 p-6 h-96">
-                <p className="text-sm text-base-content/70">
-                    Filler, right under the trigger : an open panel has to cover this text, never
-                    slide behind it. It is tall on purpose — leave the popover open and scroll : the
-                    panel has to follow its trigger rather than stay where it opened.
-                </p>
+                <p className="text-sm text-base-content/70">{ t.filler }</p>
             </div>
 
         </Container>
