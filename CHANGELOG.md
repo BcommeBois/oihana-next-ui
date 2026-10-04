@@ -8,6 +8,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**⬆️ Dependency refresh**
+
+- `@maskito/core`, `@maskito/kit` and `@maskito/react` 5.4 → 5.6, `motion` 13.4 → 13.5.1, `sanitize-html` 2.17.7 → 2.18.0.
+- Lab and tooling : `next` 16.3.5 → 16.3.8, `daisyui` 5.7.42 → 5.7.47, `terra-draw` 1.35.0 → 1.36.0, `sharp` 0.35.4 → 0.35.5, `@types/node` and `@types/sanitize-html`.
+
 ## [0.25.1] — 2026-09-24
 
 **🕛 A date served without a time zone no longer breaks hydration**
