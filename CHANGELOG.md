@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.27.0] — 2026-10-05
+
 **🔧 The gaps 0.26.0 left in the four modals, and a cap that hid what was typed**
 
 - **Reported from the consuming application that migrated onto them**, which is where every one of them showed : a dialog it could not migrate, three acknowledgements it lost, and a helper it had to import from a JSON viewer. All five were answerable by sweeping that application's call sites BEFORE the components were written rather than after.
