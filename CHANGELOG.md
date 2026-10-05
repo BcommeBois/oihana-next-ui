@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.28.0] — 2026-10-05
+
 **🔗 Attaching and detaching : `useSelectionDiff`, `AssignmentList`, `AssignmentEditorModal`**
 
 - **Gathered from a consuming application**, where two « lists » and three editors carried the same shape five times over. Measured rather than guessed : the two lists are **80 % identical** once the entity names are neutralized, and the three editors share 88, 77 and 74 % of their smaller half.
