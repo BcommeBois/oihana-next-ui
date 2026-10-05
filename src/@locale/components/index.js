@@ -1,4 +1,5 @@
 import alert      from './alert'
+import assignment from './assignment'
 import badges     from './badges'
 import buttons    from './buttons'
 import dates      from './dates'
@@ -18,6 +19,7 @@ import tree       from './tree'
 const components =
 {
     alert ,
+    assignment ,
     badges ,
     buttons ,
     dates ,

@@ -17,6 +17,7 @@ import {
 } from 'react-icons/md' ;
 
 import { LuSquareMousePointer   as ActionIcon         } from "react-icons/lu";
+import { LuListChecks          as AssignmentIcon     } from "react-icons/lu";
 import { TbAlertSquareRounded   as AlertIcon          } from "react-icons/tb";
 import { TbMap2                 as MapIcon            } from "react-icons/tb";
 import { TbMapPin               as MapMarkerIcon      } from "react-icons/tb";
@@ -103,10 +104,11 @@ const navigation =
                 Icon : ActionIcon ,
                 items :
                 [
-                    { id : 'buttons' , type : LINK  , Icon : ButtonIcon , path  : '/lab/buttons' } ,
-                    { id : 'fab'     , type : LINK  , Icon : FabIcon    , path  : '/lab/fab'     } ,
-                    { id : 'modals'  , type : LINK  , Icon : ModalIcon  , path  : '/lab/modals'  } ,
-                    { id : 'panels'  , type : LINK  , Icon : PanelIcon  , path  : '/lab/panels'  } ,
+                    { id : 'buttons'     , type : LINK  , Icon : ButtonIcon     , path  : '/lab/buttons'     } ,
+                    { id : 'fab'         , type : LINK  , Icon : FabIcon        , path  : '/lab/fab'         } ,
+                    { id : 'modals'      , type : LINK  , Icon : ModalIcon      , path  : '/lab/modals'      } ,
+                    { id : 'panels'      , type : LINK  , Icon : PanelIcon      , path  : '/lab/panels'      } ,
+                    { id : 'assignments' , type : LINK  , Icon : AssignmentIcon , path  : '/lab/assignments' } ,
                 ]
             } ,
             {

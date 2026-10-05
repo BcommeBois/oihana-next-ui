@@ -1,4 +1,5 @@
 import alerts         from './alerts'
+import assignments    from './assignments'
 import badges         from './badges'
 import buttons        from './buttons'
 import i18n           from './i18n'
@@ -21,6 +22,7 @@ import tree           from './tree'
 const lab =
 {
     alerts         ,
+    assignments    ,
     badges         ,
     buttons        ,
     i18n           ,

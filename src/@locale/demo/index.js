@@ -1,3 +1,4 @@
+import assignments from './assignments' ;
 import filters   from './filters' ;
 import metrics   from './metrics' ;
 import modals    from './modals' ;
@@ -6,6 +7,7 @@ import trees     from './trees' ;
 
 const demo =
 {
+    assignments ,
     filters ,
     metrics ,
     modals ,
