@@ -5,6 +5,8 @@ import { useState } from 'react' ;
 import Container   from '@/display/Container' ;
 import InputAction from '@/components/inputs/InputAction' ;
 
+import useI18n from '@/contexts/locale/useI18n' ;
+
 import {
     MdAdd  as AddIcon ,
     MdSend as SendIcon ,
@@ -20,59 +22,59 @@ from "react-icons/md" ;
  *
  * A whole list of entries is `InputTags`, built on this field — see its own
  * demo rather than assembling the chips by hand here.
+ *
+ * @param {Object} props
+ * @param {string} [props.path='demo.inputs.action'] - Dot notation path to the demo locale.
  */
-const InputActionDemo = () =>
+const InputActionDemo = ( { path = 'demo.inputs.action' } = {} ) =>
 {
+    const t = useI18n( path ) ?? {} ;
+
     const [ draft , setDraft ] = useState( '' ) ;
 
     return (
         <Container className="flex flex-col gap-6 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-7xl">
 
-            <h3 className="text-2xl font-bold">Input Action Examples</h3>
+            <h3 className="text-2xl font-bold">{ t.title }</h3>
 
-            {/* Commit on + / Enter, action disabled while the draft is empty */}
             <InputAction
-                label          = "Line"
-                placeholder    = "Type something…"
+                label          = { t.line?.label }
+                placeholder    = { t.line?.placeholder }
                 value          = { draft }
                 onChange       = { setDraft }
                 onAction       = { () => setDraft( '' ) }
-                actionTooltip  = "Add"
+                actionTooltip  = { t.add }
                 actionDisabled = { draft.trim().length === 0 }
-                helper         = "Press Enter or click + : the draft is committed, then cleared"
+                helper         = { t.line?.helper }
             />
 
-            {/* Colored action + custom icon */}
             <InputAction
-                label         = "Message"
-                placeholder   = "Say something…"
+                label         = { t.message?.label }
+                placeholder   = { t.message?.placeholder }
                 actionIcon    = { SendIcon }
                 actionColor   = "primary"
-                actionTooltip = "Send"
+                actionTooltip = { t.message?.tooltip }
             />
 
-            {/* Enter disabled : only the button commits */}
             <InputAction
-                label         = "Manual only"
-                placeholder   = "Enter does nothing here"
+                label         = { t.manual?.label }
+                placeholder   = { t.manual?.placeholder }
                 submitOnEnter = { false }
                 actionIcon    = { AddIcon }
-                actionTooltip = "Add (click only)"
+                actionTooltip = { t.manual?.tooltip }
             />
 
-            {/* Error state : the action button turns error too */}
             <InputAction
-                label         = "Coupon code"
-                placeholder   = "PROMO2026"
-                error         = "Invalid coupon"
-                actionTooltip = "Apply"
+                label         = { t.coupon?.label }
+                placeholder   = { t.coupon?.placeholder }
+                error         = { t.coupon?.error }
+                actionTooltip = { t.coupon?.tooltip }
             />
 
-            {/* Fully disabled field + action */}
             <InputAction
-                label        = "Disabled"
-                placeholder  = "Unavailable"
-                defaultValue = "readonly draft"
+                label        = { t.disabled?.label }
+                placeholder  = { t.disabled?.placeholder }
+                defaultValue = { t.disabled?.value }
                 disabled
             />
 

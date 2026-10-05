@@ -5,6 +5,8 @@ import { useState } from 'react' ;
 import Container  from '@/display/Container' ;
 import InputClear from '@/components/inputs/InputClear' ;
 
+import useI18n from '@/contexts/locale/useI18n' ;
+
 import {
     FaFilter   as FilterIcon ,
     FaEnvelope as EmailIcon  ,
@@ -16,74 +18,71 @@ from "react-icons/fa" ;
  * InputClear demo component.
  *
  * Demonstrates various configurations and use cases for InputClear.
+ *
+ * @param {Object} props
+ * @param {string} [props.path='demo.inputs.clear'] - Dot notation path to the demo locale.
  */
-const InputClearDemo = () =>
+const InputClearDemo = ( { path = 'demo.inputs.clear' } = {} ) =>
 {
-    const [ search, setSearch ] = useState( '' ) ;
+    const t = useI18n( path ) ?? {} ;
+
+    const [ search , setSearch ] = useState( '' ) ;
 
     return (
         <Container className="flex flex-col gap-6 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-7xl">
 
-            <h3 className="text-2xl font-bold">Input Clear Examples</h3>
+            <h3 className="text-2xl font-bold">{ t.title }</h3>
 
-            {/* Simple search */}
             <InputClear
                 showIcon    = { false }
-                placeholder = "Search products..."
+                placeholder = { t.simple?.placeholder }
             />
 
-            {/* Controlled */}
             <InputClear
                 value       = { search }
                 onChange    = { setSearch }
                 onClear     = { () => console.log( 'Search cleared!' ) }
-                placeholder = "Controlled search..."
+                placeholder = { t.controlled?.placeholder }
             />
 
-            {/* With fieldset */}
             <InputClear
                 useFieldset
-                legend      = "Search"
+                legend      = { t.fieldset?.legend }
                 icon        = { <SearchIcon /> }
-                placeholder = "Search in database..."
-                helper      = "Type to search, click X to clear"
+                placeholder = { t.fieldset?.placeholder }
+                helper      = { t.fieldset?.helper }
             />
 
-            {/* Email with clear */}
             <InputClear
                 type        = "email"
-                label       = "Email Address"
+                label       = { t.email?.label }
                 icon        = { <EmailIcon /> }
-                placeholder = "your@email.com"
-                helper      = "We'll never share your email"
+                placeholder = { t.email?.placeholder }
+                helper      = { t.email?.helper }
             />
 
-            {/* Filter with custom icon */}
             <InputClear
                 icon        = { <FilterIcon /> }
-                placeholder = "Filter results..."
+                placeholder = { t.filter?.placeholder }
             />
 
-            {/* With error */}
             <InputClear
                 useFieldset
-                legend      = "Product Search"
-                error       = "No products found"
-                placeholder = "Search..."
+                legend      = { t.error?.legend }
+                error       = { t.error?.error }
+                placeholder = { t.search }
             />
 
-            {/* Disabled */}
             <InputClear
                 disabled
-                defaultValue = "Disabled search"
-                placeholder  = "Search..."
+                defaultValue = { t.disabled?.value }
+                placeholder  = { t.search }
             />
 
-            {/* Read-only (no clear button) */}
             <InputClear
                 readOnly
-                defaultValue = "Read-only value"
-                placeholder  = "Search..."
+                defaultValue = { t.readOnly?.value }
+                placeholder  = { t.search }
             />
 
         </Container>

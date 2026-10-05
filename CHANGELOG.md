@@ -8,6 +8,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🌍 The Text demos of the Inputs page follow the language switch (one of four)**
+
+- The seven demos of the page's first category — transform, clear, search, sizes, action, tags, multilingual — read `demo.inputs.*` now : **112 keys per language**, each in a bundle of its own, the way the Modals page's nine demos already did.
+- 🚨 **Four of the seven were already part French**, frozen in the code where no language switch can reach it : the whole explanatory paragraph of the deferred-search bench, its placeholder and its empty line, two field labels, one helper, and a search field pre-filled with a French word. They sat next to section titles in English, which is what a page translated by nobody looks like.
+- 🔑 **What is data stays data.** The `{ fr , en }` maps of the multilingual demo are the VALUE that component exists to show — one language filled and the other empty is what makes its dot indicator visible — so they are literals with a comment saying why, not keys. Same for `size="xs"` shown as code, and for a coupon code nobody reads as a sentence. Two keys written for those maps were dropped rather than left unread.
+- Each declared key is read and each key read is declared, checked on the parsed sources rather than by eye : seven bundles, 112 keys, no dead one and none missing.
+- The demos lose their JSX comments on the way through — a comment inside a ternary is a build error waiting for the next edit, and the module doc says what the file shows.
+
+
 **🌍 The lab's Inputs page follows the language switch**
 
 - The page declared `path = 'app.test'` and **never read it** : a dead prop pointing at a bundle that does not exist, on the page carrying twenty-one filter rows of hardcoded English. New `app.lab.inputs` : 51 keys per language — the title, the intro, the footer tip, the count, the five categories, and a `label` + a `description` per row, each read under the row's own key so a row and its sentence cannot drift apart.

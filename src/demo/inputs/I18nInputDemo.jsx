@@ -5,6 +5,8 @@ import { useState } from 'react' ;
 import Container from '@/display/Container' ;
 import I18nInput from '@/components/i18n/I18nInput' ;
 
+import useI18n from '@/contexts/locale/useI18n' ;
+
 import { MdTitle } from 'react-icons/md' ;
 
 /**
@@ -15,49 +17,53 @@ import { MdTitle } from 'react-icons/md' ;
  * content ; languages with non-empty content carry a dot indicator.
  * A live JSON preview shows that the whole map is a single value
  * (single dirty signal for the parent form).
+ *
+ * @param {Object} props
+ * @param {string} [props.path='demo.inputs.i18nInput'] - Dot notation path to the demo locale.
  */
-const I18nInputDemo = () =>
+const I18nInputDemo = ( { path = 'demo.inputs.i18nInput' } = {} ) =>
 {
+    const t = useI18n( path ) ?? {} ;
+
+    // The maps below are the demo's DATA, not its copy : one language filled and
+    // the other empty is what shows the dot indicator doing its job.
     const [ title , setTitle ] = useState( { fr : 'Bonjour le monde' , en : '' } ) ;
     const [ slogan , setSlogan ] = useState( { fr : '' , en : '' } ) ;
 
     return (
         <Container className="flex flex-col gap-6 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-7xl">
 
-            <h3 className="text-2xl font-bold">I18n Input Examples</h3>
+            <h3 className="text-2xl font-bold">{ t.title }</h3>
 
-            {/* Controlled multi-language field + live value preview */}
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                 <I18nInput
-                    label       = "Titre"
-                    helper      = "Click a flag to edit that language — filled ones show a dot"
-                    placeholder = "Mon service…"
+                    label       = { t.heading?.label }
+                    helper      = { t.heading?.helper }
+                    placeholder = { t.heading?.placeholder }
                     value       = { title }
                     onChange    = { setTitle }
                 />
 
                 <div className="flex flex-col gap-2">
-                    <span className="text-sm font-medium opacity-70">Stored value (single object)</span>
+                    <span className="text-sm font-medium opacity-70">{ t.stored }</span>
                     <pre className="bg-base-300/60 rounded-box p-4 text-xs overflow-auto">
                         { JSON.stringify( title , null , 2 ) }
                     </pre>
                 </div>
             </div>
 
-            {/* With icon + maxLength */}
             <I18nInput
-                label       = "Slogan"
-                helper      = "With an icon and a 60 characters limit"
-                placeholder = "Un slogan accrocheur…"
+                label       = { t.slogan?.label }
+                helper      = { t.slogan?.helper }
+                placeholder = { t.slogan?.placeholder }
                 icon        = { <MdTitle size={ 18 } /> }
                 maxLength   = { 60 }
                 value       = { slogan }
                 onChange    = { setSlogan }
             />
 
-            {/* Disabled */}
             <I18nInput
-                label    = "Disabled"
+                label    = { t.disabled?.label }
                 value    = { { fr : 'Contenu figé' , en : 'Frozen content' } }
                 disabled
             />

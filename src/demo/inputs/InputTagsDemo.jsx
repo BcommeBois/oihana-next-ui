@@ -2,10 +2,14 @@
 
 import { useState } from 'react' ;
 
+import format from 'vegas-js-core/src/strings/fastformat' ;
+
 import { MdTag } from 'react-icons/md' ;
 
 import Container from '@/display/Container' ;
 import InputTags from '@/components/inputs/InputTags' ;
+
+import useI18n from '@/contexts/locale/useI18n' ;
 
 /**
  * InputTags demo component.
@@ -13,9 +17,14 @@ import InputTags from '@/components/inputs/InputTags' ;
  * Five faces of the same field : free entries, an entry refused with the
  * host's own sentence, one refused with the bundle's, a chip drawn by the
  * host, and a field that only shows what it holds.
+ *
+ * @param {Object} props
+ * @param {string} [props.path='demo.inputs.tags'] - Dot notation path to the demo locale.
  */
-const InputTagsDemo = () =>
+const InputTagsDemo = ( { path = 'demo.inputs.tags' } = {} ) =>
 {
+    const t = useI18n( path ) ?? {} ;
+
     const [ keywords , setKeywords ] = useState( [ 'draft' , 'review' ] ) ;
     const [ emails   , setEmails   ] = useState( [] ) ;
     const [ codes    , setCodes    ] = useState( [ 'ABC' ] ) ;
@@ -26,39 +35,39 @@ const InputTagsDemo = () =>
     return (
         <Container className="flex flex-col gap-8 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-7xl">
 
-            <h3 className="text-2xl font-bold">Input Tags Examples</h3>
+            <h3 className="text-2xl font-bold">{ t.title }</h3>
 
             <InputTags
-                helper      = "Type a word, then press Enter or click +"
-                label       = "Keywords"
-                placeholder = "Add a keyword…"
+                helper      = { t.keywords?.helper }
+                label       = { t.keywords?.label }
+                placeholder = { t.keywords?.placeholder }
                 value       = { keywords }
                 onChange    = { setKeywords }
             />
 
             <InputTags
-                helper      = "An entry that is not an address is refused, and stays in the field"
-                label       = "Recipients"
-                placeholder = "someone@example.com"
+                helper      = { t.recipients?.helper }
+                label       = { t.recipients?.label }
+                placeholder = { t.recipients?.placeholder }
                 value       = { emails }
-                validateTag = { entry => isEmail( entry ) || 'That does not look like an address.' }
+                validateTag = { entry => isEmail( entry ) || t.recipients?.invalid }
                 onChange    = { setEmails }
             />
 
             <InputTags
                 chipClassName = "font-mono"
-                helper        = "Three capital letters. Refusing with false shows the bundle's own sentence."
-                label         = "Codes"
-                placeholder   = "ABC"
+                helper        = { t.codes?.helper }
+                label         = { t.codes?.label }
+                placeholder   = { t.codes?.placeholder }
                 value         = { codes }
                 validateTag   = { entry => /^[A-Z]{3}$/.test( entry ) }
                 onChange      = { setCodes }
             />
 
             <InputTags
-                label       = "Drawn by the host"
-                helper      = "renderChip gets the entry, whether the field is disabled, and the way out"
-                placeholder = "Add a name…"
+                helper      = { t.drawn?.helper }
+                label       = { t.drawn?.label }
+                placeholder = { t.drawn?.placeholder }
                 value       = { colours }
                 onChange    = { setColours }
                 renderChip  = { ( { remove , value } ) => (
@@ -66,7 +75,7 @@ const InputTagsDemo = () =>
                         <MdTag className="size-3 opacity-60" />
                         { value }
                         <button
-                            aria-label = { `Remove ${ value }` }
+                            aria-label = { format( t.remove ?? '' , value ) }
                             className  = "cursor-pointer opacity-70 hover:opacity-100"
                             type       = "button"
                             onClick    = { remove }
@@ -79,9 +88,9 @@ const InputTagsDemo = () =>
 
             <InputTags
                 disabled
-                helper      = "Disabled : the entries stay readable and lose their way out"
-                label       = "Locked"
-                placeholder = "Unavailable"
+                helper      = { t.locked?.helper }
+                label       = { t.locked?.label }
+                placeholder = { t.locked?.placeholder }
                 value       = { [ 'alpha' , 'beta' , 'gamma' ] }
             />
 

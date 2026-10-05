@@ -1,14 +1,30 @@
 'use client' ;
 
 import { useState } from 'react' ;
-import Container from '@/display/Container' ;
-import InputTransform from '@/components/inputs/Input' ;
 
-const InputTransformDemo = () =>
+import format from 'vegas-js-core/src/strings/fastformat' ;
+
+import Container from '@/display/Container' ;
+import Input     from '@/components/inputs/Input' ;
+
+import useI18n from '@/contexts/locale/useI18n' ;
+
+/**
+ * Input transform demo component.
+ *
+ * Nine fields that change what is typed : the case, the characters kept, what
+ * is shown against what is stored, and what a blur settles.
+ *
+ * @param {Object} props
+ * @param {string} [props.path='demo.inputs.transform'] - Dot notation path to the demo locale.
+ */
+const InputTransformDemo = ( { path = 'demo.inputs.transform' } = {} ) =>
 {
-    const [ email, setEmail ] = useState( '' ) ;
-    const [ phone, setPhone ] = useState( '' ) ;
-    const [ isEmailValid, setIsEmailValid ] = useState( true ) ;
+    const t = useI18n( path ) ?? {} ;
+
+    const [ email , setEmail ] = useState( '' ) ;
+    const [ phone , setPhone ] = useState( '' ) ;
+    const [ isEmailValid , setIsEmailValid ] = useState( true ) ;
 
     const validateEmail = ( value ) =>
     {
@@ -20,89 +36,80 @@ const InputTransformDemo = () =>
     return (
         <Container className="flex flex-col gap-6 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-7xl">
 
-            <h2 className="text-3xl font-bold">Input Transform Examples</h2>
+            <h2 className="text-3xl font-bold">{ t.title }</h2>
 
-            {/* Uppercase transformation */}
-            <InputTransform
-                label       = "Product Code (Uppercase)"
+            <Input
+                label       = { t.upper?.label }
                 transform   = { v => v.toUpperCase() }
-                placeholder = "Enter code"
-                helper      = "Automatically converted to uppercase"
+                placeholder = { t.upper?.placeholder }
+                helper      = { t.upper?.helper }
             />
 
-            {/* Lowercase transformation */}
-            <InputTransform
-                label       = "Username (Lowercase)"
+            <Input
+                label       = { t.lower?.label }
                 transform   = { v => v.toLowerCase() }
-                placeholder = "Enter username"
-                helper      = "Automatically converted to lowercase"
+                placeholder = { t.lower?.placeholder }
+                helper      = { t.lower?.helper }
             />
 
-            {/* Email validation with revert */}
-            <InputTransform
-                label       = "Email Address"
+            <Input
+                label       = { t.email?.label }
                 value       = { email }
                 onChange    = { setEmail }
                 validate    = { validateEmail }
-                error       = { !isEmailValid ? 'Invalid email format' : '' }
-                placeholder = "your@email.com"
-                helper      = "Reverts to previous value if invalid on blur"
+                error       = { !isEmailValid ? t.email?.error : '' }
+                placeholder = { t.email?.placeholder }
+                helper      = { t.email?.helper }
             />
 
-            {/* Phone formatting (display only) */}
-            <InputTransform
-                label       = "Phone Number (FR Format)"
+            <Input
+                label       = { t.phone?.label }
                 value       = { phone }
                 onChange    = { setPhone }
-                transform   = { v => v.replace( /\D/g, '' ).slice( 0, 10 ) }
-                format      = { v => v.replace( /(\d{2})(?=\d)/g, '$1 ' ).trim() }
-                placeholder = "0123456789"
-                helper      = { `Formatted as: 01 23 45 67 89 (${phone.length}/10 digits)` }
+                transform   = { v => v.replace( /\D/g , '' ).slice( 0 , 10 ) }
+                format      = { v => v.replace( /(\d{2})(?=\d)/g , '$1 ' ).trim() }
+                placeholder = { t.phone?.placeholder }
+                helper      = { format( t.phone?.helper ?? '' , phone.length ) }
             />
 
-            {/* Remove spaces and special chars */}
-            <InputTransform
-                label       = "Alphanumeric Only"
-                transform   = { v => v.replace( /[^a-zA-Z0-9]/g, '' ) }
-                placeholder = "Only letters and numbers"
-                helper      = "Special characters are removed"
+            <Input
+                label       = { t.alphanumeric?.label }
+                transform   = { v => v.replace( /[^a-zA-Z0-9]/g , '' ) }
+                placeholder = { t.alphanumeric?.placeholder }
+                helper      = { t.alphanumeric?.helper }
             />
 
-            {/* Trim on blur */}
-            <InputTransform
-                label         = "Name (Trimmed on Blur)"
+            <Input
+                label         = { t.trimmed?.label }
                 processOnBlur = { v => v.trim() }
-                placeholder   = "Enter name"
-                helper        = "Leading and trailing spaces removed when you leave the field"
+                placeholder   = { t.trimmed?.placeholder }
+                helper        = { t.trimmed?.helper }
             />
 
-            {/* Number only with custom validation */}
-            <InputTransform
-                label       = "Age (18-99)"
+            <Input
+                label       = { t.age?.label }
                 type        = "text"
-                transform   = { v => v.replace( /\D/g, '' ).slice( 0, 2 ) }
+                transform   = { v => v.replace( /\D/g , '' ).slice( 0 , 2 ) }
                 validate    = { v => !v || ( parseInt( v ) >= 18 && parseInt( v ) <= 99 ) }
-                placeholder = "18"
-                helper      = "Only numbers between 18 and 99"
+                placeholder = { t.age?.placeholder }
+                helper      = { t.age?.helper }
             />
 
-            {/* Process value before onChange */}
-            <InputTransform
-                label       = "Price (Stored as cents)"
-                transform   = { v => v.replace( /[^\d.]/g, '' ) }
-                format      = { v => v ? `${v} €` : '' }
+            <Input
+                label       = { t.price?.label }
+                transform   = { v => v.replace( /[^\d.]/g , '' ) }
+                format      = { v => v ? `${ v } €` : '' }
                 process     = { v => Math.round( parseFloat( v || 0 ) * 100 ) }
-                placeholder = "0.00"
-                helper      = "Displayed as euros, stored as cents"
+                placeholder = { t.price?.placeholder }
+                helper      = { t.price?.helper }
             />
 
-            {/* Trim start while typing, full trim on blur */}
-            <InputTransform
-                label         = "Username (Advanced Trim)"
+            <Input
+                label         = { t.advancedTrim?.label }
                 transform     = { v => v.trimStart() }
                 processOnBlur = { v => v.trim() }
-                placeholder   = "Enter username"
-                helper        = "Leading spaces removed while typing, all spaces trimmed on blur"
+                placeholder   = { t.advancedTrim?.placeholder }
+                helper        = { t.advancedTrim?.helper }
             />
 
         </Container>
