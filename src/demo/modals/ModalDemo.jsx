@@ -2,6 +2,10 @@
 
 import { useId } from 'react' ;
 
+import format from 'vegas-js-core/src/strings/fastformat' ;
+
+import useI18n from '@/contexts/locale/useI18n' ;
+
 import Checkbox from '@/components/checkboxes/Checkbox';
 import useModal from '@/components/modals/hooks/useModal' ;
 
@@ -28,8 +32,14 @@ import {
     MdCloudDone,
 } from 'react-icons/md' ;
 
-const ModalDemo = () =>
+/**
+ * @param {Object} props
+ * @param {string} [props.path='demo.modals.modal'] - Dot notation path to the demo locale.
+ */
+const ModalDemo = ( { path = 'demo.modals.modal' } = {} ) =>
 {
+    const t = useI18n( path ) ;
+
     // Simple modal
     const { modalRef: simpleRef, open: openSimple } = useModal() ;
 
@@ -94,47 +104,35 @@ const ModalDemo = () =>
     return (
         <Container className="flex flex-col gap-6 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-7xl">
 
-            <h2 className="text-3xl font-bold">Modal Examples with useModal Hook</h2>
-
-            {/* Simple Modal */}
+            <h2 className="text-3xl font-bold">{ t.title }</h2>
             <div className="flex flex-col gap-4">
                 <h3 className="text-xl font-semibold border-b-2 border-primary pb-2">
-                    Simple Modal
+                    { t.simple.title }
                 </h3>
 
                 <Button onClick={ openSimple }>
-                    Open Simple Modal
+                    { t.simple.trigger }
                 </Button>
 
                 <Modal
                     ref                  = { simpleRef }
-                    title                = "Hello!"
-                    agree                = "Close"
+                    title                = { t.simple.modal }
+                    agree                = { t.close }
                     showDisagree         = { false }
                     disableEscapeKeyDown = { false }
                     disableBackdropClick = { false }
                 >
-                    <p className="py-2">
-                        Press ESC key or click the button below to close
-                    </p>
+                    <p className="py-2">{ t.simple.body }</p>
                 </Modal>
             </div>
 
             <Divider />
-
-            {/* Localized labels (i18n) */}
             <div className="flex flex-col gap-4">
                 <h3 className="text-xl font-semibold border-b-2 border-primary pb-2">
-                    Localized labels
+                    { t.i18n.title }
                 </h3>
 
-                <p className="text-sm opacity-70">
-                    None of the three modals below is given an <code>agree</code>,
-                    a <code>disagree</code> or a <code>closeTitle</code> prop. Every label —
-                    the two buttons and the accessible name of the header close button —
-                    is read from the <code>components.modal</code> bundle. Switch the
-                    language of the lab and reopen them : the labels follow.
-                </p>
+                <p className="text-sm opacity-70">{ t.i18n.note }</p>
 
                 <div className="flex flex-wrap gap-3">
                     <Button onClick={ openI18nModal }>
@@ -149,656 +147,520 @@ const ModalDemo = () =>
                 </div>
 
                 <Modal ref={ i18nModalRef } title="Modal">
-                    <p className="py-2">
-                        Base labels : <code>components.modal.agree</code> and
-                        {' '}<code>components.modal.disagree</code>.
-                    </p>
+                    <p className="py-2">{ t.i18n.modalBody }</p>
                 </Modal>
 
                 <ConfirmModal ref={ i18nConfirmRef } title="ConfirmModal">
-                    <p className="py-2">
-                        The agree button reads <code>components.modal.confirm.agree</code>,
-                        the disagree button falls back to the base
-                        {' '}<code>components.modal.disagree</code>.
-                    </p>
+                    <p className="py-2">{ t.i18n.confirmBody }</p>
                 </ConfirmModal>
 
                 <AlertModal ref={ i18nAlertRef } title="AlertModal">
-                    <p className="py-2">
-                        Single button, reading <code>components.modal.alert.agree</code>.
-                    </p>
+                    <p className="py-2">{ t.i18n.alertBody }</p>
                 </AlertModal>
             </div>
 
             <Divider />
-
-            {/* Popover mode (opt-in) */}
             <div className="flex flex-col gap-4">
                 <h3 className="text-xl font-semibold border-b-2 border-secondary pb-2">
-                    Popover mode — light, non-blocking (<code className="badge badge-sm">usePopover</code>)
+                    { t.popover.title }
                 </h3>
 
-                <p className="text-sm text-base-content/70">
-                    Opt-in <code className="badge badge-sm">usePopover</code>: the modal renders through the
-                    browser's native Popover API instead of <code className="badge badge-sm">&lt;dialog&gt;</code>.
-                    It can be opened <strong>declaratively</strong> (a button with <code className="badge badge-sm">popovertarget</code>,
-                    no JS) or via <code className="badge badge-sm">useModal</code>. Escape and a backdrop click close it.
-                    It does <strong>not</strong> block the page — use it for light panels, not for blocking confirmations.
-                </p>
+                <p className="text-sm text-base-content/70">{ t.popover.note }</p>
 
                 <div className="flex gap-2 flex-wrap">
                     <button type="button" className="btn btn-secondary" popoverTarget={ popoverId }>
-                        Open (declarative — no JS)
+                        { t.popover.declarative }
                     </button>
 
                     <Button onClick={ openPopoverHook }>
-                        Open (via useModal)
+                        { t.popover.viaHook }
                     </Button>
                 </div>
-
-                {/* Declarative popover modal */}
                 <Modal
                     usePopover
                     id              = { popoverId }
-                    title           = "Popover modal (declarative)"
+                    title           = { t.popover.declTitle }
                     showFooter      = { false }
                     showCloseButton
                 >
-                    <p className="py-4">
-                        Opened by a button with <code className="badge badge-sm">popovertarget</code> — zero JavaScript.
-                        Press ESC or click the backdrop to close.
-                    </p>
+                    <p className="py-4">{ t.popover.declBody }</p>
                 </Modal>
-
-                {/* useModal-driven popover modal */}
                 <Modal
                     usePopover
                     ref          = { popoverHookRef }
-                    title        = "Popover modal (via useModal)"
-                    agree        = "Close"
+                    title        = { t.popover.hookTitle }
+                    agree        = { t.close }
                     showDisagree = { false }
                 >
-                    <p className="py-4">
-                        Same popover mode, opened and closed through the <code className="badge badge-sm">useModal</code> hook.
-                    </p>
+                    <p className="py-4">{ t.popover.hookBody }</p>
                 </Modal>
             </div>
 
             <Divider />
-
-
-            {/* Responsive Fullscreen Breakpoint */}
             <div className="flex flex-col gap-4">
                 <h3 className="text-xl font-semibold border-b-2 border-info pb-2">
-                    Responsive Fullscreen (Breakpoint)
+                    { t.breakpoint.title }
                 </h3>
 
                 <div className="flex gap-2 flex-wrap">
                     <Button onClick={ openBreakpointMd }>
-                        Fullscreen &lt; md (mobile)
+                        { t.breakpoint.md }
                     </Button>
 
                     <Button onClick={ openBreakpointLg }>
-                        Fullscreen &lt; lg (tablet + mobile)
+                        { t.breakpoint.lg }
                     </Button>
 
                     <Button onClick={ openBreakpointXl }>
-                        Fullscreen &lt; xl (desktop + tablet + mobile)
+                        { t.breakpoint.xl }
                     </Button>
                 </div>
-
-                {/* Mobile fullscreen */}
                 <Modal
                     ref={ breakpointMdRef }
-                    title="Mobile Fullscreen"
+                    title={ t.breakpoint.mdTitle }
                     fullScreenBreakpoint="md"
-                    agree="Close"
+                    agree= { t.close }
                     showDisagree={ false }
                 >
                     <div className="space-y-4">
-                        <p>Ce modal est :</p>
+                        <p>{ t.breakpoint.lead }</p>
                         <ul className="list-disc list-inside space-y-2">
-                            <li><strong>Fullscreen</strong> sur mobile (&lt; 768px)</li>
-                            <li><strong>Normal</strong> sur desktop (&ge; 768px)</li>
+                            <li>{ t.breakpoint.mdFull }</li>
+                            <li>{ t.breakpoint.mdNorm }</li>
                         </ul>
-                        <p className="text-sm text-base-content/70">
-                            Redimensionnez votre fenêtre pour voir l'effet !
-                        </p>
+                        <p className="text-sm text-base-content/70">{ t.breakpoint.resize }</p>
                     </div>
                 </Modal>
-
-                {/* Tablet + Mobile fullscreen */}
                 <Modal
                     ref={ breakpointLgRef }
-                    title="Tablet + Mobile Fullscreen"
+                    title={ t.breakpoint.lgTitle }
                     fullScreenBreakpoint="lg"
-                    agree="Close"
+                    agree= { t.close }
                     showDisagree={ false }
                 >
                     <div className="space-y-4">
-                        <p>Ce modal est :</p>
+                        <p>{ t.breakpoint.lead }</p>
                         <ul className="list-disc list-inside space-y-2">
-                            <li><strong>Fullscreen</strong> sur tablet et mobile (&lt; 1024px)</li>
-                            <li><strong>Normal</strong> sur large screens (&ge; 1024px)</li>
+                            <li>{ t.breakpoint.lgFull }</li>
+                            <li>{ t.breakpoint.lgNorm }</li>
                         </ul>
                     </div>
                 </Modal>
-
-                {/* Desktop + Tablet + Mobile fullscreen */}
                 <Modal
                     ref={ breakpointXlRef }
-                    title="Almost Always Fullscreen"
+                    title={ t.breakpoint.xlTitle }
                     fullScreenBreakpoint="xl"
-                    agree="Close"
+                    agree= { t.close }
                     showDisagree={ false }
                 >
                     <div className="space-y-4">
-                        <p>Ce modal est :</p>
+                        <p>{ t.breakpoint.lead }</p>
                         <ul className="list-disc list-inside space-y-2">
-                            <li><strong>Fullscreen</strong> jusqu'à xl (&lt; 1280px)</li>
-                            <li><strong>Normal</strong> seulement sur très larges écrans (&ge; 1280px)</li>
+                            <li>{ t.breakpoint.xlFull }</li>
+                            <li>{ t.breakpoint.xlNorm }</li>
                         </ul>
                     </div>
                 </Modal>
             </div>
 
             <Divider />
-
-            {/* Toggle Modal Demo */}
             <div className="flex flex-col gap-4">
 
                 <h3 className="text-xl font-semibold border-b-2 border-accent pb-2">
-                    Toggle Modal (with State Tracking)
+                    { t.toggle.title }
                 </h3>
 
                 <div className="flex gap-2 items-center">
                     <Button onClick={ toggleModal }>
-                        { toggleIsOpen ? 'Close' : 'Open' } Toggle Modal
+                        { toggleIsOpen ? t.toggle.close : t.toggle.open }
                     </Button>
 
                     <Badge color={ toggleIsOpen ? 'success' : 'neutral' }>
-                        { toggleIsOpen ? 'Open' : 'Closed' }
+                        { toggleIsOpen ? t.toggle.opened : t.toggle.closed }
                     </Badge>
                 </div>
 
                 <Modal
                     ref          = { toggleRef }
-                    title        = "Toggle Modal"
+                    title        = { t.toggle.modal }
                     placement    = "bottom"
-                    agree        = "Close"
+                    agree        = { t.close }
                     showDisagree = { false }
                 >
-                    <p className="py-4">
-                        This modal uses the <code className="badge badge-sm">toggle</code> function and <code className="badge badge-sm">isOpen</code> state.
-                    </p>
+                    <p className="py-4">{ t.toggle.body }</p>
                 </Modal>
             </div>
 
             <Divider />
-
-            {/* Alert Modals */}
             <div className="flex flex-col gap-4">
                 <h3 className="text-xl font-semibold border-b-2 border-secondary pb-2">
-                    Alert Modals (Single Button)
+                    { t.alerts.title }
                 </h3>
 
                 <div className="flex gap-2 flex-wrap">
                     <Button color="success" onClick={ openAlertSuccess }>
-                        Success Alert
+                        { t.alerts.success }
                     </Button>
 
                     <Button color="info" onClick={ openAlertInfo }>
-                        Info Alert
+                        { t.alerts.info }
                     </Button>
 
                     <Button color="warning" onClick={ openAlertWarning }>
-                        Warning Alert
+                        { t.alerts.warning }
                     </Button>
 
                     <Button color="error" onClick={ openAlertError }>
-                        Error Alert
+                        { t.alerts.error }
                     </Button>
                 </div>
-
-                {/* Success Alert */}
                 <AlertModal
                     ref={ alertSuccessRef }
-                    title="Success!"
+                    title={ t.alerts.successTitle }
                     icon={ <MdCheckCircle size={40} className="text-success" /> }
-                    agree="Great!"
+                    agree={ t.alerts.successAgree }
                     agreeColor="success"
                 >
-                    <p>Your operation was completed successfully.</p>
+                    <p>{ t.alerts.successBody }</p>
                 </AlertModal>
-
-                {/* Info Alert */}
                 <AlertModal
                     ref={ alertInfoRef }
-                    title="Information"
+                    title={ t.alerts.infoTitle }
                     icon={ <MdInfo size={40} className="text-info" /> }
-                    agree="Got it"
+                    agree={ t.alerts.infoAgree }
                     agreeColor="info"
                 >
                     <div className="py-4">
-                        <p className="mb-2">Here's some important information:</p>
+                        <p className="mb-2">{ t.alerts.infoLead }</p>
                         <ul className="list-disc list-inside space-y-1">
-                            <li>Your session will expire in 10 minutes</li>
-                            <li>Please save your work regularly</li>
-                            <li>Contact support if you need help</li>
+                            { t.alerts.infoList.map( item => <li key={ item }>{ item }</li> ) }
                         </ul>
                     </div>
                 </AlertModal>
-
-                {/* Warning Alert */}
                 <AlertModal
                     ref={ alertWarningRef }
-                    title="Warning"
+                    title={ t.alerts.warningTitle }
                     icon={ <MdWarning size={40} className="text-warning" /> }
-                    agree="I understand"
+                    agree={ t.alerts.warningAgree }
                     agreeColor="warning"
                 >
                     <div className="alert alert-warning">
                         <MdWarning />
-                        <span>This action may have unintended consequences.</span>
+                        <span>{ t.alerts.warningBody }</span>
                     </div>
                 </AlertModal>
-
-                {/* Error Alert */}
                 <AlertModal
                     ref={ alertErrorRef }
-                    title="Error"
+                    title={ t.alerts.errorTitle }
                     icon={ <MdError size={40} className="text-error" /> }
-                    agree="Close"
+                    agree= { t.close }
                     agreeColor="error"
                 >
                     <div className="py-4">
-                        <p className="font-semibold mb-2">Payment could not be processed</p>
-                        <p className="text-sm text-base-content/70 mb-4">
-                            Please check your payment information and try again.
-                        </p>
+                        <p className="font-semibold mb-2">{ t.alerts.errorLead }</p>
+                        <p className="text-sm text-base-content/70 mb-4">{ t.alerts.errorBody }</p>
                         <div className="alert alert-error">
-                            <span className="font-mono text-sm">Error code: CARD_DECLINED</span>
+                            <span className="font-mono text-sm">{ t.alerts.errorCode }</span>
                         </div>
                     </div>
                 </AlertModal>
             </div>
 
             <Divider />
-
-            {/* Confirm Modals */}
             <div className="flex flex-col gap-4">
                 <h3 className="text-xl font-semibold border-b-2 border-accent pb-2">
-                    Confirmation Modals (Two Buttons)
+                    { t.confirms.title }
                 </h3>
 
                 <div className="flex gap-2 flex-wrap">
                     <Button color="error" onClick={ openConfirmDelete }>
-                        Delete Item
+                        { t.confirms.delete }
                     </Button>
 
                     <Button color="primary" onClick={ openConfirmSave }>
-                        Save Changes
+                        { t.confirms.save }
                     </Button>
                 </div>
-
-                {/* Delete Confirmation */}
                 <ConfirmModal
                     ref={ confirmDeleteRef }
-                    title="Delete Item"
+                    title={ t.confirms.deleteTitle }
                     icon={ <MdDelete size={40} className="text-error" /> }
-                    agree="Delete"
+                    agree={ t.confirms.deleteAgree }
                     agreeIcon={ <MdDelete size={20} /> }
-                    disagree="Cancel"
+                    disagree={ t.confirms.deleteDisagree }
                     onAgree={() => console.log( 'Item deleted' )}
                     onCancel={() => console.log( 'Deletion cancelled' )}
                 >
                     <div className="py-4">
-                        <p className="mb-4">Are you sure you want to delete this item?</p>
+                        <p className="mb-4">{ t.confirms.deleteBody }</p>
                         <div className="alert alert-warning">
                             <MdWarning />
-                            <span>This action cannot be undone.</span>
+                            <span>{ t.confirms.deleteWarning }</span>
                         </div>
                     </div>
                 </ConfirmModal>
-
-                {/* Save Confirmation */}
                 <ConfirmModal
                     ref={ confirmSaveRef }
-                    title="Save Changes"
+                    title={ t.confirms.saveTitle }
                     icon={ <MdSave size={40} className="text-primary" /> }
-                    agree="Save"
+                    agree={ t.confirms.saveAgree }
                     agreeColor="primary"
                     agreeIcon={ <MdSave size={20} /> }
-                    disagree="Discard"
+                    disagree={ t.confirms.saveDisagree }
                     disagreeColor="error"
                     onAgree={() => console.log( 'Changes saved' )}
                     onCancel={() => console.log( 'Changes discarded' )}
                 >
-                    <p className="py-4">
-                        You have unsaved changes. Do you want to save them before leaving?
-                    </p>
+                    <p className="py-4">{ t.confirms.saveBody }</p>
                 </ConfirmModal>
             </div>
 
             <Divider />
-
-            {/* Fullscreen Modal */}
             <div className="flex flex-col gap-4">
                 <h3 className="text-xl font-semibold border-b-2 border-info pb-2">
-                    Fullscreen Modal
+                    { t.fullscreen.title }
                 </h3>
 
                 <Button onClick={ openFullscreen }>
-                    Open Fullscreen Modal
+                    { t.fullscreen.trigger }
                 </Button>
 
                 <Modal
                     ref             = { fullscreenRef }
-                    title           = "Fullscreen Modal"
+                    title           = { t.fullscreen.modal }
                     fullScreen      = { true }
-                    agree           = "Close"
+                    agree           = { t.close }
                     showDisagree    = { false }
                     showCloseButton = { true }
                 >
                     <div className="flex flex-col flex-1 h-full items-center justify-center gap-4">
-                        <p className="text-2xl font-bold">This modal takes the full screen</p>
-                        <p className="text-base-content/70">Great for immersive content or forms</p>
+                        <p className="text-2xl font-bold">{ t.fullscreen.lead }</p>
+                        <p className="text-base-content/70">{ t.fullscreen.body }</p>
                     </div>
                 </Modal>
             </div>
 
             <Divider />
-
-            {/* Responsive & Placement */}
             <div className="flex flex-col gap-4">
                 <h3 className="text-xl font-semibold border-b-2 border-success pb-2">
-                    Responsive & Placement
+                    { t.placement.title }
                 </h3>
 
                 <div className="flex gap-2 flex-wrap">
                     <Button onClick={ openResponsive }>
-                        Responsive (Bottom → Middle)
+                        { t.placement.responsive }
                     </Button>
 
                     <Button onClick={ openTop }>
-                        Top Placement
+                        { t.placement.top }
                     </Button>
 
                     <Button onClick={ openBottom }>
-                        Bottom Placement
+                        { t.placement.bottom }
                     </Button>
                 </div>
-
-                {/* Responsive Modal */}
                 <Modal
                     ref                 = { responsiveRef }
-                    title               = "Responsive Modal"
+                    title               = { t.placement.responsiveTitle }
                     placement           = "bottom"
                     responsivePlacement = "sm:modal-middle"
                     agree               = "Close"
                     showDisagree        = { false }
                 >
-                    <p className="py-4">
-                        This modal appears at the bottom on mobile (<code className="badge badge-sm">modal-bottom</code>) and
-                        in the middle on desktop (<code className="badge badge-sm">sm:modal-middle</code>).
-                    </p>
+                    <p className="py-4">{ t.placement.responsiveBody }</p>
                 </Modal>
-
-                {/* Top Modal */}
                 <Modal
                     ref          = { topRef }
-                    title        = "Top Modal"
+                    title        = { t.placement.topTitle }
                     placement    = "top"
-                    agree        = "Close"
+                    agree        = { t.close }
                     showDisagree = { false }
                     // fullWidth    = { true }
                 >
-                    <p className="py-4">
-                        This modal is positioned at the top of the screen.
-                    </p>
+                    <p className="py-4">{ t.placement.topBody }</p>
                 </Modal>
-
-                {/* Bottom Modal */}
                 <Modal
                     ref          = { bottomRef }
-                    title        = "Bottom Modal"
+                    title        = { t.placement.bottomTitle }
                     placement    = "bottom"
-                    agree        = "Close"
+                    agree        = { t.close }
                     showDisagree = { false }
                     // fullWidth    = { true }
                 >
-                    <p className="py-4">
-                        This modal is positioned at the bottom of the screen.
-                    </p>
+                    <p className="py-4">{ t.placement.bottomBody }</p>
                 </Modal>
             </div>
 
             <Divider />
-
-            {/* Custom Width */}
             <div className="flex flex-col gap-4">
                 <h3 className="text-xl font-semibold border-b-2 border-warning pb-2">
-                    Custom Width
+                    { t.width.title }
                 </h3>
 
                 <Button onClick={ openCustomWidth }>
-                    Open Wide Modal (max-w-5xl)
+                    { t.width.trigger }
                 </Button>
 
                 <Modal
                     ref          = { customWidthRef }
-                    title        = "Wide Modal"
+                    title        = { t.width.modal }
                     maxWidth     = "max-w-5xl"
-                    agree        = "Close"
+                    agree        = { t.close }
                     showDisagree = { false }
                 >
                     <div className="py-4">
-                        <p className="mb-4">This modal has a custom maximum width of 5xl.</p>
+                        <p className="mb-4">{ t.width.lead }</p>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div className="card bg-base-200">
-                                <div className="card-body">
-                                    <h3 className="card-title text-sm">Column 1</h3>
-                                    <p className="text-xs">Wide modals are great for complex content</p>
+                            { t.width.columns.map( ( column , index ) => (
+                                <div className="card bg-base-200" key={ column }>
+                                    <div className="card-body">
+                                        <h3 className="card-title text-sm">{ column }</h3>
+                                        <p className="text-xs">{ t.width.cells[ index ] }</p>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="card bg-base-200">
-                                <div className="card-body">
-                                    <h3 className="card-title text-sm">Column 2</h3>
-                                    <p className="text-xs">Like multi-column layouts</p>
-                                </div>
-                            </div>
-                            <div className="card bg-base-200">
-                                <div className="card-body">
-                                    <h3 className="card-title text-sm">Column 3</h3>
-                                    <p className="text-xs">Or detailed forms</p>
-                                </div>
-                            </div>
+                            ) ) }
                         </div>
                     </div>
                 </Modal>
             </div>
 
             <Divider />
-
-            {/* Behavior Options */}
             <div className="flex flex-col gap-4">
                 <h3 className="text-xl font-semibold border-b-2 border-error pb-2">
-                    Behavior Options
+                    { t.behavior.title }
                 </h3>
 
                 <div className="flex gap-2 flex-wrap">
                     <Button onClick={ openNoBackdrop }>
-                        No Backdrop Click
+                        { t.behavior.noBackdrop }
                     </Button>
 
                     <Button onClick={ openNoEsc }>
-                        No ESC Key
+                        { t.behavior.noEsc }
                     </Button>
 
                     <Button onClick={ openCloseButton }>
-                        With Close Button
+                        { t.behavior.withClose }
                     </Button>
                 </div>
-
-                {/* No Backdrop Click */}
                 <Modal
                     ref          = { noBackdropRef }
-                    title        = "No Backdrop Click"
-                    agree        = "Close"
+                    title        = { t.behavior.noBackdropTitle }
+                    agree        = { t.close }
                     showDisagree = { false }
                     disableBackdropClick
                 >
                     <div className="py-4">
-                        <p className="mb-2">Clicking outside won't close this modal.</p>
-                        <p className="text-sm text-base-content/70">
-                            Use the button or ESC key to close.
-                        </p>
+                        <p className="mb-2">{ t.behavior.noBackdropLead }</p>
+                        <p className="text-sm text-base-content/70">{ t.behavior.noBackdropBody }</p>
                     </div>
                 </Modal>
-
-                {/* No ESC Key */}
                 <Modal
                     ref          = { noEscRef }
-                    title        = "No ESC Key"
-                    agree        = "Close"
+                    title        = { t.behavior.noEscTitle }
+                    agree        = { t.close }
                     showDisagree = { false }
                     disableEscapeKeyDown
                 >
                     <div className="py-4">
-                        <p className="mb-2">ESC key won't close this modal.</p>
-                        <p className="text-sm text-base-content/70">
-                            Use the button or click outside to close.
-                        </p>
+                        <p className="mb-2">{ t.behavior.noEscLead }</p>
+                        <p className="text-sm text-base-content/70">{ t.behavior.noEscBody }</p>
                     </div>
                 </Modal>
-
-                {/* With Close Button */}
                 <Modal
                     ref={ closeButtonRef }
-                    title="Close Button in Corner"
+                    title={ t.behavior.closeTitle }
                     showCloseButton
-                    agree="OK"
+                    agree={ t.behavior.closeAgree }
                     showDisagree={ false }
                 >
-                    <p className="py-4">
-                        This modal has a close button (✕) in the top-right corner.
-                    </p>
+                    <p className="py-4">{ t.behavior.closeBody }</p>
                 </Modal>
             </div>
 
             <Divider />
-
-            {/* Custom Footer */}
             <div className="flex flex-col gap-4">
                 <h3 className="text-xl font-semibold border-b-2 border-primary pb-2">
-                    Custom Footer
+                    { t.customFooter.title }
                 </h3>
 
                 <div className="flex gap-2 flex-wrap">
                     <Button onClick={ openNoFooter }>
-                        No Footer
+                        { t.customFooter.noFooter }
                     </Button>
 
                     <Button onClick={ openCustomFooter }>
-                        Custom Footer Options
+                        { t.customFooter.options }
                     </Button>
                 </div>
-
-                {/* No Footer */}
                 <Modal
                     ref={ noFooterRef }
-                    title="Modal without Footer"
+                    title={ t.customFooter.noFooterTitle }
                     showFooter={ false }
                     showCloseButton
                 >
-                    <p className="py-4">
-                        This modal has no footer. Close it with the ✕ button or ESC key.
-                    </p>
+                    <p className="py-4">{ t.customFooter.noFooterBody }</p>
                 </Modal>
-
-                {/* Custom Footer Options */}
                 <Modal
                     ref           = { customFooterRef }
-                    title         = "Custom Footer"
-                    agree         = "Accept"
-                    disagree      = "Decline"
+                    title         = { t.customFooter.modal }
+                    agree         = { t.customFooter.accept }
+                    disagree      = { t.customFooter.decline }
                     footerOptions =
                     {
                         <Button size="sm" color="ghost">
-                            Learn More
+                            { t.customFooter.learn }
                         </Button>
                     }
                 >
-                    <p className="py-4">
-                        This modal has a custom button in the footer alongside the standard buttons.
-                    </p>
+                    <p className="py-4">{ t.customFooter.body }</p>
                 </Modal>
             </div>
 
             <Divider />
-
-            {/* Custom Footer Node (sticky footer + scrollable content) */}
             <div className="flex flex-col gap-4">
                 <h3 className="text-xl font-semibold border-b-2 border-info pb-2">
-                    Custom Footer Node — sticky footer + scrollable content
+                    { t.footerNode.title }
                 </h3>
 
                 <div className="card bg-base-100 shadow">
                     <div className="card-body gap-4">
 
                         <h4 className="card-title text-base">
-                            <MdInfo className="text-info" /> When to use <code className="badge badge-sm">footerNode</code>
+                            <MdInfo className="text-info" /> { t.footerNode.when }
                         </h4>
 
-                        <p className="text-sm text-base-content/80">
-                            Use the <code className="badge badge-sm">footerNode</code> prop when the standard
-                            <code className="badge badge-sm">agree</code> / <code className="badge badge-sm">disagree</code> footer
-                            is too rigid — typically for forms with a status text, custom buttons, or any layout
-                            that does not fit the default <code className="badge badge-sm">modal-action</code> row.
-                        </p>
+                        <p className="text-sm text-base-content/80">{ t.footerNode.note }</p>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <h5 className="font-bold text-success mb-2">✅ What it gives you</h5>
+                                <h5 className="font-bold text-success mb-2">{ t.footerNode.givesTitle }</h5>
                                 <ul className="list-disc list-inside space-y-1 text-sm">
-                                    <li>Footer always pinned at the bottom of the modal-box</li>
-                                    <li>Content area scrolls on its own (smooth, internal)</li>
-                                    <li>Header stays at the top</li>
-                                    <li>No need for <code className="badge badge-sm">!important</code> overrides</li>
-                                    <li>No need for <code className="badge badge-sm">modalBoxClassName="flex flex-col"</code> boilerplate</li>
+                                    { t.footerNode.givesList.map( item => <li key={ item }>{ item }</li> ) }
                                 </ul>
                             </div>
 
                             <div>
-                                <h5 className="font-bold text-warning mb-2">⚠️ Precedence rules</h5>
-                                <p className="text-sm mb-1">
-                                    When <code className="badge badge-sm">footerNode</code> is set, these props are <strong>ignored</strong>:
-                                </p>
+                                <h5 className="font-bold text-warning mb-2">{ t.footerNode.rulesTitle }</h5>
+                                <p className="text-sm mb-1">{ t.footerNode.rulesLead }</p>
                                 <p className="text-xs font-mono text-base-content/70">
                                     agree, disagree, agreeColor, disagreeColor, agreeIcon, disagreeIcon,
                                     showAgree, showDisagree, showFooter, footerReverse, footerClassName,
                                     footerOptions, onAgree, onCancel
                                 </p>
-                                <p className="text-sm mt-2">
-                                    A <code className="badge badge-sm">console.warn</code> is emitted in dev if any of them
-                                    are passed alongside.
-                                </p>
+                                <p className="text-sm mt-2">{ t.footerNode.rulesNote }</p>
                             </div>
                         </div>
 
                         <div className="alert alert-info">
                             <MdInfo size={20} />
-                            <div className="text-sm">
-                                Standard mode (without <code>footerNode</code>) is unchanged: the existing
-                                <code className="badge badge-sm">showFooter</code> behaviour with sticky agree/disagree row
-                                still works exactly as before.
-                            </div>
+                            <div className="text-sm">{ t.footerNode.standard }</div>
                         </div>
 
-                        <h5 className="font-bold mt-2">Before / After</h5>
+                        <h5 className="font-bold mt-2">{ t.footerNode.beforeAfter }</h5>
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
                             <div>
-                                <p className="text-xs text-error mb-1 font-semibold">❌ Before (manual recipe — 8 lines, 5 ! markers)</p>
+                                <p className="text-xs text-error mb-1 font-semibold">{ t.footerNode.before }</p>
                                 <div className="mockup-code text-xs">
                                     <pre data-prefix="1"><code>&lt;Modal</code></pre>
                                     <pre data-prefix="2"><code>  contentClassName ="!overflow-hidden !p-0 flex flex-col flex-1 min-h-0"</code></pre>
@@ -815,7 +677,7 @@ const ModalDemo = () =>
                             </div>
 
                             <div>
-                                <p className="text-xs text-success mb-1 font-semibold">✅ After — 1 prop, no overrides</p>
+                                <p className="text-xs text-success mb-1 font-semibold">{ t.footerNode.after }</p>
                                 <div className="mockup-code text-xs">
                                     <pre data-prefix="1"><code>&lt;Modal</code></pre>
                                     <pre data-prefix="2"><code>  title="Edit profile"</code></pre>
@@ -836,19 +698,19 @@ const ModalDemo = () =>
                 </div>
 
                 <Button color="info" onClick={ openFooterNode }>
-                    Open Modal with footerNode + long form
+                    { t.footerNode.trigger }
                 </Button>
 
                 <Modal
                     ref        = { footerNodeRef }
-                    title      = "Edit User Profile (long form)"
+                    title      = { t.footerNode.modal }
                     icon       = { <MdDriveFileRenameOutline size={24} className="text-info" /> }
                     maxWidth   = "max-w-xl"
                     footerNode = {
                         <div className="flex items-center gap-3 px-4 py-3">
                             <div className="flex items-center gap-2 text-sm text-base-content/70">
                                 <MdCloudDone className="text-success" size={18} />
-                                <span>Saved 2 seconds ago</span>
+                                <span>{ t.footerNode.saved }</span>
                             </div>
                             <div className="ml-auto flex gap-2">
                                 <Button
@@ -856,7 +718,7 @@ const ModalDemo = () =>
                                     size    = "sm"
                                     onClick = { () => footerNodeRef.current?.close() }
                                 >
-                                    Cancel
+                                    { t.footerNode.cancel }
                                 </Button>
                                 <Button
                                     color   = "primary"
@@ -868,23 +730,20 @@ const ModalDemo = () =>
                                     }}
                                 >
                                     <MdSave size={16} />
-                                    Save
+                                    { t.footerNode.save }
                                 </Button>
                             </div>
                         </div>
                     }
                 >
                     <div className="flex flex-col gap-4 px-2">
-                        <p className="text-sm text-base-content/70">
-                            Scroll inside this modal — notice that the header stays at the top
-                            and the footer stays visible at the bottom while the form scrolls.
-                        </p>
+                        <p className="text-sm text-base-content/70">{ t.footerNode.scroll }</p>
 
                         { Array.from( { length: 25 } ).map( ( _ , i ) => (
                             <Input
                                 key         = { i }
-                                label       = { `Field ${ i + 1 }` }
-                                placeholder = { `Enter value for field ${ i + 1 }` }
+                                label       = { format( t.footerNode.field , i + 1 ) }
+                                placeholder = { format( t.footerNode.fieldHint , i + 1 ) }
                             />
                         ))}
                     </div>
@@ -892,24 +751,22 @@ const ModalDemo = () =>
             </div>
 
             <Divider />
-
-            {/* Form Example */}
             <div className="flex flex-col gap-4">
                 <h3 className="text-xl font-semibold border-b-2 border-secondary pb-2">
-                    Form in Modal
+                    { t.form.title }
                 </h3>
 
                 <Button onClick={ openForm }>
-                    Open Form Modal
+                    { t.form.trigger }
                 </Button>
 
                 <Modal
                     ref        = { formRef }
-                    title      = "User Registration"
+                    title      = { t.form.modal }
                     icon       = { <MdInfo size={30} className="text-primary" /> }
-                    agree      = "Submit"
+                    agree      = { t.form.submit }
                     agreeColor = "primary"
-                    disagree   = "Cancel"
+                    disagree   = { t.form.cancel }
                     onAgree    = {() => console.log( 'Form submitted' )}
                     maxWidth   = "max-w-md"
                 >
@@ -917,23 +774,23 @@ const ModalDemo = () =>
 
                         <Input
                             icon        = { <MdDriveFileRenameOutline /> }
-                            label       = "Name"
-                            placeholder = "Enter your name"
+                            label       = { t.form.name }
+                            placeholder = { t.form.nameHint }
                         />
 
                         <InputEmail
-                            label       = "Email"
-                            placeholder = "Enter your email"
+                            label       = { t.form.email }
+                            placeholder = { t.form.emailHint }
                         />
 
                         <InputPassword
-                            label       = "Password"
-                            placeholder = "Enter password"
+                            label       = { t.form.password }
+                            placeholder = { t.form.passwordHint }
                         />
 
                         <Checkbox
                             color = 'primary'
-                            label = "Accept terms and conditions"
+                            label = { t.form.terms }
                         />
 
                     </div>
@@ -941,11 +798,9 @@ const ModalDemo = () =>
             </div>
 
             <Divider />
-
-            {/* Hook Usage Examples */}
             <div className="flex flex-col gap-4">
                 <h3 className="text-xl font-semibold border-b-2 border-accent pb-2">
-                    useModal Hook Usage
+                    { t.hookUsage.title }
                 </h3>
 
                 <div className="mockup-code">
@@ -963,74 +818,64 @@ const ModalDemo = () =>
             </div>
 
             <Divider />
-
-            {/* Stacked Modals Demo */}
             <div className="flex flex-col gap-4">
                 <h3 className="text-xl font-semibold border-b-2 border-primary pb-2">
-                    Stacked Modals (Nesting)
+                    { t.stacked.title }
                 </h3>
 
                 <div className="flex flex-col gap-2">
-                    <p className="text-sm text-base-content/70">
-                        You can open multiple modals on top of each other. The browser handles the stacking order.
-                    </p>
+                    <p className="text-sm text-base-content/70">{ t.stacked.note }</p>
                     <Button onClick={ openParent }>
-                        Open Level 1 Modal
+                        { t.stacked.trigger }
                     </Button>
                 </div>
-
-                {/* Level 1: Parent Modal */}
                 <Modal
                     ref={ parentModalRef }
-                    title="Level 1: Configuration"
+                    title={ t.stacked.l1Title }
                     maxWidth="max-w-3xl"
-                    agree="Save All"
-                    disagree="Cancel"
+                    agree={ t.stacked.l1Agree }
+                    disagree={ t.stacked.l1Disagree }
                 >
                     <div className="py-4 space-y-6">
-                        <p>This is the first layer. You might be configuring a complex object here.</p>
+                        <p>{ t.stacked.l1Body }</p>
 
                         <div className="card bg-base-200 p-6 flex flex-col items-center gap-4">
-                            <p className="font-semibold text-center">Need to add a sub-item?</p>
+                            <p className="font-semibold text-center">{ t.stacked.l1Ask }</p>
                             <Button color="secondary" size="sm" onClick={ openChild }>
-                                Open Level 2: Sub-item Form
+                                { t.stacked.l1Open }
                             </Button>
                         </div>
 
                         <div className="alert alert-info shadow-sm">
                             <MdInfo size={24} />
-                            <span>The backdrop of Level 2 will cover Level 1.</span>
+                            <span>{ t.stacked.l1Note }</span>
                         </div>
                     </div>
                 </Modal>
-
-                {/* Level 2: Child Modal */}
                 <Modal
                     ref={ childModalRef }
-                    title="Level 2: Sub-item Details"
+                    title={ t.stacked.l2Title }
                     maxWidth="max-w-md"
-                    agree="Add Sub-item"
-                    disagree="Go Back"
+                    agree={ t.stacked.l2Agree }
+                    disagree={ t.stacked.l2Disagree }
                     onAgree={() => console.log('Sub-item added')}
                 >
                     <div className="py-4 space-y-4">
-                        <Input label="Sub-item Name" placeholder="e.g. Component X" />
+                        <Input label={ t.stacked.l2Name } placeholder={ t.stacked.l2NameHint } />
 
-                        <Divider>Safety Check</Divider>
+                        <Divider>{ t.stacked.l2Divider }</Divider>
 
-                        <p className="text-sm">Before confirming, you can even open a 3rd layer!</p>
+                        <p className="text-sm">{ t.stacked.l2Body }</p>
                         <Button color="error" variant="outline" size="xs" onClick={ openConfirmation }>
-                            Delete Sub-item (Level 3)
+                            { t.stacked.l2Delete }
                         </Button>
                     </div>
                 </Modal>
-
-                {/* Level 3: Confirmation Modal */}
                 <ConfirmModal
                     ref={ confirmationRef }
-                    title="Level 3: Confirm Deletion"
-                    agree="Delete Now"
-                    disagree="Keep it"
+                    title={ t.stacked.l3Title }
+                    agree={ t.stacked.l3Agree }
+                    disagree={ t.stacked.l3Disagree }
                     agreeColor="error"
                     onAgree={() => {
                         console.log('Deleted from level 3');
@@ -1038,7 +883,7 @@ const ModalDemo = () =>
                     }}
                 >
                     <div className="py-2">
-                        <p>Are you absolutely sure? This is the third layer of modals.</p>
+                        <p>{ t.stacked.l3Body }</p>
                     </div>
                 </ConfirmModal>
             </div>

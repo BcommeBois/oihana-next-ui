@@ -2,6 +2,7 @@ import asyncConfirm     from './asyncConfirm' ;
 import crud             from './crud' ;
 import form             from './form' ;
 import input            from './input' ;
+import modal            from './modal' ;
 import mountedOpen      from './mountedOpen' ;
 import portalFullscreen from './portalFullscreen' ;
 import presets          from './presets' ;
@@ -13,6 +14,7 @@ const modals =
     crud ,
     form ,
     input ,
+    modal ,
     mountedOpen ,
     portalFullscreen ,
     presets ,
