@@ -143,11 +143,16 @@ const TextArea =
     // growing, and keeping it hidden there means the text past the cap can
     // neither be seen nor reached : it is typed into nothing. So the cap is
     // what decides, and it is read from state rather than written on the node,
-    // so a re-render cannot put `overflow: hidden` back.
+    // so a re-render cannot put the hidden value back.
+    //
+    // ⚠️ `overflowY`, never the `overflow` shorthand : the shorthand also sets
+    // the horizontal axis, which would hand an autosizing box a horizontal
+    // scrollbar it never needs — a textarea wraps — and would overwrite any
+    // `overflow-x` a caller set through a class.
     const resizeStyles =
     {
-        resize   : autosize ? 'none' : resize ,
-        overflow : autosize ? ( capped ? 'auto' : 'hidden' ) : undefined ,
+        resize    : autosize ? 'none' : resize ,
+        overflowY : autosize ? ( capped ? 'auto' : 'hidden' ) : undefined ,
     } ;
 
     // --------- Value management
@@ -191,7 +196,13 @@ const TextArea =
         const minH = minRows ? ( minRows * lineHeight ) + verticalPadding : 0 ;
         const maxH = maxRows ? ( maxRows * lineHeight ) + verticalPadding : Infinity ;
 
-        const newHeight = Math.min( Math.max( textarea.scrollHeight, minH ), maxH ) ;
+        // 🚨 `scrollHeight` counts the content and the padding, NEVER the border,
+        // and Tailwind puts every element in `border-box` — where the height set
+        // here swallows the padding AND the borders. Assigning `scrollHeight`
+        // raw therefore leaves the CONTENT box short by both borders, and the
+        // last line is clipped by those two pixels. The interline leaves enough
+        // slack for it to go unnoticed, which is why it did.
+        const newHeight = Math.min( Math.max( textarea.scrollHeight + borderTop + borderBottom, minH ), maxH ) ;
 
         textarea.style.height = `${newHeight}px` ;
 
