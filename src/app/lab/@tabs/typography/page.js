@@ -204,28 +204,28 @@ const TypographyShowcase = ({ path = 'app.test' }) =>
                                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                             </Paragraph>
 
-                            <H3>H3 - Nos produits</H3>
+                            <H3>H3 - Les niveaux de titre</H3>
                             <Paragraph>
-                                Découvrez notre gamme complète de produits en bois de qualité supérieure.
+                                Six niveaux, du titre de page au sous-titre de paragraphe, chacun avec sa graisse et son interligne.
                             </Paragraph>
 
-                            <H4>H4 - Bois massif</H4>
+                            <H4>H4 - La hiérarchie</H4>
                             <Paragraph>
-                                Chêne, pin, érable et bien d'autres essences disponibles.
+                                Un niveau sauté se voit : la page perd son plan, et un lecteur au clavier perd ses repères.
                             </Paragraph>
 
-                            <H5>H5 - Caractéristiques</H5>
+                            <H5>H5 - Les réglages</H5>
                             <Paragraph>
-                                Dimensions personnalisables, traitement écologique, livraison rapide.
+                                Taille, graisse, interligne et marges verticales, en une seule échelle pour toute la page.
                             </Paragraph>
 
-                            <H6>H6 - Contact</H6>
+                            <H6>H6 - Le dernier niveau</H6>
                             <Paragraph>
-                                Pour plus d'informations, contactez notre équipe commerciale.
+                                Plus bas, un paragraphe en gras dit la même chose sans promettre une section.
                             </Paragraph>
 
                             <Blockquote showIcon className="border-l-primary">
-                                "La qualité du bois fait toute la différence dans vos projets."
+                                « Une page bien composée se lit avant d'être regardée. »
                             </Blockquote>
                         </div>
                     </div>

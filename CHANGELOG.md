@@ -16,6 +16,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `'1 component'` was a hardcoded branch beside `{0} components` : one key with a `(s)` carries both, the way the rest of the library counts.
 - ⚠️ **The twenty demos ON that page are still hardcoded** — 422 strings, which is the lot after this one. The page's own chrome is what this entry covers.
 
+**🧹 The demos stop naming a consuming application's trade**
+
+- A library's demo may not advertise the business that paid for it, and nine spots did. `InputSizesDemo` typed an oak species into a search field ; `PageHeaderDemo` showed a real company name as its example title, in the rendered card AND in the code sample beside it ; `AnimationDemo` announced a component library « for the timber trade » ; `MarkDownDemo` and the two Markdown example files priced wood by the cubic metre ; `CardDemo` named a warehouse concept of that application ; `CookieDemo` escaped an oak species to prove a cookie write was safe ; the typography page sold timber across four heading levels.
+- Replaced with neutral copy of the same shape — same lengths, same column counts, same accented characters where the point was the escaping — so each demo still shows exactly what it showed.
+- ⚠️ **What is left**, and why it is not here : `TypographyDemo` is sixty lines of prose about woodworking, which a typography demo genuinely needs — real text, with headings, a quotation and lists. Swapping words would leave it incoherent ; it wants a subject of its own, and that is a rewrite rather than a cleanup.
+
 **🏷️ `InputTags` : a list of entries built one at a time**
 
 - **Gathered from a consuming application**, where a 150-line field managed an array of patterns : one regular expression of its own, and 149 lines of draft, chips, duplicate check and refusal that any tag field writes the same way. The library had none — twenty-seven `Input*` components and no way to collect several values in one field.

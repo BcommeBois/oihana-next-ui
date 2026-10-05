@@ -25,7 +25,7 @@ const KEY = 'lab__cookie' ;
  * Samples that a raw write would have broken.
  * @type {string[]}
  */
-const SAMPLES = [ '100%' , 'planche 2%' , 'a b' , 'x;y' , 'chêne' ] ;
+const SAMPLES = [ '100%' , 'remise 2%' , 'a b' , 'x;y' , 'été' ] ;
 
 /**
  * The raw `key=value` pair of the demo cookie, or `null`.

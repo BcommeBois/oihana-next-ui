@@ -282,7 +282,7 @@ const AnimationDemo = () =>
                         <WordReveal
                             key       = { `word-reveal-${ textKey }` }
                             as        = "p"
-                            text      = "Une bibliothèque de composants moderne pour le secteur du bois"
+                            text      = "Une bibliothèque de composants moderne pour vos interfaces"
                             className = "text-xl text-secondary"
                             delay     = { 0.2 }
                             stagger   = { 0.1 }

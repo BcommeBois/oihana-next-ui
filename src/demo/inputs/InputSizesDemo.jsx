@@ -31,7 +31,7 @@ const InputSizesDemo = () => (
                 <span className="text-xs font-mono text-base-content/60">size="{ size }"</span>
                 <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
                     <InputSearch
-                        defaultValue    = "chêne"
+                        defaultValue    = "mot-clé"
                         showClearButton
                         size            = { size }
                     />

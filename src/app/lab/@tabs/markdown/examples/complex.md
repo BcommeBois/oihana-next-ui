@@ -27,11 +27,11 @@ async function getProducts()
 
 ## Tableau des prix
 
-| Catégorie | Prix/m³ | Délai |
-|-----------|---------|-------|
-| Chêne massif | 850€ | 2-3 jours |
-| Pin traité | 450€ | 1-2 jours |
-| Érable | 920€ | 3-5 jours |
+| Formule | Prix | Délai |
+|---------|------|-------|
+| Découverte | 450€ | 1-2 jours |
+| Complète | 850€ | 2-3 jours |
+| Sur mesure | 920€ | 3-5 jours |
 
 > 💡 **Astuce** : Les prix peuvent varier selon les quantités commandées.
 

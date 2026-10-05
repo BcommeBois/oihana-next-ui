@@ -298,20 +298,20 @@ const PageHeaderDemo = () =>
                     {/* Initials */}
                     <div className="bg-base-100 rounded-box p-4">
                         <PageHeader
-                            avatar               = { <span className="text-lg font-bold text-primary">BC</span> }
+                            avatar               = { <span className="text-lg font-bold text-primary">AS</span> }
                             avatarClassName      = "bg-primary/10"
-                            title                = "B Comme Bois"
-                            subtitle             = "Wood & Timber"
-                            description          = "Premium wood products and materials."
+                            title                = "Acme Studio"
+                            subtitle             = "Design & prototyping"
+                            description          = "Everything the studio makes, in one place."
                         />
                     </div>
 
                     {/* Emoji */}
                     <div className="bg-base-100 rounded-box p-4">
                         <PageHeader
-                            avatar  = { <span className="text-2xl">🪵</span> }
-                            title   = "Wood Products"
-                            subtitle = "Natural materials"
+                            avatar  = { <span className="text-2xl">🧰</span> }
+                            title   = "Shared tools"
+                            subtitle = "Booked by the hour"
                         />
                     </div>
 
@@ -319,9 +319,9 @@ const PageHeaderDemo = () =>
 
                 <div className="mockup-code text-xs">
                     <pre data-prefix="1"><code>&lt;PageHeader</code></pre>
-                    <pre data-prefix="2"><code>    avatar  = {'{ <span className="font-bold">BC</span> }'}</code></pre>
-                    <pre data-prefix="3"><code>    title   = "B Comme Bois"</code></pre>
-                    <pre data-prefix="4"><code>    subtitle = "Wood & Timber"</code></pre>
+                    <pre data-prefix="2"><code>    avatar  = {'{ <span className="font-bold">AS</span> }'}</code></pre>
+                    <pre data-prefix="3"><code>    title   = "Acme Studio"</code></pre>
+                    <pre data-prefix="4"><code>    subtitle = "Design & prototyping"</code></pre>
                     <pre data-prefix="5"><code>/&gt;</code></pre>
                 </div>
             </div>

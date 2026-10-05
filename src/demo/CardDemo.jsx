@@ -417,7 +417,7 @@ SelectableSection.displayName = 'SelectableSection' ;
 const SECTION_CARDS =
 [
     { icon : PriceIcon    , id : 'price'    , lines : 1 , title : 'Tarifs'    , end : <Badge size="sm">3</Badge> } ,
-    { icon : StockIcon    , id : 'stock'    , lines : 4 , title : 'Stock par dépôt, sur une ligne assez longue pour passer à la ligne' , end : <Badge size="sm">12</Badge> } ,
+    { icon : StockIcon    , id : 'stock'    , lines : 4 , title : 'Inventaire par site, sur une ligne assez longue pour passer à la ligne' , end : <Badge size="sm">12</Badge> } ,
     { icon : ShippingIcon , id : 'shipping' , lines : 2 , title : 'Livraison' , end : <Button size="xs" style="ghost">Gérer</Button> } ,
 ] ;
 

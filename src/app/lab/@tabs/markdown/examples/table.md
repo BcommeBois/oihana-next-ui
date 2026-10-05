@@ -2,6 +2,6 @@
 
 | Produit | Prix | Stock |
 |---------|------|-------|
-| Bois de chêne | 45€ | ✓ |
-| Bois de pin | 25€ | ✓ |
-| Bois d'érable | 55€ | ✗ |
+| Carnet A5 | 12€ | ✓ |
+| Stylo plume | 45€ | ✓ |
+| Encre bleue | 8€ | ✗ |
