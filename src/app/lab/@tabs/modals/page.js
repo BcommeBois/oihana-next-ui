@@ -6,10 +6,11 @@ import FormModalDemo        from '@/demo/modals/FormModalDemo' ;
 import InputModalDemo       from '@/demo/modals/InputModalDemo';
 import ModalDemo            from '@/demo/modals/ModalDemo';
 import ModalPresetsDemo     from '@/demo/modals/ModalPresetsDemo' ;
-import PortalFullscreenDemo from '@/demo/PortalFullscreenDemo' ;
+import PortalFullscreenDemo from '@/demo/modals/PortalFullscreenDemo' ;
 import MountedOpenModalDemo from '@/demo/modals/MountedOpenModalDemo';
 import ToastOverModalDemo   from '@/demo/modals/ToastOverModalDemo';
 import Container            from '@/display/Container';
+import Divider              from '@/components/Divider' ;
 import Page                 from '@/display/Page' ;
 
 import I18nMetas from '@/components/i18n/I18nMetas.jsx' ;
@@ -25,7 +26,7 @@ import useI18n   from '@/contexts/locale/useI18n' ;
  */
 const ModalShowcase = ( { path = 'app.lab.modals' } = {} ) =>
 {
-    const { description , title } = useI18n( path ) ;
+    const { benches , benchesNote , description , title } = useI18n( path ) ;
 
     return (
         <Page className='gap-8'>
@@ -41,23 +42,30 @@ const ModalShowcase = ( { path = 'app.lab.modals' } = {} ) =>
                 </p>
             </Container>
 
-            <PortalFullscreenDemo />
-
             <ModalDemo />
 
             <ModalPresetsDemo />
 
-            <ToastOverModalDemo />
+            <InputModalDemo />
+
+            <FormModalDemo />
 
             <CRUDDemo />
 
             <AsyncConfirmModalDemo />
 
-            <InputModalDemo />
-
             <MountedOpenModalDemo />
 
-            <FormModalDemo />
+            <Container maxWidth="max-w-7xl">
+                <Divider>{ benches }</Divider>
+                <p className="text-sm text-base-content/60 italic">
+                    { benchesNote }
+                </p>
+            </Container>
+
+            <ToastOverModalDemo />
+
+            <PortalFullscreenDemo />
 
         </Page>
     ) ;

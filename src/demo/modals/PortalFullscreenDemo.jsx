@@ -14,7 +14,7 @@
  * Open each one, switch to fullscreen, open them again. All four must sit
  * ABOVE the page in both states.
  *
- * @module demo/PortalFullscreenDemo
+ * @module demo/modals/PortalFullscreenDemo
  */
 
 import { useRef , useState } from 'react' ;
