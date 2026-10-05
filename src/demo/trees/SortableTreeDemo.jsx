@@ -2,6 +2,8 @@
 
 import { useRef , useState } from 'react' ;
 
+import useI18n from '@/contexts/locale/useI18n' ;
+
 import Badge    from '@/components/Badge' ;
 import Button   from '@/components/Button' ;
 import Checkbox from '@/components/checkboxes/Checkbox' ;
@@ -79,8 +81,40 @@ const makeTree = ( prefix ) =>
     { id : `${ prefix }-readme` , label : 'README.md' } ,
 ] ;
 
-const SortableTreeDemo = () =>
+/**
+ * The props of `SortableTree`, with their type. The description of each one
+ * lives in the bundle, under its own name — so a row and its sentence cannot
+ * drift apart, and a missing translation is a missing key rather than a
+ * silently English cell.
+ *
+ * @type {[ string , string ][]}
+ */
+const PROPS =
+[
+    [ 'canNest' , 'function' ] ,
+    [ 'collapsed' , 'Array' ] ,
+    [ 'collapsible' , 'boolean' ] ,
+    [ 'defaultCollapsed' , 'Array' ] ,
+    [ 'defaultItems' , 'Array' ] ,
+    [ 'disabled' , 'boolean' ] ,
+    [ 'getItemId' , 'function' ] ,
+    [ 'handle' , 'boolean' ] ,
+    [ 'indent' , 'number' ] ,
+    [ 'items' , 'Array' ] ,
+    [ 'maxDepth' , 'number' ] ,
+    [ 'onChange' , 'function' ] ,
+    [ 'onCollapsedChange' , 'function' ] ,
+    [ 'renderNode' , 'function' ] ,
+] ;
+
+/**
+ * @param {Object} props
+ * @param {string} [props.path='demo.trees.sortableTree'] - Dot notation path to the demo locale.
+ */
+const SortableTreeDemo = ( { path = 'demo.trees.sortableTree' } = {} ) =>
 {
+    const t = useI18n( path ) ;
+
     // --------- Typed tree (folders vs files) for the canNest example
 
     const typedTree =
@@ -238,18 +272,12 @@ const SortableTreeDemo = () =>
 
     return (
         <Container className="flex flex-col gap-6 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-7xl">
-
-            {/* Basic tree */}
             <div className="flex flex-col gap-4 w-full">
                 <h3 className="text-xl font-semibold border-b-2 border-primary pb-2">
-                    Sortable Tree (drag vertically to reorder, horizontally to indent / outdent)
+                    { t.basic.title }
                 </h3>
 
-                <p className="text-sm opacity-70">
-                    Drag a row up or down to reorder among siblings, and left or right to change its depth :
-                    the pointer's horizontal position projects the target parent. Dragging a folder moves its
-                    whole subtree (collapsed during the drag), so a node can never be dropped into its own children.
-                </p>
+                <p className="text-sm opacity-70">{ t.basic.note }</p>
 
                 <div className="w-full max-w-lg">
                     <SortableTree
@@ -267,11 +295,9 @@ const SortableTreeDemo = () =>
             </div>
 
             <Divider />
-
-            {/* Controlled tree */}
             <div className="flex flex-col gap-4 w-full">
                 <h3 className="text-xl font-semibold border-b-2 border-secondary pb-2">
-                    Controlled Tree (live structure)
+                    { t.controlled.title }
                 </h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
@@ -296,11 +322,9 @@ const SortableTreeDemo = () =>
             </div>
 
             <Divider />
-
-            {/* Async change */}
             <div className="flex flex-col gap-4 w-full">
                 <h3 className="text-xl font-semibold border-b-2 border-accent pb-2">
-                    Async Change with API Call (optimistic revert on failure)
+                    { t.async.title }
                 </h3>
 
                 <div className="flex gap-4 items-center flex-wrap">
@@ -311,7 +335,7 @@ const SortableTreeDemo = () =>
                             id       = "sortable-tree-fail"
                             onChange = { e => setShouldFail( e.target.checked ) }
                         />
-                        <span className="text-sm">Simulate API failure</span>
+                        <span className="text-sm">{ t.async.simulate }</span>
                     </label>
 
                     { saveStatus && (
@@ -334,23 +358,17 @@ const SortableTreeDemo = () =>
                     <pre data-prefix="2"><code>    defaultItems={'{ tree }'}</code></pre>
                     <pre data-prefix="3"><code>    onChange={'{ ( next , change ) => api.save( next ) }'}</code></pre>
                     <pre data-prefix="4"><code>/&gt;</code></pre>
-                    <pre data-prefix="5"><code>{'// onChange may return a promise : a rejection restores the previous tree'}</code></pre>
+                    <pre data-prefix="5"><code>{ t.async.comment }</code></pre>
                 </div>
             </div>
 
             <Divider />
-
-            {/* Max depth */}
             <div className="flex flex-col gap-4 w-full">
                 <h3 className="text-xl font-semibold border-b-2 border-warning pb-2">
-                    Max Depth (maxDepth = 2) + drop indicator
+                    { t.maxDepth.title }
                 </h3>
 
-                <p className="text-sm opacity-70">
-                    Nesting is capped at 2 levels : dragging a row deeper snaps back to the limit.
-                    The blue line is the drop indicator — it shows the exact insertion point and, by its
-                    indentation, the depth the node will land at. A folder counts its own subtree against the limit.
-                </p>
+                <p className="text-sm opacity-70">{ t.maxDepth.note }</p>
 
                 <div className="w-full max-w-lg">
                     <SortableTree
@@ -366,19 +384,12 @@ const SortableTreeDemo = () =>
             </div>
 
             <Divider />
-
-            {/* Flat list : root level only */}
             <div className="flex flex-col gap-4 w-full">
                 <h3 className="text-xl font-semibold border-b-2 border-primary pb-2">
-                    Flat List (maxDepth = 0 — a single root level, no nesting)
+                    { t.flat.title }
                 </h3>
 
-                <p className="text-sm opacity-70">
-                    With <code className="text-xs">maxDepth={'{ 0 }'}</code> every node stays at depth 0 : dragging a
-                    row sideways never indents it, so the tree behaves as a plain sortable list — only the vertical
-                    order changes. <code className="text-xs">collapsible={'{ false }'}</code> is paired with it since
-                    there is no subtree left to fold.
-                </p>
+                <p className="text-sm opacity-70">{ t.flat.note }</p>
 
                 <div className="w-full max-w-lg">
                     <SortableTree
@@ -400,18 +411,12 @@ const SortableTreeDemo = () =>
             </div>
 
             <Divider />
-
-            {/* canNest : folders only */}
             <div className="flex flex-col gap-4 w-full">
                 <h3 className="text-xl font-semibold border-b-2 border-info pb-2">
-                    Nesting Rule (canNest — only folders accept children)
+                    { t.canNest.title }
                 </h3>
 
-                <p className="text-sm opacity-70">
-                    Files can be reordered but never receive children : dragging a node under a file walks the
-                    drop up to the file's own level (its parent folder). The drop indicator turns red when no valid
-                    parent exists at a position.
-                </p>
+                <p className="text-sm opacity-70">{ t.canNest.note }</p>
 
                 <div className="w-full max-w-lg">
                     <SortableTree
@@ -431,25 +436,19 @@ const SortableTreeDemo = () =>
             </div>
 
             <Divider />
-
-            {/* Expand all / collapse all */}
             <div className="flex flex-col gap-4 w-full">
                 <h3 className="text-xl font-semibold border-b-2 border-success pb-2">
-                    Expand All / Collapse All (controlled collapse)
+                    { t.fold.title }
                 </h3>
 
-                <p className="text-sm opacity-70">
-                    The collapsed state is controlled via <code className="text-xs">collapsed</code> +{' '}
-                    <code className="text-xs">onCollapsedChange</code>, so the parent can drive it — here two buttons
-                    set it to every folder id (collapse all) or to an empty list (expand all).
-                </p>
+                <p className="text-sm opacity-70">{ t.fold.note }</p>
 
                 <div className="flex gap-2">
                     <Button size="sm" color="ghost" icon={ MdUnfoldMore } onClick={ () => setFoldCollapsed( [] ) }>
-                        Expand all
+                        { t.fold.expandAll }
                     </Button>
                     <Button size="sm" color="ghost" icon={ MdUnfoldLess } onClick={ () => setFoldCollapsed( foldFolderIds ) }>
-                        Collapse all
+                        { t.fold.collapseAll }
                     </Button>
                 </div>
 
@@ -472,18 +471,12 @@ const SortableTreeDemo = () =>
             </div>
 
             <Divider />
-
-            {/* Frozen tree */}
             <div className="flex flex-col gap-4 w-full">
                 <h3 className="text-xl font-semibold border-b-2 border-error pb-2">
-                    Frozen Tree (disabled + collapsible = false)
+                    { t.frozen.title }
                 </h3>
 
-                <p className="text-sm opacity-70">
-                    <code className="text-xs">disabled</code> stops all dragging and{' '}
-                    <code className="text-xs">collapsible={'{ false }'}</code> removes the chevrons and keeps every
-                    node expanded — a read-only, fully static tree.
-                </p>
+                <p className="text-sm opacity-70">{ t.frozen.note }</p>
 
                 <div className="w-full max-w-lg">
                     <SortableTree
@@ -500,26 +493,19 @@ const SortableTreeDemo = () =>
             </div>
 
             <Divider />
-
-            {/* Add / remove dynamically */}
             <div className="flex flex-col gap-4 w-full">
                 <h3 className="text-xl font-semibold border-b-2 border-secondary pb-2">
-                    Add / Remove Nodes Dynamically (insert into a subfolder)
+                    { t.dynamic.title }
                 </h3>
 
-                <p className="text-sm opacity-70">
-                    The tree is a controlled nested value, so add / remove are plain state updates. Each folder has a
-                    « + » button that inserts a child into <b>that folder's</b> <code className="text-xs">children</code>{' '}
-                    (targeted by its id) — the folder auto-expands to reveal it ; every node has a « × » to delete it
-                    (with its subtree). Reordering by drag still works alongside.
-                </p>
+                <p className="text-sm opacity-70">{ t.dynamic.note }</p>
 
                 <div className="flex gap-2 flex-wrap">
                     <Button size="sm" color="ghost" icon={ MdInsertDriveFile } onClick={ () => addChild( null ) }>
-                        Add top-level file
+                        { t.dynamic.addFile }
                     </Button>
                     <Button size="sm" color="ghost" icon={ MdFolder } onClick={ () => addFolder( null ) }>
-                        Add top-level folder
+                        { t.dynamic.addFolder }
                     </Button>
                 </div>
 
@@ -537,101 +523,36 @@ const SortableTreeDemo = () =>
                     <pre data-prefix="1"><code>import insertNode from 'oihana-next-ui/helpers/trees/insertNode' ;</code></pre>
                     <pre data-prefix="2"><code>import removeNode from 'oihana-next-ui/helpers/trees/removeNode' ;</code></pre>
                     <pre data-prefix="3"><code></code></pre>
-                    <pre data-prefix="4"><code>{'// add into a subfolder (by id) — or null for the top level'}</code></pre>
+                    <pre data-prefix="4"><code>{ t.dynamic.insert }</code></pre>
                     <pre data-prefix="5"><code>setTree( t =&gt; insertNode( t , folderId , newNode ) ) ;</code></pre>
-                    <pre data-prefix="6"><code>{'// remove a node and its subtree'}</code></pre>
+                    <pre data-prefix="6"><code>{ t.dynamic.remove }</code></pre>
                     <pre data-prefix="7"><code>setTree( t =&gt; removeNode( t , nodeId ) ) ;</code></pre>
                 </div>
             </div>
 
             <Divider />
-
-            {/* Props Reference */}
             <div className="flex flex-col gap-4">
                 <h3 className="text-xl font-semibold border-b-2 border-primary pb-2">
-                    Props Reference
+                    { t.reference.title }
                 </h3>
 
                 <div className="overflow-x-auto">
                     <table className="table table-zebra">
                         <thead>
                             <tr>
-                                <th>Prop</th>
-                                <th>Type</th>
-                                <th>Description</th>
+                                <th>{ t.reference.prop }</th>
+                                <th>{ t.reference.type }</th>
+                                <th>{ t.reference.description }</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td><code className="text-xs">canNest</code></td>
-                                <td>function</td>
-                                <td>(draggedItem, parentItem | null) =&gt; boolean — <code className="text-xs">null</code> = top level ; a rejected parent makes the drop walk up to the nearest valid ancestor (red indicator if none)</td>
-                            </tr>
-                            <tr>
-                                <td><code className="text-xs">collapsed</code></td>
-                                <td>Array</td>
-                                <td>Controlled list of collapsed node ids ; pair with <code className="text-xs">onCollapsedChange</code></td>
-                            </tr>
-                            <tr>
-                                <td><code className="text-xs">collapsible</code></td>
-                                <td>boolean</td>
-                                <td>Allow expanding/collapsing (default <code className="text-xs">true</code>) ; <code className="text-xs">false</code> hides the chevrons and keeps every node expanded</td>
-                            </tr>
-                            <tr>
-                                <td><code className="text-xs">defaultCollapsed</code></td>
-                                <td>Array</td>
-                                <td>Ids of nodes collapsed initially (uncontrolled collapse)</td>
-                            </tr>
-                            <tr>
-                                <td><code className="text-xs">defaultItems</code></td>
-                                <td>Array</td>
-                                <td>Uncontrolled initial tree (the component owns and updates it)</td>
-                            </tr>
-                            <tr>
-                                <td><code className="text-xs">disabled</code></td>
-                                <td>boolean</td>
-                                <td>Disable dragging for every node (default <code className="text-xs">false</code>) ; the tree can still be expanded/collapsed</td>
-                            </tr>
-                            <tr>
-                                <td><code className="text-xs">getItemId</code></td>
-                                <td>function</td>
-                                <td>(item) =&gt; string | number — unique id accessor (defaults to <code className="text-xs">item.id</code>)</td>
-                            </tr>
-                            <tr>
-                                <td><code className="text-xs">handle</code></td>
-                                <td>boolean</td>
-                                <td>Show a drag handle on each row (default <code className="text-xs">true</code>) ; <code className="text-xs">false</code> makes the whole row draggable</td>
-                            </tr>
-                            <tr>
-                                <td><code className="text-xs">indent</code></td>
-                                <td>number</td>
-                                <td>Indentation width per depth level, in pixels (default 24)</td>
-                            </tr>
-                            <tr>
-                                <td><code className="text-xs">items</code></td>
-                                <td>Array</td>
-                                <td>Controlled nested tree {'[ { id , children : [...] } ]'} ; pair with <code className="text-xs">onChange</code></td>
-                            </tr>
-                            <tr>
-                                <td><code className="text-xs">maxDepth</code></td>
-                                <td>number</td>
-                                <td>Maximum nesting depth ; a dragged folder counts its own subtree height against it</td>
-                            </tr>
-                            <tr>
-                                <td><code className="text-xs">onChange</code></td>
-                                <td>function</td>
-                                <td>(tree, {'{ item, fromParent, toParent, fromIndex, toIndex }'}) =&gt; void | Promise — a rejected promise reverts the tree (uncontrolled)</td>
-                            </tr>
-                            <tr>
-                                <td><code className="text-xs">onCollapsedChange</code></td>
-                                <td>function</td>
-                                <td>(collapsedIds) =&gt; void — called with the new collapsed ids on each toggle</td>
-                            </tr>
-                            <tr>
-                                <td><code className="text-xs">renderNode</code></td>
-                                <td>function</td>
-                                <td>(item, {'{ depth, collapsed, childCount }'}) =&gt; a SortableTreeItem element (required)</td>
-                            </tr>
+                            { PROPS.map( ( [ name , kind ] ) => (
+                                <tr key={ name }>
+                                    <td><code className="text-xs">{ name }</code></td>
+                                    <td>{ kind }</td>
+                                    <td>{ t.props[ name ] }</td>
+                                </tr>
+                            ) ) }
                         </tbody>
                     </table>
                 </div>
