@@ -8,6 +8,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🌳 A tree out of dotted paths : `groupByPath`, `PathTree`, `usePathTreeOpenState`**
+
+- **Gathered from a consuming application**, where three screens each carried their own recursive `TreeNode`, their own « expand all » and their own « a search opens the branches » — and where the prop list of those three copies grew by two at each rewriting, which is the order they were written in.
+- **New `helpers/trees/groupByPath`** — builds a tree out of a flat list by reading a dotted path on each item. The hierarchy is in the strings and nothing records it, which is what this reads out : each segment becomes a folder, and an item lands in the folder its prefix names. It does not read the path itself : `getPath` does, because only a caller knows whether the hierarchy lives in a key, a code or a slug.
+  - 🔑 **Beyond `maxDepth`, the tail is REJOINED rather than cut.** `a.b.c.d.e` capped at four gives `a`, `b`, `c`, `d.e`. Cutting it would leave two different items in a folder that names neither ; dropping it would lose them. **Every item must find a home**, or a list that claims to show everything quietly stops doing so. An item with no readable path lands in an orphan folder for the same reason.
+  - Each node carries `allItems` — its own leaves plus every descendant's — which is what a tri-state checkbox needs, and `path`, which is what everything keys on : a path survives a re-group, and a tree is re-grouped on every keystroke of a search.
+- **New `components/trees/PathTree`** — the folders, their leaves drawn by the caller's `renderItem`, a count, and optionally a tri-state checkbox per folder. It is not `SortableTree` : that one REORDERS a hierarchy by drag and drop, keyed on `parentId` ; this one reads one that exists only in the strings, and nothing here moves.
+  - 🚨 **The disclosure is a button and the checkbox is its SIBLING.** One of the three copies spelled it `<details>` / `<summary>` with the checkbox inside the summary — and a `<summary>` IS a button, so that is interactive content nested in interactive content : invalid, and it forced a `stopPropagation` on the checkbox to stop a tick from toggling the folder. Beside it, no guard is needed and each control keeps its own name.
+  - 🔑 **A locked leaf is out of the count entirely.** A folder of ten leaves where nine are locked and the tenth is ticked reads FULL, not « one of ten » : ticking the box can only ever reach that one. Counting the locked ones would leave the box forever indeterminate and the reader forever wondering what is left to tick.
+- **New `hooks/usePathTreeOpenState`** — which folders are open, and the three gestures that change it. ⚠️ **A search opens the branches and never closes them** : the effect runs on the QUERY, not on the tree, so a folder the reader closes by hand while searching stays closed, and clearing the search leaves the tree as they left it rather than snapping it shut.
+- `components.tree` : the count pattern the component reads, and the two toolbar labels a HOST reads — three screens of a consuming application were each spelling « Tout replier » inline, in French, as the fallback of a key they had declared separately.
+- Lab : the « Tree » page becomes « Trees », localized, and opens on a `PathTree` demo — twenty-one settings keys, folders that hold both their own leaves and sub-folders, a checkbox on every leaf, and the two decisions worth SEEING rather than reading : a path past the cap whose tail is rejoined, and a key with no dot at all sitting in the orphan folder. Unticking one leaf turns three levels of folders indeterminate above it while their siblings stay full, which is the whole behaviour in one gesture. `SortableTreeDemo` keeps its own hardcoded strings for now.
+
 ## [0.27.0] — 2026-10-05
 
 **🔧 The gaps 0.26.0 left in the four modals, and a cap that hid what was typed**

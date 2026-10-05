@@ -13,6 +13,7 @@ import retry      from './retry'
 import scheduler  from './scheduler'
 import sortable   from './sortable'
 import splitPanel from './splitPanel'
+import tree       from './tree'
 
 const components =
 {
@@ -31,6 +32,7 @@ const components =
     scheduler ,
     sortable ,
     splitPanel ,
+    tree ,
 };
 
 export default components ;
