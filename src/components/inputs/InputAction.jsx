@@ -16,11 +16,12 @@
  *  - The button can carry a tooltip (daisyUI inline classes — no
  *    native HTML `title`).
  *
- * Forwards every other prop to oihana-next-ui's `Input`, so labels,
- * helpers, errors, placeholders, masks, etc. behave as usual.
+ * Forwards every other prop to `Input`, so labels, helpers, errors,
+ * placeholders, masks, etc. behave as usual.
  *
- * Lives in the project for now ; will likely move to oihana-next-ui
- * once stabilised.
+ * 🔑 A whole list of entries is {@link module:components/inputs/InputTags},
+ * which is built on this field : it owns the draft, the chips and the reason
+ * an entry was refused. This one commits a draft and says no more.
  *
  * @module components/inputs/InputAction
  *

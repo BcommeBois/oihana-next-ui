@@ -18,6 +18,11 @@
  * label that says « 8 » next to a field refusing anything under 12 is worse
  * than no label. A host owning its own wording passes a `path` instead.
  *
+ * `tags` is both : `add` and `remove` name the two controls of `InputTags`,
+ * while `duplicate` and `invalid` are the sentences a refused entry shows — a
+ * field that silently drops what was typed tells nobody why. A host with a
+ * reason of its own passes it from `validateTag`.
+ *
  * The rest are `aria-label` (and `title`) values only : nothing there is visible
  * copy. They were hardcoded English in each signature and never passed by any
  * host, so a screen reader announced them in English on an otherwise French
@@ -73,6 +78,14 @@ const input =
         {
             placeholder : 'Rechercher…' ,
         } ,
+
+        tags :
+        {
+            add       : 'Ajouter' ,
+            duplicate : 'Déjà présent dans la liste.' ,
+            invalid   : 'Cette entrée ne peut pas être ajoutée.' ,
+            remove    : 'Retirer' ,
+        } ,
     } ,
 
     en :
@@ -122,6 +135,14 @@ const input =
         search :
         {
             placeholder : 'Search…' ,
+        } ,
+
+        tags :
+        {
+            add       : 'Add' ,
+            duplicate : 'Already in the list.' ,
+            invalid   : 'This entry cannot be added.' ,
+            remove    : 'Remove' ,
         } ,
     } ,
 } ;

@@ -8,6 +8,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🏷️ `InputTags` : a list of entries built one at a time**
+
+- **Gathered from a consuming application**, where a 150-line field managed an array of patterns : one regular expression of its own, and 149 lines of draft, chips, duplicate check and refusal that any tag field writes the same way. The library had none — twenty-seven `Input*` components and no way to collect several values in one field.
+- **New `components/inputs/InputTags`** — built on `InputAction`, so Enter and the « + » commit, and everything else (`label`, `helper`, `placeholder`, `size`, the masks) still reaches `Input`. The value is the ARRAY, controlled : `value` in, `onChange( next )` out, and the draft never leaves the field.
+- 🔑 **`validateTag`, not `validate`.** `Input` already has a `validate` and it means something else : it gates the draft character by character, beside `revertOnBlurIfInvalid`. A tag list asks « may THIS become an entry ? », once, on the commit. Two questions, two names — and a host can ask both. It answers `true` to accept, a **string** to refuse with that sentence, or `false` to refuse with the bundle's generic one : the application this came from had a regular expression and no sentence to add, while a field refusing a malformed address wants to explain.
+- 🔑 **A refused entry stays in the field.** The draft is kept and nothing is added, so the reader corrects what they typed rather than typing it again. The refusal shows where an error shows — and `Input` draws an error INSTEAD of its helper, so the two never crowd each other. Typing again clears it.
+- `unique` (on by default) compares **exactly** : a pattern, a code or an identifier is not the same thing spelled in another case. `chipClassName` carries a `font-mono` or a size ; `renderChip` draws the chip whole and is **keyed for the caller**, which is one « unique key » warning nobody has to meet.
+- ⚠️ **A chip's « × » is named, not tooltipped.** Twelve pixels inside a badge have no room for a tooltip, and a thumb would open one instead of removing the entry : it carries an `aria-label` and nothing else.
+- `components.input.tags` : `add` and `remove` name the two controls, `duplicate` and `invalid` are what a refused entry says — a field that silently drops what was typed tells nobody why. They sit in the `input` bundle rather than one of their own, beside the stepper buttons of `InputCounter` and the visibility toggle of `InputPassword`.
+- Lab : a « Tags » demo on the Inputs page — free keywords, an address list refused with the host's own sentence, three capital letters refused with the bundle's, a chip drawn by the host, and a disabled field whose entries keep their text and lose their way out. **`InputActionDemo` stops assembling a tag list by hand** : those forty lines were what this component replaces, and the lab would have taught both.
+
 ## [0.28.0] — 2026-10-05
 
 **🔗 Attaching and detaching : `useSelectionDiff`, `AssignmentList`, `AssignmentEditorModal`**

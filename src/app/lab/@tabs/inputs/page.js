@@ -20,6 +20,7 @@ import InputHexColorDemo   from '@/demo/inputs/InputHexColorDemo' ;
 import InputPercentageDemo from '@/demo/inputs/InputPercentageDemo' ;
 import InputSearchDemo     from '@/demo/inputs/InputSearchDemo' ;
 import InputSizesDemo      from '@/demo/inputs/InputSizesDemo' ;
+import InputTagsDemo       from '@/demo/inputs/InputTagsDemo' ;
 import InputPasswordDemo   from '@/demo/inputs/InputPasswordDemo' ;
 import InputPinDemo        from '@/demo/inputs/InputPinDemo' ;
 import PasswordStrengthDemo from '@/demo/passwords/PasswordStrengthDemo' ;
@@ -36,6 +37,7 @@ import {
     MdCreditCard ,
     MdDateRange ,
     MdEmail ,
+    MdLabel ,
     MdLock ,
     MdPercent ,
     MdPin ,
@@ -108,6 +110,14 @@ const Inputs = ({ path = 'app.test' }) =>
             description : 'Input with a trailing action button (commit on + / Enter)' ,
             category    : 'Text' ,
             component   : <InputActionDemo /> ,
+        } ,
+        {
+            key         : 'tags' ,
+            label       : 'Tags' ,
+            icon        : MdLabel ,
+            description : 'A list of entries built one at a time, each refusable with its own reason' ,
+            category    : 'Text' ,
+            component   : <InputTagsDemo /> ,
         } ,
         {
             key         : 'i18n-input' ,
