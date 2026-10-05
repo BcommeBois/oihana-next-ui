@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🌍 The lab's Inputs page follows the language switch**
+
+- The page declared `path = 'app.test'` and **never read it** : a dead prop pointing at a bundle that does not exist, on the page carrying twenty-one filter rows of hardcoded English. New `app.lab.inputs` : 51 keys per language — the title, the intro, the footer tip, the count, the five categories, and a `label` + a `description` per row, each read under the row's own key so a row and its sentence cannot drift apart.
+- 🔑 **A category is an identifier, not a label.** The five categories were strings used BOTH as headings and as the grouping key (`category === 'Text'`), which breaks the grouping the moment the heading is translated. The rows now carry `text`, `numbers`, `dates`, `security`, `specialized`, and the heading is read from the bundle.
+- The twenty-one rows become a table at module level — they never depended on state — and the component maps the copy onto them in one place rather than repeating a lookup twenty-one times. The page loses 124 lines (395 → 271) and `I18nMetas` now gives the document its title.
+- `'1 component'` was a hardcoded branch beside `{0} components` : one key with a `(s)` carries both, the way the rest of the library counts.
+- ⚠️ **The twenty demos ON that page are still hardcoded** — 422 strings, which is the lot after this one. The page's own chrome is what this entry covers.
+
 **🏷️ `InputTags` : a list of entries built one at a time**
 
 - **Gathered from a consuming application**, where a 150-line field managed an array of patterns : one regular expression of its own, and 149 lines of draft, chips, duplicate check and refusal that any tag field writes the same way. The library had none — twenty-seven `Input*` components and no way to collect several values in one field.

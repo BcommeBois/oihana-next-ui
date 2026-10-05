@@ -3,6 +3,7 @@ import assignments    from './assignments'
 import badges         from './badges'
 import buttons        from './buttons'
 import i18n           from './i18n'
+import inputs         from './inputs'
 import mapsMarkers    from './mapsMarkers'
 import mapsModel      from './mapsModel'
 import mapsPicker     from './mapsPicker'
@@ -26,6 +27,7 @@ const lab =
     badges         ,
     buttons        ,
     i18n           ,
+    inputs         ,
     mapsMarkers    ,
     mapsModel      ,
     mapsPicker     ,

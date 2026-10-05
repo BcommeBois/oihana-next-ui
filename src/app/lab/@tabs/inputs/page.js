@@ -2,11 +2,16 @@
 
 import { useState } from 'react' ;
 
+import format from 'vegas-js-core/src/strings/fastformat' ;
+
 import Badge    from '@/components/Badge' ;
 import Divider  from '@/components/Divider' ;
 
 import Container from '@/display/Container' ;
 import Page      from '@/display/Page' ;
+
+import I18nMetas from '@/components/i18n/I18nMetas' ;
+import useI18n   from '@/contexts/locale/useI18n' ;
 
 import I18nInputDemo       from '@/demo/inputs/I18nInputDemo' ;
 import InputActionDemo     from '@/demo/inputs/InputActionDemo' ;
@@ -54,197 +59,79 @@ import {
 } from 'react-icons/md' ;
 
 /**
- * Input showcase page with improved filter UI.
+ * The categories, in the order the page lays them out.
+ *
+ * 🔑 Identifiers, not labels : the heading is read from the bundle, and a
+ * grouping key cannot be a translated string — the grouping would break in the
+ * other language.
+ *
+ * @type {string[]}
  */
-const Inputs = ({ path = 'app.test' }) =>
+const CATEGORIES = [ 'text' , 'numbers' , 'dates' , 'security' , 'specialized' ] ;
+
+/**
+ * The page's rows : what each one shows, and where it belongs.
+ *
+ * Their copy lives in the bundle under the same key, so a row and its sentence
+ * are read by one name and cannot drift apart. The `all` row shows no
+ * component : it is the filter that groups every other one.
+ *
+ * @type {Array<{ key : string , icon : React.ElementType , category : ?string , component : ?React.ReactNode }>}
+ */
+const ROWS =
+[
+    { key : 'all'               , icon : MdViewModule    , category : null          , component : null } ,
+
+    { key : 'transform'         , icon : MdTextFields    , category : 'text'        , component : <InputTransformDemo /> } ,
+    { key : 'clear'             , icon : MdClear         , category : 'text'        , component : <InputClearDemo /> } ,
+    { key : 'search'            , icon : MdSearch        , category : 'text'        , component : <InputSearchDemo /> } ,
+    { key : 'sizes'             , icon : MdStraighten    , category : 'text'        , component : <InputSizesDemo /> } ,
+    { key : 'action'            , icon : MdPlaylistAdd   , category : 'text'        , component : <InputActionDemo /> } ,
+    { key : 'tags'              , icon : MdLabel         , category : 'text'        , component : <InputTagsDemo /> } ,
+    { key : 'i18n-input'        , icon : MdTranslate     , category : 'text'        , component : <I18nInputDemo /> } ,
+
+    { key : 'counter'           , icon : MdPlusOne       , category : 'numbers'     , component : <InputCounterDemo /> } ,
+    { key : 'currency'          , icon : MdAttachMoney   , category : 'numbers'     , component : <InputCurrencyDemo /> } ,
+    { key : 'percentage'        , icon : MdPercent       , category : 'numbers'     , component : <InputPercentageDemo /> } ,
+
+    { key : 'date'              , icon : MdCalendarToday , category : 'dates'       , component : <InputDateDemo /> } ,
+    { key : 'date-range'        , icon : MdDateRange     , category : 'dates'       , component : <InputDateRangeDemo /> } ,
+    { key : 'time'              , icon : MdSchedule      , category : 'dates'       , component : <InputTimeDemo /> } ,
+
+    { key : 'password'          , icon : MdLock          , category : 'security'    , component : <InputPasswordDemo /> } ,
+    { key : 'password-strength' , icon : MdPassword      , category : 'security'    , component : <PasswordStrengthDemo /> } ,
+    { key : 'pin'               , icon : MdPin           , category : 'security'    , component : <InputPinDemo /> } ,
+    { key : 'validator'         , icon : MdVerified      , category : 'security'    , component : <InputValidatorDemo /> } ,
+
+    { key : 'card'              , icon : MdCreditCard    , category : 'specialized' , component : <InputCardDemo /> } ,
+    { key : 'hex-color'         , icon : MdColorLens     , category : 'specialized' , component : <InputHexColorDemo /> } ,
+    { key : 'url-email'         , icon : MdEmail         , category : 'specialized' , component : <InputUrlEmailDemo /> } ,
+] ;
+
+/**
+ * Input showcase page : a filter bar, then every field grouped by category.
+ *
+ * @param {Object} props
+ * @param {string} [props.path='app.lab.inputs'] - Dot notation path to the page locale.
+ */
+const Inputs = ( { path = 'app.lab.inputs' } = {} ) =>
 {
+    const { categories , count , description , items , tip , title } = useI18n( path ) ;
+
     const [ filter , setFilter ] = useState( 'all' ) ;
 
-    const filterConfig =
-    [
-        {
-            key         : 'all' ,
-            label       : 'All' ,
-            icon        : MdViewModule ,
-            description : 'View all Input components' ,
-            category    : null ,
-            component   : null ,
-        } ,
-        // Text & Transform
-        {
-            key         : 'transform' ,
-            label       : 'Transform' ,
-            icon        : MdTextFields ,
-            description : 'Text transformation (uppercase, lowercase, capitalize)' ,
-            category    : 'Text' ,
-            component   : <InputTransformDemo /> ,
-        } ,
-        {
-            key         : 'clear' ,
-            label       : 'Clear' ,
-            icon        : MdClear ,
-            description : 'Input with clear button' ,
-            category    : 'Text' ,
-            component   : <InputClearDemo /> ,
-        } ,
-        {
-            key         : 'search' ,
-            label       : 'Search' ,
-            icon        : MdSearch ,
-            description : 'Search input with icon' ,
-            category    : 'Text' ,
-            component   : <InputSearchDemo /> ,
-        } ,
-        {
-            key         : 'sizes' ,
-            label       : 'Sizes' ,
-            icon        : MdStraighten ,
-            description : 'Action buttons follow the field size' ,
-            category    : 'Text' ,
-            component   : <InputSizesDemo /> ,
-        } ,
-        {
-            key         : 'action' ,
-            label       : 'Action' ,
-            icon        : MdPlaylistAdd ,
-            description : 'Input with a trailing action button (commit on + / Enter)' ,
-            category    : 'Text' ,
-            component   : <InputActionDemo /> ,
-        } ,
-        {
-            key         : 'tags' ,
-            label       : 'Tags' ,
-            icon        : MdLabel ,
-            description : 'A list of entries built one at a time, each refusable with its own reason' ,
-            category    : 'Text' ,
-            component   : <InputTagsDemo /> ,
-        } ,
-        {
-            key         : 'i18n-input' ,
-            label       : 'I18n' ,
-            icon        : MdTranslate ,
-            description : 'Multi-language input storing a { lang : text } map' ,
-            category    : 'Text' ,
-            component   : <I18nInputDemo /> ,
-        } ,
-        // Numbers & Values
-        {
-            key         : 'counter' ,
-            label       : 'Counter' ,
-            icon        : MdPlusOne ,
-            description : 'Number input with increment/decrement buttons' ,
-            category    : 'Numbers' ,
-            component   : <InputCounterDemo /> ,
-        } ,
-        {
-            key         : 'currency' ,
-            label       : 'Currency' ,
-            icon        : MdAttachMoney ,
-            description : 'Currency input with formatting' ,
-            category    : 'Numbers' ,
-            component   : <InputCurrencyDemo /> ,
-        } ,
-        {
-            key         : 'percentage' ,
-            label       : 'Percentage' ,
-            icon        : MdPercent ,
-            description : 'Percentage input (0-100%)' ,
-            category    : 'Numbers' ,
-            component   : <InputPercentageDemo /> ,
-        } ,
-        // Date & Time
-        {
-            key         : 'date' ,
-            label       : 'Date' ,
-            icon        : MdCalendarToday ,
-            description : 'Date picker input' ,
-            category    : 'Date & Time' ,
-            component   : <InputDateDemo /> ,
-        } ,
-        {
-            key         : 'date-range' ,
-            label       : 'Date Range' ,
-            icon        : MdDateRange ,
-            description : 'Date range picker (start/end dates)' ,
-            category    : 'Date & Time' ,
-            component   : <InputDateRangeDemo /> ,
-        } ,
-        {
-            key         : 'time' ,
-            label       : 'Time' ,
-            icon        : MdSchedule ,
-            description : 'Time picker input' ,
-            category    : 'Date & Time' ,
-            component   : <InputTimeDemo /> ,
-        } ,
-        // Security & Validation
-        {
-            key         : 'password' ,
-            label       : 'Password' ,
-            icon        : MdLock ,
-            description : 'Password input with show/hide toggle' ,
-            category    : 'Security' ,
-            component   : <InputPasswordDemo /> ,
-        } ,
-        {
-            key         : 'password-strength' ,
-            label       : 'Strength' ,
-            icon        : MdPassword ,
-            description : 'Strength meter, rule checklist and the new/confirm couple' ,
-            category    : 'Security' ,
-            component   : <PasswordStrengthDemo /> ,
-        } ,
-        {
-            key         : 'pin' ,
-            label       : 'PIN' ,
-            icon        : MdPin ,
-            description : 'PIN code input with multiple digits' ,
-            category    : 'Security' ,
-            component   : <InputPinDemo /> ,
-        } ,
-        {
-            key         : 'validator' ,
-            label       : 'Validator' ,
-            icon        : MdVerified ,
-            description : 'Input with validation rules' ,
-            category    : 'Security' ,
-            component   : <InputValidatorDemo /> ,
-        } ,
-        // Specialized
-        {
-            key         : 'card' ,
-            label       : 'Card' ,
-            icon        : MdCreditCard ,
-            description : 'Credit card number input with formatting' ,
-            category    : 'Specialized' ,
-            component   : <InputCardDemo /> ,
-        } ,
-        {
-            key         : 'hex-color' ,
-            label       : 'Hex Color' ,
-            icon        : MdColorLens ,
-            description : 'Hexadecimal color input (#RRGGBB)' ,
-            category    : 'Specialized' ,
-            component   : <InputHexColorDemo /> ,
-        } ,
-        {
-            key         : 'url-email' ,
-            label       : 'URL & Email' ,
-            icon        : MdEmail ,
-            description : 'URL and Email input validation' ,
-            category    : 'Specialized' ,
-            component   : <InputUrlEmailDemo /> ,
-        } ,
-    ] ;
+    const filterConfig = ROWS.map( row => (
+    {
+        ...row ,
+        description : items?.[ row.key ]?.description ,
+        label       : items?.[ row.key ]?.label ,
+    } ) ) ;
 
     const componentsToShow = filter === 'all'
         ? filterConfig.filter( item => item.component !== null )
         : filterConfig.filter( item => item.key === filter ) ;
 
     const activeFilter = filterConfig.find( item => item.key === filter ) ;
-
-    // Group by category for better display
-    const categories = [ 'Text' , 'Numbers' , 'Date & Time' , 'Security' , 'Specialized' ] ;
 
     const handleFilterChange = ( key ) =>
     {
@@ -254,11 +141,12 @@ const Inputs = ({ path = 'app.test' }) =>
     return (
         <Page className="gap-8" maxWidth="max-w-7xl">
 
-            {/* Header Section */}
+            <I18nMetas path={ path } />
+
             <Container className="flex flex-col gap-4 text-center" maxWidth="max-w-4xl">
                 <div className="flex items-center justify-center gap-3">
                     <h1 className="text-4xl md:text-5xl font-bold bg-linear-to-r from-secondary to-primary inline-block text-transparent bg-clip-text">
-                        Input Components
+                        { title }
                     </h1>
                     <Badge color="primary" size="lg">
                         { componentsToShow.length }
@@ -266,17 +154,14 @@ const Inputs = ({ path = 'app.test' }) =>
                 </div>
 
                 <p className="text-base-content/70 text-lg max-w-2xl mx-auto">
-                    Explore our comprehensive collection of specialized input components:
-                    text inputs, number inputs, date/time pickers, password fields, validators, and more.
+                    { description }
                 </p>
             </Container>
 
             <Divider />
 
-            {/* Filter Tabs - Scrollable on mobile */}
             <Container maxWidth="max-w-full">
                 <div className="flex flex-col gap-4">
-                    {/* Tab Buttons - Scrollable */}
                     <div className="overflow-x-auto">
                         <div role="tablist" className="tabs tabs-boxed bg-base-200 p-2 rounded-box shadow-inner inline-flex min-w-full">
                             { filterConfig.map( ({ key , label , icon: Icon }) => (
@@ -293,7 +178,6 @@ const Inputs = ({ path = 'app.test' }) =>
                         </div>
                     </div>
 
-                    {/* Active Filter Description */}
                     { activeFilter && (
                         <div className="alert bg-base-100 shadow-md">
                             <activeFilter.icon className="text-primary" size={ 24 } />
@@ -302,12 +186,12 @@ const Inputs = ({ path = 'app.test' }) =>
                                 <p className="text-xs opacity-70">{ activeFilter.description }</p>
                                 { activeFilter.category && (
                                     <Badge color="ghost" size="xs" className="mt-1">
-                                        { activeFilter.category }
+                                        { categories?.[ activeFilter.category ] }
                                     </Badge>
                                 )}
                             </div>
                             <Badge color="ghost" size="sm">
-                                { filter === 'all' ? `${ componentsToShow.length } components` : '1 component' }
+                                { format( count ?? '{0}' , filter === 'all' ? componentsToShow.length : 1 ) }
                             </Badge>
                         </div>
                     )}
@@ -316,63 +200,55 @@ const Inputs = ({ path = 'app.test' }) =>
 
             <Divider />
 
-            {/* Components Display */}
             <Container className="flex flex-col gap-8" maxWidth="max-w-7xl">
                 { filter === 'all' ? (
-                    // Group by category when showing all
-                    categories.map( category => {
-                        const categoryComponents = componentsToShow.filter(
-                            item => filterConfig.find( config => config.key === item.key )?.category === category
-                        ) ;
+                    CATEGORIES.map( category =>
+                    {
+                        const categoryComponents = componentsToShow.filter( item => item.category === category ) ;
 
-                        if ( categoryComponents.length === 0 ) return null ;
+                        if ( categoryComponents.length === 0 ) { return null ; }
 
                         return (
                             <div key={ category } className="flex flex-col gap-6">
-                                {/* Category Header */}
+
                                 <div className="flex items-center gap-3">
-                                    <h2 className="text-3xl font-bold text-primary">{ category }</h2>
+                                    <h2 className="text-3xl font-bold text-primary">
+                                        { categories?.[ category ] }
+                                    </h2>
                                     <Badge color="primary" size="lg">
                                         { categoryComponents.length }
                                     </Badge>
                                 </div>
 
-                                {/* Components in this category */}
                                 <div className="grid grid-cols-1 gap-8">
-                                    { categoryComponents.map( ({ key , component }) => {
-                                        const config = filterConfig.find( item => item.key === key ) ;
-
-                                        return (
-                                            <div key={ key } className="animate-fadeIn">
-                                                <div className="mb-4">
-                                                    <h3 className="text-xl font-bold flex items-center gap-2">
-                                                        { config?.icon && (
-                                                            <span className="text-secondary">
-                                                                <config.icon size={ 24 } />
-                                                            </span>
-                                                        )}
-                                                        { config?.label }
-                                                    </h3>
-                                                    <p className="text-sm opacity-70 mt-1">
-                                                        { config?.description }
-                                                    </p>
-                                                    <Divider className="my-3" />
-                                                </div>
-
-                                                { component }
+                                    { categoryComponents.map( ({ component , description : rowDescription , icon : Icon , key , label }) => (
+                                        <div key={ key } className="animate-fadeIn">
+                                            <div className="mb-4">
+                                                <h3 className="text-xl font-bold flex items-center gap-2">
+                                                    <span className="text-secondary">
+                                                        <Icon size={ 24 } />
+                                                    </span>
+                                                    { label }
+                                                </h3>
+                                                <p className="text-sm opacity-70 mt-1">
+                                                    { rowDescription }
+                                                </p>
+                                                <Divider className="my-3" />
                                             </div>
-                                        ) ;
-                                    })}
+
+                                            { component }
+                                        </div>
+                                    ))}
                                 </div>
 
-                                { category !== categories[ categories.length - 1 ] && (
+                                { category !== CATEGORIES[ CATEGORIES.length - 1 ] && (
                                     <Divider className="my-4" />
                                 )}
+
                             </div>
                         ) ;
                     })
                 ) : (
-                    // Single component view
                     componentsToShow.map( ({ key , component }) => (
                         <div key={ key } className="animate-fadeIn">
                             { component }
@@ -381,10 +257,9 @@ const Inputs = ({ path = 'app.test' }) =>
                 )}
             </Container>
 
-            {/* Footer Info */}
             <Container className="text-center opacity-60" maxWidth="max-w-4xl">
                 <p className="text-sm">
-                    💡 Tip: Use the tabs above to filter inputs by category or view specific components
+                    { tip }
                 </p>
             </Container>
 
