@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.29.0] — 2026-10-06
+
 **🔁 The dialog that says a newer build is waiting**
 
 - **New `components/pwa/UpdateModal`** — registers the Service Worker through `useServiceWorkerUpdate`, and once an update is announced opens a dialog showing the version running and the version waiting. 🔑 **The hook was already here and the dialog that goes with it was not**, which is the wrong way round : gathered from an application where it was written entirely out of this library's own parts — `Modal`, `ModalFooter`, `useModal`, `useI18n` and that very hook — and where nothing remained of its own but one import and one i18n path.
