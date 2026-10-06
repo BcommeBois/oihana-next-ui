@@ -22,6 +22,8 @@ import useChartTheme   from '../../hooks/useChartTheme' ;
 import { RADIAL } from '../../themes/charts/layout' ;
 import { NIVO }   from '../../themes/charts/palettes' ;
 
+import { tooltipValue } from '../../themes/charts/tooltip' ;
+
 import ChartFrame   from './ChartFrame' ;
 import ChartTooltip from './ChartTooltip' ;
 
@@ -84,6 +86,7 @@ const outgoingTotal = ( data , row ) => ( data?.[ row ] ?? [] ).reduce
  * @param {string} [props.renderer='svg'] - `'svg'` or `'canvas'`.
  * @param {number} [props.ribbonOpacity=0.5] - Ribbon opacity.
  * @param {Object} [props.theme] - Partial nivo theme, deeply merged over the DaisyUI one.
+ * @param {Function} [props.tooltipFormat] - Formats the value in the TOOLTIP : `( value , datum ) => React.ReactNode`. Without it, the value follows `valueFormat`, and the active locale when there is none.
  * @param {string} [props.valueFormat] - d3-format string for values.
  *
  * @example
@@ -126,6 +129,7 @@ const ChordChart =
     renderer = 'svg' ,
     ribbonOpacity = 0.5 ,
     theme : themeOverrides ,
+    tooltipFormat ,
     valueFormat ,
     ...rest
 }) =>
@@ -183,10 +187,10 @@ const ChordChart =
             <ChartTooltip
                 color = { arc?.color }
                 label = { arc?.label ?? arc?.id }
-                value = { arc?.formattedValue ?? arc?.value }
+                value = { tooltipValue( { datum : arc , formatted : valueFormat ? arc?.formattedValue : undefined , tooltipFormat , value : arc?.value } ) }
             />
         ) ,
-        [] ,
+        [ tooltipFormat , valueFormat ] ,
     ) ;
 
     // A ribbon carries a flow each way, so both ends are listed.
@@ -199,17 +203,17 @@ const ChordChart =
                     {
                         color : ribbon?.source?.color ,
                         label : `${ ribbon?.source?.id } → ${ ribbon?.target?.id }` ,
-                        value : ribbon?.source?.formattedValue ?? ribbon?.source?.value ,
+                        value : tooltipValue( { datum : ribbon?.source , formatted : valueFormat ? ribbon?.source?.formattedValue : undefined , tooltipFormat , value : ribbon?.source?.value } ) ,
                     } ,
                     {
                         color : ribbon?.target?.color ,
                         label : `${ ribbon?.target?.id } → ${ ribbon?.source?.id }` ,
-                        value : ribbon?.target?.formattedValue ?? ribbon?.target?.value ,
+                        value : tooltipValue( { datum : ribbon?.target , formatted : valueFormat ? ribbon?.target?.formattedValue : undefined , tooltipFormat , value : ribbon?.target?.value } ) ,
                     } ,
                 ]}
             />
         ) ,
-        [] ,
+        [ tooltipFormat , valueFormat ] ,
     ) ;
 
     const Component = renderer === 'canvas' ? ResponsiveChordCanvas : ResponsiveChord ;

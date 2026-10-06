@@ -20,6 +20,8 @@ import useChartTheme   from '../../hooks/useChartTheme' ;
 import { RADIAL } from '../../themes/charts/layout' ;
 import { NIVO }   from '../../themes/charts/palettes' ;
 
+import { tooltipValue } from '../../themes/charts/tooltip' ;
+
 import ChartFrame   from './ChartFrame' ;
 import ChartTooltip from './ChartTooltip' ;
 
@@ -84,6 +86,7 @@ const inferKeys = ( data , indexBy ) =>
  * @param {Object} [props.nivoProps] - Escape hatch — spread last onto the nivo component.
  * @param {string|string[]} [props.palette='nivo'] - Series palette.
  * @param {Object} [props.theme] - Partial nivo theme, deeply merged over the DaisyUI one.
+ * @param {Function} [props.tooltipFormat] - Formats the value in the TOOLTIP : `( value , datum ) => React.ReactNode`. Without it, the value follows `valueFormat`, and the active locale when there is none.
  * @param {string} [props.valueFormat] - d3-format string for values.
  *
  * @example
@@ -122,6 +125,7 @@ const RadarChart =
     nivoProps ,
     palette = NIVO ,
     theme : themeOverrides ,
+    tooltipFormat ,
     valueFormat ,
     ...rest
 }) =>
@@ -170,11 +174,11 @@ const RadarChart =
                 ({
                     color : datum?.color ,
                     label : datum?.id ,
-                    value : datum?.formattedValue ?? datum?.value ,
+                    value : tooltipValue( { datum , formatted : valueFormat ? datum?.formattedValue : undefined , tooltipFormat , value : datum?.value } ) ,
                 }) ) }
             />
         ) ,
-        [] ,
+        [ tooltipFormat , valueFormat ] ,
     ) ;
 
     return (

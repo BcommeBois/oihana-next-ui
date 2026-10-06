@@ -21,7 +21,7 @@ import { formatTimeTick } from '../../themes/charts/axes' ;
 import { CARTESIAN }      from '../../themes/charts/layout' ;
 import { NIVO }           from '../../themes/charts/palettes' ;
 
-import { formatTooltipValue } from '../../themes/charts/tooltip' ;
+import { tooltipValue } from '../../themes/charts/tooltip' ;
 
 import { LINE } from '../../themes/components/metricLegend' ;
 
@@ -136,6 +136,7 @@ const formatTooltipX = ( value ) => ( value instanceof Date ? formatTimeTick( va
  * @param {string|Function} [props.xFormat] - d3-format string, or `( value ) => string`, for x values ; this chart's equivalent of `valueFormat`.
  * @param {string|Object} [props.xScale='point'] - `'point'`, `'time'`, `'linear'`, or a nivo scale config.
  * @param {Object|boolean} [props.yAxis] - Left axis — `{ legend , format , hide }`.
+ * @param {Function} [props.tooltipFormat] - Formats the value in the TOOLTIP : `( value , datum ) => React.ReactNode`. Without it, the value follows the chart's own format, and the active locale when there is none.
  * @param {string|Function} [props.yFormat] - d3-format string, or `( value ) => string`, for y values ; this chart's equivalent of `valueFormat`. Without it the tooltip shows the value as a number of the active locale (`1 234 567,89`), never nivo's raw `1234567.89`.
  * @param {string|Object} [props.yScale='linear'] - `'linear'`, `'log'`, or a nivo scale config.
  *
@@ -192,6 +193,7 @@ const LineChart =
     xFormat ,
     xScale ,
     yAxis ,
+    tooltipFormat ,
     yFormat ,
     yScale ,
     ...rest
@@ -240,12 +242,10 @@ const LineChart =
                 title = { xFormat ? point?.data?.xFormatted : formatTooltipX( point?.data?.x ) }
                 color = { point?.seriesColor ?? point?.color }
                 label = { point?.seriesId }
-                // nivo always fills `yFormatted` — with `'' + y` when no format was
-                // given — so it only speaks for the caller when there is a `yFormat`.
-                value = { yFormat ? point?.data?.yFormatted : formatTooltipValue( point?.data?.y ) }
+                value = { tooltipValue( { datum : point , formatted : yFormat ? point?.data?.yFormatted : undefined , tooltipFormat , value : point?.data?.y } ) }
             />
         ) ,
-        [ xFormat , yFormat ] ,
+        [ tooltipFormat , xFormat , yFormat ] ,
     ) ;
 
     const Component = renderer === 'canvas' ? ResponsiveLineCanvas : ResponsiveLine ;

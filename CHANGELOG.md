@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**📈 A tooltip's format is not a chart's format**
+
+- **New `tooltipFormat` on the twelve charts** — `( value , datum ) => ReactNode`. 🔑 **A FUNCTION, not a d3 format string** : `valueFormat` is for what a chart draws inside itself, where a figure has to fit in a cell or beside a slice, and a d3 string cannot say a currency in a reader's locale. Gathered from an application that rebuilt a whole `ChartTooltip` for the one reason that its cells read a compact price where its tooltip wanted a complete one.
+- 🚨 **And ten of the twelve showed a RAW number.** The library already carried `formatTooltipValue`, whose own doc says why — nivo's formatter is `v => '' + v` without a format, so a tooltip fed that shows `1234567.89` where a reader expects `1 234 567,89` — and it had only ever been wired into `BarChart` and `LineChart`. The calendar and the time range were worse off still : they handed their tooltip the value untouched, so even a caller's `valueFormat` never reached it.
+- One helper now answers for all twelve, so the next chart cannot be written wrong : the caller's own formatter, else what nivo made of the value when it was given a format, else the value in the active locale.
+- ⚠️ **A tooltip changes on ten charts** for a caller who gave no format : a raw number becomes a number of the reader's locale. A caller who gave one sees nothing move, which was replayed string for string.
+- **Replayed before being kept** : the old reading of all twelve against the new, with and without a format, `tooltipFormat` winning over both and receiving the hovered datum, a non-number left alone, a zero not mistaken for nothing, an empty formatted string kept, and a `tooltipFormat` that is not a function ignored.
+
 **📊 A loading list says how many rows it will hold**
 
 - **New `skeletonRows` on `BarList`.** `loading` drew as many placeholders as the `data` already had rows, and five when there was none — so a list waiting for its FIRST answer could only be sized by handing it as many empty entries as it wanted placeholders. 🔑 **Fake data, built to be counted and nothing else, is a missing prop.** Gathered from an application whose ranking fabricated ten of them to keep a card from jumping between two years.

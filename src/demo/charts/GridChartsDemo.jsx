@@ -178,6 +178,22 @@ const GridChartsDemo = () =>
             <Divider />
 
             <Section
+                title       = "HeatMap — l'infobulle a son propre format"
+                description = "valueFormat compacte ce que la grille écrit dans ses cases, qui n'ont la place que de quelques signes. tooltipFormat dit l'infobulle, qui a la place de tout afficher — une fonction, pas un format d3, parce qu'une devise et une locale ne s'écrivent pas en d3. Sans elle, l'infobulle suit valueFormat, et la locale active quand il n'y en a pas."
+            >
+                <HeatMapChart
+                    ariaLabel     = "Fréquentation par mode de transport et par pays"
+                    data          = { HEATMAP_DATA }
+                    height        = { 420 }
+                    palette       = { palette }
+                    tooltipFormat = { value => Number.isFinite( value ) ? `${ value.toLocaleString( 'fr-FR' ) } passagers` : '—' }
+                    valueFormat   = "~s"
+                />
+            </Section>
+
+            <Divider />
+
+            <Section
                 title       = "HeatMap — sans valeurs"
                 description = "labels=false quand la grille devient dense : la couleur suffit et les chiffres deviennent du bruit."
             >

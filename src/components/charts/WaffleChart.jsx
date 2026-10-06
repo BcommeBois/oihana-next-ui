@@ -21,6 +21,8 @@ import useThemeColors  from '../../themes/hooks/useThemeColors' ;
 import { RADIAL } from '../../themes/charts/layout' ;
 import { NIVO }   from '../../themes/charts/palettes' ;
 
+import { tooltipValue } from '../../themes/charts/tooltip' ;
+
 import ChartFrame   from './ChartFrame' ;
 import ChartTooltip from './ChartTooltip' ;
 
@@ -64,6 +66,7 @@ import ChartTooltip from './ChartTooltip' ;
  * @param {number} [props.rows=18] - Grid height, in cells.
  * @param {Object} [props.theme] - Partial nivo theme, deeply merged over the DaisyUI one.
  * @param {number} props.total - What a completely filled grid represents.
+ * @param {Function} [props.tooltipFormat] - Formats the value in the TOOLTIP : `( value , datum ) => React.ReactNode`. Without it, the value follows `valueFormat`, and the active locale when there is none.
  * @param {string} [props.valueFormat] - d3-format string for values.
  *
  * @example
@@ -101,6 +104,7 @@ const WaffleChart =
     rows = 18 ,
     theme : themeOverrides ,
     total ,
+    tooltipFormat ,
     valueFormat ,
     ...rest
 }) =>
@@ -147,10 +151,10 @@ const WaffleChart =
             <ChartTooltip
                 color = { datum?.color }
                 label = { datum?.label ?? datum?.id }
-                value = { datum?.formattedValue ?? datum?.value }
+                value = { tooltipValue( { datum : datum , formatted : valueFormat ? datum?.formattedValue : undefined , tooltipFormat , value : datum?.value } ) }
             />
         ) ,
-        [] ,
+        [ tooltipFormat , valueFormat ] ,
     ) ;
 
     const Component = renderer === 'canvas' ? ResponsiveWaffleCanvas : ResponsiveWaffle ;

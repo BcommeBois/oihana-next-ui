@@ -24,6 +24,8 @@ import { NIVO }   from '../../themes/charts/palettes' ;
 
 import { LABEL_OUTLINE_COLOR , LABEL_OUTLINE_WIDTH } from '../../themes/charts/theme' ;
 
+import { tooltipValue } from '../../themes/charts/tooltip' ;
+
 import ChartFrame   from './ChartFrame' ;
 import ChartTooltip from './ChartTooltip' ;
 
@@ -125,6 +127,7 @@ const defaultArcLinkLabel = ( datum ) => `${ datum.id } (${ datum.formattedValue
  * @param {string|string[]} [props.palette='nivo'] - Series palette.
  * @param {string} [props.renderer='svg'] - `'svg'` or `'canvas'` (past ~2k arcs).
  * @param {Object} [props.theme] - Partial nivo theme, deeply merged over the DaisyUI one.
+ * @param {Function} [props.tooltipFormat] - Formats the value in the TOOLTIP : `( value , datum ) => React.ReactNode`. Without it, the value follows `valueFormat`, and the active locale when there is none.
  * @param {string} [props.valueFormat] - d3-format string for values.
  *
  * @example
@@ -168,6 +171,7 @@ const PieChart =
     palette = NIVO ,
     renderer = 'svg' ,
     theme : themeOverrides ,
+    tooltipFormat ,
     valueFormat ,
     ...rest
 }) =>
@@ -214,10 +218,10 @@ const PieChart =
             <ChartTooltip
                 color = { datum?.color }
                 label = { datum?.label ?? datum?.id }
-                value = { datum?.formattedValue ?? datum?.value }
+                value = { tooltipValue( { datum : datum , formatted : valueFormat ? datum?.formattedValue : undefined , tooltipFormat , value : datum?.value } ) }
             />
         ) ,
-        [] ,
+        [ tooltipFormat , valueFormat ] ,
     ) ;
 
     const Component = renderer === 'canvas' ? ResponsivePieCanvas : ResponsivePie ;

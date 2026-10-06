@@ -21,7 +21,7 @@ import { CARTESIAN } from '../../themes/charts/layout' ;
 import { sumBy }     from '../../themes/charts/legendItems' ;
 import { NIVO }      from '../../themes/charts/palettes' ;
 
-import { formatTooltipValue } from '../../themes/charts/tooltip' ;
+import { formatTooltipValue , tooltipValue } from '../../themes/charts/tooltip' ;
 
 import ChartFrame   from './ChartFrame' ;
 import ChartTooltip from './ChartTooltip' ;
@@ -85,6 +85,7 @@ const inferKeys = ( data , indexBy ) =>
  * @param {string} [props.renderer='svg'] - `'svg'` or `'canvas'` (past ~2k marks).
  * @param {boolean} [props.stacked=false] - Stack the series instead of grouping them.
  * @param {Object} [props.theme] - Partial nivo theme, deeply merged over the DaisyUI one.
+ * @param {Function} [props.tooltipFormat] - Formats the value in the TOOLTIP : `( value , datum ) => React.ReactNode`. Without it, the value follows the chart's own format, and the active locale when there is none.
  * @param {string|Function} [props.valueFormat] - d3-format string, or `( value ) => string`, for values. Without it the tooltip and the label inside each bar show the value as a number of the active locale (`1 234 567,89`), never nivo's raw `1234567.89`.
  * @param {Object|boolean} [props.xAxis] - Bottom axis — `{ legend , format , tickRotation , hide }`.
  * @param {Object|boolean} [props.yAxis] - Left axis — `{ legend , format , hide }`.
@@ -127,6 +128,7 @@ const BarChart =
     renderer = 'svg' ,
     stacked = false ,
     theme : themeOverrides ,
+    tooltipFormat ,
     valueFormat ,
     xAxis ,
     yAxis ,
@@ -172,17 +174,15 @@ const BarChart =
 
     const tooltip = useCallback
     (
-        ( { color , formattedValue , id , indexValue , value } ) => (
+        ( datum ) => (
             <ChartTooltip
-                title = { indexValue }
-                color = { color }
-                label = { id }
-                // nivo always fills `formattedValue` — with `'' + value` when no format
-                // was given — so it only speaks for the caller when there is a `valueFormat`.
-                value = { valueFormat ? formattedValue : formatTooltipValue( value ) }
+                title = { datum?.indexValue }
+                color = { datum?.color }
+                label = { datum?.id }
+                value = { tooltipValue( { datum , formatted : valueFormat ? datum?.formattedValue : undefined , tooltipFormat , value : datum?.value } ) }
             />
         ) ,
-        [ valueFormat ] ,
+        [ tooltipFormat , valueFormat ] ,
     ) ;
 
     // The label drawn inside a bar reads nivo's `formattedValue` too — the same

@@ -22,6 +22,8 @@ import { NIVO }   from '../../themes/charts/palettes' ;
 
 import { sumBy } from '../../themes/charts/legendItems' ;
 
+import { tooltipValue } from '../../themes/charts/tooltip' ;
+
 import ChartFrame   from './ChartFrame' ;
 import ChartTooltip from './ChartTooltip' ;
 
@@ -118,6 +120,7 @@ const defaultRadialAxis = ( startAngle , endAngle ) =>
  * @param {boolean|Object} [props.radialAxis=true] - Radial axis ; an object is merged over the defaults. Its `angle` must fall inside the arc — on a partial circle, one outside it draws the ticks in empty space.
  * @param {number} [props.startAngle=0] - Where the circle starts, in degrees.
  * @param {Object} [props.theme] - Partial nivo theme, deeply merged over the DaisyUI one.
+ * @param {Function} [props.tooltipFormat] - Formats the value in the TOOLTIP : `( value , datum ) => React.ReactNode`. Without it, the value follows `valueFormat`, and the active locale when there is none.
  * @param {string} [props.valueFormat] - d3-format string for values.
  * @param {number|number[]} [props.valueSteps] - Number of rings on the value scale, or the explicit values to place them at.
  *
@@ -159,6 +162,7 @@ const PolarBarChart =
     radialAxis = true ,
     startAngle = 0 ,
     theme : themeOverrides ,
+    tooltipFormat ,
     valueFormat ,
     valueSteps ,
     ...rest
@@ -209,10 +213,10 @@ const PolarBarChart =
                 title = { arc?.index }
                 color = { arc?.color }
                 label = { arc?.key }
-                value = { arc?.formattedValue ?? arc?.value }
+                value = { tooltipValue( { datum : arc , formatted : valueFormat ? arc?.formattedValue : undefined , tooltipFormat , value : arc?.value } ) }
             />
         ) ,
-        [] ,
+        [ tooltipFormat , valueFormat ] ,
     ) ;
 
     return (

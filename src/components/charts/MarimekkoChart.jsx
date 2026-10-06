@@ -23,6 +23,8 @@ import { CARTESIAN } from '../../themes/charts/layout' ;
 import { sumBy }     from '../../themes/charts/legendItems' ;
 import { NIVO }      from '../../themes/charts/palettes' ;
 
+import { tooltipValue } from '../../themes/charts/tooltip' ;
+
 import ChartFrame   from './ChartFrame' ;
 import ChartTooltip from './ChartTooltip' ;
 
@@ -69,6 +71,7 @@ import ChartTooltip from './ChartTooltip' ;
  * @param {string|string[]} [props.palette='nivo'] - Dimension palette.
  * @param {Object} [props.theme] - Partial nivo theme, deeply merged over the DaisyUI one.
  * @param {string|Function} props.value - Accessor driving each bar's thickness.
+ * @param {Function} [props.tooltipFormat] - Formats the value in the TOOLTIP : `( value , datum ) => React.ReactNode`. Without it, the value follows `valueFormat`, and the active locale when there is none.
  * @param {string} [props.valueFormat] - d3-format string for values.
  * @param {Object|boolean} [props.xAxis] - Bottom axis — `{ legend , format , tickRotation , hide }`.
  * @param {Object|boolean} [props.yAxis] - Left axis — `{ legend , format , hide }`.
@@ -113,6 +116,7 @@ const MarimekkoChart =
     palette = NIVO ,
     theme : themeOverrides ,
     value ,
+    tooltipFormat ,
     valueFormat ,
     xAxis ,
     yAxis ,
@@ -177,10 +181,10 @@ const MarimekkoChart =
                 title = { bar?.datum?.id }
                 color = { bar?.color }
                 label = { bar?.id }
-                value = { bar?.formattedValue ?? bar?.value }
+                value = { tooltipValue( { datum : bar , formatted : valueFormat ? bar?.formattedValue : undefined , tooltipFormat , value : bar?.value } ) }
             />
         ) ,
-        [] ,
+        [ tooltipFormat , valueFormat ] ,
     ) ;
 
     return (

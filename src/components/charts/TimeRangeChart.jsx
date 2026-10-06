@@ -24,6 +24,8 @@ import { NIVO }                from '../../themes/charts/palettes' ;
 
 import { getValueBounds } from '../../themes/charts/legendItems' ;
 
+import { tooltipValue } from '../../themes/charts/tooltip' ;
+
 import ChartFrame   from './ChartFrame' ;
 import ChartTooltip from './ChartTooltip' ;
 
@@ -66,6 +68,7 @@ import ChartTooltip from './ChartTooltip' ;
  * @param {number} [props.steps=5] - Number of buckets in the generated ramp.
  * @param {Object} [props.theme] - Partial nivo theme, deeply merged over the DaisyUI one.
  * @param {string|number|Date} [props.to] - Last day shown ; inferred from the data when omitted.
+ * @param {Function} [props.tooltipFormat] - Formats the value in the TOOLTIP : `( value , datum ) => React.ReactNode`. nivo hands this chart's tooltip no formatted value, so `valueFormat` does not reach it — without `tooltipFormat`, the tooltip shows the value as a number of the active locale.
  * @param {string} [props.valueFormat] - d3-format string for values.
  * @param {number[]} [props.weekdayTicks] - Which weekday labels to show, `0` to `6`.
  *
@@ -106,6 +109,7 @@ const TimeRangeChart =
     steps = 5 ,
     theme : themeOverrides ,
     to ,
+    tooltipFormat ,
     valueFormat ,
     weekdayTicks ,
     ...rest
@@ -142,10 +146,14 @@ const TimeRangeChart =
 
     const tooltip = useCallback
     (
-        ( { color , day , value } ) => (
-            <ChartTooltip color={ color } label={ day } value={ value } />
+        ( datum ) => (
+            <ChartTooltip
+                color = { datum?.color }
+                label = { datum?.day }
+                value = { tooltipValue( { datum , formatted : valueFormat ? datum?.formattedValue : undefined , tooltipFormat , value : datum?.value } ) }
+            />
         ) ,
-        [] ,
+        [ tooltipFormat , valueFormat ] ,
     ) ;
 
     return (

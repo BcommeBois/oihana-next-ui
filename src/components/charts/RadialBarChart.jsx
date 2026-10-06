@@ -20,6 +20,8 @@ import useChartTheme   from '../../hooks/useChartTheme' ;
 import { RADIAL } from '../../themes/charts/layout' ;
 import { NIVO }   from '../../themes/charts/palettes' ;
 
+import { tooltipValue } from '../../themes/charts/tooltip' ;
+
 import ChartFrame   from './ChartFrame' ;
 import ChartTooltip from './ChartTooltip' ;
 
@@ -88,6 +90,7 @@ const readCategories = ( data ) =>
  * @param {string|string[]} [props.palette='nivo'] - Category palette.
  * @param {boolean|Object} [props.radialAxis=true] - Starting radial axis ; an object is passed through to nivo.
  * @param {Object} [props.theme] - Partial nivo theme, deeply merged over the DaisyUI one.
+ * @param {Function} [props.tooltipFormat] - Formats the value in the TOOLTIP : `( value , datum ) => React.ReactNode`. Without it, the value follows `valueFormat`, and the active locale when there is none.
  * @param {string} [props.valueFormat] - d3-format string for values.
  *
  * @example
@@ -125,6 +128,7 @@ const RadialBarChart =
     palette = NIVO ,
     radialAxis = true ,
     theme : themeOverrides ,
+    tooltipFormat ,
     valueFormat ,
     ...rest
 }) =>
@@ -166,10 +170,10 @@ const RadialBarChart =
                 title = { bar?.groupId }
                 color = { bar?.color }
                 label = { bar?.category }
-                value = { bar?.formattedValue ?? bar?.value }
+                value = { tooltipValue( { datum : bar , formatted : valueFormat ? bar?.formattedValue : undefined , tooltipFormat , value : bar?.value } ) }
             />
         ) ,
-        [] ,
+        [ tooltipFormat , valueFormat ] ,
     ) ;
 
     return (

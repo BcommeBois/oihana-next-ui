@@ -68,6 +68,45 @@ export const formatTooltipValue = ( value ) =>
 } ;
 
 /**
+ * The value a tooltip shows.
+ *
+ * 🔑 **A tooltip's format is not a chart's format.** `valueFormat` is a d3
+ * format string, handed to nivo for what it draws INSIDE the chart — a compact
+ * figure that has to fit in a cell or beside a slice. A tooltip has room, and
+ * often wants the full one, in a currency, in the reader's locale : so
+ * `tooltipFormat` is a FUNCTION, and it is given the raw value and the hovered
+ * datum.
+ *
+ * Gathered from an application that rebuilt a whole `ChartTooltip` for the one
+ * reason that its cells read a compact price where its tooltip wanted a
+ * complete one.
+ *
+ * ⚠️ Without it : what nivo made of the value when it was given a format, and
+ * otherwise the value formatted in the active locale — never nivo's own
+ * `'' + value`, which shows `1234567.89` where a reader expects a number.
+ *
+ * @param {Object} [options]
+ * @param {*} [options.datum] - The hovered datum, handed to `tooltipFormat` as its second argument.
+ * @param {*} [options.formatted] - What nivo made of the value, when the caller gave a format. Left out when there is none.
+ * @param {Function} [options.tooltipFormat] - `( value , datum ) => React.ReactNode`.
+ * @param {*} [options.value] - The raw value.
+ *
+ * @returns {*} What the tooltip shows.
+ *
+ * @example
+ * ```jsx
+ * <HeatMapChart
+ *     valueFormat   = "~s"
+ *     tooltipFormat = { value => formatPrice( value , 'EUR' , lang ) }
+ * />
+ * ```
+ */
+export const tooltipValue = ( { datum , formatted , tooltipFormat , value } = {} ) =>
+    typeof tooltipFormat === 'function'
+        ? tooltipFormat( value , datum )
+        : ( formatted ?? formatTooltipValue( value ) ) ;
+
+/**
  * Generates the tooltip container class names.
  *
  * @param {Object} [props]

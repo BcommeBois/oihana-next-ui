@@ -24,6 +24,8 @@ import { NIVO }                from '../../themes/charts/palettes' ;
 
 import { getValueBounds } from '../../themes/charts/legendItems' ;
 
+import { tooltipValue } from '../../themes/charts/tooltip' ;
+
 import ChartFrame   from './ChartFrame' ;
 import ChartTooltip from './ChartTooltip' ;
 
@@ -72,6 +74,7 @@ import ChartTooltip from './ChartTooltip' ;
  * @param {string} [props.renderer='svg'] - `'svg'` or `'canvas'` (past ~2k cells).
  * @param {number} [props.steps=5] - Number of buckets in the color scale.
  * @param {Object} [props.theme] - Partial nivo theme, deeply merged over the DaisyUI one.
+ * @param {Function} [props.tooltipFormat] - Formats the value in the TOOLTIP : `( value , datum ) => React.ReactNode`. Without it, the value follows `valueFormat`, and the active locale when there is none.
  * @param {string} [props.valueFormat] - d3-format string for values.
  * @param {Object|boolean} [props.xAxis] - Top axis — `{ legend , format , tickRotation , hide }`.
  * @param {Object|boolean} [props.yAxis] - Left axis — `{ legend , format , hide }`.
@@ -113,6 +116,7 @@ const HeatMapChart =
     renderer = 'svg' ,
     steps = 5 ,
     theme : themeOverrides ,
+    tooltipFormat ,
     valueFormat ,
     xAxis ,
     yAxis ,
@@ -176,10 +180,10 @@ const HeatMapChart =
                 title = { cell?.serieId }
                 color = { cell?.color }
                 label = { cell?.data?.x }
-                value = { cell?.formattedValue ?? cell?.value }
+                value = { tooltipValue( { datum : cell , formatted : valueFormat ? cell?.formattedValue : undefined , tooltipFormat , value : cell?.value } ) }
             />
         ) ,
-        [] ,
+        [ tooltipFormat , valueFormat ] ,
     ) ;
 
     const Component = renderer === 'canvas' ? ResponsiveHeatMapCanvas : ResponsiveHeatMap ;
