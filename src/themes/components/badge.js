@@ -98,6 +98,19 @@ const sizeMap =
 export const BADGE = 'badge' ;
 
 /**
+ * How much of a free colour paints the EDGE of a tinted badge, where the wash
+ * behind it takes `withAlpha`'s own default.
+ *
+ * 🔑 **A wash alone loses its shape** on a plate that is already tinted — a
+ * card, a striped row. Twice the wash is enough to draw the pill without
+ * turning it into a filled badge, which would need its ink recomputed for
+ * contrast, twice over, once per theme.
+ *
+ * @type {number}
+ */
+export const EDGE_ALPHA = 0.3 ;
+
+/**
  * Generates a DaisyUI badge className expression.
  *
  * @param {Object} [props]

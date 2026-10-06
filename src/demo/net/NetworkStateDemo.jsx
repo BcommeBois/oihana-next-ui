@@ -266,7 +266,7 @@ const NetworkStateDemo = () =>
                             <span>Connected</span>
                         </Badge>
 
-                        <Badge color="ghost" className="gap-2">
+                        <Badge style="ghost" className="gap-2">
                             <NetworkState size={ XS } />
                             <span>WiFi</span>
                         </Badge>

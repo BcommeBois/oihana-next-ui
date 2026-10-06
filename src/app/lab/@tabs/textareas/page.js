@@ -126,7 +126,7 @@ const TextAreas = ( { path = 'app.lab.textareas' } = {} ) =>
                                 <h3 className="font-semibold">{ activeFilter.label }</h3>
                                 <p className="text-xs opacity-70">{ activeFilter.description }</p>
                             </div>
-                            <Badge color="ghost" size="sm">
+                            <Badge style="ghost" size="sm">
                                 { format( count ?? '{0}' , filter === 'all' ? componentsToShow.length : 1 ) }
                             </Badge>
                         </div>

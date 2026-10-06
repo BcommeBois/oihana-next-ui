@@ -8,6 +8,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🏷️ A mark and a badge take a colour of their own**
+
+- **Gathered from three hand-written components** in one application : two of them a coloured mark beside a label (a role, a lifecycle state), one a pill washed with a colour out of a record. 🔑 **Both said in their own doc comment that they existed only because the library would not take their colour** — one of them names `Status` and the sentence « whereas `Status` only accepts DaisyUI palette names ».
+- **`Status` takes any CSS colour.** One of the eight daisyUI names still goes through daisyUI ; anything else is painted inline and no `status-*` colour class is emitted. ⚠️ **A free colour is not an accessible name** : a palette name still stands in for a missing `ariaLabel`, as it always has, but a hex string never does and the mark falls back to `'status'`.
+- **New `labelSize` on `Status`** — the label follows a size instead of reading at `text-sm` whatever the mark does. 🔑 **The two scales are not the same scale** : a mark runs from two to sixteen pixels where readable text runs from eleven to sixteen, so `xs` and `sm` share one text size. The map is the one the two gathered components had each written out, and they agreed on every row. Left out, `labelSize` changes nothing.
+- **`Badge` takes any CSS colour, as a TINT.** 🔑 **A free colour washes the pill, it does not fill it** : a filled pill needs its ink recomputed for contrast, twice over, once per theme, for a colour nobody vouches for. The wash and the stronger line around it both come from `withAlpha`, so `rgb(…)` and named colours work where appending two hex digits never did. `tint` takes `false` for an ordinary plate — the form a dense list wants, where a mark beside the label already carries the colour — or a number for how much.
+- 🚨 **`Badge` was swallowing every prop it did not know.** Its last line handed the element a `className` and its children and nothing else : no `onClick`, no `aria-*`, no `id` — and **its own `@example` was broken**, since `<Badge as="a" href="/new">` never gave the anchor its `href`. It spreads the rest now.
+- ⚠️ **`style` on a `Badge` is the daisyUI VARIANT**, not an inline style — the name was taken long before this, and it is now said so in the component's own doc. Five call sites in the lab and in two demos passed `color="ghost"`, which is a variant and never was a colour : they emitted no colour class at all and now read `style="ghost"`, which is what they meant.
+- **`style` on a `Status` reaches the mark**, merged under a free colour rather than landing on the wrapper. Nothing passed one, in the library or in the application that drove this.
+- **Replayed before being kept** : the eight palette colours of each component produce the same classes as before, down to the string ; a free colour emits no colour class and the expected `color-mix` ; `tint={ false }` leaves a plain plate ; and the label scale matches the two hand-written copies on all five rows.
+
 **🧹 The last leak, and a word of my own**
 
 - **The lists demo was selling a handcrafted oak table.** It offers an adjustable standing desk now, as neutral as the ergonomic chair beside it. It had survived two sweeps : the first ran in French only, and the second matched whole words, so `wood` never saw `Wooden`. 🔑 **A trade is swept by stems, not by words.**

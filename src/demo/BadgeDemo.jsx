@@ -4,6 +4,19 @@ import Container from '@/display/Container' ;
 
 import Badge from '@/components/Badge' ;
 
+/**
+ * Four colours no palette holds — what a badge looks like when its colour is a
+ * value rather than a choice.
+ * @type {Array<{ color : string , name : string }>}
+ */
+const FREE_COLOURS =
+[
+    { color : '#7C3AED' , name : 'Violet' } ,
+    { color : '#F59E0B' , name : 'Amber' } ,
+    { color : '#0EA5E9' , name : 'Sky' } ,
+    { color : 'rebeccapurple' , name : 'Named, not hex' } ,
+] ;
+
 const BadgeDemo = () =>
 {
     return (
@@ -38,6 +51,42 @@ const BadgeDemo = () =>
                     <Badge color="primary" size="md">MD (default)</Badge>
                     <Badge color="primary" size="lg">LG</Badge>
                     <Badge color="primary" size="xl">XL</Badge>
+                </div>
+            </div>
+
+            <div className="flex flex-col gap-4">
+                <h3 className="text-xl font-semibold">A Colour Of Its Own</h3>
+
+                <p className="text-sm opacity-70">
+                    Any CSS colour becomes a wash behind the label and a stronger line around it — never
+                    a fill, which would need its ink recomputed for contrast, once per theme, for a
+                    colour nobody vouches for.
+                </p>
+
+                <div className="flex flex-wrap items-center gap-2">
+                    { FREE_COLOURS.map( ( { color , name } ) => (
+                        <Badge key={ name } color={ color } size="sm">{ name }</Badge>
+                    ) ) }
+                </div>
+
+                <p className="text-sm opacity-70">
+                    <code className="badge badge-sm">tint</code> says how much of it washes the plate :
+                    a number from 0 to 1, or <code className="badge badge-sm">false</code> for an
+                    ordinary plate — the form a dense list wants, where a mark beside the label already
+                    carries the colour.
+                </p>
+
+                <div className="flex flex-wrap items-center gap-2">
+                    <Badge color="#0EA5E9" size="sm" tint={ 0.08 }>tint 0.08</Badge>
+                    <Badge color="#0EA5E9" size="sm">default (0.15)</Badge>
+                    <Badge color="#0EA5E9" size="sm" tint={ 0.3 }>tint 0.3</Badge>
+                    <Badge color="#0EA5E9" size="sm" tint={ 0.6 }>tint 0.6</Badge>
+                    <Badge color="#0EA5E9" size="sm" tint={ false }>tint false</Badge>
+                </div>
+
+                <div className="mockup-code text-xs">
+                    <pre data-prefix="1"><code>&lt;Badge color={'{ term.color }'}&gt;{'{ term.label }'}&lt;/Badge&gt;</code></pre>
+                    <pre data-prefix="2"><code>&lt;Badge color={'{ term.color }'} tint={'{ false }'}&gt;{'{ term.label }'}&lt;/Badge&gt;</code></pre>
                 </div>
             </div>
 

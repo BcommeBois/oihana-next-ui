@@ -240,7 +240,7 @@ const KanbanDemo = () =>
                                 <span className="text-sm font-semibold">{ card.title }</span>
                                 <div className="flex gap-1 flex-wrap">
                                     { card.tags.map( tag => (
-                                        <Badge key={ tag } size="xs" color="ghost">{ tag }</Badge>
+                                        <Badge key={ tag } size="xs" style="ghost">{ tag }</Badge>
                                     ))}
                                 </div>
                                 <div className="flex items-center justify-between">

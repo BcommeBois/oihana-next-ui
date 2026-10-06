@@ -70,6 +70,41 @@ const sizeMap =
     [ XS ] : 'status-xs' ,
 } ;
 
+/**
+ * The text size a label takes when it is asked to follow the mark.
+ *
+ * 🔑 **The two scales are not the same scale.** A mark goes from two to
+ * sixteen pixels, where readable text goes from eleven to sixteen : `xs` and
+ * `sm` share one text size because a mark can shrink below what a sentence
+ * can. Gathered from two hand-written copies of this very map, in one
+ * application, which agreed on every row.
+ *
+ * @type {Object<string,string>}
+ */
+const labelSizeMap =
+{
+    [ XL ] : 'text-base' ,
+    [ LG ] : 'text-sm' ,
+    [ MD ] : 'text-sm' ,
+    [ SM ] : 'text-xs' ,
+    [ XS ] : 'text-xs' ,
+} ;
+
+/**
+ * What a label reads at, for a given size.
+ *
+ * @param {string} [size] - One of the status sizes. Anything else, or nothing, keeps the component's own default.
+ *
+ * @returns {?string} The text class, or `undefined` when the size is not one of the five.
+ *
+ * @example
+ * ```js
+ * getStatusLabelClass( 'xs' ) ; // → 'text-xs'
+ * getStatusLabelClass() ;       // → undefined
+ * ```
+ */
+export const getStatusLabelClass = ( size ) => labelSizeMap[ size ] ;
+
 export const STATUS = 'status' ;
 
 /**

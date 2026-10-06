@@ -185,12 +185,12 @@ const Inputs = ( { path = 'app.lab.inputs' } = {} ) =>
                                 <h3 className="font-semibold">{ activeFilter.label }</h3>
                                 <p className="text-xs opacity-70">{ activeFilter.description }</p>
                                 { activeFilter.category && (
-                                    <Badge color="ghost" size="xs" className="mt-1">
+                                    <Badge style="ghost" size="xs" className="mt-1">
                                         { categories?.[ activeFilter.category ] }
                                     </Badge>
                                 )}
                             </div>
-                            <Badge color="ghost" size="sm">
+                            <Badge style="ghost" size="sm">
                                 { format( count ?? '{0}' , filter === 'all' ? componentsToShow.length : 1 ) }
                             </Badge>
                         </div>

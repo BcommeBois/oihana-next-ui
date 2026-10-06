@@ -5,6 +5,19 @@ import Container from '@/display/Container' ;
 import Status from '@/components/Status' ;
 import Divider from '@/components/Divider' ;
 
+/**
+ * Four colours no palette holds — what a mark looks like when its colour is a
+ * value rather than a choice.
+ * @type {Array<{ color : string , name : string }>}
+ */
+const FREE_COLOURS =
+[
+    { color : '#7C3AED' , name : 'Violet' } ,
+    { color : '#F59E0B' , name : 'Amber' } ,
+    { color : '#0EA5E9' , name : 'Sky' } ,
+    { color : 'rebeccapurple' , name : 'Named, not hex' } ,
+] ;
+
 const StatusDemo = () =>
 {
     return (
@@ -40,6 +53,47 @@ const StatusDemo = () =>
                     <Status color="primary" size="md" label="MD (default)" />
                     <Status color="primary" size="lg" label="LG" />
                     <Status color="primary" size="xl" label="XL" />
+                </div>
+            </div>
+
+            <Divider />
+
+            <div className="flex flex-col gap-4">
+                <h3 className="text-xl font-semibold border-b-2 border-info pb-2">A Colour Of Its Own</h3>
+
+                <p className="text-sm opacity-70">
+                    Any CSS colour, for a mark whose colour is data rather than a choice — a label an
+                    administrator picked, a palette served by an API. The eight daisyUI names keep
+                    going through daisyUI ; everything else is painted inline.
+                </p>
+
+                <div className="flex flex-wrap items-center gap-6">
+                    { FREE_COLOURS.map( ( { color , name } ) => (
+                        <Status key={ name } color={ color } label={ name } size="md" labelSize="sm" />
+                    ) ) }
+                </div>
+
+                <p className="text-sm opacity-70">
+                    <code className="badge badge-sm">labelSize</code> makes the text follow the mark.
+                    Left out, a label reads at <code className="badge badge-sm">text-sm</code> whatever
+                    the size — the two scales are not the same scale, a mark can shrink below what a
+                    sentence can.
+                </p>
+
+                <div className="flex flex-wrap items-center gap-6">
+                    <Status color="#7C3AED" label="xs" size="xs" labelSize="xs" />
+                    <Status color="#7C3AED" label="sm" size="sm" labelSize="sm" />
+                    <Status color="#7C3AED" label="md" size="md" labelSize="md" />
+                    <Status color="#7C3AED" label="lg" size="lg" labelSize="lg" />
+                    <Status color="#7C3AED" label="xl" size="xl" labelSize="xl" />
+                </div>
+
+                <div className="mockup-code text-xs">
+                    <pre data-prefix="1"><code>&lt;Status</code></pre>
+                    <pre data-prefix="2"><code>    color={'{ term.color }'} <span className="text-success">// any CSS colour</span></code></pre>
+                    <pre data-prefix="3"><code>    label={'{ term.label }'}</code></pre>
+                    <pre data-prefix="4"><code>    labelSize="sm" <span className="text-info">// the text follows the mark</span></code></pre>
+                    <pre data-prefix="5"><code>/&gt;</code></pre>
                 </div>
             </div>
 
