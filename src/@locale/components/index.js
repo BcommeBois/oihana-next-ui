@@ -10,6 +10,7 @@ import map        from './map'
 import modal      from './modal'
 import pagination from './pagination'
 import picker     from './picker'
+import pwa        from './pwa'
 import retry      from './retry'
 import scheduler  from './scheduler'
 import sortable   from './sortable'
@@ -30,6 +31,7 @@ const components =
     modal ,
     pagination ,
     picker ,
+    pwa ,
     retry ,
     scheduler ,
     sortable ,

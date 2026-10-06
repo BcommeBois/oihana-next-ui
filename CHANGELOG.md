@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🔁 The dialog that says a newer build is waiting**
+
+- **New `components/pwa/UpdateModal`** — registers the Service Worker through `useServiceWorkerUpdate`, and once an update is announced opens a dialog showing the version running and the version waiting. 🔑 **The hook was already here and the dialog that goes with it was not**, which is the wrong way round : gathered from an application where it was written entirely out of this library's own parts — `Modal`, `ModalFooter`, `useModal`, `useI18n` and that very hook — and where nothing remained of its own but one import and one i18n path.
+- 🔑 **The running version is a PROP.** A worker knows which build is WAITING ; only the application knows which one it is RUNNING, because that string is written into its own bundle at build time. A library cannot read it, and guessing would be worse than leaving it out.
+- `serviceWorker` forwards the hook's own options, so an application whose worker is not at `/sw.js` can say so.
+- **New accessible name on the version row.** Two version strings with an arrow between them were announced as two numbers and nothing else : the row now carries « From version X to version Y », read aloud, with the arrow hidden. 🔑 **Found by moving it** : the gathered bundle declared a `current` and a `next` label that the component had never read, which is what a row with no name looks like from the outside.
+- **Not demonstrated in the lab, on purpose** : the component mounts a watcher and shows nothing until a worker finds a newer build, which the lab cannot stage without a second build of itself.
+
 **🧹 Two browser helpers an application should not have to write**
 
 - **New `helpers/pwa/clearServiceWorkerCaches()`** — empties every Cache Storage entry a Service Worker holds. 🔑 **Why a page needs it** : a worker caching navigate-mode responses serves them back from disk while the network round trip is in flight, so the cached HTML of pages that have stopped being the reader's to see can flash for a frame on the way out. It is the companion of `useServiceWorkerUpdate`, which this library already shipped. ⚠️ **It is not `clearCache`** — that one is a server action asking Next to revalidate a path ; these two have nothing in common but a word.
