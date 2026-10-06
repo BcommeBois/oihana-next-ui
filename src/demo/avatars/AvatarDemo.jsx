@@ -1,9 +1,30 @@
 'use client' ;
 
-import Avatar      from '@/components/avatars/Avatar' ;
-import AvatarGroup from '@/components/avatars/AvatarGroup' ;
-import Container   from '@/display/Container' ;
-import Image       from 'next/image' ;
+import Avatar         from '@/components/avatars/Avatar' ;
+import AvatarGroup    from '@/components/avatars/AvatarGroup' ;
+import InitialsAvatar from '@/components/avatars/InitialsAvatar' ;
+import Container      from '@/display/Container' ;
+import Image          from 'next/image' ;
+
+/**
+ * Names with nothing in common but their letters — enough to show that a
+ * colour comes from the name and never moves.
+ * @type {string[]}
+ */
+const NAMES = [ 'Acme Studio' , 'Borealis Works' , 'Amber Group' , 'Juno' , 'Vega Partners' , 'Orion Labs' ] ;
+
+/**
+ * A palette of tints, to show that one can be handed over — literal classes,
+ * never interpolated, or Tailwind emits none of them.
+ * @type {string[]}
+ */
+const TINTS =
+[
+    'bg-primary/15 text-primary' ,
+    'bg-secondary/15 text-secondary' ,
+    'bg-accent/15 text-accent' ,
+    'bg-info/15 text-info' ,
+] ;
 
 const AvatarDemo = () =>
 {
@@ -20,6 +41,61 @@ const AvatarDemo = () =>
                     <Avatar innerClassName="w-24 rounded bg-base-300">
                         <Image src="https://i.pravatar.cc/150?img=1" alt="Avatar" width={96} height={96} />
                     </Avatar>
+                </div>
+            </div>
+
+            <div className="flex flex-col gap-4">
+                <h3 className="text-xl font-semibold">Initials, And A Colour It Always Gets</h3>
+
+                <p className="text-sm opacity-70">
+                    <code className="badge badge-sm">InitialsAvatar</code> takes a name and shows its
+                    initials on a colour derived from that name — the same entity lands on the same
+                    colour in a list, on its own page, and after a reload, with nothing stored.
+                </p>
+
+                <div className="flex flex-wrap items-center gap-4">
+                    { NAMES.map( name => (
+                        <div key={ name } className="flex items-center gap-2">
+                            <InitialsAvatar name={ name } size="sm" />
+                            <span className="text-sm opacity-70">{ name }</span>
+                        </div>
+                    ) ) }
+                </div>
+
+                <p className="text-sm opacity-70">
+                    The five sizes, on one name — the colour does not move with the size.
+                </p>
+
+                <div className="flex flex-wrap items-end gap-4">
+                    <InitialsAvatar name="Borealis Works" size="xs" />
+                    <InitialsAvatar name="Borealis Works" size="sm" />
+                    <InitialsAvatar name="Borealis Works" size="md" />
+                    <InitialsAvatar name="Borealis Works" size="lg" />
+                    <InitialsAvatar name="Borealis Works" size="xl" />
+                </div>
+
+                <p className="text-sm opacity-70">
+                    With a <code className="badge badge-sm">src</code> the picture takes the place of the
+                    initials — one code path, since it is <code className="badge badge-sm">Picture</code>
+                    that answers « a source, or something in its place ». An
+                    <code className="badge badge-sm">indicator</code> and a
+                    <code className="badge badge-sm">palette</code> of one's own both still apply.
+                </p>
+
+                <div className="flex flex-wrap items-center gap-4">
+                    <InitialsAvatar name="Juno" size="lg" src="https://i.pravatar.cc/150?img=12" />
+                    <InitialsAvatar name="Juno" size="lg" />
+                    <InitialsAvatar name="Vega Partners" size="lg" indicator="online" />
+                    <InitialsAvatar name="Orion Labs" size="lg" indicator="offline" />
+                    { NAMES.slice( 0 , 4 ).map( name => (
+                        <InitialsAvatar key={ name } name={ name } palette={ TINTS } size="lg" />
+                    ) ) }
+                </div>
+
+                <div className="mockup-code text-xs">
+                    <pre data-prefix="1"><code>&lt;InitialsAvatar name={'{ thing.name }'} size="sm" /&gt;</code></pre>
+                    <pre data-prefix="2"><code>&lt;InitialsAvatar name={'{ thing.name }'} src={'{ thing.logo }'} size="lg" /&gt;</code></pre>
+                    <pre data-prefix="3"><code>&lt;InitialsAvatar name={'{ thing.name }'} palette={'{ OWN_TINTS }'} /&gt;</code></pre>
                 </div>
             </div>
 

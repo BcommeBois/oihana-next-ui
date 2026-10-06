@@ -49,6 +49,8 @@ const Avatar =
     children,
     indicator,
     placeholder,
+
+    ...rest
 }) =>
 {
     const Component = as ?? 'div' ;
@@ -60,7 +62,7 @@ const Avatar =
     }) ;
 
     return (
-        <Component className={ wrapperClasses }>
+        <Component className={ wrapperClasses } { ...rest }>
             <div className={ innerClassName }>
                 { children }
             </div>

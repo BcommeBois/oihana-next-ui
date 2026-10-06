@@ -8,6 +8,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**👤 The round avatar of a named thing**
+
+- **Gathered from a 155-line component** in one application, which held three things at once : an avatar, and **a third copy of two helpers the library already ships** — its `getInitials`, and a `getPaletteIndex` that is `hashIndex` to the character.
+- **New `components/avatars/InitialsAvatar`**, built on the daisyUI `Avatar` : a name gives the initials and, through `hashIndex`, the fill they sit on. 🔑 **The colour is derived, never stored** — the same entity lands on the same colour in a list, on its own page and after a reload, where an array position would move with the sort order.
+- 🔑 **One code path, not two.** `Picture` already answers « a source, or something in its place », so it is handed the initials as its `fallback` and a missing picture is not a branch. The gathered component switched on the picture BEFORE rendering, because `next/image` cannot render without a `src` — and **its image branch went unused by all seven of its call sites**, as did four of its five sizes and three of its five props.
+- **The palette is the seven pairs daisyUI guarantees**, each a background and the ink daisyUI defines for it, so a theme decides what they look like and the contrast is never computed here. A `palette` of one's own replaces it — what a caller with tints rather than fills passes.
+- 🚨 **`Avatar` was swallowing every prop it did not know**, exactly as `Badge` was : no `onClick`, no `aria-*`, no `id`. It spreads the rest now, and `InitialsAvatar` needs that to carry a handler.
+- ⚠️ **The box is set by `size`, not by a class.** A picture is handed the pixel size of its box, since `Picture` sets no `sizes` attribute and `fill` would warn without one ; a class that changed the box would leave the picture at its old size, centred. The initials fill their box and follow a class either way.
+- ⚠️ **One behaviour differs from the gathered component, deliberately** : a name of nothing but spaces drew an EMPTY disc there, and reads `?` here. An avatar with nothing in it looks broken rather than anonymous, which is what this library's `getInitials` already said in its own doc.
+- **Replayed before being kept** : 212 names through both helpers (accents, a typographic apostrophe, ideographs, repeated spaces, `undefined`, `null`) — **one difference, the empty one above** ; then 105 names picking **the same fill out of the same seven**, the five boxes matching class for class, and every pixel size agreeing with its `size-*`.
+
 **🏷️ A mark and a badge take a colour of their own**
 
 - **Gathered from three hand-written components** in one application : two of them a coloured mark beside a label (a role, a lifecycle state), one a pill washed with a colour out of a record. 🔑 **Both said in their own doc comment that they existed only because the library would not take their colour** — one of them names `Status` and the sentence « whereas `Status` only accepts DaisyUI palette names ».
