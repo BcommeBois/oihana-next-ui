@@ -19,10 +19,13 @@ import {
     MdShare
 } from 'react-icons/md' ;
 
+import format  from 'vegas-js-core/src/strings/fastformat' ;
 import ucFirst from 'vegas-js-core/src/strings/ucFirst' ;
 
 import getInitials from '@/helpers/strings/getInitials' ;
 import hashIndex   from '@/helpers/strings/hashIndex' ;
+
+import useI18n from '@/contexts/locale/useI18n' ;
 
 /**
  * A tint per index, as literal classes — never interpolated, or Tailwind emits
@@ -73,24 +76,67 @@ const LOADING_COLORS =
 /**
  * The twelve frames of the masonry gallery : a height, the seed of its image,
  * and the loader it plays — the point of the section being that the heights
- * differ, so the columns cannot align.
- * @type {Array<{ alt : string , animation : string , color : string , height : number , seed : number }>}
+ * differ, so the columns cannot align. Their alternative text is numbered
+ * from the bundle : what each photograph shows is nobody's business here.
+ * @type {Array<{ animation : string , color : string , height : number , seed : number }>}
  */
 const MASONRY =
 [
-    { alt : 'Portrait 1'  , animation : 'ring'     , color : 'primary'   , height : 600 , seed : 301 } ,
-    { alt : 'Landscape 1' , animation : 'spinner'  , color : 'secondary' , height : 300 , seed : 302 } ,
-    { alt : 'Square-ish'  , animation : 'dots'     , color : 'accent'    , height : 500 , seed : 303 } ,
-    { alt : 'Square'      , animation : 'bars'     , color : 'info'      , height : 400 , seed : 304 } ,
-    { alt : 'Portrait 2'  , animation : 'ball'     , color : 'success'   , height : 550 , seed : 305 } ,
-    { alt : 'Landscape 2' , animation : 'infinity' , color : 'warning'   , height : 350 , seed : 306 } ,
-    { alt : 'Tall-ish'    , animation : 'ring'     , color : 'error'     , height : 450 , seed : 205 } ,
-    { alt : 'Wide'        , animation : 'spinner'  , color : 'primary'   , height : 320 , seed : 308 } ,
-    { alt : 'Portrait 3'  , animation : 'dots'     , color : 'secondary' , height : 580 , seed : 309 } ,
-    { alt : 'Landscape 3' , animation : 'bars'     , color : 'accent'    , height : 380 , seed : 310 } ,
-    { alt : 'Portrait 4'  , animation : 'ball'     , color : 'info'      , height : 520 , seed : 311 } ,
-    { alt : 'Landscape 4' , animation : 'infinity' , color : 'success'   , height : 340 , seed : 312 } ,
+    { animation : 'ring'     , color : 'primary'   , height : 600 , seed : 301 } ,
+    { animation : 'spinner'  , color : 'secondary' , height : 300 , seed : 302 } ,
+    { animation : 'dots'     , color : 'accent'    , height : 500 , seed : 303 } ,
+    { animation : 'bars'     , color : 'info'      , height : 400 , seed : 304 } ,
+    { animation : 'ball'     , color : 'success'   , height : 550 , seed : 305 } ,
+    { animation : 'infinity' , color : 'warning'   , height : 350 , seed : 306 } ,
+    { animation : 'ring'     , color : 'error'     , height : 450 , seed : 205 } ,
+    { animation : 'spinner'  , color : 'primary'   , height : 320 , seed : 308 } ,
+    { animation : 'dots'     , color : 'secondary' , height : 580 , seed : 309 } ,
+    { animation : 'bars'     , color : 'accent'    , height : 380 , seed : 310 } ,
+    { animation : 'ball'     , color : 'info'      , height : 520 , seed : 311 } ,
+    { animation : 'infinity' , color : 'success'   , height : 340 , seed : 312 } ,
 ] ;
+
+/**
+ * The four frames of the fill-mode section. The `aspect` class is LITERAL —
+ * interpolated, Tailwind emits none of them — and `ratio` is what the badge
+ * and the alternative text name it by.
+ * @type {Array<{ animation : string , aspect : string , color : string , height : number , ratio : string , seed : number , width : number }>}
+ */
+const ASPECTS =
+[
+    { animation : 'ring'     , aspect : 'aspect-video'  , color : 'primary'   , height : 1080 , ratio : '16:9' , seed : 400 , width : 1920 } ,
+    { animation : 'spinner'  , aspect : 'aspect-4/3'    , color : 'secondary' , height :  900 , ratio : '4:3'  , seed : 401 , width : 1200 } ,
+    { animation : 'dots'     , aspect : 'aspect-square' , color : 'accent'    , height :  800 , ratio : '1:1'  , seed : 402 , width :  800 } ,
+    { animation : 'bars'     , aspect : 'aspect-21/9'   , color : 'info'      , height :  900 , ratio : '21:9' , seed : 403 , width : 2100 } ,
+] ;
+
+/**
+ * The four values of `objectFit`, in the order the section shows them. Their
+ * images are the seeds 410 to 413, by position.
+ * @type {string[]}
+ */
+const OBJECT_FITS = [ 'cover' , 'contain' , 'fill' , 'none' ] ;
+
+/**
+ * The three margins of the anticipation section : the value, the colour its
+ * loader plays in, and the key its sentence is read by.
+ * @type {Array<{ color : string , key : string , margin : string , seed : string }>}
+ */
+const LAZY_MARGINS =
+[
+    { color : 'error'   , key : 'edge'     , margin : '0px'   , seed : 'margin01' } ,
+    { color : 'warning' , key : 'standard' , margin : '200px' , seed : 'margin02' } ,
+    { color : 'success' , key : 'early'    , margin : '500px' , seed : 'margin03' } ,
+] ;
+
+/** What lazy mounting is worth it for, in the order the list reads. */
+const WHEN_KEYS = [ 'galleries' , 'lists' , 'heavy' , 'mobile' ] ;
+
+/** The three use cases, as the summary sums them up. */
+const SUMMARY_KEYS = [ 'gallery' , 'hero' , 'dimensions' ] ;
+
+/** The props a corner is passed through, and the two of the dimensions badge. */
+const CORNER_POSITIONS = [ 'topLeft' , 'topRight' , 'bottomLeft' , 'bottomRight' , 'showDimensions' , 'dimensionsPosition' ] ;
 
 /**
  * The same map, minus the ids given — what a « Reload all » button leaves
@@ -111,8 +157,32 @@ const forget = ( state , ids ) =>
     return next ;
 } ;
 
-const PictureDemo = () =>
+/**
+ * What the `Picture` component does, section by section : how it waits, how a
+ * gallery lays it out, how it holds back until the frame comes near, how it
+ * fills its parent, what sits in its corners and at its centre, and what it
+ * shows with no source at all.
+ *
+ * 🔑 Blocks that differ only by an API value are LOOPED over that value and
+ * labelled BY it — the loader animations, its sizes, its colours, the aspect
+ * ratios, the object fits and the lazy margins. A value is not copy.
+ *
+ * @module demo/images/PictureDemo
+ *
+ * @param {Object} props
+ * @param {string} [props.path='demo.images.picture'] - Dot notation path to the demo locale.
+ */
+const PictureDemo = ( { path = 'demo.images.picture' } = {} ) =>
 {
+    const t = useI18n( path ) ?? {} ;
+
+    const basic    = t.basic ?? {} ;
+    const corners  = t.corners ?? {} ;
+    const dims     = t.dimensions ?? {} ;
+    const lazy     = t.lazy ?? {} ;
+    const masonry  = t.masonry ?? {} ;
+    const useCases = t.useCases ?? {} ;
+
     // --------- Loading states for different sections
 
     const [ basicImageKey , setBasicImageKey ] = useState( 0 ) ;
@@ -157,21 +227,20 @@ const PictureDemo = () =>
     return (
         <Container className="flex flex-col gap-6 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-7xl">
 
-            <h2 className="text-3xl font-bold">Picture Examples</h2>
+            <h2 className="text-3xl font-bold">{ t.title }</h2>
 
-            {/* Basic Picture */}
             <div className="flex flex-col gap-4">
                 <h3 className="text-xl font-semibold border-b-2 border-primary pb-2">
-                    Basic Picture with Loading Spinner
+                    { t.sections?.basic }
                 </h3>
 
                 <div className="flex gap-2 items-center">
                     <Button size="sm" color="ghost" icon={ MdRefresh } onClick={ reloadBasic }>
-                        Reload Image
+                        { basic.reload }
                     </Button>
 
                     { loadedImages.basic && (
-                        <Badge color="success">Loaded</Badge>
+                        <Badge color="success">{ basic.loaded }</Badge>
                     )}
                 </div>
 
@@ -179,7 +248,7 @@ const PictureDemo = () =>
                     <Picture
                         key={ basicImageKey }
                         src={ `https://picsum.photos/640/480?random=${ basicImageKey }` }
-                        alt="Random landscape"
+                        alt={ basic.alt }
                         width={ 640 }
                         height={ 480 }
                         className="rounded-box overflow-hidden shadow-lg max-w-2xl"
@@ -201,14 +270,13 @@ const PictureDemo = () =>
 
             <Divider />
 
-            {/* Masonry Gallery */}
             <div className="flex flex-col gap-4">
                 <h3 className="text-xl font-semibold border-b-2 border-warning pb-2">
-                    Masonry Gallery Layout
+                    { t.sections?.masonry }
                 </h3>
 
                 <p className="text-sm opacity-70">
-                    Responsive masonry layout that distributes images across columns automatically.
+                    { masonry.description }
                 </p>
 
                 <Masonry
@@ -216,11 +284,11 @@ const PictureDemo = () =>
                     gap={ 4 }
                     className="w-full"
                 >
-                    { MASONRY.map( ( { alt , animation , color , height , seed } , index ) => (
+                    { MASONRY.map( ( { animation , color , height , seed } , index ) => (
                         <Picture
                             key={ seed }
                             src={ `https://picsum.photos/400/${ height }?random=${ seed }` }
-                            alt={ alt }
+                            alt={ format( masonry.alt ?? '' , index + 1 ) }
                             width={ 400 }
                             height={ height }
                             className="rounded-box overflow-hidden shadow-md"
@@ -249,42 +317,40 @@ const PictureDemo = () =>
 
                 <div className="alert alert-info">
                     <span className="text-sm">
-                        💡 <strong>Tip:</strong> Masonry layout automatically distributes images across columns.
-                        Images with different heights create a natural, flowing layout without gaps.
+                        💡 <strong>{ masonry.tip?.label }</strong> { masonry.tip?.text }
                     </span>
                 </div>
             </div>
 
             <Divider />
 
-            {/* Lazy Mount */}
             <div className="flex flex-col gap-4">
                 <h3 className="text-xl font-semibold border-b-2 border-info pb-2">
-                    Lazy Mount (Load on Scroll)
+                    { t.sections?.lazy }
                 </h3>
 
                 <p className="text-sm opacity-70">
-                    Images are only mounted in the DOM when they enter the viewport.
-                    Scroll down to see images load progressively.
+                    { lazy.description }
                 </p>
 
                 <div className="alert alert-info">
                     <span className="text-sm">
-                        💡 <strong>lazyMount</strong> differs from native browser lazy loading:
-                        the entire component is not rendered until visible — saves DOM nodes and network requests.
+                        💡 <strong>lazyMount</strong> { lazy.note }
                     </span>
                 </div>
 
-                {/* Comparison: normal vs lazy */}
                 <div className="flex flex-col gap-2">
-                    <h4 className="font-semibold">Normal vs Lazy Mount</h4>
+                    <h4 className="font-semibold">{ lazy.comparison?.title }</h4>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="flex flex-col gap-2">
-                            <code className="badge badge-sm">Normal (loaded immediately)</code>
+                            <div className="flex items-center gap-2">
+                                <code className="badge badge-sm">{ lazy.comparison?.normal }</code>
+                                <span className="text-xs opacity-70">{ lazy.comparison?.normalHint }</span>
+                            </div>
                             <Picture
                                 src="https://picsum.photos/600/400?random=lazy01"
-                                alt="Normal loading"
+                                alt={ lazy.comparison?.normalAlt }
                                 width={ 600 }
                                 height={ 400 }
                                 className="rounded-box overflow-hidden shadow-md"
@@ -294,10 +360,13 @@ const PictureDemo = () =>
                         </div>
 
                         <div className="flex flex-col gap-2">
-                            <code className="badge badge-sm">lazyMount (loaded on scroll)</code>
+                            <div className="flex items-center gap-2">
+                                <code className="badge badge-sm">lazyMount</code>
+                                <span className="text-xs opacity-70">{ lazy.comparison?.lazyHint }</span>
+                            </div>
                             <Picture
                                 src="https://picsum.photos/600/400?random=lazy02"
-                                alt="Lazy mount"
+                                alt={ lazy.comparison?.lazyAlt }
                                 width={ 600 }
                                 height={ 400 }
                                 className="rounded-box overflow-hidden shadow-md"
@@ -309,11 +378,10 @@ const PictureDemo = () =>
                     </div>
                 </div>
 
-                {/* Large lazy grid */}
                 <div className="flex flex-col gap-2 mt-4">
-                    <h4 className="font-semibold">Grid of 12 lazy images</h4>
+                    <h4 className="font-semibold">{ lazy.grid?.title }</h4>
                     <p className="text-sm opacity-70">
-                        Each image mounts only when it enters the viewport (200px margin).
+                        { lazy.grid?.description }
                     </p>
 
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -324,7 +392,7 @@ const PictureDemo = () =>
                                 </code>
                                 <Picture
                                     src={ `https://picsum.photos/400/300?random=lazyg${ i }` }
-                                    alt={ `Lazy image ${ i + 1 }` }
+                                    alt={ format( lazy.grid?.alt ?? '' , i + 1 ) }
                                     width={ 400 }
                                     height={ 300 }
                                     className="rounded-box overflow-hidden shadow-md"
@@ -338,61 +406,33 @@ const PictureDemo = () =>
                     </div>
                 </div>
 
-                {/* Custom margin */}
                 <div className="flex flex-col gap-2 mt-4">
-                    <h4 className="font-semibold">lazyRootMargin — Preload anticipation</h4>
+                    <h4 className="font-semibold">lazyRootMargin — { lazy.margin?.title }</h4>
                     <p className="text-sm opacity-70">
-                        <code>lazyRootMargin</code> controls how many pixels before entering the viewport the image starts loading.
+                        <code>lazyRootMargin</code> { lazy.margin?.description }
                     </p>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div className="flex flex-col gap-2">
-                            <code className="badge badge-sm">lazyRootMargin="0px" (at the edge)</code>
-                            <Picture
-                                src="https://picsum.photos/400/250?random=margin01"
-                                alt="Margin 0px"
-                                width={ 400 }
-                                height={ 250 }
-                                className="rounded-box overflow-hidden shadow-md"
-                                loadingAnimation="ring"
-                                loadingColor="error"
-                                loadingSize="sm"
-                                lazyMount
-                                lazyRootMargin="0px"
-                            />
-                        </div>
-
-                        <div className="flex flex-col gap-2">
-                            <code className="badge badge-sm">lazyRootMargin="200px" (default)</code>
-                            <Picture
-                                src="https://picsum.photos/400/250?random=margin02"
-                                alt="Margin 200px"
-                                width={ 400 }
-                                height={ 250 }
-                                className="rounded-box overflow-hidden shadow-md"
-                                loadingAnimation="ring"
-                                loadingColor="warning"
-                                loadingSize="sm"
-                                lazyMount
-                                lazyRootMargin="200px"
-                            />
-                        </div>
-
-                        <div className="flex flex-col gap-2">
-                            <code className="badge badge-sm">lazyRootMargin="500px" (early load)</code>
-                            <Picture
-                                src="https://picsum.photos/400/250?random=margin03"
-                                alt="Margin 500px"
-                                width={ 400 }
-                                height={ 250 }
-                                className="rounded-box overflow-hidden shadow-md"
-                                loadingAnimation="ring"
-                                loadingColor="success"
-                                loadingSize="sm"
-                                lazyMount
-                                lazyRootMargin="500px"
-                            />
-                        </div>
+                        { LAZY_MARGINS.map( ( { color , key , margin , seed } ) => (
+                            <div key={ key } className="flex flex-col gap-2">
+                                <div className="flex items-center gap-2">
+                                    <code className="badge badge-sm">{ `lazyRootMargin="${ margin }"` }</code>
+                                    <span className="text-xs opacity-70">{ lazy.margin?.hints?.[ key ] }</span>
+                                </div>
+                                <Picture
+                                    src={ `https://picsum.photos/400/250?random=${ seed }` }
+                                    alt={ format( lazy.margin?.alt ?? '' , margin ) }
+                                    width={ 400 }
+                                    height={ 250 }
+                                    className="rounded-box overflow-hidden shadow-md"
+                                    loadingAnimation="ring"
+                                    loadingColor={ color }
+                                    loadingSize="sm"
+                                    lazyMount
+                                    lazyRootMargin={ margin }
+                                />
+                            </div>
+                        ))}
                     </div>
                 </div>
 
@@ -410,12 +450,13 @@ const PictureDemo = () =>
 
                 <div className="alert alert-success">
                     <div className="flex flex-col gap-1 text-sm">
-                        <div className="font-semibold">✅ When to use lazyMount?</div>
+                        <div className="font-semibold">✅ { lazy.when?.title }</div>
                         <ul className="list-disc list-inside space-y-1 text-xs">
-                            <li><strong>Long galleries</strong> — grids of 20+ images</li>
-                            <li><strong>Infinite lists</strong> — dynamically loaded content</li>
-                            <li><strong>Heavy pages</strong> — reduce initial DOM size</li>
-                            <li><strong>Mobile</strong> — save bandwidth and battery</li>
+                            { WHEN_KEYS.map( key => (
+                                <li key={ key }>
+                                    <strong>{ lazy.when?.items?.[ key ]?.label }</strong> — { lazy.when?.items?.[ key ]?.text }
+                                </li>
+                            ))}
                         </ul>
                     </div>
                 </div>
@@ -423,150 +464,54 @@ const PictureDemo = () =>
 
             <Divider />
 
-            {/* Auto Dimensions & Fill Mode */}
             <div className="flex flex-col gap-4">
                 <h3 className="text-xl font-semibold border-b-2 border-primary pb-2">
-                    Auto Dimensions & Fill Mode
+                    { t.sections?.dimensions }
                 </h3>
 
                 <div className="alert alert-info">
                     <span className="text-sm">
-                        💡 <strong>Fill mode</strong> makes images responsive - they fill their parent container while maintaining aspect ratio.
-                        Natural dimensions are displayed in development mode.
+                        💡 <strong>{ dims.note?.label }</strong> { dims.note?.text }
                     </span>
                 </div>
 
-                {/* Fill mode examples */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-                    {/* Aspect ratio 16:9 */}
-                    <div className="flex flex-col gap-2">
-                        <code className="badge badge-sm">fill + aspect-video (16:9)</code>
-                        <div className="relative aspect-video rounded-box overflow-hidden bg-base-300">
-                            <Picture
-                                src="https://picsum.photos/1920/1080?random=400"
-                                alt="Fill mode 16:9"
-                                fill
-                                objectFit="cover"
-                                loadingAnimation="ring"
-                                loadingColor="primary"
-                                showDimensions={ true }
-                                onLoad={ e =>
-                                {
-                                    console.log( 'Image loaded - Natural size:' , e.target.naturalWidth , 'x' , e.target.naturalWidth ) ;
-                                }}
-                            />
-                        </div>
-                    </div>
-
-                    {/* Aspect ratio 4:3 */}
-                    <div className="flex flex-col gap-2">
-                        <code className="badge badge-sm">fill + aspect-4/3</code>
-                        <div className="relative aspect-4/3 rounded-box overflow-hidden bg-base-300">
-                            <Picture
-                                src="https://picsum.photos/1200/900?random=401"
-                                alt="Fill mode 4:3"
-                                fill
-                                objectFit="cover"
-                                loadingAnimation="spinner"
-                                loadingColor="secondary"
-                                showDimensions={ true }
-                            />
-                        </div>
-                    </div>
-
-                    {/* Aspect ratio 1:1 (square) */}
-                    <div className="flex flex-col gap-2">
-                        <code className="badge badge-sm">fill + aspect-square</code>
-                        <div className="relative aspect-square rounded-box overflow-hidden bg-base-300">
-                            <Picture
-                                src="https://picsum.photos/800/800?random=402"
-                                alt="Fill mode square"
-                                fill
-                                objectFit="cover"
-                                loadingAnimation="dots"
-                                loadingColor="accent"
-                                showDimensions={ true }
-                            />
-                        </div>
-                    </div>
-
-                    {/* Aspect ratio 21:9 (ultrawide) */}
-                    <div className="flex flex-col gap-2">
-                        <code className="badge badge-sm">fill + aspect-[21/9]</code>
-                        <div className="relative aspect-21/9 rounded-box overflow-hidden bg-base-300">
-                            <Picture
-                                src="https://picsum.photos/2100/900?random=403"
-                                alt="Fill mode ultrawide"
-                                fill
-                                objectFit="cover"
-                                loadingAnimation="bars"
-                                loadingColor="info"
-                                showDimensions={ true }
-                            />
-                        </div>
-                    </div>
-
-                </div>
-
-                {/* Object fit variations */}
-                <div className="flex flex-col gap-2 mt-4">
-                    <h4 className="font-semibold">Object Fit Variations</h4>
-
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-
-                        <div className="flex flex-col gap-2">
-                            <code className="badge badge-sm">objectFit="cover"</code>
-                            <div className="relative h-40 rounded-box overflow-hidden bg-base-300">
+                    { ASPECTS.map( ( { animation , aspect , color , height , ratio , seed , width } ) => (
+                        <div key={ aspect } className="flex flex-col gap-2">
+                            <code className="badge badge-sm">{ `fill + ${ aspect } (${ ratio })` }</code>
+                            <div className={ `relative ${ aspect } rounded-box overflow-hidden bg-base-300` }>
                                 <Picture
-                                    src="https://picsum.photos/800/1200?random=410"
-                                    alt="Object fit cover"
+                                    src={ `https://picsum.photos/${ width }/${ height }?random=${ seed }` }
+                                    alt={ format( dims.fill?.alt ?? '' , ratio ) }
                                     fill
                                     objectFit="cover"
-                                    loadingSize="sm"
+                                    loadingAnimation={ animation }
+                                    loadingColor={ color }
+                                    showDimensions={ true }
                                 />
                             </div>
                         </div>
+                    ))}
+                </div>
 
-                        <div className="flex flex-col gap-2">
-                            <code className="badge badge-sm">objectFit="contain"</code>
-                            <div className="relative h-40 rounded-box overflow-hidden bg-base-300">
-                                <Picture
-                                    src="https://picsum.photos/800/1200?random=411"
-                                    alt="Object fit contain"
-                                    fill
-                                    objectFit="contain"
-                                    loadingSize="sm"
-                                />
+                <div className="flex flex-col gap-2 mt-4">
+                    <h4 className="font-semibold">{ dims.objectFit?.title }</h4>
+
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        { OBJECT_FITS.map( ( objectFit , index ) => (
+                            <div key={ objectFit } className="flex flex-col gap-2">
+                                <code className="badge badge-sm">{ `objectFit="${ objectFit }"` }</code>
+                                <div className="relative h-40 rounded-box overflow-hidden bg-base-300">
+                                    <Picture
+                                        src={ `https://picsum.photos/800/1200?random=${ 410 + index }` }
+                                        alt={ format( dims.objectFit?.alt ?? '' , objectFit ) }
+                                        fill
+                                        objectFit={ objectFit }
+                                        loadingSize="sm"
+                                    />
+                                </div>
                             </div>
-                        </div>
-
-                        <div className="flex flex-col gap-2">
-                            <code className="badge badge-sm">objectFit="fill"</code>
-                            <div className="relative h-40 rounded-box overflow-hidden bg-base-300">
-                                <Picture
-                                    src="https://picsum.photos/800/1200?random=412"
-                                    alt="Object fit fill"
-                                    fill
-                                    objectFit="fill"
-                                    loadingSize="sm"
-                                />
-                            </div>
-                        </div>
-
-                        <div className="flex flex-col gap-2">
-                            <code className="badge badge-sm">objectFit="none"</code>
-                            <div className="relative h-40 rounded-box overflow-hidden bg-base-300">
-                                <Picture
-                                    src="https://picsum.photos/800/1200?random=413"
-                                    alt="Object fit none"
-                                    fill
-                                    objectFit="none"
-                                    loadingSize="sm"
-                                />
-                            </div>
-                        </div>
-
+                        ))}
                     </div>
                 </div>
 
@@ -587,25 +532,23 @@ const PictureDemo = () =>
 
             <Divider />
 
-            {/* Practical Use Cases */}
             <div className="flex flex-col gap-4">
                 <h3 className="text-xl font-semibold border-b-2 border-secondary pb-2">
-                    Practical Use Cases
+                    { t.sections?.useCases }
                 </h3>
 
-                {/* Use Case 1: Responsive Gallery */}
                 <div className="flex flex-col gap-2">
-                    <h4 className="font-semibold">1. Responsive Gallery Grid</h4>
+                    <h4 className="font-semibold">1. { useCases.gallery?.title }</h4>
                     <p className="text-sm opacity-70">
-                        Grid with uniform aspect ratios - perfect for photo galleries
+                        { useCases.gallery?.description }
                     </p>
 
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                        { [ 501 , 502 , 503 , 504 , 505 , 506 , 507 , 508 ].map( id => (
+                        { [ 501 , 502 , 503 , 504 , 505 , 506 , 507 , 508 ].map( ( id , index ) => (
                             <div key={ id } className="relative aspect-square rounded-box overflow-hidden bg-base-300 hover:scale-105 transition-transform cursor-pointer">
                                 <Picture
                                     src={ `https://picsum.photos/600/600?random=${ id }` }
-                                    alt={ `Gallery image ${ id }` }
+                                    alt={ format( useCases.gallery?.alt ?? '' , index + 1 ) }
                                     fill
                                     objectFit="cover"
                                     loadingAnimation="ring"
@@ -634,17 +577,16 @@ const PictureDemo = () =>
 
                 <Divider className="my-2" />
 
-                {/* Use Case 2: Hero Banner */}
                 <div className="flex flex-col gap-2">
-                    <h4 className="font-semibold">2. Adaptive Hero Banner</h4>
+                    <h4 className="font-semibold">2. { useCases.hero?.title }</h4>
                     <p className="text-sm opacity-70">
-                        Full-width banner with ultrawide aspect ratio - great for headers
+                        { useCases.hero?.description }
                     </p>
 
                     <div className="relative aspect-21/9 w-full rounded-box overflow-hidden bg-base-300 shadow-xl">
                         <Picture
                             src="https://picsum.photos/2100/900?random=600"
-                            alt="Hero banner"
+                            alt={ useCases.hero?.alt }
                             fill
                             priority
                             objectFit="cover"
@@ -653,11 +595,10 @@ const PictureDemo = () =>
                             loadingSize="xl"
                         />
 
-                        {/* Overlay content */}
                         <div className="absolute inset-0 flex items-center justify-center bg-linear-to-r from-black/50 to-transparent">
                             <div className="text-center text-white">
-                                <h1 className="text-4xl md:text-6xl font-bold mb-4">Welcome to Oihana Next UI</h1>
-                                <p className="text-lg md:text-xl opacity-90">Next JS OpenSource UI Library</p>
+                                <h1 className="text-4xl md:text-6xl font-bold mb-4">{ useCases.hero?.overlay?.title }</h1>
+                                <p className="text-lg md:text-xl opacity-90">{ useCases.hero?.overlay?.subtitle }</p>
                             </div>
                         </div>
                     </div>
@@ -680,18 +621,17 @@ const PictureDemo = () =>
 
                 <Divider className="my-2" />
 
-                {/* Use Case 3: Dimension Detection */}
                 <div className="flex flex-col gap-2">
-                    <h4 className="font-semibold">3. Auto Dimension Detection</h4>
+                    <h4 className="font-semibold">3. { useCases.dimensions?.title }</h4>
                     <p className="text-sm opacity-70">
-                        Retrieve natural image dimensions for processing or display
+                        { useCases.dimensions?.description }
                     </p>
 
                     <div className="flex flex-col md:flex-row gap-4 items-start">
                         <div className="flex-1">
                             <Picture
                                 src="https://picsum.photos/1920/1080?random=700"
-                                alt="Dimension detection"
+                                alt={ useCases.dimensions?.alt }
                                 width={ 480 }
                                 height={ 270 }
                                 className="rounded-box overflow-hidden shadow-md"
@@ -710,11 +650,11 @@ const PictureDemo = () =>
                         <div className="flex-1">
                             <div className="alert alert-success">
                                 <div className="flex flex-col gap-2 text-sm">
-                                    <div className="font-semibold">Open your browser console to see:</div>
+                                    <div className="font-semibold">{ useCases.dimensions?.console?.title }</div>
                                     <ul className="list-disc list-inside space-y-1 text-xs">
-                                        <li><code>naturalWidth</code> & <code>naturalHeight</code> (original image size)</li>
-                                        <li><code>width</code> & <code>height</code> (displayed size)</li>
-                                        <li>Useful for image processing, validation, or analytics</li>
+                                        <li><code>naturalWidth</code> & <code>naturalHeight</code> — { useCases.dimensions?.console?.natural }</li>
+                                        <li><code>width</code> & <code>height</code> — { useCases.dimensions?.console?.displayed }</li>
+                                        <li>{ useCases.dimensions?.console?.useful }</li>
                                     </ul>
                                 </div>
                             </div>
@@ -748,11 +688,13 @@ const PictureDemo = () =>
 
                 <div className="alert alert-info mt-4">
                     <div className="flex flex-col gap-1 text-sm">
-                        <div className="font-semibold">💡 Use Cases Summary:</div>
+                        <div className="font-semibold">💡 { useCases.summary?.title }</div>
                         <ul className="list-disc list-inside space-y-1 text-xs">
-                            <li><strong>Gallery:</strong> Uniform grid with <code>aspect-square</code> + <code>fill</code></li>
-                            <li><strong>Hero Banner:</strong> Wide format with <code>aspect-[21/9]</code> + <code>priority</code></li>
-                            <li><strong>Dimensions:</strong> Use <code>onLoad</code> to get natural size</li>
+                            { SUMMARY_KEYS.map( key => (
+                                <li key={ key }>
+                                    <strong>{ useCases.summary?.items?.[ key ]?.label }</strong> — { useCases.summary?.items?.[ key ]?.text }
+                                </li>
+                            ))}
                         </ul>
                     </div>
                 </div>
@@ -760,24 +702,21 @@ const PictureDemo = () =>
 
             <Divider />
 
-            {/* Corner Content & Overlays */}
             <div className="flex flex-col gap-4">
                 <h3 className="text-xl font-semibold border-b-2 border-accent pb-2">
-                    Corner Content & Overlays
+                    { t.sections?.corners }
                 </h3>
 
                 <p className="text-sm opacity-70">
-                    Add any content to the four corners of your images: badges, buttons, icons, text, etc.
+                    { corners.description }
                 </p>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-                    {/* Example 1: Product with badges */}
                     <div className="flex flex-col gap-2">
-                        <code className="badge badge-sm">E-commerce Product</code>
+                        <code className="badge badge-sm">{ corners.scenarios?.product }</code>
                         <Picture
                             src="https://picsum.photos/600/800?random=801"
-                            alt="Product"
+                            alt={ corners.product?.alt }
                             width={ 600 }
                             height={ 800 }
                             className="rounded-box overflow-hidden shadow-lg"
@@ -789,18 +728,17 @@ const PictureDemo = () =>
                                     <div className="text-sm line-through opacity-50">$499</div>
                                 </div>
                             }
-                            bottomRight={ <Badge color="success">In Stock</Badge> }
+                            bottomRight={ <Badge color="success">{ corners.product?.stock }</Badge> }
                             loadingAnimation="ring"
                             loadingSize="md"
                         />
                     </div>
 
-                    {/* Example 2: Photo with metadata */}
                     <div className="flex flex-col gap-2">
-                        <code className="badge badge-sm">Photo Gallery</code>
+                        <code className="badge badge-sm">{ corners.scenarios?.photo }</code>
                         <Picture
                             src="https://picsum.photos/600/800?random=802"
-                            alt="Gallery photo"
+                            alt={ corners.photo?.alt }
                             width={ 600 }
                             height={ 800 }
                             className="rounded-box overflow-hidden shadow-lg"
@@ -817,7 +755,7 @@ const PictureDemo = () =>
                             }
                             bottomLeft={
                                 <div className="bg-black/50 backdrop-blur text-white px-2 py-1 rounded-box text-xs">
-                                    ⭐ 4.8 (124 likes)
+                                    ⭐ 4.8 · { format( corners.photo?.likes ?? '' , 124 ) }
                                 </div>
                             }
                             showDimensions
@@ -827,30 +765,29 @@ const PictureDemo = () =>
                         />
                     </div>
 
-                    {/* Example 3: Real estate listing */}
                     <div className="flex flex-col gap-2">
-                        <code className="badge badge-sm">Real Estate</code>
+                        <code className="badge badge-sm">{ corners.scenarios?.estate }</code>
                         <Picture
                             src="https://picsum.photos/600/400?random=803"
-                            alt="Property"
+                            alt={ corners.estate?.alt }
                             width={ 600 }
                             height={ 400 }
                             className="rounded-box overflow-hidden shadow-lg"
-                            topLeft={ <Badge color="primary" size="lg">Featured</Badge> }
+                            topLeft={ <Badge color="primary" size="lg">{ corners.estate?.featured }</Badge> }
                             topRight={
                                 <div className="bg-success/90 text-success-content px-3 py-1 rounded-box font-bold">
-                                    NEW
+                                    { corners.estate?.flag }
                                 </div>
                             }
                             bottomLeft={
                                 <div className="bg-base-100/95 backdrop-blur px-4 py-2 rounded-box">
-                                    <div className="text-sm opacity-70">Starting at</div>
+                                    <div className="text-sm opacity-70">{ corners.estate?.from }</div>
                                     <div className="text-3xl font-bold text-primary">$1.2M</div>
                                 </div>
                             }
                             bottomRight={
                                 <div className="bg-base-100/95 backdrop-blur px-3 py-1 rounded-box text-sm">
-                                    🛏️ 3 beds · 🚿 2 baths
+                                    { format( corners.estate?.beds ?? '' , 3 , 2 ) }
                                 </div>
                             }
                             loadingAnimation="dots"
@@ -858,19 +795,18 @@ const PictureDemo = () =>
                         />
                     </div>
 
-                    {/* Example 4: Video thumbnail */}
                     <div className="flex flex-col gap-2">
-                        <code className="badge badge-sm">Video Thumbnail</code>
+                        <code className="badge badge-sm">{ corners.scenarios?.video }</code>
                         <Picture
                             src="https://picsum.photos/600/400?random=804"
-                            alt="Video"
+                            alt={ corners.video?.alt }
                             width={ 600 }
                             height={ 400 }
                             className="rounded-box overflow-hidden shadow-lg"
                             topRight={
                                 <Badge color="error">
                                     <span className="inline-block w-2 h-2 bg-error-content rounded-full animate-pulse mr-1" />
-                                    LIVE
+                                    { corners.video?.live }
                                 </Badge>
                             }
                             bottomLeft={
@@ -910,14 +846,13 @@ const PictureDemo = () =>
 
                 <div className="alert alert-info">
                     <div className="flex flex-col gap-1 text-sm">
-                        <div className="font-semibold">💡 Corner Positions Available:</div>
+                        <div className="font-semibold">💡 { corners.positions?.title }</div>
                         <ul className="list-disc list-inside space-y-1 text-xs">
-                            <li><code>topLeft</code> - Top-left corner (e.g., badges, labels)</li>
-                            <li><code>topRight</code> - Top-right corner (e.g., action buttons)</li>
-                            <li><code>bottomLeft</code> - Bottom-left corner (e.g., price, metadata)</li>
-                            <li><code>bottomRight</code> - Bottom-right corner (e.g., status, CTA)</li>
-                            <li><code>showDimensions</code> - Display natural image dimensions</li>
-                            <li><code>dimensionsPosition</code> - Where to place dimensions badge</li>
+                            { CORNER_POSITIONS.map( name => (
+                                <li key={ name }>
+                                    <code>{ name }</code> — { corners.positions?.items?.[ name ] }
+                                </li>
+                            ))}
                         </ul>
                     </div>
                 </div>

@@ -1,5 +1,6 @@
 import assignments from './assignments' ;
 import filters   from './filters' ;
+import images    from './images' ;
 import inputs    from './inputs' ;
 import metrics   from './metrics' ;
 import modals    from './modals' ;
@@ -11,6 +12,7 @@ const demo =
 {
     assignments ,
     filters ,
+    images ,
     inputs ,
     metrics ,
     modals ,

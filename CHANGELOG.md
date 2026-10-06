@@ -8,6 +8,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🌍 The lab's Images page follows the language switch (one of two)**
+
+- **The page had no bundle at all** — one hard-coded English title, and a third dead `path = 'app.test'` prop like the two already taken out. It reads `app.lab.images` now, and `I18nMetas` puts its title and its sentence in the document.
+- **90 keys per language for the first half of the Picture demo** : the plain picture and its wait, the masonry gallery, lazy mounting, automatic dimensions and fill mode, the three use cases, and content in the corners. **103 literals left the markup.**
+- 🔑 **What a reader reads is copy ; what the component takes is not.** A badge naming a prop or one of its values (`objectFit="cover"`, `fill + aspect-square`) stays as it is, and so do the `mockup-code` samples and the `//` comments inside them : a sample someone copies has to read in the language the code is written in. The same goes for the `console.log` calls and the mock console mirroring them — a console is not a screen.
+- **Three badges said a value and a sentence in one breath** (`lazyRootMargin="200px" (default)`). The value stays in the badge and the sentence moved beside it, rather than shutting an API value inside a translatable string.
+- **Three more blocks were copies over an API value** — four aspect ratios, four object fits, three lazy margins. They loop over their values as well, which is why the file still shrinks (1586 → 1520 lines) while taking on everything a translated demo carries.
+- Two things the rewrite could not keep quiet about : a fill-mode badge said `aspect-[21/9]` where the markup sets `aspect-21/9`, and three of the four named no ratio at all — the four of them now name the class they apply and the ratio it gives. And one tile carried a `console.log` of its own which printed the natural width twice instead of the height ; the section on reading dimensions does that properly, three sections below, so it is gone.
+
 **🧹 The Images demo stops writing the same tile twenty-seven times**
 
 - **Four blocks of the lab's Picture page were copies over an API value** — six loader animations, five sizes, four colours, and a twelve-frame masonry gallery : **27 tiles** of twelve to twenty-five lines each, differing by one word. They loop over their values now, labelled BY the value, and the file drops from **1864 to 1585 lines** with nothing changed on screen.
