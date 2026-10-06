@@ -11,12 +11,37 @@ import Picture  from '@/components/images/Picture' ;
 import Container from '@/display/Container' ;
 
 import {
+    MdImageNotSupported ,
     MdPlayArrow ,
     MdEdit ,
     MdFavorite ,
     MdRefresh ,
     MdShare
 } from 'react-icons/md' ;
+
+import getInitials from '@/helpers/strings/getInitials' ;
+import hashIndex   from '@/helpers/strings/hashIndex' ;
+
+/**
+ * A tint per index, as literal classes — never interpolated, or Tailwind emits
+ * none of them.
+ * @type {string[]}
+ */
+const PALETTE =
+[
+    'bg-primary/15 text-primary' ,
+    'bg-secondary/15 text-secondary' ,
+    'bg-accent/15 text-accent' ,
+    'bg-info/15 text-info' ,
+] ;
+
+/** The four frames of the fallback section. */
+const FALLBACKS =
+[
+    { label : 'a tint picked from the name' , name : 'Acme Studio' } ,
+    { label : 'another name, another tint' , name : 'Borealis Works' } ,
+    { color : '#F59E0B' , label : 'a colour the entity carries' , name : 'Amber Group' } ,
+] ;
 
 const PictureDemo = () =>
 {
@@ -1776,6 +1801,60 @@ const PictureDemo = () =>
                     <pre data-prefix="2"><code>    priority <span className="text-error">// Preload this image (disables lazy loading)</span></code></pre>
                     <pre data-prefix="3"><code>    src="/hero-banner.jpg"</code></pre>
                     <pre data-prefix="4"><code>/&gt;</code></pre>
+                </div>
+            </div>
+
+            <Divider />
+
+            <div className="flex flex-col gap-4">
+                <h3 className="text-xl font-semibold border-b-2 border-secondary pb-2">
+                    No source at all : the fallback
+                </h3>
+
+                <div className="alert alert-info">
+                    <span className="text-sm">
+                        An entity with no picture is ordinary. Without a <code className="badge badge-sm">src</code>,
+                        the frame shows <code className="badge badge-sm">fallback</code> instead of an image —
+                        and the four corners and the centre keep working, so a caller composes overlays
+                        without switching on whether a picture exists.
+                    </span>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+
+                    { FALLBACKS.map( ( { color , label , name } ) => (
+                        <div className="flex flex-col gap-2" key={ name }>
+                            <Picture
+                                className         = "h-28 w-full rounded-box overflow-hidden"
+                                fallback          = { <span className="text-3xl font-semibold tracking-wide select-none">{ getInitials( name ) }</span> }
+                                fallbackClassName = { color ? undefined : PALETTE[ hashIndex( name , PALETTE.length ) ] }
+                                fallbackColor     = { color }
+                                fill
+                                topRight          = { <Badge color="neutral" size="sm">{ getInitials( name ) }</Badge> }
+                            />
+                            <span className="text-xs opacity-70">{ label }</span>
+                        </div>
+                    ) ) }
+
+                    <div className="flex flex-col gap-2">
+                        <Picture
+                            className     = "h-28 w-full rounded-box overflow-hidden"
+                            fallback      = { <MdImageNotSupported className="size-10 opacity-40" /> }
+                            fallbackColor = "#0EA5E9"
+                            fill
+                            bottomLeft    = { <Badge size="sm">corner</Badge> }
+                        />
+                        <span className="text-xs opacity-70">an icon, and a corner over it</span>
+                    </div>
+
+                </div>
+
+                <div className="mockup-code text-xs">
+                    <pre data-prefix="1"><code>&lt;Picture</code></pre>
+                    <pre data-prefix="2"><code>    fallback      = {'{ <span>{ getInitials( name ) }</span> }'}</code></pre>
+                    <pre data-prefix="3"><code>    fallbackColor = {'{ entity.color }'} <span className="text-success">// a wash of it behind, the colour itself on the content</span></code></pre>
+                    <pre data-prefix="4"><code>    fill</code></pre>
+                    <pre data-prefix="5"><code>/&gt;</code></pre>
                 </div>
             </div>
 

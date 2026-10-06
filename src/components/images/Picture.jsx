@@ -12,6 +12,8 @@ import Image   from 'next/image' ;
 
 import buildImageProps from './helpers/buildImageProps' ;
 
+import withAlpha from '../../helpers/colors/withAlpha' ;
+
 /**
  * Picture component with loading state, spinner, and dark mode support.
  * Wrapper around Next.js Image with preload indicator.
@@ -28,6 +30,9 @@ import buildImageProps from './helpers/buildImageProps' ;
  * @param {string} [props.className] - Container classes
  * @param {string|import('next/image').StaticImageData} [props.dark] - Dark mode image source
  * @param {'top-left'|'top-right'|'bottom-left'|'bottom-right'} [props.dimensionsPosition='bottom-right'] - Position for dimensions badge
+ * @param {React.ReactNode} [props.fallback] - Shown INSTEAD of the image when there is no source : initials, an icon, a word. Without it, a source-less Picture renders its empty container.
+ * @param {string} [props.fallbackClassName] - Classes for the fallback block — a tint from the theme's tokens, a radius, a text size.
+ * @param {string} [props.fallbackColor] - Any CSS colour : the fallback gets a wash of it behind (through `withAlpha`) and the colour itself on its content.
  * @param {boolean} [props.fill=false] - Fill parent container (responsive mode)
  * @param {number} [props.height] - Image height (required if not using fill)
  * @param {string} [props.imageClassName] - Image element classes
@@ -57,6 +62,9 @@ const Picture =
     className ,
     dark ,
     dimensionsPosition = 'bottom-right' ,
+    fallback ,
+    fallbackClassName ,
+    fallbackColor ,
     fill = false ,
     height ,
     imageClassName ,
@@ -113,6 +121,13 @@ const Picture =
 
     // Active source: dark image when in dark mode, light image otherwise
     const activeSrc = ( dark && isDark ) ? dark : src ;
+
+    // 🚨 No source at all is a case of its own : `next/image` needs a `src`,
+    // so a Picture without one used to be a broken call rather than an empty
+    // frame. An entity with no picture is ordinary — it gets its initials, its
+    // icon, and the corners keep working, which is what three hand-written
+    // covers of a consuming application were each doing on their own.
+    const hasSource = Boolean( activeSrc ) ;
 
     /**
      * @param {React.SyntheticEvent<HTMLImageElement>} e
@@ -181,7 +196,19 @@ const Picture =
             ref       = { mergedRef }
         >
 
-            { shouldRender ? (
+            { !hasSource ? (
+                <div
+                    className = { cn( 'flex items-center justify-center' , fill ? 'absolute inset-0' : 'w-full h-full' , fallbackClassName ) }
+                    style     = {
+                        {
+                            ...( !fill && width && height ? { width , height } : null ) ,
+                            ...( fallbackColor ? { backgroundColor : withAlpha( fallbackColor ) , color : fallbackColor } : null ) ,
+                        }
+                    }
+                >
+                    { fallback }
+                </div>
+            ) : shouldRender ? (
                 <>
                     <div className={ cn( 'relative' , !fill && 'inline-block' , fill && 'w-full h-full' ) }>
                         <Image { ...imageProps } />

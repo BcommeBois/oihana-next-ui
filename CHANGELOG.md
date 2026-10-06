@@ -8,6 +8,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🖼️ A Picture with no source, and the two helpers an avatar needs**
+
+- **Gathered from three hand-written covers** in one application — a thing's cover, a user's picture, an entity's cover — which are one component with three fallbacks : initials on a tint, initials on a colour the entity carries, an icon on that colour. All three copied the same table of corner positions, and all three switched on whether a picture existed **before** calling `Picture`, because it could not render without one.
+- 🚨 **`next/image` needs a `src`**, so a source-less `Picture` was a broken call rather than an empty frame. It now shows **`fallback`** instead of the image — initials, an icon, a word — while the four corners and the centre keep working, which is what let the three copies exist in the first place.
+  - **`fallbackColor`** takes any CSS colour and paints a wash of it behind (through `withAlpha`) with the colour itself on the content : the three-line pattern those covers each wrote by hand. **`fallbackClassName`** is for a tint from the theme's own tokens, which a CSS colour cannot express.
+- **New `helpers/strings/getInitials( value , { fallback = '?' , max = 2 } )`** — one word gives one letter, several give one each. ⚠️ It reads a NAME, not a record : which fields make up that name is the caller's business and changes with every payload.
+- **New `helpers/strings/hashIndex( value , length )`** — a stable index from a string, for « always the same colour for the same name » without storing anything. 🔑 **Stable is the whole point** : a reader recognises an entity before reading it, and an array position would change with the sort order. ⚠️ Not a security hash, and documented as such — a 32-bit polynomial over a short name collides readily, which costs nothing when the answer is a colour.
+- ⚠️ **Replayed against the application's own two functions** before being written down : the same initials and the same palette index on fifteen hand-picked names — hyphenated, accented, apostrophed, non-Latin, over-spaced — and on two thousand generated ones. **Zero divergence**, so the colours do not move when those copies go.
+- They are in oihana rather than in vegas-js-core, which has neither : the component that uses them is born here, and a second library publication for thirty lines of pure string work would double the round-trip. A later move is a re-export.
+- Lab, images page : the fallback in four frames — a tint picked from the name, another name picking another tint, a colour an entity carries, and an icon with a corner badge over it.
+
+
 **🔵 The round colour mark, and a colour made translucent**
 
 - **Gathered from five hand-written copies of the same mark** in one application — a coloured disc beside a name, in a row — which spelled « no colour » **four different ways**. The difference is not cosmetic : the same entity is served with its colour in one place and without it in another, and a grey disc would read as « its colour is grey » rather than « nobody gave it one ». One of the five carried that argument in its own doc comment.
