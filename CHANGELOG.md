@@ -8,6 +8,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🌍 The lab's TextAreas page follows the language switch**
+
+- The twin of the Inputs page, in the same state : a `path = 'app.test'` prop it never read, seven filter rows of hardcoded English, and six demos that had never seen a bundle. Now **190 keys per language** — 18 for the page, 172 for its demos — and `I18nMetas` gives the document its title.
+- 🔑 **Eleven near-identical blocks became two loops.** The sizes and the colours sections of the text area demo wrote the same field out eleven times, each labelled with the value it was passing. They loop over `SIZES` and `COLORS` now, labelled with the value itself — a `size` is not copy, and a demo that repeats itself eleven times teaches nothing the twelfth would not. Same for the four resize modes and the three row counts.
+- **Three demos were already part French**, frozen where no switch reaches : two placeholders and, in the code demo, a whole `CodeBlock` whose copy labels and toast messages were spelled in French to show they could be overridden. That block now takes them from the bundle, under a line saying they come from the HOST — the example keeps its point in both languages.
+- Still hardcoded, deliberately : every `CONTENT_*` and code sample, because they are the DOCUMENT being edited and what the preview or the highlighter has to render ; the `{ fr , en }` maps of the two multilingual demos, which are the value those components exist to hold ; and `tabSize = { 2 }` shown as code.
+- **Found by the key cross-check** : a section title declared and rendered nowhere — the indentation pair of the code demo had two sub-headings and no heading of its own. It has one now, like every other block on that page.
+- 🔑 **And the checker learned to read a loop.** `t.resize?.[ mode ]?.label` is a key it cannot know, so it counted fourteen declared keys as dead ; a computed access now stars its branch and everything under it counts as read. Second time this week the tool was wrong before the code was.
+
+
 **🌍 The Security and Specialized demos follow the language switch, and the Inputs page is done**
 
 - The last seven — password, strength, PIN, validator, card, colour, address and link — bring **160 keys per language**. The page now reads **500 keys** where it had none this morning : 435 under `demo.inputs.*`, 14 under a new `demo.passwords.strength`, and 51 for its own chrome.

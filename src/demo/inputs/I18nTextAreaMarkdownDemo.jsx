@@ -5,6 +5,8 @@ import { useState } from 'react' ;
 import Container            from '@/display/Container' ;
 import I18nTextAreaMarkdown from '@/components/i18n/I18nTextAreaMarkdown' ;
 
+import useI18n from '@/contexts/locale/useI18n' ;
+
 /**
  * I18nTextAreaMarkdown demo component.
  *
@@ -14,9 +16,16 @@ import I18nTextAreaMarkdown from '@/components/i18n/I18nTextAreaMarkdown' ;
  * non-empty content carry a dot indicator. A live JSON preview shows
  * that the whole map is a single value (single dirty signal for the
  * parent form).
+ *
+ * @param {Object} props
+ * @param {string} [props.path='demo.inputs.i18nTextAreaMarkdown'] - Dot notation path to the demo locale.
  */
-const I18nTextAreaMarkdownDemo = () =>
+const I18nTextAreaMarkdownDemo = ( { path = 'demo.inputs.i18nTextAreaMarkdown' } = {} ) =>
 {
+    const t = useI18n( path ) ?? {} ;
+
+    // The maps below are the demo's DATA, not its copy : a markdown document
+    // per language is the value this editor exists to hold.
     const [ description , setDescription ] = useState({
         fr : '# Bonjour\n\nUne **description** multilingue en _markdown_.\n\n- la preview suit la langue active\n- les drapeaux remplis portent un point' ,
         en : ''
@@ -27,13 +36,12 @@ const I18nTextAreaMarkdownDemo = () =>
     return (
         <Container className="flex flex-col gap-6 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-7xl">
 
-            <h3 className="text-2xl font-bold">I18n TextArea Markdown Examples</h3>
+            <h3 className="text-2xl font-bold">{ t.title }</h3>
 
-            {/* Controlled multi-language markdown field (side-by-side preview) */}
             <I18nTextAreaMarkdown
-                label       = "Description"
-                helper      = "Click a flag to edit that language — the preview follows"
-                placeholder = "Écrivez en markdown…"
+                label       = { t.description?.label }
+                helper      = { t.description?.helper }
+                placeholder = { t.description?.placeholder }
                 value       = { description }
                 onChange    = { setDescription }
                 autosize
@@ -41,27 +49,24 @@ const I18nTextAreaMarkdownDemo = () =>
                 maxRows     = { 10 }
             />
 
-            {/* Stored value */}
             <div className="flex flex-col gap-2">
-                <span className="text-sm font-medium opacity-70">Stored value (single object)</span>
+                <span className="text-sm font-medium opacity-70">{ t.stored }</span>
                 <pre className="bg-base-300/60 rounded-box p-4 text-xs overflow-auto">
                     { JSON.stringify( description , null , 2 ) }
                 </pre>
             </div>
 
-            {/* Tab mode : Write | Preview */}
             <I18nTextAreaMarkdown
-                label           = "Notes (tab mode)"
+                label           = { t.notes?.label }
                 previewPosition = "tab"
-                placeholder     = "Write markdown…"
+                placeholder     = { t.notes?.placeholder }
                 value           = { notes }
                 onChange        = { setNotes }
                 minRows         = { 3 }
             />
 
-            {/* Disabled */}
             <I18nTextAreaMarkdown
-                label    = "Disabled"
+                label    = { t.disabled?.label }
                 value    = { { fr : '**Contenu figé**' , en : '**Frozen content**' } }
                 disabled
             />

@@ -18,6 +18,7 @@ import schedulerMonth from './schedulerMonth'
 import schedulerSlots from './schedulerSlots'
 import schedulerTimeline from './schedulerTimeline'
 import schedulerWeek  from './schedulerWeek'
+import textareas      from './textareas'
 import tree           from './tree'
 
 const lab =
@@ -42,7 +43,8 @@ const lab =
     schedulerSlots ,
     schedulerTimeline ,
     schedulerWeek ,
-    tree ,
+    textareas      ,
+    tree           ,
 };
 
 export default lab ;

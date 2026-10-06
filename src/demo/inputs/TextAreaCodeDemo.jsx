@@ -2,10 +2,14 @@
 
 import { useState } from 'react' ;
 
+import format from 'vegas-js-core/src/strings/fastformat' ;
+
 import CodeBlock          from '@/components/typography/CodeBlock'
 import CodeBlockWithToast from '@/components/typography/CodeBlockWithToast'
 import Container          from '@/display/Container'
 import TextAreaCode       from '@/components/inputs/TextAreaCode'
+
+import useI18n from '@/contexts/locale/useI18n' ;
 
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 
@@ -24,22 +28,35 @@ const BASH_EXAMPLE    = `npm install next@latest\nnpm run dev` ;
 const JSON_EXAMPLE    = `{\n  "apiKey": "your-key-here",\n  "endpoint": "https://api.example.com"\n}` ;
 const AUTOSIZE_CODE   = `// Editor grows as you add lines\n\nfunction example() {\n  // Add more code...\n}` ;
 
-const TextAreaCodeDemo = () =>
+/**
+ * TextAreaCode demo component.
+ *
+ * The code editor and the display-only `CodeBlock` beside it : tab handling,
+ * highlighted previews, indentation widths, and the labels a host can pass.
+ *
+ * ⚠️ The snippets above are CODE, not copy : they are what the editor is
+ * editing and what the highlighter has to colour.
+ *
+ * @param {Object} props
+ * @param {string} [props.path='demo.inputs.textAreaCode'] - Dot notation path to the demo locale.
+ */
+const TextAreaCodeDemo = ( { path = 'demo.inputs.textAreaCode' } = {} ) =>
 {
-    const [ codeValue, setCodeValue ] = useState( JS_EXAMPLE ) ;
+    const t = useI18n( path ) ?? {} ;
+
+    const [ codeValue , setCodeValue ] = useState( JS_EXAMPLE ) ;
 
     return (
         <Container className="flex flex-col gap-6 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-8xl">
 
-            <h2 className="text-3xl font-bold">TextArea Code Examples</h2>
+            <h2 className="text-3xl font-bold">{ t.title }</h2>
 
-            {/* CodeBlock standalone example */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">CodeBlock Component (Display Only)</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.block }</h3>
 
                 <div className="flex flex-col gap-2">
                     <label className="label">
-                        <span className="label-text">React Component Example</span>
+                        <span className="label-text">{ t.block?.label }</span>
                     </label>
 
                     <CodeBlock
@@ -52,33 +69,31 @@ const TextAreaCodeDemo = () =>
                     </CodeBlock>
 
                     <p className="label text-xs text-base-content/70">
-                        CodeBlock is perfect for displaying static code snippets with syntax highlighting and copy functionality
+                        { t.block?.note }
                     </p>
                 </div>
             </div>
 
-            {/* Basic with tab handling */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">Tab Handling (JavaScript)</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.tab }</h3>
 
                 <TextAreaCode
                     defaultValue    = { JS_EXAMPLE }
-                    helper          = "Press Tab to indent (inserts 2 spaces)"
-                    label           = "JavaScript Code"
+                    helper          = { t.tab?.helper }
+                    label           = { t.tab?.label }
                     language        = "javascript"
                     rows            = { 10 }
                     tabSize         = { 2 }
                 />
             </div>
 
-            {/* With preview */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">With Syntax Preview (Right)</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.right }</h3>
 
                 <TextAreaCode
                     defaultValue    = { PY_EXAMPLE }
-                    helper          = "Edit on left, see syntax-highlighted preview on right"
-                    label           = "Python Code"
+                    helper          = { t.right?.helper }
+                    label           = { t.right?.label }
                     language        = "python"
                     previewPosition = "right"
                     rows            = { 12 }
@@ -88,13 +103,12 @@ const TextAreaCodeDemo = () =>
                 />
             </div>
 
-            {/* Preview bottom */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">Preview Bottom (HTML)</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.bottom }</h3>
 
                 <TextAreaCode
                     defaultValue    = { HTML_EXAMPLE }
-                    label           = "HTML Template"
+                    label           = { t.bottom?.label }
                     language        = "html"
                     previewPosition = "bottom"
                     rows            = { 10 }
@@ -103,26 +117,27 @@ const TextAreaCodeDemo = () =>
                 />
             </div>
 
-            {/* SQL */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">SQL Query</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.sql }</h3>
 
                 <TextAreaCode
                     defaultValue    = { SQL_EXAMPLE }
-                    label           = "Database Query"
+                    label           = { t.sql?.label }
                     language        = "sql"
                     rows            = { 8 }
                     tabSize         = { 2 }
                 />
             </div>
 
-            {/* Tab size variations */}
+            <div className="flex flex-col gap-4">
+                <h3 className="text-xl font-semibold">{ t.sections?.indent }</h3>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <h4 className="text-lg font-semibold mb-2">Tab Size: 2 spaces</h4>
+                    <h4 className="text-lg font-semibold mb-2 font-mono">tabSize = { 2 }</h4>
                     <TextAreaCode
                         defaultValue = { INDENT_2 }
-                        label        = "2-space indentation"
+                        label        = { t.indent?.two?.label }
                         language     = "javascript"
                         rows         = { 5 }
                         tabSize      = { 2 }
@@ -130,37 +145,36 @@ const TextAreaCodeDemo = () =>
                 </div>
 
                 <div>
-                    <h4 className="text-lg font-semibold mb-2">Tab Size: 4 spaces</h4>
+                    <h4 className="text-lg font-semibold mb-2 font-mono">tabSize = { 4 }</h4>
                     <TextAreaCode
                         defaultValue = { INDENT_4 }
-                        label        = "4-space indentation"
+                        label        = { t.indent?.four?.label }
                         language     = "javascript"
                         rows         = { 5 }
                         tabSize      = { 4 }
                     />
                 </div>
             </div>
+            </div>
 
-            {/* Without tab handling */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">Without Tab Handling</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.noTab }</h3>
 
                 <TextAreaCode
                     defaultValue = "// Tab key changes focus instead of indenting"
                     handleTab    = { false }
-                    helper       = "Tab key works normally (changes focus)"
-                    label        = "Normal Textarea"
+                    helper       = { t.noTab?.helper }
+                    label        = { t.noTab?.label }
                     language     = "javascript"
                     rows         = { 5 }
                 />
             </div>
 
-            {/* Controlled */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">Controlled Component</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.controlled }</h3>
 
                 <TextAreaCode
-                    label           = "Controlled Editor"
+                    label           = { t.controlled?.label }
                     language        = "javascript"
                     onChange        = { setCodeValue }
                     previewPosition = "right"
@@ -172,47 +186,44 @@ const TextAreaCodeDemo = () =>
 
                 <div className="alert">
                     <div className="flex flex-col gap-1">
-                        <span className="font-mono text-sm">Lines: { codeValue.split('\n').length }</span>
-                        <span className="font-mono text-sm">Characters: { codeValue.length }</span>
+                        <span className="font-mono text-sm">{ format( t.controlled?.lines ?? '' , codeValue.split( '\n' ).length ) }</span>
+                        <span className="font-mono text-sm">{ format( t.controlled?.chars ?? '' , codeValue.length ) }</span>
                     </div>
                 </div>
             </div>
 
-            {/* Autosize */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">Auto-resize</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.autosize }</h3>
 
                 <TextAreaCode
                     autosize
                     defaultValue    = { AUTOSIZE_CODE }
-                    helper          = "Grows automatically up to 20 rows"
-                    label           = "Growing Code Editor"
+                    helper          = { t.autosize?.helper }
+                    label           = { t.autosize?.label }
                     language        = "javascript"
                     maxRows         = { 20 }
                     minRows         = { 5 }
                 />
             </div>
 
-            {/* With fieldset */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">With Fieldset</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.fieldset }</h3>
 
                 <TextAreaCode
                     defaultValue = { JSON_EXAMPLE }
                     language     = "json"
-                    legend       = "API Configuration"
+                    legend       = { t.fieldset?.legend }
                     rows         = { 6 }
                     useFieldset
                 />
             </div>
 
-            {/* Read-only with preview */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">Read-only with Preview</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.readOnly }</h3>
 
                 <TextAreaCode
                     defaultValue    = { BASH_EXAMPLE }
-                    label           = "Code Snippet (Read-only)"
+                    label           = { t.readOnly?.label }
                     language        = "bash"
                     previewPosition = "right"
                     readOnly
@@ -221,43 +232,47 @@ const TextAreaCodeDemo = () =>
                 />
             </div>
 
-            {/* CodeBlock Customization */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">CodeBlock Customizations</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.labels }</h3>
+
+                <p className="text-sm text-base-content/70">{ t.labels?.defaults }</p>
 
                 <CodeBlock language="js" style={ oneDark }>
                     const x = 10;
                 </CodeBlock>
 
+                <p className="text-sm text-base-content/70">{ t.labels?.host }</p>
+
                 <CodeBlock
-                    copiedButtonText = "Copied!"
-                    copyButtonText   = "Copy"
+                    copiedButtonText = { t.labels?.copied }
+                    copyButtonText   = { t.labels?.copy }
                     language         = "js"
                     style            = { oneDark }
                 >
                     const x = 10;
                 </CodeBlock>
 
+                <p className="text-sm text-base-content/70">{ t.labels?.toasts }</p>
+
                 <CodeBlock
-                    copiedButtonText = "Copié !"
-                    copyButtonText   = "Copier"
-                    errorMessage     = "Échec de la copie"
+                    copiedButtonText = { t.labels?.copied }
+                    copyButtonText   = { t.labels?.copy }
+                    errorMessage     = { t.labels?.failure }
                     language         = "js"
                     style            = { oneDark }
-                    successMessage   = "Code copié !"
+                    successMessage   = { t.labels?.success }
                 >
                     const x = 10;
                 </CodeBlock>
             </div>
 
-            {/* Comparison */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">Multiple CodeBlocks (Comparison)</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.comparison }</h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label className="label">
-                            <span className="label-text">Before</span>
+                            <span className="label-text">{ t.comparison?.before }</span>
                         </label>
                         <CodeBlock
                             language        = "javascript"
@@ -271,7 +286,7 @@ const TextAreaCodeDemo = () =>
 
                     <div>
                         <label className="label">
-                            <span className="label-text">After</span>
+                            <span className="label-text">{ t.comparison?.after }</span>
                         </label>
                         <CodeBlock
                             language        = "javascript"
@@ -287,7 +302,7 @@ const TextAreaCodeDemo = () =>
                 <CodeBlockWithToast
                     language       = "js"
                     style          = { oneDark }
-                    successMessage = "Copied!"
+                    successMessage = { t.labels?.success }
                 >
                     { MODERN_JS }
                 </CodeBlockWithToast>

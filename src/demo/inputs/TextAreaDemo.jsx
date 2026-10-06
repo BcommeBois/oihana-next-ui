@@ -1,274 +1,224 @@
 'use client' ;
 
 import { useState } from 'react' ;
+
+import format from 'vegas-js-core/src/strings/fastformat' ;
+
 import Container from '@/display/Container' ;
-import TextArea from '@/components/inputs/TextArea' ;
+import TextArea  from '@/components/inputs/TextArea' ;
+
+import useI18n from '@/contexts/locale/useI18n' ;
 
 import ValueProbe from './ValueProbe' ;
 
-const TextAreaDemo = () =>
+/** Smallest to largest. */
+const SIZES = [ 'xs' , 'sm' , 'md' , 'lg' , 'xl' ] ;
+
+/** The daisyUI colours a field can carry. */
+const COLORS = [ 'primary' , 'secondary' , 'accent' , 'info' , 'success' , 'warning' ] ;
+
+/** The four values of `resize`, in the order the section shows them. */
+const RESIZES = [ 'vertical' , 'horizontal' , 'both' , 'none' ] ;
+
+/** The row counts of the « number of rows » section, and their key. */
+const ROWS = [ [ 1 , 'one' ] , [ 5 , 'five' ] , [ 10 , 'ten' ] ] ;
+
+/**
+ * The read-only sample — a document, not copy : what matters is that the field
+ * shows a long text it refuses to let go of.
+ */
+const SAMPLE = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.' ;
+
+/**
+ * TextArea demo component.
+ *
+ * Thirteen sections : the plain field, every size, every colour, what it
+ * transforms, how it resizes, how many rows it holds, and the four states.
+ *
+ * 🔑 The sizes, colours, resize modes and row counts are LOOPED over their API
+ * values, each labelled with the value itself : eleven near-identical blocks
+ * said the same thing eleven times, and a value is not copy.
+ *
+ * @param {Object} props
+ * @param {string} [props.path='demo.inputs.textArea'] - Dot notation path to the demo locale.
+ */
+const TextAreaDemo = ( { path = 'demo.inputs.textArea' } = {} ) =>
 {
-    const [ message, setMessage ] = useState( '' ) ;
+    const t = useI18n( path ) ?? {} ;
+
+    const [ message , setMessage ] = useState( '' ) ;
 
     return (
         <Container className="flex flex-col gap-6 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-7xl">
 
-            <h2 className="text-3xl font-bold">TextArea Examples</h2>
+            <h2 className="text-3xl font-bold">{ t.title }</h2>
 
-            {/* Basic */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">Basic Usage</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.basic }</h3>
 
                 <TextArea
-                    label       = "Message"
+                    label       = { t.basic?.label }
                     className   = "w-full"
-                    placeholder = "Enter your message..."
-                    helper      = "Maximum 500 characters"
+                    placeholder = { t.basic?.placeholder }
+                    helper      = { t.basic?.helper }
                 />
             </div>
 
-            {/* Sizes */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">Sizes</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.sizes }</h3>
 
-                <TextArea
-                    label       = "Extra Small"
-                    size        = "xs"
-                    placeholder = "Extra small textarea..."
-                />
-
-                <TextArea
-                    label       = "Small"
-                    size        = "sm"
-                    placeholder = "Small textarea..."
-                />
-
-                <TextArea
-                    label       = "Medium (Default)"
-                    size        = "md"
-                    placeholder = "Medium textarea..."
-                />
-
-                <TextArea
-                    label       = "Large"
-                    size        = "lg"
-                    placeholder = "Large textarea..."
-                />
-
-                <TextArea
-                    label       = "Extra Large"
-                    size        = "xl"
-                    placeholder = "Extra large textarea..."
-                />
+                { SIZES.map( size => (
+                    <TextArea
+                        key         = { size }
+                        label       = { `size="${ size }"` }
+                        size        = { size }
+                        placeholder = { t.sizes?.placeholder }
+                    />
+                ) ) }
             </div>
 
-            {/* Colors */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">Colors</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.colors }</h3>
 
-                <TextArea
-                    label       = "Primary"
-                    color       = "primary"
-                    placeholder = "Primary textarea..."
-                />
-
-                <TextArea
-                    label       = "Secondary"
-                    color       = "secondary"
-                    placeholder = "Secondary textarea..."
-                />
-
-                <TextArea
-                    label       = "Accent"
-                    color       = "accent"
-                    placeholder = "Accent textarea..."
-                />
-
-                <TextArea
-                    label       = "Info"
-                    color       = "info"
-                    placeholder = "Info textarea..."
-                />
-
-                <TextArea
-                    label       = "Success"
-                    color       = "success"
-                    placeholder = "Success textarea..."
-                />
-
-                <TextArea
-                    label       = "Warning"
-                    color       = "warning"
-                    placeholder = "Warning textarea..."
-                />
+                { COLORS.map( color => (
+                    <TextArea
+                        key         = { color }
+                        label       = { `color="${ color }"` }
+                        color       = { color }
+                        placeholder = { t.colors?.placeholder }
+                    />
+                ) ) }
             </div>
 
-            {/* Transformation Example */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">Transformations</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.transform }</h3>
+
                 <TextArea
-                    label     = "Uppercase Description"
+                    label     = { t.transform?.label }
                     transform = { val => val.toUpperCase() }
-                    helper    = "Automatically converted to uppercase"
+                    helper    = { t.transform?.helper }
                 />
             </div>
 
-            {/* Ghost style */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">Ghost Style</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.ghost }</h3>
 
                 <TextArea
-                    label       = "Ghost Textarea"
+                    label       = { t.ghost?.label }
                     style       = "ghost"
-                    placeholder = "Ghost style textarea..."
+                    placeholder = { t.ghost?.placeholder }
                 />
             </div>
 
-            {/* Resize options */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">Resize Options</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.resize }</h3>
 
-                <TextArea
-                    label       = "Vertical Resize (Default)"
-                    resize      = "vertical"
-                    placeholder = "Can only resize vertically..."
-                />
+                { RESIZES.map( resize => (
+                    <TextArea
+                        key         = { resize }
+                        label       = { t.resize?.[ resize ]?.label }
+                        resize      = { resize }
+                        placeholder = { t.resize?.[ resize ]?.placeholder }
+                    />
+                ) ) }
 
-                <TextArea
-                    label       = "Horizontal Resize"
-                    resize      = "horizontal"
-                    placeholder = "Can only resize horizontally..."
-                />
-
-                <TextArea
-                    label       = "Both Directions"
-                    resize      = "both"
-                    placeholder = "Can resize both ways..."
-                />
-
-                <TextArea
-                    label       = "No Resize"
-                    resize      = "none"
-                    placeholder = "Cannot resize..."
-                />
-
-                <TextArea rows={5} label="Comment" />
+                <TextArea label={ t.resize?.fixed?.label } rows={ 5 } />
 
                 <TextArea
                     autosize
-                    minRows = {3}
-                    maxRows = {10}
-                    label   = "Growing Comment"
+                    minRows = { 3 }
+                    maxRows = { 10 }
+                    label   = { t.resize?.growing?.label }
                 />
 
-                {/* unlimited auto-resize */}
                 <TextArea
                     autosize
-                    minRows = {2}
-                    label   = "Expands infinitely"
-                />
-
-            </div>
-
-            {/* Custom rows */}
-            <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">Custom Rows</h3>
-
-                <TextArea
-                    label       = "1 Row"
-                    rows        = { 1 }
-                    placeholder = "Single line..."
-                />
-
-                <TextArea
-                    label       = "5 Rows"
-                    rows        = { 5 }
-                    placeholder = "Five lines..."
-                />
-
-                <TextArea
-                    label       = "10 Rows"
-                    rows        = { 10 }
-                    placeholder = "Ten lines..."
+                    minRows = { 2 }
+                    label   = { t.resize?.infinite?.label }
                 />
             </div>
 
-            {/* With validation */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">With Validation</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.rows }</h3>
+
+                { ROWS.map( ( [ count , key ] ) => (
+                    <TextArea
+                        key         = { key }
+                        label       = { t.rows?.[ key ]?.label }
+                        rows        = { count }
+                        placeholder = { t.rows?.[ key ]?.placeholder }
+                    />
+                ) ) }
+            </div>
+
+            <div className="flex flex-col gap-4">
+                <h3 className="text-xl font-semibold">{ t.sections?.validation }</h3>
 
                 <TextArea
                     useValidator
                     required
-                    label         = "Required Message"
+                    label         = { t.validation?.label }
                     minLength     = { 10 }
                     maxLength     = { 500 }
-                    placeholder   = "At least 10 characters..."
-                    validatorHint = "Message must be between 10 and 500 characters"
+                    placeholder   = { t.validation?.placeholder }
+                    validatorHint = { t.validation?.hint }
                 />
             </div>
 
-            {/* Controlled */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">Controlled</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.controlled }</h3>
 
-                { /* `TextArea` hands its `onChange` the value, never the DOM event — reading
-                     `event.target.value` here threw on the first keystroke. */ }
                 <TextArea
-                    label       = "Your Message"
+                    label       = { t.controlled?.label }
                     value       = { message }
                     onChange    = { setMessage }
-                    placeholder = "Type something..."
-                    helper      = { `${message.length} characters` }
+                    placeholder = { t.controlled?.placeholder }
+                    helper      = { format( t.controlled?.chars ?? '' , message.length ) }
                 />
                 <ValueProbe label="message" value={ message } />
             </div>
 
-            {/* With fieldset */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">With Fieldset</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.fieldset }</h3>
 
                 <TextArea
                     useFieldset
-                    legend      = "Project Description"
+                    legend      = { t.fieldset?.legend }
                     rows        = { 5 }
-                    placeholder = "Describe your project in detail..."
-                    helper      = "Be as detailed as possible"
+                    placeholder = { t.fieldset?.placeholder }
+                    helper      = { t.fieldset?.helper }
                 />
             </div>
 
-            {/* Error state */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">Error State</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.error }</h3>
 
                 <TextArea
-                    label       = "Comment"
-                    error       = "Comment is required and must be at least 20 characters"
-                    placeholder = "Add your comment..."
+                    label       = { t.error?.label }
+                    error       = { t.error?.error }
+                    placeholder = { t.error?.placeholder }
                 />
             </div>
 
-            {/* Disabled */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">Disabled</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.disabled }</h3>
 
                 <TextArea
-                    label       = "Disabled Message"
+                    label       = { t.disabled?.label }
                     disabled
-                    placeholder = "This textarea is disabled..."
-                    helper      = "Cannot edit this field"
+                    placeholder = { t.disabled?.placeholder }
+                    helper      = { t.disabled?.helper }
                 />
             </div>
 
-            {/* Read-only */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">Read-only</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.readOnly }</h3>
 
                 <TextArea
-                    label       = "Terms and Conditions"
+                    label        = { t.readOnly?.label }
                     readOnly
-                    rows        = { 6 }
-                    defaultValue = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris."
+                    rows         = { 6 }
+                    defaultValue = { SAMPLE }
                 />
             </div>
 

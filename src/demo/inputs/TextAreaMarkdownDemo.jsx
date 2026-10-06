@@ -1,8 +1,12 @@
 'use client' ;
 
 import { useState } from 'react' ;
-import Container from '@/display/Container' ;
+import format from 'vegas-js-core/src/strings/fastformat' ;
+
+import Container        from '@/display/Container' ;
 import TextAreaMarkdown from '@/components/inputs/TextAreaMarkdown' ;
+
+import useI18n from '@/contexts/locale/useI18n' ;
 
 // --- Constants (Content)
 
@@ -39,73 +43,82 @@ const CONTENT_PYTHON     = `\`\`\`python\ndef hello():\n    print("Hello World")
 const CONTENT_RAW        = `# No Preview\n\nJust a simple markdown editor.` ;
 const CONTENT_TAB        = `# Tab Mode\n\nSwitch between **Write** and **Preview** tabs.` ;
 
-const TextAreaMarkdownDemo = () =>
+/**
+ * TextAreaMarkdown demo component.
+ *
+ * Nine settings of the Markdown editor : where the preview sits, whether there
+ * is one at all, what it is given, and how the editor grows.
+ *
+ * ⚠️ The `CONTENT_*` samples above are DOCUMENTS, not copy : they are what the
+ * editor is editing, and what the preview has to render.
+ *
+ * @param {Object} props
+ * @param {string} [props.path='demo.inputs.textAreaMarkdown'] - Dot notation path to the demo locale.
+ */
+const TextAreaMarkdownDemo = ( { path = 'demo.inputs.textAreaMarkdown' } = {} ) =>
 {
-    const [ controlledValue, setControlledValue ] = useState( CONTENT_CONTROLLED ) ;
+    const t = useI18n( path ) ?? {} ;
+
+    const [ controlledValue , setControlledValue ] = useState( CONTENT_CONTROLLED ) ;
 
     return (
         <Container className="flex flex-col gap-6 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-8xl">
 
-            <h2 className="text-3xl font-bold">TextArea Markdown Examples</h2>
+            <h2 className="text-3xl font-bold">{ t.title }</h2>
 
-            {/* Basic with right preview */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">Preview Right (Default)</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.right }</h3>
 
                 <TextAreaMarkdown
                     defaultValue    = { CONTENT_DEFAULT }
-                    helper          = "Edit on the left, see preview on the right"
-                    label           = "Post Content"
+                    helper          = { t.right?.helper }
+                    label           = { t.right?.label }
                     previewPosition = "right"
                     rows            = { 24 }
                 />
             </div>
 
-            {/* Preview bottom */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">Preview Bottom</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.bottom }</h3>
 
                 <TextAreaMarkdown
                     defaultValue    = { CONTENT_BOTTOM }
-                    label           = "Documentation"
+                    label           = { t.bottom?.label }
                     previewPosition = "bottom"
                     rows            = { 5 }
                 />
             </div>
 
-            {/* Tab mode */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">Tab Mode (Write | Preview)</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.tab }</h3>
 
                 <TextAreaMarkdown
                     defaultValue    = { CONTENT_TAB }
-                    helper          = "Click tabs to switch between edit and preview"
-                    label           = "Article"
+                    helper          = { t.tab?.helper }
+                    label           = { t.tab?.label }
                     previewPosition = "tab"
                     rows            = { 8 }
                 />
             </div>
 
-            {/* Without preview */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">Without Preview</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.none }</h3>
 
                 <TextAreaMarkdown
                     defaultValue = { CONTENT_RAW }
-                    label        = "Raw Markdown"
+                    label        = { t.none?.label }
                     rows         = { 5 }
                     showPreview  = { false }
                 />
             </div>
 
-            {/* Custom Markdown props */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">Custom Markdown Props</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.custom }</h3>
 
                 <TextAreaMarkdown
                     defaultValue    = { CONTENT_PYTHON }
-                    helper          = "Preview has copy buttons and line numbers"
-                    label           = "Code Example"
+                    helper          = { t.custom?.helper }
+                    label           = { t.custom?.label }
                     markdownProps   = {{
                         linkColor       : 'secondary',
                         showCopyButton  : true,
@@ -117,12 +130,11 @@ const TextAreaMarkdownDemo = () =>
                 />
             </div>
 
-            {/* Controlled */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">Controlled Component</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.controlled }</h3>
 
                 <TextAreaMarkdown
-                    label           = "Controlled Editor"
+                    label           = { t.controlled?.label }
                     onChange        = { setControlledValue }
                     previewPosition = "right"
                     rows            = { 6 }
@@ -131,48 +143,45 @@ const TextAreaMarkdownDemo = () =>
 
                 <div className="alert">
                     <span className="font-mono text-sm">
-                        Character count: { controlledValue.length }
+                        { format( t.controlled?.chars ?? '' , controlledValue.length ) }
                     </span>
                 </div>
             </div>
 
-            {/* With fieldset */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">With Fieldset</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.fieldset }</h3>
 
                 <TextAreaMarkdown
                     defaultValue    = { CONTENT_BLOG }
-                    legend          = "Blog Post"
+                    legend          = { t.fieldset?.legend }
                     previewPosition = "right"
                     rows            = { 8 }
                     useFieldset
                 />
             </div>
 
-            {/* With validation */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">With Validation</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.validation }</h3>
 
                 <TextAreaMarkdown
-                    label           = "Required Content"
+                    label           = { t.validation?.label }
                     minLength       = { 20 }
                     previewPosition = "tab"
                     required
                     rows            = { 6 }
                     useValidator
-                    validatorHint   = "Content must be at least 20 characters"
+                    validatorHint   = { t.validation?.hint }
                 />
             </div>
 
-            {/* Autosize */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">Auto-resize</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.autosize }</h3>
 
                 <TextAreaMarkdown
                     autosize
                     defaultValue    = { CONTENT_AUTOSIZE }
-                    helper          = "Editor grows automatically up to 15 rows"
-                    label           = "Growing Editor"
+                    helper          = { t.autosize?.helper }
+                    label           = { t.autosize?.label }
                     maxRows         = { 15 }
                     minRows         = { 3 }
                     previewPosition = "right"
