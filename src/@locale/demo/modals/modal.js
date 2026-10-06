@@ -237,6 +237,19 @@ const modal =
             l3Disagree : 'Le garder' ,
             l3Body     : 'Vraiment sûr ? C’est la troisième couche de modales.' ,
         } ,
+
+        closeAll :
+        {
+            title       : 'Tout fermer d’un coup' ,
+            note        : 'closeAllOpenDialogs() ferme chaque <dialog> ouvert du document, sans rien demander — ce qu’il faut avant un départ forcé, et seulement là. Les deux modales ci-dessous partent ensemble, depuis un bouton de la seconde.' ,
+            trigger     : 'Ouvrir la première modale' ,
+            firstTitle  : 'Première couche' ,
+            firstBody   : 'Celle-ci reste ouverte sous la suivante.' ,
+            openSecond  : 'Ouvrir la seconde par-dessus' ,
+            secondTitle : 'Seconde couche' ,
+            secondBody  : 'Un seul appel, et les deux s’en vont.' ,
+            closeAll    : 'Tout fermer' ,
+        } ,
     } ,
     en :
     {
@@ -474,6 +487,19 @@ const modal =
             l3Agree    : 'Delete now' ,
             l3Disagree : 'Keep it' ,
             l3Body     : 'Are you absolutely sure? This is the third layer of modals.' ,
+        } ,
+
+        closeAll :
+        {
+            title       : 'Closing them all at once' ,
+            note        : 'closeAllOpenDialogs() closes every open <dialog> in the document, without asking — what a forced departure needs, and nothing else. The two modals below leave together, from a button inside the second one.' ,
+            trigger     : 'Open the first modal' ,
+            firstTitle  : 'First layer' ,
+            firstBody   : 'This one stays open under the next.' ,
+            openSecond  : 'Open the second one over it' ,
+            secondTitle : 'Second layer' ,
+            secondBody  : 'One call, and both of them go.' ,
+            closeAll    : 'Close them all' ,
         } ,
     } ,
 } ;

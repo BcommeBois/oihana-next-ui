@@ -9,6 +9,8 @@ import useI18n from '@/contexts/locale/useI18n' ;
 import Checkbox from '@/components/checkboxes/Checkbox';
 import useModal from '@/components/modals/hooks/useModal' ;
 
+import closeAllOpenDialogs from '@/components/modals/helpers/closeAllOpenDialogs' ;
+
 import AlertModal    from '@/components/modals/AlertModal' ;
 import Badge         from '@/components/Badge' ;
 import Button        from '@/components/Button' ;
@@ -100,6 +102,10 @@ const ModalDemo = ( { path = 'demo.modals.modal' } = {} ) =>
     const { modalRef: parentModalRef, open: openParent } = useModal();
     const { modalRef: childModalRef, open: openChild } = useModal();
     const { modalRef: confirmationRef, open: openConfirmation } = useModal();
+
+    // Two stacked dialogs, closed by one call from inside the deeper one.
+    const { modalRef: closeAllOneRef , open : openCloseAllOne } = useModal() ;
+    const { modalRef: closeAllTwoRef , open : openCloseAllTwo } = useModal() ;
 
     return (
         <Container className="flex flex-col gap-6 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-7xl">
@@ -886,6 +892,38 @@ const ModalDemo = ( { path = 'demo.modals.modal' } = {} ) =>
                         <p>{ t.stacked.l3Body }</p>
                     </div>
                 </ConfirmModal>
+            </div>
+
+            <Divider />
+
+            <div className="flex flex-col gap-4">
+                <h3 className="text-xl font-semibold border-b-2 border-primary pb-2">
+                    { t.closeAll.title }
+                </h3>
+
+                <p className="text-sm text-base-content/70">{ t.closeAll.note }</p>
+
+                <Button color="primary" className="self-start" onClick={ openCloseAllOne }>
+                    { t.closeAll.trigger }
+                </Button>
+
+                <Modal ref={ closeAllOneRef } title={ t.closeAll.firstTitle } maxWidth="max-w-md">
+                    <div className="flex flex-col gap-3 py-2">
+                        <p className="text-sm">{ t.closeAll.firstBody }</p>
+                        <Button color="secondary" onClick={ openCloseAllTwo }>
+                            { t.closeAll.openSecond }
+                        </Button>
+                    </div>
+                </Modal>
+
+                <Modal ref={ closeAllTwoRef } title={ t.closeAll.secondTitle } maxWidth="max-w-md">
+                    <div className="flex flex-col gap-3 py-2">
+                        <p className="text-sm">{ t.closeAll.secondBody }</p>
+                        <Button color="error" onClick={ closeAllOpenDialogs }>
+                            { t.closeAll.closeAll }
+                        </Button>
+                    </div>
+                </Modal>
             </div>
 
         </Container>

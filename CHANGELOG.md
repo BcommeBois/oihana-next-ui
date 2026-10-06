@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🧹 Two browser helpers an application should not have to write**
+
+- **New `helpers/pwa/clearServiceWorkerCaches()`** — empties every Cache Storage entry a Service Worker holds. 🔑 **Why a page needs it** : a worker caching navigate-mode responses serves them back from disk while the network round trip is in flight, so the cached HTML of pages that have stopped being the reader's to see can flash for a frame on the way out. It is the companion of `useServiceWorkerUpdate`, which this library already shipped. ⚠️ **It is not `clearCache`** — that one is a server action asking Next to revalidate a path ; these two have nothing in common but a word.
+- **New `components/modals/helpers/closeAllOpenDialogs()`** — closes every open `<dialog>` at once, which is the frame between a decision and a navigation : the browser spends a few milliseconds starting it, and a modal sits over the page through all of them. Every modal here renders a native `<dialog>`, so one call covers them all. ⚠️ **It closes them without asking**, which is right before a forced departure and wrong anywhere else.
+- Both were gathered from one application, where they lived under its authentication folder and explained themselves in terms of sessions and sign-outs. Neither has anything to do with either : what they describe now is the browser.
+- Shown in the base modal demo : two stacked dialogs, one call from inside the deeper one, both gone. **The cache helper is NOT demonstrated** — a button emptying Cache Storage on the lab's own page would wipe the lab.
+- 🚨 **The key cross-check called 43 live keys dead**, across three files of the modals family, because a bundle also travels as a PROP into a sub-component of the same file. Verified by hand, repaired, and the nine bundles of that family then came back clean. **Fifth reading idiom that check had to be taught.**
+
 **📈 A tooltip's format is not a chart's format**
 
 - **New `tooltipFormat` on the twelve charts** — `( value , datum ) => ReactNode`. 🔑 **A FUNCTION, not a d3 format string** : `valueFormat` is for what a chart draws inside itself, where a figure has to fit in a cell or beside a slice, and a d3 string cannot say a currency in a reader's locale. Gathered from an application that rebuilt a whole `ChartTooltip` for the one reason that its cells read a compact price where its tooltip wanted a complete one.
