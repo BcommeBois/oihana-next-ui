@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🧹 The Images demo stops writing the same tile twenty-seven times**
+
+- **Four blocks of the lab's Picture page were copies over an API value** — six loader animations, five sizes, four colours, and a twelve-frame masonry gallery : **27 tiles** of twelve to twenty-five lines each, differing by one word. They loop over their values now, labelled BY the value, and the file drops from **1864 to 1585 lines** with nothing changed on screen.
+- **Each « Reload all » button listed its own ids** to forget, one `delete` per tile. The four of them read the same tables as the tiles do, so a value added to a table is reloaded with the rest instead of being quietly left out.
+- Replayed tile by tile before the rewrite was kept : the 27 of them produce the same source, the same alternative text, the same dimensions, the same loader and the same remount key as the hand-written ones.
+
 **🖼️ A Picture with no source, and the two helpers an avatar needs**
 
 - **Gathered from three hand-written covers** in one application — a thing's cover, a user's picture, an entity's cover — which are one component with three fallbacks : initials on a tint, initials on a colour the entity carries, an icon on that colour. All three copied the same table of corner positions, and all three switched on whether a picture existed **before** calling `Picture`, because it could not render without one.

@@ -19,6 +19,8 @@ import {
     MdShare
 } from 'react-icons/md' ;
 
+import ucFirst from 'vegas-js-core/src/strings/ucFirst' ;
+
 import getInitials from '@/helpers/strings/getInitials' ;
 import hashIndex   from '@/helpers/strings/hashIndex' ;
 
@@ -43,6 +45,72 @@ const FALLBACKS =
     { color : '#F59E0B' , label : 'a colour the entity carries' , name : 'Amber Group' } ,
 ] ;
 
+/**
+ * The animations the loader can play, in the order the section shows them.
+ * @type {string[]}
+ */
+const LOADING_ANIMATIONS = [ 'spinner' , 'ring' , 'dots' , 'bars' , 'ball' , 'infinity' ] ;
+
+/**
+ * The loader sizes, from the smallest.
+ * @type {string[]}
+ */
+const LOADING_SIZES = [ 'xs' , 'sm' , 'md' , 'lg' , 'xl' ] ;
+
+/**
+ * The loader colours the section shows, each with the literal badge class that
+ * names it — never interpolated, or Tailwind emits none of them.
+ * @type {Array<{ badge : string , value : string }>}
+ */
+const LOADING_COLORS =
+[
+    { badge : 'badge-primary'   , value : 'primary'   } ,
+    { badge : 'badge-secondary' , value : 'secondary' } ,
+    { badge : 'badge-accent'    , value : 'accent'    } ,
+    { badge : 'badge-error'     , value : 'error'     } ,
+] ;
+
+/**
+ * The twelve frames of the masonry gallery : a height, the seed of its image,
+ * and the loader it plays — the point of the section being that the heights
+ * differ, so the columns cannot align.
+ * @type {Array<{ alt : string , animation : string , color : string , height : number , seed : number }>}
+ */
+const MASONRY =
+[
+    { alt : 'Portrait 1'  , animation : 'ring'     , color : 'primary'   , height : 600 , seed : 301 } ,
+    { alt : 'Landscape 1' , animation : 'spinner'  , color : 'secondary' , height : 300 , seed : 302 } ,
+    { alt : 'Square-ish'  , animation : 'dots'     , color : 'accent'    , height : 500 , seed : 303 } ,
+    { alt : 'Square'      , animation : 'bars'     , color : 'info'      , height : 400 , seed : 304 } ,
+    { alt : 'Portrait 2'  , animation : 'ball'     , color : 'success'   , height : 550 , seed : 305 } ,
+    { alt : 'Landscape 2' , animation : 'infinity' , color : 'warning'   , height : 350 , seed : 306 } ,
+    { alt : 'Tall-ish'    , animation : 'ring'     , color : 'error'     , height : 450 , seed : 205 } ,
+    { alt : 'Wide'        , animation : 'spinner'  , color : 'primary'   , height : 320 , seed : 308 } ,
+    { alt : 'Portrait 3'  , animation : 'dots'     , color : 'secondary' , height : 580 , seed : 309 } ,
+    { alt : 'Landscape 3' , animation : 'bars'     , color : 'accent'    , height : 380 , seed : 310 } ,
+    { alt : 'Portrait 4'  , animation : 'ball'     , color : 'info'      , height : 520 , seed : 311 } ,
+    { alt : 'Landscape 4' , animation : 'infinity' , color : 'success'   , height : 340 , seed : 312 } ,
+] ;
+
+/**
+ * The same map, minus the ids given — what a « Reload all » button leaves
+ * behind : the ✓ marks go, a new `key` remounts every picture, and they come
+ * back one at a time.
+ *
+ * @param {Object}   state - Which ids have loaded.
+ * @param {string[]} ids   - The ones to forget.
+ *
+ * @returns {Object} A copy without them.
+ */
+const forget = ( state , ids ) =>
+{
+    const next = { ...state } ;
+
+    for ( const id of ids ) { delete next[ id ] ; }
+
+    return next ;
+} ;
+
 const PictureDemo = () =>
 {
     // --------- Loading states for different sections
@@ -65,57 +133,25 @@ const PictureDemo = () =>
     const reloadBasic = () =>
     {
         setBasicImageKey( prev => prev + 1 ) ;
-        setLoadedImages( prev =>
-        {
-            const newState = { ...prev } ;
-            delete newState.basic ;
-            return newState ;
-        }) ;
+        setLoadedImages( prev => forget( prev , [ 'basic' ] ) ) ;
     } ;
 
     const reloadAnimation = () =>
     {
         setAnimationKey( prev => prev + 1 ) ;
-        setLoadedImages( prev =>
-        {
-            const newState = { ...prev } ;
-            delete newState['animation-spinner'] ;
-            delete newState['animation-ring'] ;
-            delete newState['animation-dots'] ;
-            delete newState['animation-bars'] ;
-            delete newState['animation-ball'] ;
-            delete newState['animation-infinity'] ;
-            return newState ;
-        }) ;
+        setLoadedImages( prev => forget( prev , LOADING_ANIMATIONS.map( value => `animation-${ value }` ) ) ) ;
     } ;
 
     const reloadSize = () =>
     {
         setSizeKey( prev => prev + 1 ) ;
-        setLoadedImages( prev =>
-        {
-            const newState = { ...prev } ;
-            delete newState['size-xs'] ;
-            delete newState['size-sm'] ;
-            delete newState['size-md'] ;
-            delete newState['size-lg'] ;
-            delete newState['size-xl'] ;
-            return newState ;
-        }) ;
+        setLoadedImages( prev => forget( prev , LOADING_SIZES.map( value => `size-${ value }` ) ) ) ;
     } ;
 
     const reloadColor = () =>
     {
         setColorKey( prev => prev + 1 ) ;
-        setLoadedImages( prev =>
-        {
-            const newState = { ...prev } ;
-            delete newState['color-primary'] ;
-            delete newState['color-secondary'] ;
-            delete newState['color-accent'] ;
-            delete newState['color-error'] ;
-            return newState ;
-        }) ;
+        setLoadedImages( prev => forget( prev , LOADING_COLORS.map( ( { value } ) => `color-${ value }` ) ) ) ;
     } ;
 
     return (
@@ -180,149 +216,20 @@ const PictureDemo = () =>
                     gap={ 4 }
                     className="w-full"
                 >
-                    <Picture
-                        src="https://picsum.photos/400/600?random=301"
-                        alt="Portrait 1"
-                        width={ 400 }
-                        height={ 600 }
-                        className="rounded-box overflow-hidden shadow-md"
-                        loadingAnimation="ring"
-                        loadingColor="primary"
-                        loadingSize="md"
-                        topRight={ <Badge color='success'>#01</Badge> }
-                    />
-
-                    <Picture
-                        src="https://picsum.photos/400/300?random=302"
-                        alt="Landscape 1"
-                        width={ 400 }
-                        height={ 300 }
-                        className="rounded-box overflow-hidden shadow-md"
-                        loadingAnimation="spinner"
-                        loadingColor="secondary"
-                        loadingSize="md"
-                        topRight={ <Badge color='success'>#02</Badge> }
-                    />
-
-                    <Picture
-                        src="https://picsum.photos/400/500?random=303"
-                        alt="Square-ish"
-                        width={ 400 }
-                        height={ 500 }
-                        className="rounded-box overflow-hidden shadow-md"
-                        loadingAnimation="dots"
-                        loadingColor="accent"
-                        loadingSize="md"
-                        topRight={ <Badge color='success'>#03</Badge> }
-                    />
-
-                    <Picture
-                        src="https://picsum.photos/400/400?random=304"
-                        alt="Square"
-                        width={ 400 }
-                        height={ 400 }
-                        className="rounded-box overflow-hidden shadow-md"
-                        loadingAnimation="bars"
-                        loadingColor="info"
-                        loadingSize="md"
-                        topRight={ <Badge color='success'>#04</Badge> }
-                    />
-
-                    <Picture
-                        src="https://picsum.photos/400/550?random=305"
-                        alt="Portrait 2"
-                        width={ 400 }
-                        height={ 550 }
-                        className="rounded-box overflow-hidden shadow-md"
-                        loadingAnimation="ball"
-                        loadingColor="success"
-                        loadingSize="md"
-                        topRight={ <Badge color='success'>#05</Badge> }
-                    />
-
-                    <Picture
-                        src="https://picsum.photos/400/350?random=306"
-                        alt="Landscape 2"
-                        width={ 400 }
-                        height={ 350 }
-                        className="rounded-box overflow-hidden shadow-md"
-                        loadingAnimation="infinity"
-                        loadingColor="warning"
-                        loadingSize="md"
-                        topRight={ <Badge color='success'>#06</Badge> }
-                    />
-
-                    <Picture
-                        src="https://picsum.photos/400/450?random=205"
-                        alt="Tall-ish"
-                        width={ 400 }
-                        height={ 450 }
-                        className="rounded-box overflow-hidden shadow-md"
-                        loadingAnimation="ring"
-                        loadingColor="error"
-                        loadingSize="md"
-                        topRight={ <Badge color='success'>#07</Badge> }
-                    />
-
-                    <Picture
-                        src="https://picsum.photos/400/320?random=308"
-                        alt="Wide"
-                        width={ 400 }
-                        height={ 320 }
-                        className="rounded-box overflow-hidden shadow-md"
-                        loadingAnimation="spinner"
-                        loadingColor="primary"
-                        loadingSize="md"
-                        topRight={ <Badge color='success'>#08</Badge> }
-                    />
-
-                    <Picture
-                        src="https://picsum.photos/400/580?random=309"
-                        alt="Portrait 3"
-                        width={ 400 }
-                        height={ 580 }
-                        className="rounded-box overflow-hidden shadow-md"
-                        loadingAnimation="dots"
-                        loadingColor="secondary"
-                        loadingSize="md"
-                        topRight={ <Badge color='success'>#09</Badge> }
-                    />
-
-                    <Picture
-                        src="https://picsum.photos/400/380?random=310"
-                        alt="Landscape 3"
-                        width={ 400 }
-                        height={ 380 }
-                        className="rounded-box overflow-hidden shadow-md"
-                        loadingAnimation="bars"
-                        loadingColor="accent"
-                        loadingSize="md"
-                        topRight={ <Badge color='success'>#10</Badge> }
-                    />
-
-                    <Picture
-                        src="https://picsum.photos/400/520?random=311"
-                        alt="Portrait 4"
-                        width={ 400 }
-                        height={ 520 }
-                        className="rounded-box overflow-hidden shadow-md"
-                        loadingAnimation="ball"
-                        loadingColor="info"
-                        loadingSize="md"
-                        topRight={ <Badge color='success'>#11</Badge> }
-                    />
-
-                    <Picture
-                        src="https://picsum.photos/400/340?random=312"
-                        alt="Landscape 4"
-                        width={ 400 }
-                        height={ 340 }
-                        className="rounded-box overflow-hidden shadow-md"
-                        loadingAnimation="infinity"
-                        loadingColor="success"
-                        loadingSize="md"
-                        topRight={ <Badge color='success'>#12</Badge> }
-                    />
+                    { MASONRY.map( ( { alt , animation , color , height , seed } , index ) => (
+                        <Picture
+                            key={ seed }
+                            src={ `https://picsum.photos/400/${ height }?random=${ seed }` }
+                            alt={ alt }
+                            width={ 400 }
+                            height={ height }
+                            className="rounded-box overflow-hidden shadow-md"
+                            loadingAnimation={ animation }
+                            loadingColor={ color }
+                            loadingSize="md"
+                            topRight={ <Badge color='success'>{ `#${ String( index + 1 ).padStart( 2 , '0' ) }` }</Badge> }
+                        />
+                    ))}
                 </Masonry>
 
                 <div className="mockup-code text-xs">
@@ -1373,107 +1280,29 @@ const PictureDemo = () =>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div className="flex flex-col gap-2">
-                        <div className="flex items-center gap-2">
-                            <code className="badge badge-sm">spinner</code>
-                            { loadedImages['animation-spinner'] && <Badge color="success" size="xs">✓</Badge> }
-                        </div>
-                        <Picture
-                            key={ `spinner-${ animationKey }` }
-                            src={ `https://picsum.photos/400/300?random=${ animationKey + 1 }` }
-                            alt="Spinner animation"
-                            width={ 400 }
-                            height={ 300 }
-                            className="rounded-box overflow-hidden"
-                            loadingAnimation="spinner"
-                            onLoad={ () => handleImageLoad( 'animation-spinner' ) }
-                        />
-                    </div>
+                    { LOADING_ANIMATIONS.map( ( animation , index ) =>
+                    {
+                        const id = `animation-${ animation }` ;
 
-                    <div className="flex flex-col gap-2">
-                        <div className="flex items-center gap-2">
-                            <code className="badge badge-sm">ring</code>
-                            { loadedImages['animation-ring'] && <Badge color="success" size="xs">✓</Badge> }
-                        </div>
-                        <Picture
-                            key={ `ring-${ animationKey }` }
-                            src={ `https://picsum.photos/400/300?random=${ animationKey + 2 }` }
-                            alt="Ring animation"
-                            width={ 400 }
-                            height={ 300 }
-                            className="rounded-box overflow-hidden"
-                            loadingAnimation="ring"
-                            onLoad={ () => handleImageLoad( 'animation-ring' ) }
-                        />
-                    </div>
-
-                    <div className="flex flex-col gap-2">
-                        <div className="flex items-center gap-2">
-                            <code className="badge badge-sm">dots</code>
-                            { loadedImages['animation-dots'] && <Badge color="success" size="xs">✓</Badge> }
-                        </div>
-                        <Picture
-                            key={ `dots-${ animationKey }` }
-                            src={ `https://picsum.photos/400/300?random=${ animationKey + 3 }` }
-                            alt="Dots animation"
-                            width={ 400 }
-                            height={ 300 }
-                            className="rounded-box overflow-hidden"
-                            loadingAnimation="dots"
-                            onLoad={ () => handleImageLoad( 'animation-dots' ) }
-                        />
-                    </div>
-
-                    <div className="flex flex-col gap-2">
-                        <div className="flex items-center gap-2">
-                            <code className="badge badge-sm">bars</code>
-                            { loadedImages['animation-bars'] && <Badge color="success" size="xs">✓</Badge> }
-                        </div>
-                        <Picture
-                            key={ `bars-${ animationKey }` }
-                            src={ `https://picsum.photos/400/300?random=${ animationKey + 4 }` }
-                            alt="Bars animation"
-                            width={ 400 }
-                            height={ 300 }
-                            className="rounded-box overflow-hidden"
-                            loadingAnimation="bars"
-                            onLoad={ () => handleImageLoad( 'animation-bars' ) }
-                        />
-                    </div>
-
-                    <div className="flex flex-col gap-2">
-                        <div className="flex items-center gap-2">
-                            <code className="badge badge-sm">ball</code>
-                            { loadedImages['animation-ball'] && <Badge color="success" size="xs">✓</Badge> }
-                        </div>
-                        <Picture
-                            key={ `ball-${ animationKey }` }
-                            src={ `https://picsum.photos/400/300?random=${ animationKey + 5 }` }
-                            alt="Ball animation"
-                            width={ 400 }
-                            height={ 300 }
-                            className="rounded-box overflow-hidden"
-                            loadingAnimation="ball"
-                            onLoad={ () => handleImageLoad( 'animation-ball' ) }
-                        />
-                    </div>
-
-                    <div className="flex flex-col gap-2">
-                        <div className="flex items-center gap-2">
-                            <code className="badge badge-sm">infinity</code>
-                            { loadedImages['animation-infinity'] && <Badge color="success" size="xs">✓</Badge> }
-                        </div>
-                        <Picture
-                            key={ `infinity-${ animationKey }` }
-                            src={ `https://picsum.photos/400/300?random=${ animationKey + 6 }` }
-                            alt="Infinity animation"
-                            width={ 400 }
-                            height={ 300 }
-                            className="rounded-box overflow-hidden"
-                            loadingAnimation="infinity"
-                            onLoad={ () => handleImageLoad( 'animation-infinity' ) }
-                        />
-                    </div>
+                        return (
+                            <div key={ animation } className="flex flex-col gap-2">
+                                <div className="flex items-center gap-2">
+                                    <code className="badge badge-sm">{ animation }</code>
+                                    { loadedImages[ id ] && <Badge color="success" size="xs">✓</Badge> }
+                                </div>
+                                <Picture
+                                    key={ `${ animation }-${ animationKey }` }
+                                    src={ `https://picsum.photos/400/300?random=${ animationKey + index + 1 }` }
+                                    alt={ `${ ucFirst( animation ) } animation` }
+                                    width={ 400 }
+                                    height={ 300 }
+                                    className="rounded-box overflow-hidden"
+                                    loadingAnimation={ animation }
+                                    onLoad={ () => handleImageLoad( id ) }
+                                />
+                            </div>
+                        ) ;
+                    })}
                 </div>
 
                 <div className="mockup-code text-xs">
@@ -1498,90 +1327,29 @@ const PictureDemo = () =>
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                    <div className="flex flex-col gap-2">
-                        <div className="flex items-center gap-2">
-                            <code className="badge badge-sm">xs</code>
-                            { loadedImages['size-xs'] && <Badge color="success" size="xs">✓</Badge> }
-                        </div>
-                        <Picture
-                            key={ `xs-${ sizeKey }` }
-                            src={ `https://picsum.photos/200/150?random=${ sizeKey + 10 }` }
-                            alt="XS size"
-                            width={ 200 }
-                            height={ 150 }
-                            className="rounded-box overflow-hidden"
-                            loadingSize="xs"
-                            onLoad={ () => handleImageLoad( 'size-xs' ) }
-                        />
-                    </div>
+                    { LOADING_SIZES.map( ( size , index ) =>
+                    {
+                        const id = `size-${ size }` ;
 
-                    <div className="flex flex-col gap-2">
-                        <div className="flex items-center gap-2">
-                            <code className="badge badge-sm">sm</code>
-                            { loadedImages['size-sm'] && <Badge color="success" size="xs">✓</Badge> }
-                        </div>
-                        <Picture
-                            key={ `sm-${ sizeKey }` }
-                            src={ `https://picsum.photos/200/150?random=${ sizeKey + 11 }` }
-                            alt="SM size"
-                            width={ 200 }
-                            height={ 150 }
-                            className="rounded-box overflow-hidden"
-                            loadingSize="sm"
-                            onLoad={ () => handleImageLoad( 'size-sm' ) }
-                        />
-                    </div>
-
-                    <div className="flex flex-col gap-2">
-                        <div className="flex items-center gap-2">
-                            <code className="badge badge-sm">md</code>
-                            { loadedImages['size-md'] && <Badge color="success" size="xs">✓</Badge> }
-                        </div>
-                        <Picture
-                            key={ `md-${ sizeKey }` }
-                            src={ `https://picsum.photos/200/150?random=${ sizeKey + 12 }` }
-                            alt="MD size"
-                            width={ 200 }
-                            height={ 150 }
-                            className="rounded-box overflow-hidden"
-                            loadingSize="md"
-                            onLoad={ () => handleImageLoad( 'size-md' ) }
-                        />
-                    </div>
-
-                    <div className="flex flex-col gap-2">
-                        <div className="flex items-center gap-2">
-                            <code className="badge badge-sm">lg</code>
-                            { loadedImages['size-lg'] && <Badge color="success" size="xs">✓</Badge> }
-                        </div>
-                        <Picture
-                            key={ `lg-${ sizeKey }` }
-                            src={ `https://picsum.photos/200/150?random=${ sizeKey + 13 }` }
-                            alt="LG size"
-                            width={ 200 }
-                            height={ 150 }
-                            className="rounded-box overflow-hidden"
-                            loadingSize="lg"
-                            onLoad={ () => handleImageLoad( 'size-lg' ) }
-                        />
-                    </div>
-
-                    <div className="flex flex-col gap-2">
-                        <div className="flex items-center gap-2">
-                            <code className="badge badge-sm">xl</code>
-                            { loadedImages['size-xl'] && <Badge color="success" size="xs">✓</Badge> }
-                        </div>
-                        <Picture
-                            key={ `xl-${ sizeKey }` }
-                            src={ `https://picsum.photos/200/150?random=${ sizeKey + 14 }` }
-                            alt="XL size"
-                            width={ 200 }
-                            height={ 150 }
-                            className="rounded-box overflow-hidden"
-                            loadingSize="xl"
-                            onLoad={ () => handleImageLoad( 'size-xl' ) }
-                        />
-                    </div>
+                        return (
+                            <div key={ size } className="flex flex-col gap-2">
+                                <div className="flex items-center gap-2">
+                                    <code className="badge badge-sm">{ size }</code>
+                                    { loadedImages[ id ] && <Badge color="success" size="xs">✓</Badge> }
+                                </div>
+                                <Picture
+                                    key={ `${ size }-${ sizeKey }` }
+                                    src={ `https://picsum.photos/200/150?random=${ sizeKey + index + 10 }` }
+                                    alt={ `${ size.toUpperCase() } size` }
+                                    width={ 200 }
+                                    height={ 150 }
+                                    className="rounded-box overflow-hidden"
+                                    loadingSize={ size }
+                                    onLoad={ () => handleImageLoad( id ) }
+                                />
+                            </div>
+                        ) ;
+                    })}
                 </div>
 
                 <div className="mockup-code text-xs">
@@ -1606,77 +1374,30 @@ const PictureDemo = () =>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div className="flex flex-col gap-2">
-                        <div className="flex items-center gap-2">
-                            <code className="badge badge-sm badge-primary">primary</code>
-                            { loadedImages['color-primary'] && <Badge color="success" size="xs">✓</Badge> }
-                        </div>
-                        <Picture
-                            key={ `primary-${ colorKey }` }
-                            src={ `https://picsum.photos/300/200?random=${ colorKey + 20 }` }
-                            alt="Primary color"
-                            width={ 300 }
-                            height={ 200 }
-                            className="rounded-box overflow-hidden"
-                            loadingAnimation="ring"
-                            loadingColor="primary"
-                            onLoad={ () => handleImageLoad( 'color-primary' ) }
-                        />
-                    </div>
+                    { LOADING_COLORS.map( ( { badge , value } , index ) =>
+                    {
+                        const id = `color-${ value }` ;
 
-                    <div className="flex flex-col gap-2">
-                        <div className="flex items-center gap-2">
-                            <code className="badge badge-sm badge-secondary">secondary</code>
-                            { loadedImages['color-secondary'] && <Badge color="success" size="xs">✓</Badge> }
-                        </div>
-                        <Picture
-                            key={ `secondary-${ colorKey }` }
-                            src={ `https://picsum.photos/300/200?random=${ colorKey + 21 }` }
-                            alt="Secondary color"
-                            width={ 300 }
-                            height={ 200 }
-                            className="rounded-box overflow-hidden"
-                            loadingAnimation="ring"
-                            loadingColor="secondary"
-                            onLoad={ () => handleImageLoad( 'color-secondary' ) }
-                        />
-                    </div>
-
-                    <div className="flex flex-col gap-2">
-                        <div className="flex items-center gap-2">
-                            <code className="badge badge-sm badge-accent">accent</code>
-                            { loadedImages['color-accent'] && <Badge color="success" size="xs">✓</Badge> }
-                        </div>
-                        <Picture
-                            key={ `accent-${ colorKey }` }
-                            src={ `https://picsum.photos/300/200?random=${ colorKey + 22 }` }
-                            alt="Accent color"
-                            width={ 300 }
-                            height={ 200 }
-                            className="rounded-box overflow-hidden"
-                            loadingAnimation="ring"
-                            loadingColor="accent"
-                            onLoad={ () => handleImageLoad( 'color-accent' ) }
-                        />
-                    </div>
-
-                    <div className="flex flex-col gap-2">
-                        <div className="flex items-center gap-2">
-                            <code className="badge badge-sm badge-error">error</code>
-                            { loadedImages['color-error'] && <Badge color="success" size="xs">✓</Badge> }
-                        </div>
-                        <Picture
-                            key={ `error-${ colorKey }` }
-                            src={ `https://picsum.photos/300/200?random=${ colorKey + 23 }` }
-                            alt="Error color"
-                            width={ 300 }
-                            height={ 200 }
-                            className="rounded-box overflow-hidden"
-                            loadingAnimation="ring"
-                            loadingColor="error"
-                            onLoad={ () => handleImageLoad( 'color-error' ) }
-                        />
-                    </div>
+                        return (
+                            <div key={ value } className="flex flex-col gap-2">
+                                <div className="flex items-center gap-2">
+                                    <code className={ `badge badge-sm ${ badge }` }>{ value }</code>
+                                    { loadedImages[ id ] && <Badge color="success" size="xs">✓</Badge> }
+                                </div>
+                                <Picture
+                                    key={ `${ value }-${ colorKey }` }
+                                    src={ `https://picsum.photos/300/200?random=${ colorKey + index + 20 }` }
+                                    alt={ `${ ucFirst( value ) } color` }
+                                    width={ 300 }
+                                    height={ 200 }
+                                    className="rounded-box overflow-hidden"
+                                    loadingAnimation="ring"
+                                    loadingColor={ value }
+                                    onLoad={ () => handleImageLoad( id ) }
+                                />
+                            </div>
+                        ) ;
+                    })}
                 </div>
 
                 <div className="mockup-code text-xs">
