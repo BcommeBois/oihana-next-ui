@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🧹 The last leak, and a word of my own**
+
+- **The lists demo was selling a handcrafted oak table.** It offers an adjustable standing desk now, as neutral as the ergonomic chair beside it. It had survived two sweeps : the first ran in French only, and the second matched whole words, so `wood` never saw `Wooden`. 🔑 **A trade is swept by stems, not by words.**
+- **A key written the day before reached for a word that means both a sheet of photographs and a plank.** The photographic sense was the one meant, but a sweep cannot tell the two apart, and a check that cries wolf is a check nobody reads. Both languages say « a series of photographs » now.
+- Two matches stay, and should : one scheduler sentence uses the French for « a floor width », which shares its root with « plank », and the repository's own GitHub URL carries the organisation's name.
+
 **🌍 The lab's Images page follows the language switch (two of two), and the page is done**
 
 - **90 more keys per language** — content at the centre, one image per theme, the animations of the wait and its sizes and colours, round pictures, priority loading and the fallback. The demo reads **180 keys** and holds **94 literals** where it held 329 : what is left is API names, `mockup-code` samples, and sample figures like a price or a duration.

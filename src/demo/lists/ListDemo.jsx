@@ -532,8 +532,8 @@ const ListDemo = () =>
                             }
                             grow={
                                 <div>
-                                    <div className="font-semibold">Premium Wooden Table</div>
-                                    <div className="text-sm opacity-60">Handcrafted oak wood</div>
+                                    <div className="font-semibold">Adjustable Standing Desk</div>
+                                    <div className="text-sm opacity-60">Quiet motor, two presets</div>
                                     <div className="flex gap-2 mt-2">
                                         <Badge size="xs" color="primary">New</Badge>
                                         <Badge size="xs" color="success">In Stock</Badge>

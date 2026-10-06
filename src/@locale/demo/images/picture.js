@@ -141,7 +141,7 @@ const picture =
             gallery :
             {
                 alt         : 'Image {0} de la galerie' ,
-                description : 'Une grille aux proportions égales — ce que demande une planche de photos.' ,
+                description : 'Une grille aux proportions égales — ce que demande une série de photographies.' ,
                 title       : 'Une galerie élastique' ,
             } ,
 
@@ -507,7 +507,7 @@ const picture =
             gallery :
             {
                 alt         : 'Gallery image {0}' ,
-                description : 'A grid of equal proportions — what a sheet of photographs asks for.' ,
+                description : 'A grid of equal proportions — what a series of photographs asks for.' ,
                 title       : 'An elastic gallery' ,
             } ,
 
