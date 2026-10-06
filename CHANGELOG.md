@@ -8,6 +8,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🌍 The Security and Specialized demos follow the language switch, and the Inputs page is done**
+
+- The last seven — password, strength, PIN, validator, card, colour, address and link — bring **160 keys per language**. The page now reads **500 keys** where it had none this morning : 435 under `demo.inputs.*`, 14 under a new `demo.passwords.strength`, and 51 for its own chrome.
+- A new `demo.passwords` family rather than a fourteenth `demo.inputs.*` entry : the demo it serves lives in `demo/passwords/`, beside the components it shows, and a bundle that does not follow its demo is a bundle nobody finds.
+- 🔑 **The password demo's French example was the point, not an accident.** Its last field showed `showPasswordLabel` and `hidePasswordLabel` being overridden — in French, hardcoded, on an otherwise English page. The two labels now come from the bundle and the helper says they were passed by the HOST, so the example keeps what it demonstrates and loses what it froze.
+- **An `alert()` is copy too.** The PIN demo announced a typed code and a wrong one, the card demo its submitted number, all three in English literals inside the handlers — they go through keys with `{0}` like any other sentence.
+- Still hardcoded, deliberately : the values typed INTO the fields — `mail@site.com`, `0123456789`, `FFFFFF`, a card number, an expiry — and the `ValueProbe` labels, which name the variables being watched. A sample value is data ; the sentence around it is copy.
+- 🔑 **The checker was wrong before the code was.** The address demo aliases `t.email` and `t.url` once rather than repeating two levels over thirty-four reads, and the key cross-check counted that as two keys read and thirty-four unused. The tool now follows such an alias : a verification that punishes the better spelling is a verification to fix.
+
+
 **🌍 The Numbers and Date & Time demos of the Inputs page follow the language switch (two of four)**
 
 - Six more demos — counter, currency, percentage, date, date range, time — read `demo.inputs.*` : **177 keys per language**, which brings the page's first thirteen demos to 289.

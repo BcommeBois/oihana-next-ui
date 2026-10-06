@@ -6,149 +6,158 @@ import Container  from '@/display/Container' ;
 import InputEmail from '@/components/inputs/InputEmail' ;
 import InputURL   from '@/components/inputs/InputUrl' ;
 
-const InputEmailURLDemo = () =>
+import useI18n from '@/contexts/locale/useI18n' ;
+
+/**
+ * InputEmail and InputUrl demo component.
+ *
+ * Two fields that know what they expect : one address or several, and an
+ * address whose protocol is added, demanded or left alone.
+ *
+ * @param {Object} props
+ * @param {string} [props.path='demo.inputs.urlEmail'] - Dot notation path to the demo locale.
+ */
+const InputEmailURLDemo = ( { path = 'demo.inputs.urlEmail' } = {} ) =>
 {
-    const [ email, setEmail ] = useState( '' ) ;
-    const [ url, setUrl ] = useState( '' ) ;
+    const t = useI18n( path ) ?? {} ;
+
+    const email = t.email ?? {} ;
+    const url   = t.url   ?? {} ;
+
+    const [ emailValue , setEmailValue ] = useState( '' ) ;
+    const [ urlValue , setUrlValue ] = useState( '' ) ;
 
     return (
         <Container className="flex flex-col gap-6 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-7xl">
 
-            <h2 className="text-3xl font-bold">Input Email & URL Examples</h2>
+            <h2 className="text-3xl font-bold">{ t.title }</h2>
 
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">Email Input</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.email }</h3>
 
                 <InputEmail
-                    label  = "Email Address"
-                    value  = { email }
-                    onChange = { setEmail }
-                    helper = "Enter your email address"
+                    label    = { email.basic?.label }
+                    value    = { emailValue }
+                    onChange = { setEmailValue }
+                    helper   = { email.basic?.helper }
                 />
 
                 <InputEmail
                     useValidator
-                    // required
-                    label         = "Email (Required)"
-                    validatorHint = "Please enter a valid email address"
+                    label         = { email.required?.label }
+                    validatorHint = { email.required?.hint }
                 />
 
                 <InputEmail
                     multiple
-                    label       = "Multiple Emails"
-                    placeholder = "email1@example.com, email2@example.com"
-                    helper      = "Separate multiple emails with commas"
+                    label       = { email.multiple?.label }
+                    placeholder = { email.multiple?.placeholder }
+                    helper      = { email.multiple?.helper }
                 />
 
-                {/* Multiple emails - Validation native */}
                 <InputEmail
                     multiple
                     useValidator
-                    // required
-                    label="Multiple Emails"
-                    placeholder="email1@example.com, email2@example.com"
-                    validatorHint="Enter one or more valid emails separated by commas"
-                    helper="HTML5 validation handles multiple emails automatically"
+                    label         = { email.multipleV?.label }
+                    placeholder   = { email.multiple?.placeholder }
+                    validatorHint = { email.multipleV?.hint }
+                    helper        = { email.multipleV?.helper }
                 />
 
                 <InputEmail
                     useFieldset
-                    legend = "Contact Email"
-                    helper = "We'll never share your email"
+                    legend = { email.fieldset?.legend }
+                    helper = { email.fieldset?.helper }
                 />
 
                 <InputEmail
-                    label    = "Email without icon"
+                    label    = { email.noIcon?.label }
                     showIcon = { false }
                 />
 
                 <InputEmail
-                    label = "Email with error"
-                    error = "This email is already taken"
+                    label = { email.error?.label }
+                    error = { email.error?.error }
                 />
 
                 <InputEmail
-                    label        = "Disabled Email"
+                    label        = { email.disabled?.label }
                     defaultValue = "user@example.com"
                     disabled
                 />
             </div>
 
-            {/* URL Examples */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">URL Input</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.url }</h3>
 
                 <InputURL
-                    label    = "Website URL"
-                    value    = { url }
-                    onChange = { setUrl }
-                    helper   = "https:// will be added automatically"
+                    label    = { url.basic?.label }
+                    value    = { urlValue }
+                    onChange = { setUrlValue }
+                    helper   = { url.basic?.helper }
                 />
 
                 <InputURL
                     allowedProtocols = "https"
-                    validatorHint    = "Only secure HTTPS URLs allowed"
+                    validatorHint    = { url.secure?.hint }
                 />
 
                 <InputURL
                     allowedProtocols = "http"
-                    placeholder      = "http://localhost:3000"
+                    placeholder      = { url.plain?.placeholder }
                 />
 
                 <InputURL
                     allowedProtocols = "https"
                     autoProtocol     = { false }
-                    validatorHint    = "Must start with https://"
+                    validatorHint    = { url.strict?.hint }
                 />
 
                 <InputURL
-                    label        = "Portfolio URL"
+                    label        = { url.noProtocol?.label }
                     autoProtocol = { false }
-                    helper       = "Enter URL without protocol"
+                    helper       = { url.noProtocol?.helper }
                 />
 
                 <InputURL
                     useValidator
-                    // required
-                    label         = "Company Website (Required)"
-                    validatorHint = "Please enter a valid URL"
+                    label         = { url.required?.label }
+                    validatorHint = { url.required?.hint }
                 />
 
                 <InputURL
                     showOpenButton = { false }
-                    label          = "URL without open button"
-                    helper         = "Just the input, no action button"
+                    label          = { url.noButton?.label }
+                    helper         = { url.noButton?.helper }
                 />
 
                 <InputURL
                     useFieldset
-                    legend = "Social Media Link"
-                    helper = "Your public profile URL"
+                    legend = { url.fieldset?.legend }
+                    helper = { url.fieldset?.helper }
                 />
 
                 <InputURL
-                    label    = "URL without icon"
+                    label    = { url.noIcon?.label }
                     showIcon = { false }
                 />
 
                 <InputURL
-                    label = "URL with error"
-                    error = "Invalid URL format"
+                    label = { url.error?.label }
+                    error = { url.error?.error }
                 />
 
                 <InputURL
-                    label        = "Disabled URL"
+                    label        = { url.disabled?.label }
                     defaultValue = "https://example.com"
                     disabled
                 />
 
                 <InputURL
-                    label        = "Read-only URL"
+                    label        = { url.readOnly?.label }
                     defaultValue = "https://example.com"
                     readOnly
                 />
-
-
             </div>
 
         </Container>

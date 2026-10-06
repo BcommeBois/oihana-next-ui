@@ -1,7 +1,9 @@
 'use client' ;
 
-import Container  from '@/display/Container' ;
-import Input from '@/components/inputs/Input' ;
+import Container from '@/display/Container' ;
+import Input     from '@/components/inputs/Input' ;
+
+import useI18n from '@/contexts/locale/useI18n' ;
 
 import {
     FaEnvelope as EmailIcon    ,
@@ -24,9 +26,17 @@ const PATTERN_URL      = '^(https?://)?([a-zA-Z0-9]([a-zA-Z0-9\\-].*[a-zA-Z0-9])
  * InputValidator demo component.
  *
  * Demonstrates HTML5 validation features with DaisyUI validator styling.
+ *
+ * ⚠️ The patterns above are the contract, not copy : what a reader is shown is
+ * the `title` and the `validatorHint` beside them.
+ *
+ * @param {Object} props
+ * @param {string} [props.path='demo.inputs.validator'] - Dot notation path to the demo locale.
  */
-const InputValidatorDemo = () =>
+const InputValidatorDemo = ( { path = 'demo.inputs.validator' } = {} ) =>
 {
+    const t = useI18n( path ) ?? {} ;
+
     const handleSubmit = ( event ) =>
     {
         event.preventDefault() ;
@@ -36,72 +46,68 @@ const InputValidatorDemo = () =>
     return (
         <Container className="flex flex-col gap-6 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-7xl">
 
-            <h2 className="text-3xl font-bold">Input Validator Examples</h2>
+            <h2 className="text-3xl font-bold">{ t.title }</h2>
             <p className="text-sm text-base-content/70">
-                Try submitting with invalid data to see validation hints
+                { t.note }
             </p>
 
-            {/* Email validation */}
             <form onSubmit={ handleSubmit } className="flex flex-col gap-2">
                 <Input
                     useValidator
-                    label         = "Email Address"
+                    label         = { t.email?.label }
                     icon          = { <EmailIcon /> }
                     type          = "email"
                     placeholder   = "mail@site.com"
                     required
-                    validatorHint = "Enter valid email address"
+                    validatorHint = { t.email?.hint }
                 />
                 <button type="submit" className="btn btn-primary btn-sm self-start">
-                    Validate Email
+                    { t.email?.submit }
                 </button>
             </form>
 
-            {/* Username validation */}
             <form onSubmit={ handleSubmit } className="flex flex-col gap-2">
                 <Input
                     useValidator
-                    label         = "Username"
+                    label         = { t.username?.label }
                     icon          = { <UserIcon /> }
                     type          = "text"
-                    placeholder   = "Username"
+                    placeholder   = { t.username?.label }
                     required
                     pattern       = { PATTERN_USERNAME }
                     minLength     = { 3 }
                     maxLength     = { 30 }
-                    title         = "Only letters, numbers or dash"
-                    validatorHint = "Must be 3 to 30 characters containing only letters, numbers or dash"
+                    title         = { t.username?.title }
+                    validatorHint = { t.username?.hint }
                 />
                 <button type="submit" className="btn btn-primary btn-sm self-start">
-                    Validate Username
+                    { t.username?.submit }
                 </button>
             </form>
 
-            {/* Password validation */}
             <form onSubmit={ handleSubmit } className="flex flex-col gap-2">
                 <Input
                     useValidator
                     useFieldset
-                    legend        = "Password"
+                    legend        = { t.password?.legend }
                     icon          = { <PasswordIcon /> }
                     type          = "password"
-                    placeholder   = "Password"
+                    placeholder   = { t.password?.legend }
                     required
                     pattern       = { PATTERN_PASSWORD }
                     minLength     = { 8 }
-                    title         = "Must be more than 8 characters, including number, lowercase letter, uppercase letter"
-                    validatorHint = "Must be more than 8 characters, including at least one number, one lowercase letter, one uppercase letter"
+                    title         = { t.password?.title }
+                    validatorHint = { t.password?.hint }
                 />
                 <button type="submit" className="btn btn-primary btn-sm self-start">
-                    Validate Password
+                    { t.password?.submit }
                 </button>
             </form>
 
-            {/* Phone validation */}
             <form onSubmit={ handleSubmit } className="flex flex-col gap-2">
                 <Input
                     useValidator
-                    label         = "Phone Number"
+                    label         = { t.phone?.label }
                     icon          = { <PhoneIcon /> }
                     type          = "tel"
                     placeholder   = "0123456789"
@@ -109,69 +115,66 @@ const InputValidatorDemo = () =>
                     pattern       = { PATTERN_PHONE }
                     minLength     = { 10 }
                     maxLength     = { 10 }
-                    title         = "Must be 10 digits"
-                    validatorHint = "Must be 10 digits"
+                    title         = { t.phone?.title }
+                    validatorHint = { t.phone?.hint }
                 />
                 <button type="submit" className="btn btn-primary btn-sm self-start">
-                    Validate Phone
+                    { t.phone?.submit }
                 </button>
             </form>
 
-            {/* Number validation */}
             <form onSubmit={ handleSubmit } className="flex flex-col gap-2">
                 <Input
                     useValidator
-                    label         = "Age"
+                    label         = { t.age?.label }
                     type          = "number"
-                    placeholder   = "Type a number between 1 to 100"
+                    placeholder   = { t.age?.placeholder }
                     required
                     min           = { 1 }
                     max           = { 100 }
-                    title         = "Must be between 1 to 100"
-                    validatorHint = "Must be between 1 to 100"
+                    title         = { t.age?.title }
+                    validatorHint = { t.age?.hint }
                 />
                 <button type="submit" className="btn btn-primary btn-sm self-start">
-                    Validate Age
+                    { t.age?.submit }
                 </button>
             </form>
 
-            {/* URL validation */}
             <form onSubmit={ handleSubmit } className="flex flex-col gap-2">
                 <Input
                     useValidator
-                    label         = "Website URL"
+                    label         = { t.url?.label }
                     icon          = { <LinkIcon /> }
                     type          = "url"
                     placeholder   = "https://example.com"
                     required
                     pattern       = { PATTERN_URL }
-                    title         = "Must be valid URL"
-                    validatorHint = "Must be valid URL"
+                    title         = { t.url?.title }
+                    validatorHint = { t.url?.hint }
                 />
                 <button type="submit" className="btn btn-primary btn-sm self-start">
-                    Validate URL
+                    { t.url?.submit }
                 </button>
             </form>
 
-            {/* Combined: validator + helper + action buttons */}
             <form onSubmit={ handleSubmit }>
                 <Input
                     useValidator
                     useFieldset
-                    legend        = "Email Newsletter"
+                    legend        = { t.newsletter?.legend }
                     icon          = { <EmailIcon /> }
                     type          = "email"
                     placeholder   = "mail@site.com"
                     required
-                    validatorHint = "Enter valid email address"
-                    helper        = "We'll send you a confirmation email"
+                    validatorHint = { t.newsletter?.hint }
+                    helper        = { t.newsletter?.helper }
                     actions       =
                     {
                         <button
                             className = { cn( 'btn join-item btn-square font-semibold' , styles.btnInput ) }
                             type      = "submit"
                         >
-                            Join
+                            { t.newsletter?.join }
                         </button>
                     }
                 />

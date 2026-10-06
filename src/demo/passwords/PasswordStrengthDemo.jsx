@@ -23,19 +23,28 @@ import InputPassword from '@/components/inputs/InputPassword' ;
 import PasswordRuleList    from '@/components/passwords/PasswordRuleList' ;
 import PasswordStrengthBar from '@/components/passwords/PasswordStrengthBar' ;
 
+import useI18n from '@/contexts/locale/useI18n' ;
+
 import usePasswordPair from '@/hooks/usePasswordPair' ;
 
 /** How long a passphrase has to be in the second example. */
 const PASSPHRASE_MIN_LENGTH = 12 ;
+
+/** Where the three examples read their labels. */
+const PATH = 'demo.passwords.strength' ;
 
 /**
  * The full couple, on the default policy.
  */
 const SignUpExample = () =>
 {
+    const t = useI18n( PATH ) ?? {} ;
+
+    const labels = t.signUp ?? {} ;
+
     const [ submitted , setSubmitted ] = useState( false ) ;
 
-    const pair = usePasswordPair( { mismatchMessage : 'Both passwords must be identical' } ) ;
+    const pair = usePasswordPair( { mismatchMessage : labels.mismatch } ) ;
 
     const canSubmit = pair.allRulesPass && pair.matches ;
 
@@ -51,7 +60,7 @@ const SignUpExample = () =>
 
             <InputPassword
                 autoComplete = "new-password"
-                label        = "New password"
+                label        = { labels.password }
                 onChange     = { pair.handleNewChange }
                 value        = { pair.newPassword }
             />
@@ -61,7 +70,7 @@ const SignUpExample = () =>
             <InputPassword
                 autoComplete = "new-password"
                 error        = { pair.confirmError ?? undefined }
-                label        = "Confirm password"
+                label        = { labels.confirm }
                 onBlur       = { pair.handleConfirmBlur }
                 onChange     = { pair.handleConfirmChange }
                 value        = { pair.confirm }
@@ -70,11 +79,11 @@ const SignUpExample = () =>
             <PasswordRuleList matches={ pair.matches } password={ pair.newPassword } />
 
             <Button color="primary" disabled={ !canSubmit } type="submit">
-                Create the account
+                { labels.submit }
             </Button>
 
             { submitted && (
-                <p className="text-sm text-success">Submitted — both fields were emptied by reset().</p>
+                <p className="text-sm text-success">{ labels.submitted }</p>
             ) }
 
         </form>
@@ -89,10 +98,14 @@ const SignUpExample = () =>
  */
 const PassphraseExample = () =>
 {
+    const t = useI18n( PATH ) ?? {} ;
+
+    const labels = t.passphrase ?? {} ;
+
     const pair = usePasswordPair
     ({
         minLength       : PASSPHRASE_MIN_LENGTH ,
-        mismatchMessage : 'Both passphrases must be identical' ,
+        mismatchMessage : labels.mismatch ,
     }) ;
 
     return (
@@ -100,7 +113,7 @@ const PassphraseExample = () =>
 
             <InputPassword
                 autoComplete = "new-password"
-                label        = "Passphrase"
+                label        = { labels.password }
                 onChange     = { pair.handleNewChange }
                 value        = { pair.newPassword }
             />
@@ -110,7 +123,7 @@ const PassphraseExample = () =>
             <InputPassword
                 autoComplete = "new-password"
                 error        = { pair.confirmError ?? undefined }
-                label        = "Confirm passphrase"
+                label        = { labels.confirm }
                 onBlur       = { pair.handleConfirmBlur }
                 onChange     = { pair.handleConfirmChange }
                 value        = { pair.confirm }
@@ -132,6 +145,8 @@ const PassphraseExample = () =>
  */
 const SingleFieldExample = () =>
 {
+    const t = useI18n( PATH ) ?? {} ;
+
     const [ password , setPassword ] = useState( '' ) ;
 
     return (
@@ -139,7 +154,7 @@ const SingleFieldExample = () =>
 
             <InputPassword
                 autoComplete = "new-password"
-                label        = "Password"
+                label        = { t.single?.password }
                 onChange     = { setPassword }
                 value        = { password }
             />
@@ -151,28 +166,35 @@ const SingleFieldExample = () =>
     ) ;
 } ;
 
-const PasswordStrengthDemo = () =>
-(
-    <Container className="flex flex-col gap-6 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-7xl">
+/**
+ * @param {Object} props
+ * @param {string} [props.path='demo.passwords.strength'] - Dot notation path to the demo locale.
+ */
+const PasswordStrengthDemo = ( { path = PATH } = {} ) =>
+{
+    const t = useI18n( path ) ?? {} ;
 
-        <h2 className="text-3xl font-bold">Password strength</h2>
+    return (
+        <Container className="flex flex-col gap-6 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-7xl">
 
-        <p className="text-sm text-base-content/70 max-w-2xl">
-            The meter and the checklist render nothing while the field is empty. Start typing to see
-            them appear, and watch the button unlock once every line is ticked.
-        </p>
+            <h2 className="text-3xl font-bold">{ t.title }</h2>
 
-        <Divider>Sign-up form</Divider>
-        <SignUpExample />
+            <p className="text-sm text-base-content/70 max-w-2xl">
+                { t.note }
+            </p>
 
-        <Divider>Twelve characters</Divider>
-        <PassphraseExample />
+            <Divider>{ t.sections?.signUp }</Divider>
+            <SignUpExample />
 
-        <Divider>No confirmation field</Divider>
-        <SingleFieldExample />
+            <Divider>{ t.sections?.twelve }</Divider>
+            <PassphraseExample />
 
-    </Container>
-) ;
+            <Divider>{ t.sections?.single }</Divider>
+            <SingleFieldExample />
+
+        </Container>
+    ) ;
+} ;
 
 PasswordStrengthDemo.displayName = 'PasswordStrengthDemo' ;
 

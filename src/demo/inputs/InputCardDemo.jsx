@@ -1,21 +1,37 @@
 'use client' ;
 
 import { useState } from 'react' ;
+
+import format from 'vegas-js-core/src/strings/fastformat' ;
+
 import Container from '@/display/Container' ;
 
 import InputCardNumber from '@/components/inputs/InputCardNumber' ;
 import InputCardExpiry from '@/components/inputs/InputCardExpiry' ;
-import InputCardCVV from '@/components/inputs/InputCardCVV' ;
+import InputCardCVV    from '@/components/inputs/InputCardCVV' ;
+
+import useI18n from '@/contexts/locale/useI18n' ;
 
 import ValueProbe from './ValueProbe' ;
 
-const InputCardDemo = () =>
+/**
+ * Card input demo component.
+ *
+ * The trio of a payment form : the number that recognises its own type, the
+ * expiry, and a security code whose length follows that type.
+ *
+ * @param {Object} props
+ * @param {string} [props.path='demo.inputs.card'] - Dot notation path to the demo locale.
+ */
+const InputCardDemo = ( { path = 'demo.inputs.card' } = {} ) =>
 {
-    const [ cardNumber, setCardNumber ] = useState( '' ) ;
-    const [ expiry, setExpiry ] = useState( '' ) ;
-    const [ cvv, setCvv ] = useState( '' ) ;
-    const [ cardType, setCardType ] = useState( 'unknown' ) ;
-    const [ cvvLength, setCvvLength ] = useState( 3 ) ;
+    const t = useI18n( path ) ?? {} ;
+
+    const [ cardNumber , setCardNumber ] = useState( '' ) ;
+    const [ expiry , setExpiry ] = useState( '' ) ;
+    const [ cvv , setCvv ] = useState( '' ) ;
+    const [ cardType , setCardType ] = useState( 'unknown' ) ;
+    const [ cvvLength , setCvvLength ] = useState( 3 ) ;
 
     const handleCardTypeChange = ( type ) =>
     {
@@ -27,42 +43,40 @@ const InputCardDemo = () =>
     const handleSubmit = ( event ) =>
     {
         event.preventDefault() ;
-        console.log( 'Card:', { cardNumber, expiry, cvv } ) ;
-        alert( `Card submitted!\nNumber: ${cardNumber}\nExpiry: ${expiry}\nCVV: ${cvv}` ) ;
+        alert( format( t.submitted ?? '' , cardNumber , expiry , cvv ) ) ;
     } ;
 
     return (
         <Container className="flex flex-col gap-8 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-7xl">
 
-            <h2 className="text-3xl font-bold">Card Input Examples</h2>
+            <h2 className="text-3xl font-bold">{ t.title }</h2>
 
-            {/* Formulaire complet */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">Complete Card Form</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.complete }</h3>
 
                 <form onSubmit={ handleSubmit } className="flex flex-col gap-4">
 
                     <InputCardNumber
-                        label              = "Card Number"
-                        value              = { cardNumber }
-                        onChange           = { setCardNumber }
-                        onCardTypeChange   = { handleCardTypeChange }
-                        helper             = { `Detected: ${cardType}` }
+                        label            = { t.number?.label }
+                        value            = { cardNumber }
+                        onChange         = { setCardNumber }
+                        onCardTypeChange = { handleCardTypeChange }
+                        helper           = { format( t.number?.detected ?? '' , cardType ) }
                     />
 
                     <div className="grid grid-cols-2 gap-4">
                         <InputCardExpiry
-                            label   = "Expiration"
-                            value   = { expiry }
+                            label    = { t.expiry?.label }
+                            value    = { expiry }
                             onChange = { setExpiry }
                         />
 
                         <InputCardCVV
-                            label    = "CVV"
+                            label    = { t.cvv?.label }
                             value    = { cvv }
                             onChange = { setCvv }
                             length   = { cvvLength }
-                            helper   = { cvvLength === 4 ? '4 digits for Amex' : '3 digits' }
+                            helper   = { cvvLength === 4 ? t.cvv?.four : t.cvv?.three }
                         />
                     </div>
 
@@ -78,97 +92,93 @@ const InputCardDemo = () =>
                         className = "btn btn-primary"
                         disabled  = { !cardNumber || !expiry || !cvv }
                     >
-                        Submit Payment
+                        { t.submit }
                     </button>
                 </form>
             </div>
 
-            {/* With fieldset */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">With Fieldsets</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.fieldset }</h3>
 
                 <InputCardNumber
                     useFieldset
-                    legend      = "Card Number"
-                    helper      = "Enter your 16-digit card number"
+                    legend = { t.fieldset?.number?.legend }
+                    helper = { t.fieldset?.number?.helper }
                 />
 
                 <div className="grid grid-cols-2 gap-4">
                     <InputCardExpiry
                         useFieldset
-                        legend = "Expiry Date"
+                        legend = { t.fieldset?.expiry?.legend }
                     />
 
                     <InputCardCVV
                         useFieldset
-                        legend = "Security Code"
+                        legend = { t.fieldset?.cvv?.legend }
                     />
                 </div>
             </div>
 
-            {/* Without icons */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">Without Icons</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.noIcon }</h3>
 
                 <InputCardNumber
-                    label    = "Card Number"
+                    label    = { t.number?.label }
                     showIcon = { false }
                 />
 
                 <div className="grid grid-cols-2 gap-4">
                     <InputCardExpiry
-                        label    = "Expiration"
+                        label    = { t.expiry?.label }
                         showIcon = { false }
                     />
 
                     <InputCardCVV
-                        label    = "CVV"
+                        label    = { t.cvv?.label }
                         showIcon = { false }
                     />
                 </div>
             </div>
 
-            {/* With errors */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">With Errors</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.error }</h3>
 
                 <InputCardNumber
-                    label = "Card Number"
-                    error = "Invalid card number"
+                    label = { t.number?.label }
+                    error = { t.errors?.number }
                 />
 
                 <div className="grid grid-cols-2 gap-4">
                     <InputCardExpiry
-                        label = "Expiration"
-                        error = "Card has expired"
+                        label = { t.expiry?.label }
+                        error = { t.errors?.expiry }
                     />
 
                     <InputCardCVV
-                        label = "CVV"
-                        error = "Invalid CVV"
+                        label = { t.cvv?.label }
+                        error = { t.errors?.cvv }
                     />
                 </div>
             </div>
 
-            {/* Disabled */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">Disabled State</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.disabled }</h3>
 
                 <InputCardNumber
-                    label        = "Card Number"
+                    label        = { t.number?.label }
                     defaultValue = "4111 1111 1111 1111"
                     disabled
                 />
 
                 <div className="grid grid-cols-2 gap-4">
                     <InputCardExpiry
-                        label        = "Expiration"
+                        label        = { t.expiry?.label }
                         defaultValue = "12/25"
                         disabled
                     />
 
                     <InputCardCVV
-                        label        = "CVV"
+                        label        = { t.cvv?.label }
                         defaultValue = "123"
                         disabled
                     />

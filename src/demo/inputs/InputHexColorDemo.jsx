@@ -1,94 +1,100 @@
 'use client' ;
 
 import { useState } from 'react' ;
-import Container from '@/display/Container' ;
+
+import Container     from '@/display/Container' ;
 import InputHexColor from '@/components/inputs/InputHexColor' ;
+
+import useI18n from '@/contexts/locale/useI18n' ;
 
 import { MdColorLens as ColorIcon } from 'react-icons/md' ;
 
-const InputHexColorDemo = () =>
+/**
+ * InputHexColor demo component.
+ *
+ * Six characters, eight with an alpha channel, three in the short form, with
+ * or without the leading hash — and what an invalid value says on blur.
+ *
+ * @param {Object} props
+ * @param {string} [props.path='demo.inputs.hexColor'] - Dot notation path to the demo locale.
+ */
+const InputHexColorDemo = ( { path = 'demo.inputs.hexColor' } = {} ) =>
 {
-    const [ color, setColor ] = useState( '#FF5733' ) ;
-    const [ colorWithAlpha, setColorWithAlpha ] = useState( '#FF5733FF' ) ;
+    const t = useI18n( path ) ?? {} ;
+
+    const [ color , setColor ] = useState( '#FF5733' ) ;
+    const [ colorWithAlpha , setColorWithAlpha ] = useState( '#FF5733FF' ) ;
 
     return (
         <Container className="flex flex-col gap-6 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-7xl">
 
-            <h2 className="text-3xl font-bold">Input Hex Color Examples</h2>
+            <h2 className="text-3xl font-bold">{ t.title }</h2>
 
-            {/* Basic hex color */}
             <div className="flex flex-row items-center gap-4">
                 <InputHexColor
-                    label       = "Color (6 chars)"
+                    label       = { t.basic?.label }
                     value       = { color }
                     onChange    = { setColor }
                     icon        = { <ColorIcon /> }
                     placeholder = "FFFFFF"
-                    helper      = "Enter hex color (e.g., FF5733)"
+                    helper      = { t.basic?.helper }
                 />
             </div>
 
-            {/* With alpha channel */}
             <div className="flex flex-row items-center gap-4">
                 <InputHexColor
                     alpha
-                    label       = "Color with Alpha (8 chars)"
+                    label       = { t.alpha?.label }
                     value       = { colorWithAlpha }
                     onChange    = { setColorWithAlpha }
                     icon        = { <ColorIcon /> }
                     placeholder = "FFFFFFFF"
-                    helper      = "Enter hex color with alpha (e.g., FF5733FF)"
+                    helper      = { t.alpha?.helper }
                 />
             </div>
 
-            {/* Without prefix display */}
             <InputHexColor
                 prefixed    = { false }
-                label       = "Color Code (No Prefix)"
+                label       = { t.noPrefix?.label }
                 placeholder = "FFFFFF"
-                helper      = "Displayed without # prefix"
+                helper      = { t.noPrefix?.helper }
             />
 
-            {/* With fieldset */}
             <InputHexColor
                 useFieldset
-                legend      = "Primary Color"
+                legend      = { t.fieldset?.legend }
                 icon        = { <ColorIcon /> }
                 placeholder = "007BFF"
-                helper      = "Brand primary color"
+                helper      = { t.fieldset?.helper }
             />
 
-            {/* Short format (3 chars) */}
             <InputHexColor
                 length       = { 3 }
-                label        = "Short Format (3 chars)"
+                label        = { t.short?.label }
                 defaultValue = "F53"
                 icon         = { <ColorIcon /> }
                 placeholder  = "FFF"
-                helper       = "Short format: #rgb"
+                helper       = { t.short?.helper }
             />
 
-            {/* With validation error */}
             <InputHexColor
-                label               = "Invalid Color"
+                label               = { t.invalid?.label }
                 defaultValue        = "ZZZZZZ"
                 icon                = { <ColorIcon /> }
-                helper              = "This will show validation on blur"
+                helper              = { t.invalid?.helper }
                 showValidationError = { true }
-                validationError     = "Couleur invalide ({0} caractères requis)"
+                validationError     = { t.invalid?.error }
             />
 
-            {/* Disabled */}
             <InputHexColor
-                label        = "Disabled"
+                label        = { t.disabled?.label }
                 defaultValue = "CCCCCC"
                 icon         = { <ColorIcon /> }
                 disabled
             />
 
-            {/* Read-only */}
             <InputHexColor
-                label        = "Read-only"
+                label        = { t.readOnly?.label }
                 defaultValue = "333333"
                 icon         = { <ColorIcon /> }
                 readOnly
