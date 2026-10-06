@@ -18,9 +18,13 @@
  * ⚠️ **The rendered value is local state, not `useSearchParams()`.** Reading the
  * hook would tie the component to whether Next chooses to propagate a shallow
  * history write — a detail that has moved between versions. Seeding from the URL
- * once and owning the value afterwards behaves the same in every version, and
- * `popstate` is listened to so the browser's Back button still puts the control
- * back where the address bar says it is.
+ * once and owning the value afterwards behaves the same in every version.
+ *
+ * Which is why a write ANNOUNCES itself
+ * ({@link module:helpers/routes/shallowParamEvents}) : the address can move
+ * without a given instance asking — the browser's Back button, or another
+ * control writing the same parameter — and every instance then re-reads the
+ * address bar. Two controls over one parameter stay in step, with no reload.
  *
  * 🚨 **Not for a parameter the server reads.** A period, a filter, a page of a
  * SERVER-paginated list change what must be fetched : those belong to a plain
@@ -34,6 +38,7 @@
 import { useCallback , useEffect , useState } from 'react' ;
 
 import { markInPlace } from '../helpers/routes/inPlaceNavigation' ;
+import { notifyShallowParam , subscribeShallowParam } from '../helpers/routes/shallowParamEvents' ;
 
 /**
  * Reads one parameter out of the current address bar.
@@ -50,7 +55,7 @@ const read = ( name ) =>
 
 /**
  * @param {string}  name            - The query parameter.
- * @param {*}       [initial]       - Value when the URL carries none. Also what a `null` write falls back to.
+ * @param {*}       [initial]       - Value when the URL carries none. Also what a cleared write falls back to.
  * @returns {[ string , ( value : * ) => void ]} The current value and a setter that rewrites the URL in place.
  *
  * @example
@@ -72,25 +77,28 @@ const useShallowParam = ( name , initial = '' ) =>
 
         sync() ;
 
-        // The address bar can move without this component asking : the Back
-        // button, or another control writing the same way.
-        window.addEventListener( 'popstate' , sync ) ;
-
-        return () => window.removeEventListener( 'popstate' , sync ) ;
+        return subscribeShallowParam( sync ) ;
     } , [ initial , name ] ) ;
 
     const set = useCallback( ( next ) =>
     {
-        setValue( next ?? initial ) ;
+        // A parameter back at its default leaves the URL rather than sitting
+        // there saying nothing — a shared link should carry what was chosen,
+        // not every control that was left alone.
+        const cleared = next === null || next === undefined || next === '' || next === initial ;
+
+        // What a re-read of the address will give, so the writer lands on its
+        // value once : the announcement below reaches this instance too. A
+        // cleared parameter reads back as `initial`, not as the empty string
+        // that cleared it, and a number reads back as the string the address
+        // bar actually carries.
+        setValue( cleared ? initial : String( next ) ) ;
 
         if ( typeof window === 'undefined' ) { return ; }
 
         const params = new URLSearchParams( window.location.search ) ;
 
-        // A parameter back at its default leaves the URL rather than sitting
-        // there saying nothing — a shared link should carry what was chosen,
-        // not every control that was left alone.
-        if ( next === null || next === undefined || next === '' || next === initial )
+        if ( cleared )
         {
             params.delete( name ) ;
         }
@@ -119,6 +127,10 @@ const useShallowParam = ( name , initial = '' ) =>
         markInPlace( href ) ;
 
         window.history.replaceState( null , '' , href ) ;
+
+        // Said AFTER the write : whoever hears it re-reads the address bar, which
+        // now carries the new value.
+        notifyShallowParam( name ) ;
     } , [ initial , name ] ) ;
 
     return [ value , set ] ;

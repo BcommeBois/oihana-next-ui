@@ -6,7 +6,11 @@
  * - `useShallowParam` for a parameter the server does not read : the address
  *   bar changes, nothing is fetched, and the history gains no entry — the
  *   value is REPLACED, so Back leaves the page rather than stepping through
- *   every sort the reader tried.
+ *   every sort the reader tried. The sort is shown TWICE, as two independent
+ *   instances of the same control over one parameter : choosing in either must
+ *   move the other, with no reload. That is the point of keeping such state in
+ *   the address, and it is what a shallow write has to announce for
+ *   (`helpers/routes/shallowParamEvents`).
  * - `BusyNavigationProvider` + `BusySurface` for a navigation that does reload
  *   the page : one shared transition, and the data greys out for at least the
  *   provider's floor instead of flickering.
@@ -120,7 +124,14 @@ const ShallowParamDemo = () => (
                         remplace l&apos;entrée d&apos;historique : Précédent quitte la page au lieu de rejouer chaque
                         tri essayé. Rechargez : le tri choisi est conservé.
                     </p>
-                    <ShallowSort />
+                    <p className="text-sm text-base-content/70">
+                        Les deux listes lisent le même paramètre : choisir le tri dans l&apos;une déplace
+                        l&apos;autre, sans rechargement.
+                    </p>
+                    <div className="grid gap-4 sm:grid-cols-2">
+                        <ShallowSort />
+                        <ShallowSort />
+                    </div>
                 </section>
 
                 <section className="flex flex-col gap-2">

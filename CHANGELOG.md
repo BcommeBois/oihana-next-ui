@@ -8,6 +8,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.29.1] — 2026-10-06
+
+**🔗 Two controls over one URL parameter stay in step**
+
+- 🚨 **A shallow write announced nothing, so only its author heard it.** `useShallowParam` rewrites the address with `window.history.replaceState`, which fires no `popstate` and does not touch the router — the point of the hook, and also the whole defect : the rendered value is local state, and nothing told the OTHER readers of that parameter to look again. A second control over the same parameter kept showing the value it had until a reload or a Back happened to re-sync it. Which is to say two controls over one parameter — the reason such state lives in the address rather than in a component — could not work at all.
+- **The write announces itself now**, on `window`, and every instance re-reads the address bar on hearing it. 🔑 **The announcement carries no value** : the address is the one place the truth lives, and re-reading it is exactly what each instance already did on `popstate`. So the fix adds a listener, not a second source of truth.
+- **New `helpers/routes/shallowParamEvents`** — `SHALLOW_PARAM_EVENT`, `notifyShallowParam()` and `subscribeShallowParam()`, which listens for both the announcement and `popstate` : the two ways an address moves without the listener asking. The event name is exported so a screen rewriting the address in place by its own means can join in.
+- ⚠️ **Never a synthetic `popstate`.** Next's router listens to it and would read a sort as the browser's Back button : the page would navigate, which is what a shallow write exists to avoid.
+- 🔑 **The library already had the same ailment and the same remedy, in another family** : `helpers/storage/writeStorage` dispatches a `StorageEvent` after writing, because the native `storage` event only reaches OTHER tabs, and `subscribeStorage` wraps the listening. This is that shape, applied to the address bar.
+- ⚠️ **Two values are normalised**, because the announcement reaches the writer too and its own value must not change twice : a CLEARED parameter now reads back as `initial` rather than as the empty string that cleared it — which the hook's own doc already promised — and a number reads back as the string the address bar actually carries. A caller writing a string, which the returned signature has always said, sees nothing move.
+- **Two lists in the demo instead of one**, both over `?sort=`, since one control could never show the defect : choosing in either moves the other, with no reload.
+
 ## [0.29.0] — 2026-10-06
 
 **🔁 The dialog that says a newer build is waiting**
