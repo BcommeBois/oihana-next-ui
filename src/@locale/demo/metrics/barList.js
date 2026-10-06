@@ -51,8 +51,10 @@ const barList =
         states :
         {
             title       : 'Chargement et liste vide' ,
-            description : "loading affiche des squelettes au nombre de lignes attendu, pour que le panneau ne saute pas quand la donnée arrive. Une liste vide bascule sur EmptyState." ,
+            description : "loading affiche des squelettes pour que le panneau ne saute pas quand la donnée arrive : autant que la liste aura de lignes, ou le nombre que skeletonRows annonce — une liste qui attend sa première réponse n'a pas de données pour se mesurer. Une liste vide bascule sur EmptyState." ,
             empty       : 'Aucune visite sur la période' ,
+            fromCount   : 'skeletonRows = 8, sans aucune donnée' ,
+            fromData    : 'Au nombre de lignes des données déjà là' ,
             hint        : 'Élargis la plage de dates pour voir des résultats.' ,
         } ,
 
@@ -121,8 +123,10 @@ const barList =
         states :
         {
             title       : 'Loading and empty' ,
-            description : 'loading shows as many skeletons as the data will have rows, so the panel does not jump when it lands. An empty list falls back to EmptyState.' ,
+            description : 'loading shows skeletons so the panel does not jump when it lands : as many as the list will have rows, or the count skeletonRows announces — a list waiting for its first answer has no data to be measured by. An empty list falls back to EmptyState.' ,
             empty       : 'No visit over the period' ,
+            fromCount   : 'skeletonRows = 8, with no data at all' ,
+            fromData    : 'As many rows as the data already there' ,
             hint        : 'Widen the date range to see results.' ,
         } ,
 

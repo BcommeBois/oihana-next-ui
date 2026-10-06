@@ -124,15 +124,27 @@ const BarListDemo = ( { path = 'demo.metrics.barList' } ) =>
                     <div className="flex flex-col gap-2">
                         <p className="text-xs font-semibold uppercase text-base-content/50">{ scale?.before }</p>
                         <div className="grid gap-6 md:grid-cols-2">
-                            <BarList data={ THIS_WEEK } />
-                            <BarList data={ LAST_WEEK } />
+                            <div className="flex flex-col gap-1">
+                                <p className="text-xs text-base-content/60">{ scale?.thisWeek }</p>
+                                <BarList data={ THIS_WEEK } />
+                            </div>
+                            <div className="flex flex-col gap-1">
+                                <p className="text-xs text-base-content/60">{ scale?.lastWeek }</p>
+                                <BarList data={ LAST_WEEK } />
+                            </div>
                         </div>
                     </div>
                     <div className="flex flex-col gap-2">
                         <p className="text-xs font-semibold uppercase text-base-content/50">{ scale?.after }</p>
                         <div className="grid gap-6 md:grid-cols-2">
-                            <BarList data={ THIS_WEEK } max={ 1000 } />
-                            <BarList data={ LAST_WEEK } max={ 1000 } />
+                            <div className="flex flex-col gap-1">
+                                <p className="text-xs text-base-content/60">{ scale?.thisWeek }</p>
+                                <BarList data={ THIS_WEEK } max={ 1000 } />
+                            </div>
+                            <div className="flex flex-col gap-1">
+                                <p className="text-xs text-base-content/60">{ scale?.lastWeek }</p>
+                                <BarList data={ LAST_WEEK } max={ 1000 } />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -165,7 +177,16 @@ const BarListDemo = ( { path = 'demo.metrics.barList' } ) =>
 
             <Section title={ states?.title } description={ states?.description }>
                 <div className="flex flex-col gap-6">
-                    <BarList data={ PAGES } loading />
+                    <div className="flex flex-col gap-2">
+                        <p className="text-xs font-semibold uppercase text-base-content/50">{ states?.fromData }</p>
+                        <BarList data={ PAGES } loading />
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                        <p className="text-xs font-semibold uppercase text-base-content/50">{ states?.fromCount }</p>
+                        <BarList loading skeletonRows={ 8 } />
+                    </div>
+
                     <BarList
                         data       = { [] }
                         emptyLabel = { states?.empty }

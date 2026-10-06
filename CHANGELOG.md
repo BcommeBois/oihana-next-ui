@@ -8,6 +8,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**📊 A loading list says how many rows it will hold**
+
+- **New `skeletonRows` on `BarList`.** `loading` drew as many placeholders as the `data` already had rows, and five when there was none — so a list waiting for its FIRST answer could only be sized by handing it as many empty entries as it wanted placeholders. 🔑 **Fake data, built to be counted and nothing else, is a missing prop.** Gathered from an application whose ranking fabricated ten of them to keep a card from jumping between two years.
+- An outright count wins over the data, the data over the default, and **zero is honoured** — for a caller that already knows the answer will be empty. `DEFAULT_SKELETON_ROWS` is exported and says what five is for : a panel's worth, not a ranking's.
+- **Found by the key cross-check** : two labels of the bar-list demo were declared and rendered nowhere — the section comparing two series side by side never said which was which. Both read now, in each of its two blocks. The same check found nothing in the six other bundles of the family.
+- 🚨 **And the check itself was wrong three times before the code was.** It followed `t.a?.b` and an alias, but not a destructuring (`const { states } = useI18n( path )`), not `useI18n( path ) ?? {}`, and not the second step of one (`const locale = useI18n( path )` then `const { bullet } = locale`). It reported **zero reads** on two demos that were perfectly correct. A check that punishes the better spelling is a check to repair.
+
 **👤 The round avatar of a named thing**
 
 - **Gathered from a 155-line component** in one application, which held three things at once : an avatar, and **a third copy of two helpers the library already ships** — its `getInitials`, and a `getPaletteIndex` that is `hashIndex` to the character.

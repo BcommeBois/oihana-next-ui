@@ -16,7 +16,15 @@ import Skeleton   from '../Skeleton' ;
  */
 export const sortOrders = [ 'ascending' , 'descending' , 'none' ] ;
 
-const DEFAULT_SKELETON_ROWS = 5 ;
+/**
+ * How many placeholders a loading list holds when nothing says otherwise.
+ *
+ * Five is a panel's worth, not a ranking's : a list that knows it will hold ten
+ * says so through `skeletonRows`.
+ *
+ * @type {number}
+ */
+export const DEFAULT_SKELETON_ROWS = 5 ;
 
 // A non-zero value always keeps a sliver of bar : without it, the smallest entry of a
 // long-tailed distribution renders as nothing at all and reads as missing data.
@@ -86,6 +94,7 @@ const DONE = 'done' ;
  * @param {string} [props.rowClassName] - Additional classes on every row.
  * @param {boolean} [props.showPercentage=false] - Append each value's share of the total, in a muted span.
  * @param {import('../../themes/components/barList').BarListSize|Object} [props.size='md'] - Row height, scalar or per breakpoint.
+ * @param {number} [props.skeletonRows] - How many placeholders `loading` holds. Without it, as many as the `data` has rows, and five when there is none.
  * @param {'ascending'|'descending'|'none'} [props.sortOrder='descending'] - How to order the rows.
  * @param {string} [props.valueClassName] - Additional classes on every value cell.
  * @param {Function} [props.valueFormatter] - Formats the displayed value : `( value ) => string`.
@@ -147,6 +156,7 @@ const BarList =
     rowClassName ,
     showPercentage = false ,
     size ,
+    skeletonRows ,
     sortOrder = 'descending' ,
     valueClassName ,
     valueFormatter = value => String( value ) ,
@@ -204,10 +214,23 @@ const BarList =
 
     if ( loading )
     {
-        // The placeholders keep the row count the data will have, so the panel does not
-        // jump when it lands.
+        /*
+            The placeholders keep the row count the data will have, so the panel does not
+            jump when it lands.
+
+            A count given outright wins over the data : a list waiting for its first
+            answer has no data to be measured by, and knows perfectly well how many rows
+            it will hold. Without that, a caller had to hand over as many empty entries as
+            it wanted placeholders — fake data, built to be counted and nothing else.
+
+            Zero is honoured, for a caller that knows the answer will be empty.
+        */
+        const length = Number.isFinite( skeletonRows ) && skeletonRows >= 0
+            ? Math.floor( skeletonRows )
+            : ( data.length || DEFAULT_SKELETON_ROWS ) ;
+
         const placeholders = Array.from(
-            { length : data.length || DEFAULT_SKELETON_ROWS } ,
+            { length } ,
             ( _ , index ) => `skeleton-${ index }` ,
         ) ;
 
