@@ -25,6 +25,15 @@ const picture =
             dimensions : 'Dimensions automatiques et mode « remplir »' ,
             useCases   : 'Trois mises en pratique' ,
             corners    : 'Du contenu dans les coins' ,
+            center     : 'Du contenu au centre' ,
+            darkMode   : 'Une image par thème' ,
+            animations : 'Les animations de l’attente' ,
+            sizes      : 'Les tailles de l’attente' ,
+            colors     : 'Les couleurs de l’attente' ,
+            avatars    : 'Les images rondes' ,
+            noSpinner  : 'Sans attente affichée' ,
+            priority   : 'Le chargement prioritaire' ,
+            fallback   : 'Sans aucune source : le repli' ,
         } ,
 
         basic :
@@ -213,6 +222,161 @@ const picture =
                 live : 'EN DIRECT' ,
             } ,
         } ,
+
+        center :
+        {
+            cta :
+            {
+                alt   : 'Appel à l’action' ,
+                badge : 'Licence ouverte' ,
+                more  : 'En savoir plus' ,
+                shop  : 'Parcourir' ,
+                text  : 'Mille photographies prêtes à l’emploi, sous licence ouverte.' ,
+                title : 'Des images libres de droits' ,
+            } ,
+
+            description : 'Du contenu au centre d’une image : un bouton de lecture, un titre en surimpression, un appel à l’action.' ,
+
+            hero :
+            {
+                action   : 'Voir la collection' ,
+                alt      : 'Titre en surimpression' ,
+                subtitle : 'Une sélection de photographies, depuis 1995' ,
+                title    : 'Les grands espaces' ,
+            } ,
+
+            premium :
+            {
+                action : 'Débloquer' ,
+                alt    : 'Contenu réservé' ,
+                text   : 'Abonnez-vous pour accéder aux photos et aux vidéos réservées.' ,
+                title  : 'Contenu réservé' ,
+            } ,
+
+            preview :
+            {
+                alt     : 'Aperçu' ,
+                quality : 'Haute définition' ,
+                zoom    : 'Cliquer pour agrandir' ,
+            } ,
+
+            scenarios :
+            {
+                cta     : 'Un appel à l’action' ,
+                hero    : 'Un titre en surimpression' ,
+                premium : 'Un contenu réservé' ,
+                preview : 'Un aperçu agrandissable' ,
+                soon    : 'Une sortie à venir' ,
+                video   : 'Une vignette vidéo' ,
+            } ,
+
+            soon :
+            {
+                alt   : 'Sortie à venir' ,
+                date  : 'mars 2026' ,
+                title : 'BIENTÔT' ,
+            } ,
+
+            uses :
+            {
+                items :
+                {
+                    cta     : { label : 'Les appels à l’action' , text : 'un bouton centré, une promotion' } ,
+                    hero    : { label : 'Les titres' , text : 'un titre et son bouton, centrés sur l’image' } ,
+                    icons   : { label : 'Les icônes actives' , text : 'agrandir, prévisualiser, agir' } ,
+                    play    : { label : 'Les boutons de lecture' , text : 'une vignette vidéo ou sonore et sa commande' } ,
+                    premium : { label : 'Les contenus réservés' , text : 'une invitation à déverrouiller' } ,
+                    status  : { label : 'Les états' , text : '« Bientôt », « Épuisé », et les autres' } ,
+                } ,
+                title : 'À quoi sert le centre' ,
+            } ,
+
+            video :
+            {
+                alt  : 'Vignette vidéo' ,
+                live : 'EN DIRECT' ,
+            } ,
+        } ,
+
+        darkMode :
+        {
+            benefits :
+            {
+                items :
+                {
+                    automatic   : { label : 'Une bascule automatique' , text : 'l’image suit le thème, sans une ligne de JavaScript' } ,
+                    compatible  : { label : 'Rien d’exclu' , text : 'tout le reste du composant continue — les coins, le centre, le mode remplir' } ,
+                    optional    : { label : 'Facultatif' , text : 'sans la propriété dark, le composant se comporte comme avant' } ,
+                    performance : { label : 'Une seule image à la fois' , text : 'c’est le CSS qui décide laquelle se voit' } ,
+                    uses        : { label : 'Pour quoi' , text : 'un logo, une illustration, un schéma, un bandeau, un produit' } ,
+                } ,
+                title : 'Ce que ça apporte' ,
+            } ,
+
+            description : 'Deux images, et celle qui s’affiche suit le thème.' ,
+
+            hero :
+            {
+                alt   : 'Bandeau selon le thème' ,
+                title : 'Un bandeau qui suit le thème' ,
+            } ,
+
+            illustration :
+            {
+                alt   : 'Illustration' ,
+                badge : 'Premium' ,
+            } ,
+
+            logo :
+            {
+                alt  : 'Logo' ,
+                note : 'Le thème clair montre la première image, le thème sombre la seconde.' ,
+            } ,
+
+            product :
+            {
+                alt  : 'Produit' ,
+                cart : 'Ajouter au panier' ,
+            } ,
+
+            scenarios :
+            {
+                hero         : 'Un bandeau selon le thème' ,
+                illustration : 'Une illustration, en mode remplir' ,
+                logo         : 'Un logo selon le thème' ,
+                product      : 'Un produit et sa variante sombre' ,
+            } ,
+
+            tip : 'Changez de thème : les images suivent.' ,
+        } ,
+
+        animations : { alt : 'Animation {0}' } ,
+        sizes      : { alt : 'Taille {0}' } ,
+        colors     : { alt : 'Couleur {0}' } ,
+        reloadAll  : 'Tout recharger' ,
+
+        avatars : { alt : 'Portrait {0}' } ,
+
+        noSpinner : { alt : 'Sans attente affichée' } ,
+
+        priority :
+        {
+            alt  : 'Bandeau' ,
+            note : 'pour les images visibles dès le chargement de la page : un bandeau, tout ce qui est au-dessus de la ligne de flottaison.' ,
+        } ,
+
+        fallback :
+        {
+            corner : 'coin' ,
+            frames :
+            {
+                carried : 'une couleur portée par l’entité' ,
+                other   : 'un autre nom, une autre teinte' ,
+                tint    : 'une teinte prise dans le nom' ,
+            } ,
+            icon : 'une icône, et un coin par-dessus' ,
+            note : 'Une entité sans image, c’est banal. Privé de src, le cadre montre son fallback au lieu d’une image — et les quatre coins comme le centre continuent de fonctionner, si bien qu’un appelant compose ses surimpressions sans avoir à se demander si une image existe.' ,
+        } ,
     } ,
 
     en :
@@ -227,6 +391,15 @@ const picture =
             dimensions : 'Automatic dimensions and fill mode' ,
             useCases   : 'Three things put to use' ,
             corners    : 'Content in the corners' ,
+            center     : 'Content at the centre' ,
+            darkMode   : 'One image per theme' ,
+            animations : 'The animations of the wait' ,
+            sizes      : 'The sizes of the wait' ,
+            colors     : 'The colours of the wait' ,
+            avatars    : 'Round pictures' ,
+            noSpinner  : 'No wait on show' ,
+            priority   : 'Priority loading' ,
+            fallback   : 'No source at all : the fallback' ,
         } ,
 
         basic :
@@ -414,6 +587,161 @@ const picture =
                 alt  : 'Video' ,
                 live : 'LIVE' ,
             } ,
+        } ,
+
+        center :
+        {
+            cta :
+            {
+                alt   : 'Call to action' ,
+                badge : 'Open licence' ,
+                more  : 'Learn more' ,
+                shop  : 'Browse' ,
+                text  : 'A thousand photographs ready to use, under an open licence.' ,
+                title : 'Royalty-free images' ,
+            } ,
+
+            description : 'Content at the centre of an image : a play button, a headline over it, a call to action.' ,
+
+            hero :
+            {
+                action   : 'See the collection' ,
+                alt      : 'Headline over an image' ,
+                subtitle : 'A selection of photographs, since 1995' ,
+                title    : 'Wide Open Spaces' ,
+            } ,
+
+            premium :
+            {
+                action : 'Unlock it' ,
+                alt    : 'Reserved content' ,
+                text   : 'Subscribe to reach the photographs and videos held back.' ,
+                title  : 'Reserved content' ,
+            } ,
+
+            preview :
+            {
+                alt     : 'Preview' ,
+                quality : 'High definition' ,
+                zoom    : 'Click to zoom' ,
+            } ,
+
+            scenarios :
+            {
+                cta     : 'A call to action' ,
+                hero    : 'A headline over an image' ,
+                premium : 'Content held back' ,
+                preview : 'A preview one can zoom' ,
+                soon    : 'A release to come' ,
+                video   : 'A video thumbnail' ,
+            } ,
+
+            soon :
+            {
+                alt   : 'Release to come' ,
+                date  : 'March 2026' ,
+                title : 'COMING SOON' ,
+            } ,
+
+            uses :
+            {
+                items :
+                {
+                    cta     : { label : 'Calls to action' , text : 'a centred button, a promotion' } ,
+                    hero    : { label : 'Headlines' , text : 'a headline and its button, centred on the image' } ,
+                    icons   : { label : 'Live icons' , text : 'zoom, preview, act' } ,
+                    play    : { label : 'Play buttons' , text : 'a video or audio thumbnail and its control' } ,
+                    premium : { label : 'Content held back' , text : 'an invitation to unlock it' } ,
+                    status  : { label : 'States' , text : '« Coming soon », « Sold out », and the rest' } ,
+                } ,
+                title : 'What the centre is for' ,
+            } ,
+
+            video :
+            {
+                alt  : 'Video thumbnail' ,
+                live : 'LIVE' ,
+            } ,
+        } ,
+
+        darkMode :
+        {
+            benefits :
+            {
+                items :
+                {
+                    automatic   : { label : 'It switches itself' , text : 'the image follows the theme, without a line of JavaScript' } ,
+                    compatible  : { label : 'Nothing left out' , text : 'the rest of the component carries on — the corners, the centre, fill mode' } ,
+                    optional    : { label : 'Optional' , text : 'with no dark property, the component behaves as it always did' } ,
+                    performance : { label : 'One image at a time' , text : 'CSS is what decides which one shows' } ,
+                    uses        : { label : 'What for' , text : 'a logo, an illustration, a diagram, a banner, a product' } ,
+                } ,
+                title : 'What it is worth' ,
+            } ,
+
+            description : 'Two images, and the one on show follows the theme.' ,
+
+            hero :
+            {
+                alt   : 'Banner following the theme' ,
+                title : 'A banner that follows the theme' ,
+            } ,
+
+            illustration :
+            {
+                alt   : 'Illustration' ,
+                badge : 'Premium' ,
+            } ,
+
+            logo :
+            {
+                alt  : 'Logo' ,
+                note : 'The light theme shows the first image, the dark one the second.' ,
+            } ,
+
+            product :
+            {
+                alt  : 'Product' ,
+                cart : 'Add to cart' ,
+            } ,
+
+            scenarios :
+            {
+                hero         : 'A banner following the theme' ,
+                illustration : 'An illustration, in fill mode' ,
+                logo         : 'A logo following the theme' ,
+                product      : 'A product and its dark variant' ,
+            } ,
+
+            tip : 'Switch the theme : the images follow.' ,
+        } ,
+
+        animations : { alt : '{0} animation' } ,
+        sizes      : { alt : '{0} size' } ,
+        colors     : { alt : '{0} colour' } ,
+        reloadAll  : 'Reload them all' ,
+
+        avatars : { alt : 'Portrait {0}' } ,
+
+        noSpinner : { alt : 'No wait on show' } ,
+
+        priority :
+        {
+            alt  : 'Banner' ,
+            note : 'for images visible the moment the page loads : a banner, anything above the fold.' ,
+        } ,
+
+        fallback :
+        {
+            corner : 'corner' ,
+            frames :
+            {
+                carried : 'a colour the entity carries' ,
+                other   : 'another name, another tint' ,
+                tint    : 'a tint picked from the name' ,
+            } ,
+            icon : 'an icon, and a corner over it' ,
+            note : 'An entity with no picture is ordinary. Deprived of a src, the frame shows its fallback instead of an image — and the four corners and the centre keep working, so a caller composes overlays without having to ask whether a picture exists.' ,
         } ,
     } ,
 } ;

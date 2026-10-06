@@ -8,6 +8,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🌍 The lab's Images page follows the language switch (two of two), and the page is done**
+
+- **90 more keys per language** — content at the centre, one image per theme, the animations of the wait and its sizes and colours, round pictures, priority loading and the fallback. The demo reads **180 keys** and holds **94 literals** where it held 329 : what is left is API names, `mockup-code` samples, and sample figures like a price or a duration.
+- 🚨 **Two leaks named a consuming application's trade**, in English, in the overlay copy of this very page — the sweep that took out the French ones had been run in French only. They are gone, and what the overlays now sell is photographs : a subject an image demo can claim as its own. **One more is left**, in the lists demo, and it goes in its own commit.
+- **A third `Reload all` label was written out a third time.** One key at the top of the bundle serves the three sections that reload.
+- **The round pictures were three copies of one block.** They loop over a table, like the masonry gallery and the six other blocks that differ only by a value — eight in all on this page now.
+- **`ucFirst` is gone from the demo.** The alternative texts of the three wait sections were built by capitalising an API value in code ; they read a key taking `{0}`, and a capital letter belongs to a sentence, not to a value.
+- **The eighteen remaining section comments are out of the markup.** Each repeated the heading two lines below it, and the file now carries none at all — what a section is for belongs to the module's doc comment.
+- ⚠️ **Twenty lab pages still carry a dead `path = 'app.test'` prop**, read by nothing. Three are now gone, with the three pages that were translated ; the rest is a job of its own.
+
 **🌍 The lab's Images page follows the language switch (one of two)**
 
 - **The page had no bundle at all** — one hard-coded English title, and a third dead `path = 'app.test'` prop like the two already taken out. It reads `app.lab.images` now, and `I18nMetas` puts its title and its sentence in the document.

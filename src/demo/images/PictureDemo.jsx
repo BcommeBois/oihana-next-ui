@@ -19,8 +19,7 @@ import {
     MdShare
 } from 'react-icons/md' ;
 
-import format  from 'vegas-js-core/src/strings/fastformat' ;
-import ucFirst from 'vegas-js-core/src/strings/ucFirst' ;
+import format from 'vegas-js-core/src/strings/fastformat' ;
 
 import getInitials from '@/helpers/strings/getInitials' ;
 import hashIndex   from '@/helpers/strings/hashIndex' ;
@@ -40,13 +39,34 @@ const PALETTE =
     'bg-info/15 text-info' ,
 ] ;
 
-/** The four frames of the fallback section. */
+/**
+ * The three named frames of the fallback section : a name to take initials and
+ * a tint from, and the key its sentence is read by.
+ * @type {Array<{ color : ?string , key : string , name : string }>}
+ */
 const FALLBACKS =
 [
-    { label : 'a tint picked from the name' , name : 'Acme Studio' } ,
-    { label : 'another name, another tint' , name : 'Borealis Works' } ,
-    { color : '#F59E0B' , label : 'a colour the entity carries' , name : 'Amber Group' } ,
+    { key : 'tint'    , name : 'Acme Studio' } ,
+    { key : 'other'   , name : 'Borealis Works' } ,
+    { color : '#F59E0B' , key : 'carried' , name : 'Amber Group' } ,
 ] ;
+
+/**
+ * The three round pictures, each waiting in its own way.
+ * @type {Array<{ animation : string , color : ?string , img : number }>}
+ */
+const AVATARS =
+[
+    { animation : 'ring'    , img : 1 } ,
+    { animation : 'spinner' , color : 'primary'   , img : 5 } ,
+    { animation : 'dots'    , color : 'secondary' , img : 8 } ,
+] ;
+
+/** What the centre is for, in the order the list reads. */
+const CENTER_USES = [ 'play' , 'hero' , 'premium' , 'icons' , 'status' , 'cta' ] ;
+
+/** What two images per theme are worth, in the order the list reads. */
+const DARK_BENEFITS = [ 'automatic' , 'compatible' , 'optional' , 'performance' , 'uses' ] ;
 
 /**
  * The animations the loader can play, in the order the section shows them.
@@ -177,8 +197,11 @@ const PictureDemo = ( { path = 'demo.images.picture' } = {} ) =>
     const t = useI18n( path ) ?? {} ;
 
     const basic    = t.basic ?? {} ;
+    const center   = t.center ?? {} ;
     const corners  = t.corners ?? {} ;
+    const darkMode = t.darkMode ?? {} ;
     const dims     = t.dimensions ?? {} ;
+    const fallback = t.fallback ?? {} ;
     const lazy     = t.lazy ?? {} ;
     const masonry  = t.masonry ?? {} ;
     const useCases = t.useCases ?? {} ;
@@ -860,24 +883,22 @@ const PictureDemo = ( { path = 'demo.images.picture' } = {} ) =>
 
             <Divider />
 
-            {/* Center Content Examples */}
             <div className="flex flex-col gap-4">
                 <h3 className="text-xl font-semibold border-b-2 border-info pb-2">
-                    Center Content Examples
+                    { t.sections?.center }
                 </h3>
 
                 <p className="text-sm opacity-70">
-                    Place content in the center of images - perfect for play buttons, overlay text, or call-to-actions.
+                    { center.description }
                 </p>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                    {/* Example 1: Video play button */}
                     <div className="flex flex-col gap-2">
-                        <code className="badge badge-sm">Video Thumbnail</code>
+                        <code className="badge badge-sm">{ center.scenarios?.video }</code>
                         <Picture
                             src="https://picsum.photos/800/450?random=901"
-                            alt="Video"
+                            alt={ center.video?.alt }
                             width={ 800 }
                             height={ 450 }
                             className="rounded-box overflow-hidden shadow-lg"
@@ -894,7 +915,7 @@ const PictureDemo = ( { path = 'demo.images.picture' } = {} ) =>
                             topRight={
                                 <Badge color="error">
                                     <span className="inline-block w-2 h-2 bg-error-content rounded-full animate-pulse mr-1" />
-                                    LIVE
+                                    { center.video?.live }
                                 </Badge>
                             }
                             bottomLeft={
@@ -907,25 +928,24 @@ const PictureDemo = ( { path = 'demo.images.picture' } = {} ) =>
                         />
                     </div>
 
-                    {/* Example 2: Image with text overlay */}
                     <div className="flex flex-col gap-2">
-                        <code className="badge badge-sm">Hero Overlay</code>
+                        <code className="badge badge-sm">{ center.scenarios?.hero }</code>
                         <Picture
                             src="https://picsum.photos/800/450?random=902"
-                            alt="Hero"
+                            alt={ center.hero?.alt }
                             width={ 800 }
                             height={ 450 }
                             className="rounded-box overflow-hidden shadow-lg"
                             center={
                                 <div className="text-center text-white space-y-4">
                                     <h2 className="text-4xl font-bold drop-shadow-lg">
-                                        Premium Wood Furniture
+                                        { center.hero?.title }
                                     </h2>
                                     <p className="text-lg drop-shadow">
-                                        Handcrafted Excellence Since 1995
+                                        { center.hero?.subtitle }
                                     </p>
                                     <Button color="primary" size="lg">
-                                        Discover Collection
+                                        { center.hero?.action }
                                     </Button>
                                 </div>
                             }
@@ -934,12 +954,11 @@ const PictureDemo = ( { path = 'demo.images.picture' } = {} ) =>
                         />
                     </div>
 
-                    {/* Example 3: Locked content */}
                     <div className="flex flex-col gap-2">
-                        <code className="badge badge-sm">Premium Content</code>
+                        <code className="badge badge-sm">{ center.scenarios?.premium }</code>
                         <Picture
                             src="https://picsum.photos/800/450?random=903"
-                            alt="Premium"
+                            alt={ center.premium?.alt }
                             width={ 800 }
                             height={ 450 }
                             className="rounded-box overflow-hidden shadow-lg"
@@ -947,12 +966,12 @@ const PictureDemo = ( { path = 'demo.images.picture' } = {} ) =>
                             center={
                                 <div className="bg-base-100/95 backdrop-blur-xl rounded-box p-8 text-center space-y-4 max-w-sm">
                                     <div className="text-6xl">🔒</div>
-                                    <h3 className="text-2xl font-bold">Premium Content</h3>
+                                    <h3 className="text-2xl font-bold">{ center.premium?.title }</h3>
                                     <p className="text-sm opacity-70">
-                                        Subscribe to unlock exclusive photos and videos
+                                        { center.premium?.text }
                                     </p>
                                     <Button color="primary" size="lg" className="w-full">
-                                        Unlock Now
+                                        { center.premium?.action }
                                     </Button>
                                 </div>
                             }
@@ -961,12 +980,11 @@ const PictureDemo = ( { path = 'demo.images.picture' } = {} ) =>
                         />
                     </div>
 
-                    {/* Example 4: Zoom/Preview */}
                     <div className="flex flex-col gap-2">
-                        <code className="badge badge-sm">Image Preview</code>
+                        <code className="badge badge-sm">{ center.scenarios?.preview }</code>
                         <Picture
                             src="https://picsum.photos/800/450?random=904"
-                            alt="Preview"
+                            alt={ center.preview?.alt }
                             width={ 800 }
                             height={ 450 }
                             className="rounded-box overflow-hidden shadow-lg group cursor-pointer"
@@ -977,27 +995,26 @@ const PictureDemo = ( { path = 'demo.images.picture' } = {} ) =>
                                     </svg>
                                 </div>
                             }
-                            topRight={ <Badge color="info">HD Quality</Badge> }
-                            bottomRight={ <div className="badge badge-sm">Click to zoom</div> }
+                            topRight={ <Badge color="info">{ center.preview?.quality }</Badge> }
+                            bottomRight={ <div className="badge badge-sm">{ center.preview?.zoom }</div> }
                             loadingAnimation="bars"
                             loadingSize="md"
                         />
                     </div>
 
-                    {/* Example 5: Coming Soon */}
                     <div className="flex flex-col gap-2">
-                        <code className="badge badge-sm">Coming Soon</code>
+                        <code className="badge badge-sm">{ center.scenarios?.soon }</code>
                         <Picture
                             src="https://picsum.photos/800/450?random=905"
-                            alt="Coming soon"
+                            alt={ center.soon?.alt }
                             width={ 800 }
                             height={ 450 }
                             className="rounded-box overflow-hidden shadow-lg"
                             imageClassName="grayscale"
                             center={
                                 <div className="bg-linear-to-r from-primary to-secondary text-primary-content rounded-box px-8 py-6 text-center transform -rotate-12 shadow-2xl">
-                                    <div className="text-3xl font-bold">COMING SOON</div>
-                                    <div className="text-sm mt-2">March 2026</div>
+                                    <div className="text-3xl font-bold">{ center.soon?.title }</div>
+                                    <div className="text-sm mt-2">{ center.soon?.date }</div>
                                 </div>
                             }
                             loadingAnimation="ball"
@@ -1005,31 +1022,30 @@ const PictureDemo = ( { path = 'demo.images.picture' } = {} ) =>
                         />
                     </div>
 
-                    {/* Example 6: Call to Action */}
                     <div className="flex flex-col gap-2">
-                        <code className="badge badge-sm">CTA Overlay</code>
+                        <code className="badge badge-sm">{ center.scenarios?.cta }</code>
                         <Picture
                             src="https://picsum.photos/800/450?random=906"
-                            alt="CTA"
+                            alt={ center.cta?.alt }
                             width={ 800 }
                             height={ 450 }
                             className="rounded-box overflow-hidden shadow-lg"
                             center={
                                 <div className="bg-linear-to-t from-black/80 via-black/40 to-transparent absolute inset-0 flex items-center justify-center">
                                     <div className="text-center text-white space-y-3 px-4">
-                                        <div className="text-5xl">🌲</div>
-                                        <h3 className="text-2xl font-bold">Sustainable Wood</h3>
+                                        <div className="text-5xl">🖼️</div>
+                                        <h3 className="text-2xl font-bold">{ center.cta?.title }</h3>
                                         <p className="text-sm max-w-md">
-                                            100% eco-friendly materials sourced from certified forests
+                                            { center.cta?.text }
                                         </p>
                                         <div className="flex gap-2 justify-center">
-                                            <Button color="primary" size="sm">Learn More</Button>
-                                            <Button color="ghost" size="sm" className="text-white">Shop Now</Button>
+                                            <Button color="primary" size="sm">{ center.cta?.more }</Button>
+                                            <Button color="ghost" size="sm" className="text-white">{ center.cta?.shop }</Button>
                                         </div>
                                     </div>
                                 </div>
                             }
-                            topLeft={ <Badge color="success">Eco-Friendly</Badge> }
+                            topLeft={ <Badge color="success">{ center.cta?.badge }</Badge> }
                             loadingAnimation="infinity"
                             loadingSize="md"
                         />
@@ -1058,14 +1074,13 @@ const PictureDemo = ( { path = 'demo.images.picture' } = {} ) =>
 
                 <div className="alert alert-info">
                     <div className="flex flex-col gap-1 text-sm">
-                        <div className="font-semibold">💡 Center Content Use Cases:</div>
+                        <div className="font-semibold">💡 { center.uses?.title }</div>
                         <ul className="list-disc list-inside space-y-1 text-xs">
-                            <li><strong>Play Buttons:</strong> Video/audio thumbnails with play controls</li>
-                            <li><strong>Hero Text:</strong> Centered headlines and CTAs over images</li>
-                            <li><strong>Premium Overlays:</strong> Locked content with unlock prompts</li>
-                            <li><strong>Interactive Icons:</strong> Zoom, preview, or action buttons</li>
-                            <li><strong>Status Messages:</strong> "Coming Soon", "Sold Out", etc.</li>
-                            <li><strong>Call to Actions:</strong> Centered buttons and promotional content</li>
+                            { CENTER_USES.map( key => (
+                                <li key={ key }>
+                                    <strong>{ center.uses?.items?.[ key ]?.label }</strong> — { center.uses?.items?.[ key ]?.text }
+                                </li>
+                            ))}
                         </ul>
                     </div>
                 </div>
@@ -1073,56 +1088,53 @@ const PictureDemo = ( { path = 'demo.images.picture' } = {} ) =>
 
             <Divider />
 
-            {/* Dark Mode Support */}
             <div className="flex flex-col gap-4">
                 <h3 className="text-xl font-semibold border-b-2 border-primary pb-2">
-                    Dark Mode Support
+                    { t.sections?.darkMode }
                 </h3>
 
                 <p className="text-sm opacity-70">
-                    Automatically switch between light and dark images based on the theme.
+                    { darkMode.description }
                 </p>
 
                 <div className="alert alert-info">
                     <span className="text-sm">
-                        💡 Toggle your theme to see the images change automatically!
+                        💡 { darkMode.tip }
                     </span>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                    {/* Example 1: Logo */}
                     <div className="flex flex-col gap-2">
-                        <code className="badge badge-sm">Logo with Dark Mode</code>
+                        <code className="badge badge-sm">{ darkMode.scenarios?.logo }</code>
                         <div className="flex items-center justify-center bg-base-100 rounded-box p-8">
                             <Picture
                                 src="https://picsum.photos/400/100?random=1001"
                                 dark="https://picsum.photos/400/100?random=1008"
-                                alt="Logo"
+                                alt={ darkMode.logo?.alt }
                                 width={ 400 }
                                 height={ 100 }
                                 showLoading={ false }
                             />
                         </div>
                         <p className="text-xs opacity-70">
-                            Light theme shows first image, dark theme shows second image
+                            { darkMode.logo?.note }
                         </p>
                     </div>
 
-                    {/* Example 2: Hero Banner */}
                     <div className="flex flex-col gap-2">
-                        <code className="badge badge-sm">Hero Banner with Dark Mode</code>
+                        <code className="badge badge-sm">{ darkMode.scenarios?.hero }</code>
                         <Picture
                             src="https://picsum.photos/600/300?random=1003"
                             dark="https://picsum.photos/600/300?random=1004"
-                            alt="Hero"
+                            alt={ darkMode.hero?.alt }
                             width={ 600 }
                             height={ 300 }
                             className="rounded-box overflow-hidden shadow-lg"
                             center={
                                 <div className="text-center text-white">
                                     <h3 className="text-2xl font-bold drop-shadow-lg">
-                                        Theme-Aware Hero
+                                        { darkMode.hero?.title }
                                     </h3>
                                 </div>
                             }
@@ -1131,20 +1143,19 @@ const PictureDemo = ( { path = 'demo.images.picture' } = {} ) =>
                         />
                     </div>
 
-                    {/* Example 3: Product Image */}
                     <div className="flex flex-col gap-2">
-                        <code className="badge badge-sm">Product with Dark Variant</code>
+                        <code className="badge badge-sm">{ darkMode.scenarios?.product }</code>
                         <Picture
                             src="https://picsum.photos/500/500?random=1005"
                             dark="https://picsum.photos/500/500?random=1006"
-                            alt="Product"
+                            alt={ darkMode.product?.alt }
                             width={ 500 }
                             height={ 500 }
                             className="rounded-box overflow-hidden shadow-lg"
                             topLeft={ <Badge color="error">-30%</Badge> }
                             bottomRight={
                                 <Button color="primary" size="sm">
-                                    Add to Cart
+                                    { darkMode.product?.cart }
                                 </Button>
                             }
                             loadingAnimation="dots"
@@ -1152,17 +1163,16 @@ const PictureDemo = ( { path = 'demo.images.picture' } = {} ) =>
                         />
                     </div>
 
-                    {/* Example 4: Illustration */}
                     <div className="flex flex-col gap-2">
-                        <code className="badge badge-sm">Illustration (Fill Mode)</code>
+                        <code className="badge badge-sm">{ darkMode.scenarios?.illustration }</code>
                         <div className="relative aspect-square rounded-box overflow-hidden bg-base-300 shadow-lg">
                             <Picture
                                 src="https://picsum.photos/800/800?random=1007"
                                 dark="https://picsum.photos/800/800?random=1008"
-                                alt="Illustration"
+                                alt={ darkMode.illustration?.alt }
                                 fill
                                 objectFit="cover"
-                                topRight={ <Badge color="info">Premium</Badge> }
+                                topRight={ <Badge color="info">{ darkMode.illustration?.badge }</Badge> }
                                 loadingAnimation="spinner"
                                 loadingSize="md"
                             />
@@ -1188,13 +1198,13 @@ const PictureDemo = ( { path = 'demo.images.picture' } = {} ) =>
 
                 <div className="alert alert-success">
                     <div className="flex flex-col gap-1 text-sm">
-                        <div className="font-semibold">✅ Dark Mode Benefits:</div>
+                        <div className="font-semibold">✅ { darkMode.benefits?.title }</div>
                         <ul className="list-disc list-inside space-y-1 text-xs">
-                            <li><strong>Automatic switching:</strong> Images change with theme (no JS required)</li>
-                            <li><strong>Full compatibility:</strong> Works with all Picture features (corners, center, fill, etc.)</li>
-                            <li><strong>Backward compatible:</strong> Optional - works like before if <code>dark</code> prop is omitted</li>
-                            <li><strong>Performance:</strong> Only one image loaded at a time (CSS handles visibility)</li>
-                            <li><strong>Use cases:</strong> Logos, illustrations, diagrams, hero banners, products</li>
+                            { DARK_BENEFITS.map( key => (
+                                <li key={ key }>
+                                    <strong>{ darkMode.benefits?.items?.[ key ]?.label }</strong> — { darkMode.benefits?.items?.[ key ]?.text }
+                                </li>
+                            ))}
                         </ul>
                     </div>
                 </div>
@@ -1202,15 +1212,14 @@ const PictureDemo = ( { path = 'demo.images.picture' } = {} ) =>
 
             <Divider />
 
-            {/* Loading Animations */}
             <div className="flex flex-col gap-4">
                 <h3 className="text-xl font-semibold border-b-2 border-secondary pb-2">
-                    Loading Animations
+                    { t.sections?.animations }
                 </h3>
 
                 <div className="flex gap-2 items-center">
                     <Button size="sm" color="ghost" icon={ MdRefresh } onClick={ reloadAnimation }>
-                        Reload All
+                        { t.reloadAll }
                     </Button>
                 </div>
 
@@ -1228,7 +1237,7 @@ const PictureDemo = ( { path = 'demo.images.picture' } = {} ) =>
                                 <Picture
                                     key={ `${ animation }-${ animationKey }` }
                                     src={ `https://picsum.photos/400/300?random=${ animationKey + index + 1 }` }
-                                    alt={ `${ ucFirst( animation ) } animation` }
+                                    alt={ format( t.animations?.alt ?? '' , animation ) }
                                     width={ 400 }
                                     height={ 300 }
                                     className="rounded-box overflow-hidden"
@@ -1249,15 +1258,14 @@ const PictureDemo = ( { path = 'demo.images.picture' } = {} ) =>
 
             <Divider />
 
-            {/* Loading Sizes */}
             <div className="flex flex-col gap-4">
                 <h3 className="text-xl font-semibold border-b-2 border-accent pb-2">
-                    Loading Sizes
+                    { t.sections?.sizes }
                 </h3>
 
                 <div className="flex gap-2 items-center">
                     <Button size="sm" color="ghost" icon={ MdRefresh } onClick={ reloadSize }>
-                        Reload All
+                        { t.reloadAll }
                     </Button>
                 </div>
 
@@ -1275,7 +1283,7 @@ const PictureDemo = ( { path = 'demo.images.picture' } = {} ) =>
                                 <Picture
                                     key={ `${ size }-${ sizeKey }` }
                                     src={ `https://picsum.photos/200/150?random=${ sizeKey + index + 10 }` }
-                                    alt={ `${ size.toUpperCase() } size` }
+                                    alt={ format( t.sizes?.alt ?? '' , size ) }
                                     width={ 200 }
                                     height={ 150 }
                                     className="rounded-box overflow-hidden"
@@ -1296,15 +1304,14 @@ const PictureDemo = ( { path = 'demo.images.picture' } = {} ) =>
 
             <Divider />
 
-            {/* Loading Colors */}
             <div className="flex flex-col gap-4">
                 <h3 className="text-xl font-semibold border-b-2 border-info pb-2">
-                    Loading Colors
+                    { t.sections?.colors }
                 </h3>
 
                 <div className="flex gap-2 items-center">
                     <Button size="sm" color="ghost" icon={ MdRefresh } onClick={ reloadColor }>
-                        Reload All
+                        { t.reloadAll }
                     </Button>
                 </div>
 
@@ -1322,7 +1329,7 @@ const PictureDemo = ( { path = 'demo.images.picture' } = {} ) =>
                                 <Picture
                                     key={ `${ value }-${ colorKey }` }
                                     src={ `https://picsum.photos/300/200?random=${ colorKey + index + 20 }` }
-                                    alt={ `${ ucFirst( value ) } color` }
+                                    alt={ format( t.colors?.alt ?? '' , value ) }
                                     width={ 300 }
                                     height={ 200 }
                                     className="rounded-box overflow-hidden"
@@ -1344,47 +1351,26 @@ const PictureDemo = ( { path = 'demo.images.picture' } = {} ) =>
 
             <Divider />
 
-            {/* Avatars / Round Pictures */}
             <div className="flex flex-col gap-4">
                 <h3 className="text-xl font-semibold border-b-2 border-success pb-2">
-                    Round Pictures (Avatars)
+                    { t.sections?.avatars }
                 </h3>
 
                 <div className="flex gap-4 flex-wrap justify-center">
-                    <Picture
-                        src="https://i.pravatar.cc/150?img=1"
-                        alt="Avatar 1"
-                        width={ 150 }
-                        height={ 150 }
-                        className="rounded-full overflow-hidden shadow-lg"
-                        imageClassName="object-cover"
-                        loadingAnimation="ring"
-                        loadingSize="md"
-                    />
-
-                    <Picture
-                        src="https://i.pravatar.cc/150?img=5"
-                        alt="Avatar 2"
-                        width={ 150 }
-                        height={ 150 }
-                        className="rounded-full overflow-hidden shadow-lg"
-                        imageClassName="object-cover"
-                        loadingAnimation="spinner"
-                        loadingColor="primary"
-                        loadingSize="md"
-                    />
-
-                    <Picture
-                        src="https://i.pravatar.cc/150?img=8"
-                        alt="Avatar 3"
-                        width={ 150 }
-                        height={ 150 }
-                        className="rounded-full overflow-hidden shadow-lg"
-                        imageClassName="object-cover"
-                        loadingAnimation="dots"
-                        loadingColor="secondary"
-                        loadingSize="md"
-                    />
+                    { AVATARS.map( ( { animation , color , img } , index ) => (
+                        <Picture
+                            key={ img }
+                            src={ `https://i.pravatar.cc/150?img=${ img }` }
+                            alt={ format( t.avatars?.alt ?? '' , index + 1 ) }
+                            width={ 150 }
+                            height={ 150 }
+                            className="rounded-full overflow-hidden shadow-lg"
+                            imageClassName="object-cover"
+                            loadingAnimation={ animation }
+                            loadingColor={ color }
+                            loadingSize="md"
+                        />
+                    ))}
                 </div>
 
                 <div className="mockup-code text-xs">
@@ -1401,16 +1387,15 @@ const PictureDemo = ( { path = 'demo.images.picture' } = {} ) =>
 
             <Divider />
 
-            {/* Without Loading Spinner */}
             <div className="flex flex-col gap-4">
                 <h3 className="text-xl font-semibold border-b-2 border-warning pb-2">
-                    Without Loading Spinner
+                    { t.sections?.noSpinner }
                 </h3>
 
                 <div className="flex justify-center">
                     <Picture
                         src="https://picsum.photos/500/300?random=100"
-                        alt="No spinner"
+                        alt={ t.noSpinner?.alt }
                         width={ 500 }
                         height={ 300 }
                         className="rounded-box overflow-hidden shadow-lg"
@@ -1427,22 +1412,21 @@ const PictureDemo = ( { path = 'demo.images.picture' } = {} ) =>
 
             <Divider />
 
-            {/* Priority Loading */}
             <div className="flex flex-col gap-4">
                 <h3 className="text-xl font-semibold border-b-2 border-error pb-2">
-                    Priority Loading (Above-the-fold)
+                    { t.sections?.priority }
                 </h3>
 
                 <div className="alert alert-info">
                     <span className="text-sm">
-                        Use <code className="badge badge-sm">priority</code> for images that are visible immediately when the page loads (hero banners, above-the-fold content).
+                        <code className="badge badge-sm">priority</code> { t.priority?.note }
                     </span>
                 </div>
 
                 <div className="flex justify-center">
                     <Picture
                         src="https://picsum.photos/1200/400?random=200"
-                        alt="Hero banner"
+                        alt={ t.priority?.alt }
                         width={ 1200 }
                         height={ 400 }
                         className="rounded-box overflow-hidden shadow-lg max-w-full"
@@ -1464,21 +1448,18 @@ const PictureDemo = ( { path = 'demo.images.picture' } = {} ) =>
 
             <div className="flex flex-col gap-4">
                 <h3 className="text-xl font-semibold border-b-2 border-secondary pb-2">
-                    No source at all : the fallback
+                    { t.sections?.fallback }
                 </h3>
 
                 <div className="alert alert-info">
                     <span className="text-sm">
-                        An entity with no picture is ordinary. Without a <code className="badge badge-sm">src</code>,
-                        the frame shows <code className="badge badge-sm">fallback</code> instead of an image —
-                        and the four corners and the centre keep working, so a caller composes overlays
-                        without switching on whether a picture exists.
+                        { fallback.note }
                     </span>
                 </div>
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
 
-                    { FALLBACKS.map( ( { color , label , name } ) => (
+                    { FALLBACKS.map( ( { color , key , name } ) => (
                         <div className="flex flex-col gap-2" key={ name }>
                             <Picture
                                 className         = "h-28 w-full rounded-box overflow-hidden"
@@ -1488,7 +1469,7 @@ const PictureDemo = ( { path = 'demo.images.picture' } = {} ) =>
                                 fill
                                 topRight          = { <Badge color="neutral" size="sm">{ getInitials( name ) }</Badge> }
                             />
-                            <span className="text-xs opacity-70">{ label }</span>
+                            <span className="text-xs opacity-70">{ fallback.frames?.[ key ] }</span>
                         </div>
                     ) ) }
 
@@ -1498,9 +1479,9 @@ const PictureDemo = ( { path = 'demo.images.picture' } = {} ) =>
                             fallback      = { <MdImageNotSupported className="size-10 opacity-40" /> }
                             fallbackColor = "#0EA5E9"
                             fill
-                            bottomLeft    = { <Badge size="sm">corner</Badge> }
+                            bottomLeft    = { <Badge size="sm">{ fallback.corner }</Badge> }
                         />
-                        <span className="text-xs opacity-70">an icon, and a corner over it</span>
+                        <span className="text-xs opacity-70">{ fallback.icon }</span>
                     </div>
 
                 </div>
