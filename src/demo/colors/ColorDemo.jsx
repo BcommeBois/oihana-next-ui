@@ -9,6 +9,8 @@ import InputColor     from '@/components/inputs/InputColor' ;
 import ColorPicker    from '@/components/colors/ColorPicker' ;
 import ColorIndicator from '@/components/colors/ColorIndicator' ;
 
+import withAlpha from '@/helpers/colors/withAlpha' ;
+
 import InputColorInModalDemo from './InputColorInModalDemo' ;
 
 /**
@@ -180,20 +182,103 @@ const ColorDemo = () =>
 
             <Divider />
 
-            {/* ColorIndicator — a reusable presentational swatch */}
             <div className="flex flex-col gap-4">
                 <span className="font-semibold">ColorIndicator (swatch)</span>
                 <p className="text-sm opacity-70">
-                    A presentational color chip (xs → xl), used by the picker presets, lists, legends…
-                    The last one shows the empty state (border only).
+                    A presentational color chip (2xs → xl), used by the picker presets, lists, legends…
+                    The last one shows the empty state : the ordinary border, no fill.
                 </p>
                 <div className="flex items-end gap-3">
+                    <ColorIndicator color="#FF5733" size="2xs" />
                     <ColorIndicator color="#FF5733" size="xs" />
                     <ColorIndicator color="#FF5733" size="sm" />
                     <ColorIndicator color="#FF5733" size="md" />
                     <ColorIndicator color="#FF5733" size="lg" />
                     <ColorIndicator color="#FF5733" size="xl" />
                     <ColorIndicator size="xl" />
+                </div>
+            </div>
+
+            <Divider />
+
+            <div className="flex flex-col gap-4">
+                <span className="font-semibold">The round mark, and what « no colour » looks like</span>
+                <p className="text-sm opacity-70">
+                    The mark that sits beside a name in a row. A missing colour is never a grey
+                    fill — that would read as « its colour is grey ». Each pair below shows the
+                    same setting with a colour and without one.
+                </p>
+
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+
+                    <div className="flex flex-col gap-2 rounded-box bg-base-100 p-4">
+                        <code className="text-xs opacity-70">shape="circle"</code>
+                        <div className="flex items-center gap-3">
+                            <ColorIndicator color="#22C55E" shape="circle" size="xs" />
+                            <ColorIndicator shape="circle" size="xs" />
+                        </div>
+                        <span className="text-xs opacity-70">bordered, and the border stays when empty</span>
+                    </div>
+
+                    <div className="flex flex-col gap-2 rounded-box bg-base-100 p-4">
+                        <code className="text-xs opacity-70">bordered={ '{ false }' }</code>
+                        <div className="flex items-center gap-3">
+                            <ColorIndicator bordered={ false } color="#22C55E" shape="circle" size="xs" />
+                            <ColorIndicator bordered={ false } shape="circle" size="xs" />
+                        </div>
+                        <span className="text-xs opacity-70">nothing either way : the name carries the meaning</span>
+                    </div>
+
+                    <div className="flex flex-col gap-2 rounded-box bg-base-100 p-4">
+                        <code className="text-xs opacity-70">empty="ring"</code>
+                        <div className="flex items-center gap-3">
+                            <ColorIndicator bordered={ false } color="#22C55E" empty="ring" shape="circle" size="xs" />
+                            <ColorIndicator bordered={ false } empty="ring" shape="circle" size="xs" />
+                        </div>
+                        <span className="text-xs opacity-70">no border when filled, a ring when not</span>
+                    </div>
+
+                    <div className="flex flex-col gap-2 rounded-box bg-base-100 p-4">
+                        <code className="text-xs opacity-70">empty="dashed"</code>
+                        <div className="flex items-center gap-3">
+                            <ColorIndicator color="#22C55E" empty="dashed" shape="circle" size="xs" />
+                            <ColorIndicator empty="dashed" shape="circle" size="xs" />
+                        </div>
+                        <span className="text-xs opacity-70">nobody ever gave this one a colour</span>
+                    </div>
+
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2 text-sm">
+                    <ColorIndicator bordered={ false } color="#F59E0B" empty="ring" shape="circle" size="2xs" />
+                    <span>a term with a colour</span>
+                    <span aria-hidden="true" className="opacity-40">·</span>
+                    <ColorIndicator bordered={ false } empty="ring" shape="circle" size="2xs" />
+                    <span>one without</span>
+                </div>
+            </div>
+
+            <Divider />
+
+            <div className="flex flex-col gap-4">
+                <span className="font-semibold">withAlpha — the same colour, as a wash</span>
+                <p className="text-sm opacity-70">
+                    For a tint behind initials or an icon. It goes through <code>color-mix</code>,
+                    so a colour served as <code>rgb(…)</code> or named works exactly like a hex one —
+                    appending two hex digits does not.
+                </p>
+
+                <div className="flex flex-wrap gap-3">
+                    { [ [ '#FF5733' , 0.15 ] , [ '#FF5733' , 0.4 ] , [ 'rebeccapurple' , 0.15 ] , [ 'rgb(34 197 94)' , 0.25 ] ].map( ( [ value , alpha ] ) => (
+                        <div
+                            className = "flex min-w-40 flex-col gap-1 rounded-box p-4"
+                            key       = { `${ value }-${ alpha }` }
+                            style     = { { backgroundColor : withAlpha( value , alpha ) } }
+                        >
+                            <span className="text-2xl font-semibold" style={ { color : value } }>Aa</span>
+                            <code className="text-xs opacity-70">{ `withAlpha( '${ value }' , ${ alpha } )` }</code>
+                        </div>
+                    ) ) }
                 </div>
             </div>
 

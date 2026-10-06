@@ -8,6 +8,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🔵 The round colour mark, and a colour made translucent**
+
+- **Gathered from five hand-written copies of the same mark** in one application — a coloured disc beside a name, in a row — which spelled « no colour » **four different ways**. The difference is not cosmetic : the same entity is served with its colour in one place and without it in another, and a grey disc would read as « its colour is grey » rather than « nobody gave it one ». One of the five carried that argument in its own doc comment.
+- **`ColorIndicator` answers two questions apart.** 🔑 **`bordered` governs the swatch that HAS a colour** — a mark beside a name usually wants no border, a swatch one points at wants one or a white colour vanishes into a white card. 🔑 **`empty` governs the one that has none** : `transparent` keeps the ordinary border and shows no fill, which is what the picker has always shown ; `ring` draws a mark carrying no border when filled ; `dashed` says nobody ever gave this one a colour. Two props, four renderings, and every one of the five copies lands on them.
+- `shape="circle"` beside the square the picker shows, and a **`2xs`** size (eight pixels) under the existing `xs` : the mark in a dense row is half the size of the smallest swatch. The inner shadow now belongs to the **square** only — on an eight-pixel disc it was noise, and its job is to make a white swatch visible on a white card.
+- ⚠️ **No change for `ColorPicker`** : replayed on the class generator, a square swatch with a colour comes out with exactly the classes it had. The swatch also carries `aria-hidden` now — it never had an accessible name, being a `span` with a background, and the preset buttons around it keep theirs.
+- **New `helpers/colors/withAlpha( color , alpha = 0.15 )`** — the same colour as a wash, behind initials or an icon. 🚨 **Gathered from six places appending two hex digits** to a colour to mean « about 15 % ». That works for a six-digit hex and for nothing else : a colour served as `rgb(…)`, named, or already carrying an alpha produces an invalid string and a background that disappears **with no error at all**. `color-mix` takes any CSS colour, and is no new requirement — Tailwind 4 and daisyUI already use it in their own stylesheets.
+  - It returns `undefined` when handed no colour, so a caller can pass the result straight to `style` and get no background rather than a broken one. `null` as the alpha takes the default — a caller passing a value it does not have should get the wash, not an invisible background — while `0` is honoured.
+- Lab, colours page : the round mark in its four settings, each shown with a colour and without one side by side, and four washes through `withAlpha` including a named colour and an `rgb(…)` one.
+
+
 **🌍 The lab's TextAreas page follows the language switch**
 
 - The twin of the Inputs page, in the same state : a `path = 'app.test'` prop it never read, seven filter rows of hardcoded English, and six demos that had never seen a bundle. Now **190 keys per language** — 18 for the page, 172 for its demos — and `I18nMetas` gives the document its title.

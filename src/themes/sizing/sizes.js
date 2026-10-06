@@ -16,6 +16,7 @@ export const XS    = 'xs' ;
 export const WIDE  = 'wide' ;
 
 // Extended sizes
+export const XXS        = '2xs' ;
 export const XL         = 'xl' ;
 export const XXL        = '2xl' ;
 export const XXXL       = '3xl' ;

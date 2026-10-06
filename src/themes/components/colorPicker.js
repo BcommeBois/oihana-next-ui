@@ -18,7 +18,7 @@ import cn from '../helpers/cn' ;
 
 import { HORIZONTAL , VERTICAL } from '../enums/orientations' ;
 
-import { LG , MD , SM , XL , XS } from '../sizing/sizes' ;
+import { LG , MD , SM , XL , XS , XXS } from '../sizing/sizes' ;
 
 /**
  * Default preset palette offered by the picker (Tailwind-ish hues + black/white).
@@ -33,35 +33,108 @@ export const DEFAULT_PRESETS =
 // ---------- Indicator (swatch)
 
 /**
- * @typedef {'xs' | 'sm' | 'md' | 'lg' | 'xl'} ColorIndicatorSize
+ * @typedef {'2xs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl'} ColorIndicatorSize
  */
 
 /**
  * Valid swatch sizes.
+ *
+ * `2xs` is the mark beside a name in a dense row — eight pixels, where the
+ * others are swatches one points at.
+ *
  * @type {ColorIndicatorSize[]}
  */
-export const indicatorSizes = [ XS , SM , MD , LG , XL ] ;
+export const indicatorSizes = [ XXS , XS , SM , MD , LG , XL ] ;
 
 const indicatorSizeMap =
 {
-    [ XS ] : 'size-3' ,
-    [ SM ] : 'size-4' ,
-    [ MD ] : 'size-5' ,
-    [ LG ] : 'size-6' ,
-    [ XL ] : 'size-8' ,
+    [ XXS ] : 'size-2' ,
+    [ XS ]  : 'size-3' ,
+    [ SM ]  : 'size-4' ,
+    [ MD ]  : 'size-5' ,
+    [ LG ]  : 'size-6' ,
+    [ XL ]  : 'size-8' ,
 } ;
 
-/** Base classes for the color swatch. */
-export const COLOR_INDICATOR = 'inline-block shrink-0 rounded-field border border-base-content/15 shadow-inner' ;
+/**
+ * The round mark.
+ *
+ * Declared here rather than imported : `themes/components/button` and
+ * `themes/components/mask` each declare their own, because the word means a
+ * different thing in each — a round BUTTON, a round MASK, a round mark.
+ *
+ * @type {string}
+ */
+export const CIRCLE = 'circle' ;
+
+/**
+ * The swatch with the field radius, which is what a picker shows.
+ * @type {string}
+ */
+export const SQUARE = 'square' ;
+
+/**
+ * The default `empty` : the ordinary border, no fill.
+ * @type {string}
+ */
+export const TRANSPARENT = 'transparent' ;
+
+/**
+ * @typedef {'circle' | 'square'} ColorIndicatorShape
+ */
+
+/**
+ * @typedef {'dashed' | 'ring' | 'transparent'} ColorIndicatorEmpty
+ */
+
+/** What the swatch always carries. */
+export const COLOR_INDICATOR = 'inline-block shrink-0' ;
+
+/** The square swatch — the one a picker shows, with its inner shadow so a white colour reads on a white card. */
+export const COLOR_INDICATOR_SQUARE = 'rounded-field shadow-inner' ;
+
+/** The round mark — beside a name, in a row, where an inner shadow would be eight pixels of noise. */
+export const COLOR_INDICATOR_CIRCLE = 'rounded-full' ;
+
+/** The border of a swatch that HAS a colour. */
+export const COLOR_INDICATOR_BORDER = 'border border-base-content/15' ;
+
+/**
+ * What a MISSING colour looks like, beyond the ordinary border.
+ *
+ * 🚨 Three spellings, because they say three different things. `transparent`
+ * keeps the swatch's own border and shows no fill — « this swatch has no
+ * colour yet », which is what a picker shows before one is chosen. `ring` draws
+ * a mark that carries no border when it IS filled — « there is something here,
+ * and it is empty ». `dashed` says « nobody ever gave this one a colour ».
+ *
+ * None of them is a fill : a grey disc would read as « its colour is grey »,
+ * which is a different statement altogether.
+ *
+ * @type {Object<ColorIndicatorEmpty, string>}
+ */
+export const COLOR_INDICATOR_EMPTY =
+{
+    dashed : 'border border-dashed border-base-content/30' ,
+    ring   : 'border border-base-content/30' ,
+} ;
 
 /**
  * Generates the className for a {@link module:components/colors/ColorIndicator} swatch.
+ *
+ * `bordered` governs the swatch that HAS a colour ; `empty` governs the one
+ * that has none. Two questions, two answers — a mark with no border when it is
+ * filled may still need a ring when it is not.
  *
  * @param {Object} [props]
  * @param {Object} [props.after] - Class definitions to append.
  * @param {Object} [props.before] - Class definitions to prepend.
  * @param {string} [props.beforeClassName] - ClassName to prepend.
+ * @param {boolean} [props.bordered=true] - Draw a border when a colour is given.
  * @param {string} [props.className] - ClassName to append.
+ * @param {ColorIndicatorEmpty} [props.empty='transparent'] - What a missing colour looks like.
+ * @param {boolean} [props.filled=true] - Whether a colour was given.
+ * @param {ColorIndicatorShape} [props.shape='square'] - Swatch shape.
  * @param {ColorIndicatorSize} [props.size='md'] - Swatch size.
  *
  * @returns {string} The swatch className expression.
@@ -69,7 +142,10 @@ export const COLOR_INDICATOR = 'inline-block shrink-0 rounded-field border borde
  * @example
  * ```js
  * getColorIndicatorClasses({ size: 'lg' }) ;
- * // → 'inline-block shrink-0 rounded-field border border-base-content/15 shadow-inner size-6'
+ * // → 'inline-block shrink-0 rounded-field shadow-inner border border-base-content/15 size-6'
+ *
+ * getColorIndicatorClasses({ empty: 'dashed' , filled: false , shape: 'circle' , size: '2xs' }) ;
+ * // → 'inline-block shrink-0 rounded-full border border-dashed border-base-content/30 size-2'
  * ```
  */
 export const getColorIndicatorClasses =
@@ -77,13 +153,24 @@ export const getColorIndicatorClasses =
     after ,
     before ,
     beforeClassName ,
+    bordered = true ,
     className ,
-    size = MD ,
+    empty    = TRANSPARENT ,
+    filled   = true ,
+    shape    = SQUARE ,
+    size     = MD ,
 }
 = {} ) => cn
 (
     beforeClassName ,
     COLOR_INDICATOR ,
+    shape === CIRCLE ? COLOR_INDICATOR_CIRCLE : COLOR_INDICATOR_SQUARE ,
+    // `transparent` is the ordinary border with no fill, which is what the
+    // picker has always shown for « no colour yet » — so an empty swatch keeps
+    // its border unless `empty` asks for a mark of its own.
+    filled || empty === TRANSPARENT
+        ? ( bordered && COLOR_INDICATOR_BORDER )
+        : COLOR_INDICATOR_EMPTY[ empty ] ,
     {
         ...before ,
         ...!!indicatorSizeMap[ size ] && { [ indicatorSizeMap[ size ] ] : true } ,
