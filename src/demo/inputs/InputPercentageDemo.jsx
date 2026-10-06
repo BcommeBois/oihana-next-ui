@@ -1,147 +1,150 @@
-// @/demo/inputs/InputPercentageDemo.jsx
-
 'use client' ;
 
 import { useState } from 'react' ;
-import Container from '@/display/Container' ;
+
+import Container       from '@/display/Container' ;
 import InputPercentage from '@/components/inputs/InputPercentage' ;
+
+import useI18n from '@/contexts/locale/useI18n' ;
 
 import ValueProbe from './ValueProbe' ;
 
-const InputPercentageDemo = () =>
+/**
+ * InputPercentage demo component.
+ *
+ * Ten sections : the plain field, chosen bounds, the symbol dropped, a comma
+ * for the decimals, HTML5 validation, a fieldset, no icon, and the three
+ * states.
+ *
+ * @param {Object} props
+ * @param {string} [props.path='demo.inputs.percentage'] - Dot notation path to the demo locale.
+ */
+const InputPercentageDemo = ( { path = 'demo.inputs.percentage' } = {} ) =>
 {
-    const [ percentage, setPercentage ] = useState( 75 ) ;
+    const t = useI18n( path ) ?? {} ;
+
+    const [ percentage , setPercentage ] = useState( 75 ) ;
 
     return (
         <Container className="flex flex-col gap-6 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-7xl">
 
-            <h2 className="text-3xl font-bold">Input Percentage Examples</h2>
+            <h2 className="text-3xl font-bold">{ t.title }</h2>
 
-            {/* Basic */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">Basic Usage</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.basic }</h3>
 
                 <InputPercentage
-                    label       = "Discount"
+                    label        = { t.discount?.label }
                     defaultValue = { 15 }
-                    helper      = "Enter discount percentage"
+                    helper       = { t.discount?.helper }
                 />
 
                 <InputPercentage
-                    label  = "Progress"
-                    value  = { percentage }
+                    label    = { t.progress?.label }
+                    value    = { percentage }
                     onChange = { setPercentage }
                 />
-                { /* `process` converts before onChange fires : the probe must read `number`. */ }
+
                 <ValueProbe label="percentage" value={ percentage } />
             </div>
 
-            {/* Custom range */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">Custom Range</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.range }</h3>
 
                 <InputPercentage
-                    label        = "Tax Rate (Max 50%)"
+                    label        = { t.tax?.label }
                     max          = { 50 }
                     defaultValue = { 20 }
-                    helper       = "Between 0% and 50%"
+                    helper       = { t.tax?.helper }
                 />
 
                 <InputPercentage
-                    label        = "Premium Discount (10-30%)"
+                    label        = { t.premium?.label }
                     min          = { 10 }
                     max          = { 30 }
                     defaultValue = { 15 }
-                    helper       = "Between 10% and 30%"
+                    helper       = { t.premium?.helper }
                 />
             </div>
 
-            {/* Without symbol */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">Without Symbol</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.noSymbol }</h3>
 
                 <InputPercentage
                     showSymbol   = { false }
-                    label        = "Completion"
+                    label        = { t.completion?.label }
                     defaultValue = { 85 }
-                    helper       = "Value without % symbol"
+                    helper       = { t.completion?.helper }
                 />
             </div>
 
-            {/* European format */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">European Format (Comma)</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.comma }</h3>
 
                 <InputPercentage
                     decimalSeparator = ","
-                    label            = "TVA"
+                    label            = { t.vat?.label }
                     defaultValue     = { 20.5 }
-                    helper           = "Uses comma as decimal separator"
+                    helper           = { t.vat?.helper }
                 />
             </div>
 
-            {/* With validation */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">With Validation</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.validation }</h3>
 
                 <InputPercentage
                     useValidator
                     required
-                    label         = "Completion Rate"
-                    validatorHint = "Must be between 0 and 100%"
+                    label         = { t.rate?.label }
+                    validatorHint = { t.rate?.hint }
                 />
             </div>
 
-            {/* With fieldset */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">With Fieldset</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.fieldset }</h3>
 
                 <InputPercentage
                     useFieldset
-                    legend       = "Discount Rate"
+                    legend       = { t.discountRate?.legend }
                     defaultValue = { 25 }
-                    helper       = "Applied to final price"
+                    helper       = { t.discountRate?.helper }
                 />
             </div>
 
-            {/* Without icon */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">Without Icon</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.noIcon }</h3>
 
                 <InputPercentage
                     showIcon     = { false }
-                    label        = "Rate"
+                    label        = { t.simpleRate?.label }
                     defaultValue = { 50 }
                 />
             </div>
 
-            {/* Error state */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">Error State</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.error }</h3>
 
                 <InputPercentage
-                    label = "Invalid Percentage"
-                    error = "Value must be between 0 and 100"
+                    label = { t.invalid?.label }
+                    error = { t.invalid?.error }
                 />
             </div>
 
-            {/* Disabled */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">Disabled</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.disabled }</h3>
 
                 <InputPercentage
-                    label        = "Locked Rate"
+                    label        = { t.locked?.label }
                     defaultValue = { 18 }
                     disabled
                 />
             </div>
 
-            {/* Read-only */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">Read-only</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.readOnly }</h3>
 
                 <InputPercentage
-                    label        = "Current Rate"
+                    label        = { t.current?.label }
                     defaultValue = { 33.33 }
                     readOnly
                 />

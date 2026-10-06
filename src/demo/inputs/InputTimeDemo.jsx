@@ -1,178 +1,187 @@
 'use client' ;
 
 import { useState } from 'react' ;
+
+import format from 'vegas-js-core/src/strings/fastformat' ;
+
 import Container from '@/display/Container' ;
 import InputTime from '@/components/inputs/InputTime' ;
 
-const InputTimeDemo = () =>
+import useI18n from '@/contexts/locale/useI18n' ;
+
+/**
+ * InputTime demo component.
+ *
+ * The 24-hour and 12-hour fields, seconds and milliseconds, the hour alone,
+ * and the time object handed back.
+ *
+ * @param {Object} props
+ * @param {string} [props.path='demo.inputs.time'] - Dot notation path to the demo locale.
+ */
+const InputTimeDemo = ( { path = 'demo.inputs.time' } = {} ) =>
 {
-    const [ time24, setTime24 ] = useState( '14:30' ) ;
-    const [ time12, setTime12 ] = useState( '02:30' ) ;
-    const [ timeWithSeconds, setTimeWithSeconds ] = useState( '14:30:45' ) ;
-    const [ timeObject, setTimeObject ] = useState( null ) ;
+    const t = useI18n( path ) ?? {} ;
+
+    const [ time24 , setTime24 ] = useState( '14:30' ) ;
+    const [ time12 , setTime12 ] = useState( '02:30' ) ;
+    const [ timeWithSeconds , setTimeWithSeconds ] = useState( '14:30:45' ) ;
+    const [ timeObject , setTimeObject ] = useState( null ) ;
 
     return (
         <Container className="flex flex-col gap-6 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-7xl">
 
-            <h2 className="text-3xl font-bold">Input Time Examples</h2>
+            <h2 className="text-3xl font-bold">{ t.title }</h2>
 
-            {/* 24-hour format */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">24-Hour Format</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.h24 }</h3>
 
                 <InputTime
-                    label       = "Time (24h)"
-                    value       = { time24 }
-                    onChange    = { setTime24 }
-                    helper      = "HH:MM format"
+                    label    = { t.h24?.label }
+                    value    = { time24 }
+                    onChange = { setTime24 }
+                    helper   = { t.h24?.helper }
                 />
 
                 <InputTime
-                    label       = "Time with Seconds"
-                    value       = { timeWithSeconds }
-                    onChange    = { setTimeWithSeconds }
+                    label    = { t.seconds?.label }
+                    value    = { timeWithSeconds }
+                    onChange = { setTimeWithSeconds }
                     useSeconds
-                    helper      = "HH:MM:SS format"
+                    helper   = { t.seconds?.helper }
                 />
 
                 <InputTime
-                    label           = "Time with Milliseconds"
+                    label           = { t.millis?.label }
                     useSeconds
                     useMilliseconds
                     defaultValue    = "14:30:45.123"
-                    helper          = "HH:MM:SS.MSS format"
+                    helper          = { t.millis?.helper }
                 />
             </div>
 
-            {/* 12-hour format with AM/PM */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">12-Hour Format (AM/PM)</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.h12 }</h3>
 
                 <InputTime
                     ampm
-                    label           = "Time (12h)"
+                    label           = { t.h12?.label }
                     value           = { time12 }
                     onChange        = { setTime12 }
                     defaultMeridiem = "PM"
-                    helper          = "Click AM/PM to toggle"
+                    helper          = { t.h12?.helper }
                 />
 
                 <InputTime
                     ampm
                     useSeconds
-                    label           = "Time with Seconds (12h)"
+                    label           = { t.h12Seconds?.label }
                     defaultValue    = "02:30:45"
                     defaultMeridiem = "PM"
                 />
             </div>
 
-            {/* With fieldset */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">With Fieldsets</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.fieldset }</h3>
 
                 <InputTime
                     useFieldset
-                    legend      = "Appointment Time"
-                    helper      = "Select your preferred time"
+                    legend = { t.appointment?.legend }
+                    helper = { t.appointment?.helper }
                 />
 
                 <InputTime
                     ampm
                     useFieldset
-                    legend          = "Meeting Time"
+                    legend          = { t.meeting?.legend }
                     defaultMeridiem = "PM"
                 />
             </div>
 
-            {/* Without icon */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">Without Icon</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.noIcon }</h3>
 
                 <InputTime
-                    label    = "Time"
+                    label    = { t.plain?.label }
                     showIcon = { false }
                 />
             </div>
 
-            {/* Minutes only (HH:MM) */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">Hours Only</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.hourOnly }</h3>
 
                 <InputTime
-                    label      = "Hour"
+                    label      = { t.hourOnly?.label }
                     useMinutes = { false }
-                    helper     = "HH format only"
+                    helper     = { t.hourOnly?.helper }
                 />
             </div>
 
-            {/* With Time object callback */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">With Time Object Callback</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.object }</h3>
 
                 <InputTime
-                    label    = "Time"
-                    onTime   = { setTimeObject }
-                    helper   = { timeObject ? `Time object: ${timeObject.toString()}` : 'Type a time...' }
+                    label  = { t.object?.label }
+                    onTime = { setTimeObject }
+                    helper = { timeObject
+                        ? format( t.object?.typed ?? '' , timeObject.toString() )
+                        : t.object?.empty }
                 />
 
                 { timeObject && (
                     <div className="text-sm bg-base-300 p-4 rounded-box">
-                        <p><strong>Hour:</strong> { timeObject.hour }</p>
-                        <p><strong>Minute:</strong> { timeObject.minute }</p>
-                        <p><strong>Second:</strong> { timeObject.second }</p>
-                        <p><strong>String:</strong> { timeObject.toString() }</p>
+                        <p><strong>{ t.object?.hour }</strong> { timeObject.hour }</p>
+                        <p><strong>{ t.object?.minute }</strong> { timeObject.minute }</p>
+                        <p><strong>{ t.object?.second }</strong> { timeObject.second }</p>
+                        <p><strong>{ t.object?.text }</strong> { timeObject.toString() }</p>
                     </div>
                 ) }
             </div>
 
-            {/* Error state */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">With Errors</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.error }</h3>
 
                 <InputTime
-                    label = "Time"
-                    error = "Invalid time format"
+                    label = { t.invalid?.label }
+                    error = { t.invalid?.error }
                 />
 
                 <InputTime
                     ampm
-                    label = "Meeting Time"
-                    error = "Time slot not available"
+                    label = { t.unavailable?.label }
+                    error = { t.unavailable?.error }
                 />
             </div>
 
-            {/* Disabled */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">Disabled State</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.disabled }</h3>
 
                 <InputTime
-                    label        = "Time"
+                    label        = { t.plain?.label }
                     defaultValue = "14:30"
                     disabled
                 />
 
                 <InputTime
                     ampm
-                    label           = "Meeting Time"
+                    label           = { t.meeting?.legend }
                     defaultValue    = "02:30"
                     defaultMeridiem = "PM"
                     disabled
                 />
             </div>
 
-            {/* Read-only */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">Read-only State</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.readOnly }</h3>
 
                 <InputTime
-                    label        = "Time"
+                    label        = { t.plain?.label }
                     defaultValue = "14:30"
                     readOnly
                 />
 
                 <InputTime
                     ampm
-                    label           = "Meeting Time"
+                    label           = { t.meeting?.legend }
                     defaultValue    = "02:30"
                     defaultMeridiem = "PM"
                     readOnly

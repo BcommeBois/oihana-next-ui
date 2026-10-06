@@ -1,40 +1,52 @@
 'use client' ;
 
 import { useState } from 'react' ;
-import Container from '@/display/Container' ;
+
+import Container     from '@/display/Container' ;
 import InputCurrency from '@/components/inputs/InputCurrency' ;
+
+import useI18n from '@/contexts/locale/useI18n' ;
 
 import ValueProbe from './ValueProbe' ;
 
-import { MdAttachMoney as DollarIcon, MdEuro as EuroIcon } from 'react-icons/md' ;
+import { MdAttachMoney as DollarIcon } from 'react-icons/md' ;
 
-const InputCurrencyDemo = () =>
+/**
+ * InputCurrency demo component.
+ *
+ * Opens on a typing bench : the same field wired controlled on one side and
+ * uncontrolled on the other, each reporting what it hands back on every
+ * keystroke.
+ *
+ * @param {Object} props
+ * @param {string} [props.path='demo.inputs.currency'] - Dot notation path to the demo locale.
+ */
+const InputCurrencyDemo = ( { path = 'demo.inputs.currency' } = {} ) =>
 {
-    const [ price, setPrice ] = useState( 99.99 ) ;
+    const t = useI18n( path ) ?? {} ;
 
-    // Typing probe : the field is the same, only the wiring differs — controlled on the
-    // left, uncontrolled on the right. Both report what they hand back on every keystroke.
+    const [ price , setPrice ] = useState( 99.99 ) ;
+
     const [ probeControlled   , setProbeControlled   ] = useState( 12.34 ) ;
     const [ probeUncontrolled , setProbeUncontrolled ] = useState( 12.34 ) ;
 
     return (
         <Container className="flex flex-col gap-6 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-7xl">
 
-            <h2 className="text-3xl font-bold">Input Currency Examples</h2>
+            <h2 className="text-3xl font-bold">{ t.title }</h2>
 
             <div className="flex flex-col gap-4 rounded-box border border-base-300 p-4">
 
-                <h3 className="text-xl font-semibold">Typing probe</h3>
+                <h3 className="text-xl font-semibold">{ t.probe?.title }</h3>
                 <p className="text-sm opacity-70">
-                    Type in either field: the badge must follow every keystroke, decimals included.
-                    A badge stuck on <code>∅ empty</code> means the keystroke was thrown away.
+                    { t.probe?.note }
                 </p>
 
                 <div className="grid gap-6 md:grid-cols-2">
 
                     <div className="flex flex-col gap-2">
                         <InputCurrency
-                            label             = "Controlled (FR, 2 decimals)"
+                            label             = { t.probe?.controlled }
                             value             = { probeControlled }
                             onChange          = { setProbeControlled }
                             decimalSeparator  = ","
@@ -49,7 +61,7 @@ const InputCurrencyDemo = () =>
 
                     <div className="flex flex-col gap-2">
                         <InputCurrency
-                            label        = "Uncontrolled (defaultValue + onChange)"
+                            label        = { t.probe?.uncontrolled }
                             defaultValue = { 12.34 }
                             onChange     = { setProbeUncontrolled }
                             min          = { 0 }
@@ -62,9 +74,8 @@ const InputCurrencyDemo = () =>
                 </div>
             </div>
 
-            {/* Euro by default */}
             <InputCurrency
-                label       = "Price (EUR)"
+                label        = { t.eur?.label }
                 defaultValue = { 100 }
                 min          = { 0 }
                 max          = { 10000 }
@@ -72,9 +83,8 @@ const InputCurrencyDemo = () =>
                 precision    = { 2 }
             />
 
-            {/* US Dollar */}
             <InputCurrency
-                label             = "Price (USD)"
+                label             = { t.usd?.label }
                 defaultValue      = { 1000 }
                 prefix            = "$ "
                 postfix           = ""
@@ -87,49 +97,44 @@ const InputCurrencyDemo = () =>
                 precision         = { 2 }
             />
 
-            {/* With fieldset */}
             <InputCurrency
                 useFieldset
-                legend            = "Product Price"
-                defaultValue      = { 49.99 }
-                min               = { 0 }
-                max               = { 999.99 }
-                step              = { 0.50 }
-                precision         = { 2 }
-                helper            = "Price must be between 0 and 999.99"
+                legend       = { t.fieldset?.legend }
+                defaultValue = { 49.99 }
+                min          = { 0 }
+                max          = { 999.99 }
+                step         = { 0.50 }
+                precision    = { 2 }
+                helper       = { t.fieldset?.helper }
             />
 
-            {/* Controlled */}
             <InputCurrency
-                label        = "Controlled Price"
-                value        = { price }
-                onChange     = { setPrice }
-                min          = { 0 }
-                max          = { 5000 }
-                step         = { 10 }
-                precision    = { 2 }
+                label     = { t.controlled?.label }
+                value     = { price }
+                onChange  = { setPrice }
+                min       = { 0 }
+                max       = { 5000 }
+                step      = { 10 }
+                precision = { 2 }
             />
             <ValueProbe label="price" value={ price } />
 
-            {/* Without stepper */}
             <InputCurrency
-                label        = "No Stepper"
+                label        = { t.noStepper?.label }
                 defaultValue = { 250 }
                 showStepper  = { false }
                 min          = { 0 }
                 max          = { 10000 }
             />
 
-            {/* Without icon */}
             <InputCurrency
-                label        = "No Icon"
+                label        = { t.noIcon?.label }
                 defaultValue = { 75.50 }
                 showIcon     = { false }
             />
 
-            {/* French separators (comma) */}
             <InputCurrency
-                label             = "Prix (Format FR)"
+                label             = { t.french?.label }
                 defaultValue      = { 1234.56 }
                 decimalSeparator  = ","
                 thousandSeparator = " "
@@ -137,33 +142,29 @@ const InputCurrencyDemo = () =>
                 precision         = { 2 }
             />
 
-            {/* Without zero padding */}
             <InputCurrency
-                label              = "No Zero Padding"
+                label              = { t.noPadding?.label }
                 defaultValue       = { 100 }
                 decimalZeroPadding = { false }
                 precision          = { 2 }
             />
 
-            {/* With error */}
             <InputCurrency
-                label        = "Price"
+                label        = { t.error?.label }
                 defaultValue = { 0 }
-                error        = "Price must be greater than 0"
+                error        = { t.error?.error }
                 min          = { 0 }
                 max          = { 10000 }
             />
 
-            {/* Disabled */}
             <InputCurrency
-                label        = "Disabled"
+                label        = { t.disabled?.label }
                 defaultValue = { 500 }
                 disabled
             />
 
-            {/* Read-only */}
             <InputCurrency
-                label        = "Read-only"
+                label        = { t.readOnly?.label }
                 defaultValue = { 999.99 }
                 readOnly
             />

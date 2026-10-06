@@ -1,152 +1,163 @@
 'use client' ;
 
 import { useState } from 'react' ;
+
+import format from 'vegas-js-core/src/strings/fastformat' ;
+
 import Container from '@/display/Container' ;
-import InputDateRange, {
-    DD_MM_YYYY,
-    MM_DD_YYYY,
-    YYYY_MM_DD
+import InputDateRange , {
+    DD_MM_YYYY ,
+    MM_DD_YYYY ,
+    YYYY_MM_DD ,
 } from '@/components/inputs/InputDateRange' ;
 
-const InputDateRangeDemo = () =>
+import useI18n from '@/contexts/locale/useI18n' ;
+
+/**
+ * InputDateRange demo component.
+ *
+ * Two dates in one field : the three orders, a separator of your own, bounds on
+ * the dates and on the duration, and the `{ start , end }` object handed back.
+ *
+ * @param {Object} props
+ * @param {string} [props.path='demo.inputs.dateRange'] - Dot notation path to the demo locale.
+ */
+const InputDateRangeDemo = ( { path = 'demo.inputs.dateRange' } = {} ) =>
 {
-    const [ rangeFR, setRangeFR ] = useState( '' ) ;
-    const [ rangeISO, setRangeISO ] = useState( '' ) ;
-    const [ dateRange, setDateRange ] = useState( null ) ;
+    const t = useI18n( path ) ?? {} ;
+
+    const [ rangeFR , setRangeFR ] = useState( '' ) ;
+    const [ rangeISO , setRangeISO ] = useState( '' ) ;
+    const [ dateRange , setDateRange ] = useState( null ) ;
+
+    const days = dateRange
+        ? Math.ceil( ( dateRange.end - dateRange.start ) / ( 1000 * 60 * 60 * 24 ) )
+        : 0 ;
 
     return (
         <Container className="flex flex-col gap-6 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-7xl">
 
-            <h2 className="text-3xl font-bold">Input Date Range Examples</h2>
+            <h2 className="text-3xl font-bold">{ t.title }</h2>
 
-            {/* French format */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">French Format (DD/MM/YYYY)</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.french }</h3>
 
                 <InputDateRange
-                    label     = "Période de réservation"
-                    value     = { rangeFR }
-                    onChange  = { setRangeFR }
-                    mode      = { DD_MM_YYYY }
-                    helper    = "Format: JJ/MM/AAAA – JJ/MM/AAAA"
+                    label    = { t.booking?.label }
+                    value    = { rangeFR }
+                    onChange = { setRangeFR }
+                    mode     = { DD_MM_YYYY }
+                    helper   = { t.booking?.helper }
                 />
 
                 <InputDateRange
-                    label          = "Avec séparateur personnalisé"
+                    label          = { t.separator?.label }
                     mode           = { DD_MM_YYYY }
                     rangeSeparator = " to "
-                    helper         = "Format: DD/MM/YYYY to DD/MM/YYYY"
+                    helper         = { t.separator?.helper }
                 />
             </div>
 
-            {/* ISO format */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">ISO Format (YYYY-MM-DD)</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.iso }</h3>
 
                 <InputDateRange
-                    label         = "Date Range"
+                    label         = { t.iso?.label }
                     value         = { rangeISO }
                     onChange      = { setRangeISO }
                     mode          = { YYYY_MM_DD }
                     dateSeparator = "-"
-                    helper        = "Format: YYYY-MM-DD – YYYY-MM-DD"
+                    helper        = { t.iso?.helper }
                 />
             </div>
 
-            {/* US format */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">US Format (MM/DD/YYYY)</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.us }</h3>
 
                 <InputDateRange
-                    label  = "Booking Period"
+                    label  = { t.us?.label }
                     mode   = { MM_DD_YYYY }
-                    helper = "Format: MM/DD/YYYY – MM/DD/YYYY"
+                    helper = { t.us?.helper }
                 />
             </div>
 
-            {/* With date range limits */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">With Date Limits</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.bounded }</h3>
 
                 <InputDateRange
-                    label  = "Vacation 2024"
+                    label  = { t.bounded?.label }
                     mode   = { DD_MM_YYYY }
                     min    = { new Date( '2024-01-01' ) }
                     max    = { new Date( '2024-12-31' ) }
-                    helper = "Only dates in 2024"
+                    helper = { t.bounded?.helper }
                 />
             </div>
 
-            {/* With min/max range length */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">With Range Length Limits</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.length }</h3>
 
                 <InputDateRange
-                    label     = "Short Stay (1-7 days)"
+                    label     = { t.shortStay?.label }
                     mode      = { DD_MM_YYYY }
-                    minLength = {{ day: 1 }}
-                    maxLength = {{ day: 7 }}
-                    helper    = "Between 1 and 7 days"
+                    minLength = {{ day : 1 }}
+                    maxLength = {{ day : 7 }}
+                    helper    = { t.shortStay?.helper }
                 />
 
                 <InputDateRange
-                    label     = "Monthly Period"
+                    label     = { t.monthly?.label }
                     mode      = { DD_MM_YYYY }
-                    minLength = {{ month: 1 }}
-                    maxLength = {{ month: 3 }}
-                    helper    = "Between 1 and 3 months"
+                    minLength = {{ month : 1 }}
+                    maxLength = {{ month : 3 }}
+                    helper    = { t.monthly?.helper }
                 />
             </div>
 
-            {/* With callback */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">With Date Range Callback</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.object }</h3>
 
                 <InputDateRange
-                    label       = "Select Period"
+                    label       = { t.object?.label }
                     onDateRange = { setDateRange }
                     helper      = { dateRange
-                        ? `Start: ${dateRange.start.toLocaleDateString()}, End: ${dateRange.end.toLocaleDateString()}`
-                        : 'Type a date range...'
+                        ? format( t.object?.typed ?? '' , dateRange.start.toLocaleDateString() , dateRange.end.toLocaleDateString() )
+                        : t.object?.empty
                     }
                 />
 
                 { dateRange && (
                     <div className="text-sm bg-base-300 p-4 rounded-box">
-                        <p><strong>Start:</strong> { dateRange.start.toISOString() }</p>
-                        <p><strong>End:</strong> { dateRange.end.toISOString() }</p>
-                        <p><strong>Duration:</strong> { Math.ceil( ( dateRange.end - dateRange.start ) / ( 1000 * 60 * 60 * 24 ) ) } days</p>
+                        <p><strong>{ t.object?.start }</strong> { dateRange.start.toISOString() }</p>
+                        <p><strong>{ t.object?.end }</strong> { dateRange.end.toISOString() }</p>
+                        <p><strong>{ t.object?.duration }</strong> { format( t.object?.days ?? '' , days ) }</p>
                     </div>
                 ) }
             </div>
 
-            {/* With fieldset */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">With Fieldset</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.fieldset }</h3>
 
                 <InputDateRange
                     useFieldset
-                    legend = "Période de location"
-                    helper = "Du ... au ..."
+                    legend = { t.fieldset?.legend }
+                    helper = { t.fieldset?.helper }
                 />
             </div>
 
-            {/* Error state */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">With Error</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.error }</h3>
 
                 <InputDateRange
-                    label = "Period"
-                    error = "Invalid date range"
+                    label = { t.invalid?.label }
+                    error = { t.invalid?.error }
                 />
             </div>
 
-            {/* Disabled */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">Disabled State</h3>
+                <h3 className="text-xl font-semibold">{ t.sections?.disabled }</h3>
 
                 <InputDateRange
-                    label        = "Period"
+                    label        = { t.disabled?.label }
                     defaultValue = "01/01/2024 – 31/12/2024"
                     disabled
                 />

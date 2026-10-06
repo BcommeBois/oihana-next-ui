@@ -8,6 +8,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🌍 The Numbers and Date & Time demos of the Inputs page follow the language switch (two of four)**
+
+- Six more demos — counter, currency, percentage, date, date range, time — read `demo.inputs.*` : **177 keys per language**, which brings the page's first thirteen demos to 289.
+- 🔑 **A format pattern shown to a reader is copy ; the `mode` that produces it is not.** `mode="dd/mm/yyyy"` and `separator="."` are the component's API and stay as they are, while the helper spelling that same format out is written with the letters of the reader's own language — the date demo's eleven format lines were the clearest case of a string that looks technical and is not.
+- 🚨 **The date and range demos were the most French of the twenty** : a birth-date label, two separator labels, an appointment legend and its helper, a booking period, a rental period and its « from … to … » line, all frozen in the code under section titles written in English.
+- The `{ start , end }` and time objects handed back are reported through keys with `{0}` placeholders rather than template literals, so the sentence around the value is translatable and the value stays a value.
+- Dropped on the way through : an icon imported and never used by the currency demo, and a duration computed inside the JSX of the range demo rather than above it.
+- The debug probes keep their hardcoded labels — `probeControlled`, `price`, `percentage` are the names of the variables they watch, not copy, the same way `size="xs"` is shown as code in the sizes demo.
+- ⚠️ **Seven demos still to go** on this page : the Security and Specialized categories, 149 strings.
+
+
 **🌍 The Text demos of the Inputs page follow the language switch (one of four)**
 
 - The seven demos of the page's first category — transform, clear, search, sizes, action, tags, multilingual — read `demo.inputs.*` now : **112 keys per language**, each in a bundle of its own, the way the Modals page's nine demos already did.
