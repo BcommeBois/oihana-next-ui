@@ -31,6 +31,23 @@
  * when the movement rests. Which is why the backdrop and Escape are taken back
  * from `Modal` here : left to it, both would close outright and skip the fall.
  *
+ * ### 🔑 How the CONTENT asks to close
+ *
+ * A sheet's rows close it too — a link that navigates, a button that acts — and
+ * they must fall like the rest rather than vanish. So `children` may be a
+ * FUNCTION, called with `{ close }` :
+ *
+ * ```jsx
+ * <BottomSheet onClose={ … }>
+ *     { ( { close } ) => <Link href="/somewhere" onClick={ close }>…</Link> }
+ * </BottomSheet>
+ * ```
+ *
+ * ⚠️ **`close` is the request, not `onClose`.** Calling the latter from inside
+ * would close the dialog outright and skip the fall, which is the one thing
+ * this component is for. A node rather than a function still works, for content
+ * that closes nothing.
+ *
  * ⚠️ **Mounted means open.** There is no `open` prop : render it when the sheet
  * should be there, and let `onClose` take it away. A sheet kept mounted and
  * hidden would hold a `<dialog>` over the page for nothing.
@@ -40,7 +57,7 @@
  * @param {Object} props
  * @param {boolean} [props.animate=true] - Play the rise. `false` for a sheet that only appeared because the viewport crossed a breakpoint.
  * @param {string} [props.ariaLabel] - The dialog's accessible name. It draws no header, so nothing else names it.
- * @param {React.ReactNode} [props.children] - What goes on the sheet.
+ * @param {React.ReactNode|function({ close : Function }) : React.ReactNode} [props.children] - What goes on the sheet. A function is called with `{ close }`, the request its own rows close through.
  * @param {string} [props.className] - Added to the panel, after its own looks.
  * @param {string} [props.maxWidth='max-w-md'] - The cap : full width at a tablet's 1000 pixels reads as a broken layout.
  * @param {Function} [props.onClose] - Called once the panel has finished falling.
@@ -53,7 +70,7 @@
  * ```jsx
  * { isOpen && (
  *     <BottomSheet ariaLabel="Menu" onClose={ () => setOpen( false ) }>
- *         <MyRows />
+ *         { ( { close } ) => <MyRows onPick={ close } /> }
  *     </BottomSheet>
  * ) }
  * ```
@@ -221,7 +238,7 @@ const BottomSheet =
                     <span aria-hidden="true" className="mx-auto mb-2 block h-1 w-10 rounded-full bg-base-300" />
                 ) }
 
-                { children }
+                { typeof children === 'function' ? children( { close : requestClose } ) : children }
 
             </motion.div>
         </Modal>

@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🩹 A bottom sheet's own rows could not close it properly**
+
+- 🚨 **`BottomSheet` said every exit went through the fall, and gave its CONTENT no way to take it.** The swipe, the backdrop and Escape worked ; a row that navigates or a cross in a header could only call `onClose`, which shuts the dialog outright and skips the one behaviour the component exists for. Found on the first real use — a profile menu whose five rows all close it.
+- **`children` may now be a FUNCTION**, called with `{ close }` : the request its own rows close through. A node still works, for content that closes nothing, so nothing written against 0.30.0 moves.
+- ⚠️ **`close`, not `onClose`.** The first asks the panel to fall and lets the dialog go when it rests ; the second ends it in the frame it is called.
+- **The demo had the defect too** — its cross called the parent's state setter — which is what a demo that does not exercise what it documents looks like. Its rows and its cross go through `close` now, and the note says so.
+
+
 ## [0.30.0] — 2026-10-07
 
 **📱 A panel rising from the bottom, dismissed by a swipe down**

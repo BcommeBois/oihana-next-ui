@@ -9,6 +9,11 @@
  * because a thumb asked. The rows are a generic menu on purpose — what a sheet
  * carries belongs to the product, and this one must not suggest otherwise.
  *
+ * 🔑 **The content is a FUNCTION here**, so the rows and the cross close through
+ * `close` : they fall like a swipe does, rather than making the sheet vanish.
+ * Calling `onClose` from inside would skip that, which is the whole point of the
+ * component.
+ *
  * @module demo/modals/BottomSheetDemo
  *
  * @param {Object} [props]
@@ -77,27 +82,29 @@ const BottomSheetDemo = ( { path = 'demo.modals.bottomSheet' } = {} ) =>
                     ariaLabel = { t.sheetLabel }
                     onClose   = { () => setOpen( false ) }
                 >
+                    { ( { close } ) => (
+                        <>
+                            <div className="flex items-center gap-3 px-1 pb-2">
+                                <span className="min-w-0 flex-1 truncate font-semibold">
+                                    { t.heading }
+                                </span>
+                                <button
+                                    aria-label = { t.close }
+                                    className  = "btn btn-ghost btn-sm btn-circle shrink-0"
+                                    onClick    = { close }
+                                    type       = "button"
+                                >
+                                    <MdClose className="size-5" />
+                                </button>
+                            </div>
 
-                    <div className="flex items-center gap-3 px-1 pb-2">
-                        <span className="min-w-0 flex-1 truncate font-semibold">
-                            { t.heading }
-                        </span>
-                        <button
-                            aria-label = { t.close }
-                            className  = "btn btn-ghost btn-sm btn-circle shrink-0"
-                            onClick    = { () => setOpen( false ) }
-                            type       = "button"
-                        >
-                            <MdClose className="size-5" />
-                        </button>
-                    </div>
-
-                    { rows.map( row => (
-                        <button className={ ROW } key={ row } type="button">
-                            { row }
-                        </button>
-                    ) ) }
-
+                            { rows.map( row => (
+                                <button className={ ROW } key={ row } onClick={ close } type="button">
+                                    { row }
+                                </button>
+                            ) ) }
+                        </>
+                    ) }
                 </BottomSheet>
             ) }
         </Container>

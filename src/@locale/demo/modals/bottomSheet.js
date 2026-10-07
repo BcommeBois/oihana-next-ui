@@ -27,7 +27,7 @@ const bottomSheet =
             'Troisième entrée' ,
         ] ,
 
-        hint : 'Glissez la feuille vers le bas, ou touchez à côté, ou pressez Échap : dans les trois cas elle redescend AVANT que le dialogue se ferme.' ,
+        hint : 'Glissez la feuille vers le bas, touchez à côté, pressez Échap, ou touchez une entrée : dans tous les cas elle redescend AVANT que le dialogue se ferme. Les entrées y arrivent par le close que la feuille passe à son contenu.' ,
     } ,
 
     en :
@@ -51,7 +51,7 @@ const bottomSheet =
             'Third entry' ,
         ] ,
 
-        hint : 'Swipe the sheet down, or tap beside it, or press Escape : all three make it fall back BEFORE the dialog closes.' ,
+        hint : 'Swipe the sheet down, tap beside it, press Escape, or tap an entry : all of them make it fall back BEFORE the dialog closes. The entries reach that through the close the sheet hands its content.' ,
     } ,
 } ;
 
