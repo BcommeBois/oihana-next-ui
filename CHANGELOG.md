@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.30.0] — 2026-10-07
+
 **📱 A panel rising from the bottom, dismissed by a swipe down**
 
 - **New `components/modals/BottomSheet`** — what a menu anchored to a corner cannot be on a device held in two hands : the rows fall where the thumb already is, and they span the width instead of hanging off one edge. 🔑 **It carries NO content of its own** : the sheet is the surface, what goes on it belongs to the product. Gathered from one application's profile menu, which keeps every one of its rows.
@@ -50,6 +52,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - **Replayed before being kept** : 1 020 cases through the gathered implementation and the new one — a plain string, a translated map, an empty string, a missing language, a fallback language, a number, a boolean, an array, a `String` object, a thing of `undefined` — **not one difference**. The signature is unchanged, fallback value before fallback language included.
 - ⚠️ **They read a THING, not a bundle.** The copy of an interface comes from `useI18n` ; this is for the DATA, whose languages are whatever was stored.
 - **Not demonstrated in the lab** : neither shows anything on a page on its own.
+
+**✏️ Three invented words leave the lab's copy**
+
+- « portaillée », « se portailler » and « portalled » were a VERB coined on React's `Portal` — and no such verb exists, in French or in English. The NOUN always did, in both, so the sentences turn on it instead : a surface is « placed in a portal », or « goes through » one, rather than being portalled. The three cards of the mounted-open demo now read in parallel.
+- ⚠️ **Left alone in the JSDoc** : « portalled » in a code comment is prose for a React developer, where a string on screen is not.
 
 **🎨 A hex colour, as strict as the caller needs**
 
