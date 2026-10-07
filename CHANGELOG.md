@@ -8,6 +8,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**📱 A panel rising from the bottom, dismissed by a swipe down**
+
+- **New `components/modals/BottomSheet`** — what a menu anchored to a corner cannot be on a device held in two hands : the rows fall where the thumb already is, and they span the width instead of hanging off one edge. 🔑 **It carries NO content of its own** : the sheet is the surface, what goes on it belongs to the product. Gathered from one application's profile menu, which keeps every one of its rows.
+- 🔑 **The box is neutralised and the inner panel IS the sheet.** daisyUI animates `modal-bottom` on its own, but only for a `<dialog>` that was in the DOM *before* it opened — one created already open has no starting state to run from, so the transition never plays. The `modal-box` gives up its background, padding and shadow to a `motion.div` which carries them and owns the movement.
+- 🚨 **Closing is a REQUEST, not an act.** A `<dialog>` closes in the frame it is asked to, which makes every dismissal a disappearance : nothing tells a reader whether their swipe worked or the sheet simply blinked out. Every exit — the swipe, the backdrop, Escape, and whatever the content calls — sets the panel falling, and the dialog closes when the movement rests. Which is why the backdrop and Escape are taken back from `Modal` here : left to it, both would close outright and skip the fall.
+- **`animate={ false }` is not a detail.** A sheet that appears because the WINDOW was resized past a breakpoint must not slide : nothing was asked for, and a surface arriving unbidden reads as a glitch. The demo puts that on a toggle, because it is the one behaviour a screenshot cannot show.
+- **Swipe down to dismiss**, at the same distance and velocity as `Sidebar`'s swipe-to-close — two surfaces dismissed by the same gesture must answer to the same hand. ⚠️ **Spelled twice for now** : `Sidebar` still carries its own defaults inline.
+- ⚠️ **Mounted means open.** There is no `open` prop : render it when the sheet should be there, and let `onClose` take it away. A sheet kept mounted and hidden would hold a `<dialog>` over the page for nothing.
+- `maxWidth` caps it — full width at a tablet's thousand pixels reads as a broken layout — and `showHandle` keeps the grab bar, which says the sheet can be pulled down where no label could.
+- **Demonstrated in the modals page of the lab**, with generic rows on purpose : a demo that filled the sheet with one product's menu would suggest the sheet knows what a menu is.
+
+
 **🚧 The page that stands in for a page**
 
 - **New `components/ErrorScreen`** — a number, a line saying what happened, and one way out. 404, 403, and whatever else a product needs to say.

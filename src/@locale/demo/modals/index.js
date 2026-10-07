@@ -1,4 +1,5 @@
 import asyncConfirm     from './asyncConfirm' ;
+import bottomSheet      from './bottomSheet' ;
 import crud             from './crud' ;
 import form             from './form' ;
 import input            from './input' ;
@@ -11,6 +12,7 @@ import toastOver        from './toastOver' ;
 const modals =
 {
     asyncConfirm ,
+    bottomSheet ,
     crud ,
     form ,
     input ,

@@ -1,6 +1,7 @@
 'use client' ;
 
 import AsyncConfirmModalDemo from '@/demo/modals/AsyncConfirmModalDemo' ;
+import BottomSheetDemo      from '@/demo/modals/BottomSheetDemo' ;
 import CRUDDemo             from '@/demo/modals/CRUDModalDemo';
 import FormModalDemo        from '@/demo/modals/FormModalDemo' ;
 import InputModalDemo       from '@/demo/modals/InputModalDemo';
@@ -55,6 +56,8 @@ const ModalShowcase = ( { path = 'app.lab.modals' } = {} ) =>
             <AsyncConfirmModalDemo />
 
             <MountedOpenModalDemo />
+
+            <BottomSheetDemo />
 
             <Container maxWidth="max-w-7xl">
                 <Divider>{ benches }</Divider>
