@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.30.1] — 2026-10-07
+
 **🩹 A bottom sheet's own rows could not close it properly**
 
 - 🚨 **`BottomSheet` said every exit went through the fall, and gave its CONTENT no way to take it.** The swipe, the backdrop and Escape worked ; a row that navigates or a cross in a header could only call `onClose`, which shuts the dialog outright and skips the one behaviour the component exists for. Found on the first real use — a profile menu whose five rows all close it.
