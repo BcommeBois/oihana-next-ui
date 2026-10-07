@@ -8,6 +8,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🗓️ Month names, and a thing's property in the reader's language**
+
+- **New `helpers/date/monthNames( locale , style )`** — the twelve names, january first, from `Intl` rather than from a translation bundle : twenty-four correctly accented strings every platform already knows, which an axis wants short and a sentence wants long.
+- ⚠️ **A LOCALE, not a language, and the region is not decoration** : `en-GB` writes **Sept** where `en` and `en-US` write `Sep`, and `fr-CA` writes **juill.** where `fr-FR` writes `juil.`. An application naming its locales must hand the resolved one over — `helpers/numbers/resolveLocale` does that — or its axes change spelling.
+- 🚨 **Formatted on a FIXED date, never on today** : day 15 of a fixed non-leap year, in UTC. Formatting « now » would make the answer depend on when the page renders, and a server and a browser disagreeing on a month name hydrate as a mismatch. **Replayed in two extreme time zones** — UTC+14 and UTC−11 — across seven locales and five styles, with no difference.
+- **New `helpers/i18n/getLocaleProperty`** and the seven readers built on it : `getLocaleName`, `getLocaleAlternateName`, `getLocaleDescription`, `getLocaleHeadline`, `getLocaleAlternativeHeadline`, `getLocaleText`, `getLocaleNotes`. A schema.org field is spelled two legitimate ways — `name : 'Oak'` and `name : { fr : 'Chêne' , en : 'Oak' }` — and these answer « the text, in the reader's language » for either, so a caller never switches on which one it was handed.
+- 🚨 **This library has the very defect they prevent.** `helpers/schedule/eventFields` reads `value.name ?? value.alternateName ?? …` with no language resolution at all, and hands the result to `SchedulerEventField` and `useEventEditor` : fed a translated payload it returns an OBJECT, which React refuses as a child. The language is already in scope there — `formatValue` takes `options.lang` for its dates — so the repair is short, and it is deliberately **not** in this entry : it changes what the scheduler shows, and that is worth its own reading.
+- **Replayed before being kept** : 1 020 cases through the gathered implementation and the new one — a plain string, a translated map, an empty string, a missing language, a fallback language, a number, a boolean, an array, a `String` object, a thing of `undefined` — **not one difference**. The signature is unchanged, fallback value before fallback language included.
+- ⚠️ **They read a THING, not a bundle.** The copy of an interface comes from `useI18n` ; this is for the DATA, whose languages are whatever was stored.
+- **Not demonstrated in the lab** : neither shows anything on a page on its own.
+
+
 **🎨 A hex colour, as strict as the caller needs**
 
 - **`validateHexColor` takes an options object** — `digits`, `hash`, and the `alpha` it already had. 🚨 **Gathered from an application that wrote `` /^#[a-fA-F0-9]{6}$/ `` in SIXTEEN files rather than call this helper**, because it needed what a boolean could not say : six digits exactly, and the `#` required. A helper nobody can ask the right question of is a helper nobody calls.
