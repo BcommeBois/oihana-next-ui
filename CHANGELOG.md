@@ -8,6 +8,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🚧 The page that stands in for a page**
+
+- **New `components/ErrorScreen`** — a number, a line saying what happened, and one way out. 404, 403, and whatever else a product needs to say.
+- 🔑 **This library already had the recipe, written out by hand** : its own catch-all page composed the same wrapper, the same `Jump` on a six-extra-large secondary headline, the same `LetterReveal` tagline and the same `LinkButton` — in hardcoded French, inside a library that ships an i18n system. **That page is now the component's demonstration**, which a page that really is a 404 shows better than a card pretending to be one.
+- **The illustration is optional.** The shape reads without it — the gathered version always had one, this library's page never did — and an application with no artwork of its own should not have to find some.
+- 🔑 **Every word is a prop, and there is no bundle behind this one.** A 404 says « page introuvable » in one product and « this page has moved » in another ; the way out is `/` for some and `/home` for others. What the component owns is the arrangement, not the vocabulary.
+- ⚠️ **`title` must be a real string**, not a node : it is read as the illustration's alternative text as well as shown under the number.
+- ⚠️ **Server-safe on purpose** — no `'use client'`. The three motions it composes opt into client rendering themselves, so it renders inside a route group or as a bare catch-all alike.
+- **`actionPosition` puts the way out above the message or under it.** Under by default — a reader learns what happened, then acts — and `top` for a screen whose illustration already fills the upper half, where the button reads better between the picture and the words. Both orders exist in the wild ; neither is wrong, so neither is hardcoded.
+- The backdrop goes through `getPatternClass` rather than a literal, and `pattern={ null }` removes it.
+
+
 **🩹 The scheduler read a translated field and showed nothing, or an object**
 
 - 🚨 **`helpers/schedule/eventFields` resolved no language at all**, and its result goes to `SchedulerEventField` and `useEventEditor`. A schema.org field spelled `{ fr : '…' , en : '…' }` — as legitimate as a bare string, and what a translated API serves — produced **four different wrongs**, measured on the module itself : a `description` came back `null` and **the row never drew** ; a `Place` whose `name` is translated came back an **object**, which React refuses as a child ; so did an agent's `alternateName` ; and a `PostalAddress` whose country is translated printed `« 1 rue A, 75001 Paris, [object Object] »`, which breaks nothing and reads as rubbish.
