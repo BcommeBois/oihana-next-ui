@@ -8,6 +8,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🎨 A hex colour, as strict as the caller needs**
+
+- **`validateHexColor` takes an options object** — `digits`, `hash`, and the `alpha` it already had. 🚨 **Gathered from an application that wrote `` /^#[a-fA-F0-9]{6}$/ `` in SIXTEEN files rather than call this helper**, because it needed what a boolean could not say : six digits exactly, and the `#` required. A helper nobody can ask the right question of is a helper nobody calls.
+- The boolean second argument still works and still means `alpha`. **Replayed before being kept** : 102 cases through both implementations — three and six digits, four and eight with and without alpha, a leading `#`, a double `#`, non-hex letters, the empty string, surrounding spaces, and seven non-strings — **not one difference**.
+- `HASH_OPTIONAL`, `HASH_REQUIRED` and `HASH_FORBIDDEN` are exported : a value stored without its `#` is as real a contract as one stored with it.
+- ⚠️ **`digits` given explicitly IS the answer**, and `alpha` is then not consulted : a caller naming the lengths has already decided. `alpha` governs the DEFAULT set, where it says whether the two lengths carrying an alpha channel belong to it.
+- **Not demonstrated in the lab**, on purpose : a predicate shows nothing on a page, and the component that leans on it — `InputHexColor` — is already there.
+
+
 ## [0.29.1] — 2026-10-06
 
 **🔗 Two controls over one URL parameter stay in step**
