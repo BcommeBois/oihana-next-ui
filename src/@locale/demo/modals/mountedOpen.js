@@ -22,10 +22,10 @@ const mountedOpen =
 
         prop :
         {
-            card  : 'Portaillée par la modale elle-même' ,
+            card  : 'Placée dans un portail par la modale elle-même' ,
             hint  : 'La prop portal sur Modal, et le même showModal().' ,
             title : 'prop portal' ,
-            body  : 'On demande à la modale de se portailler elle-même avec portal, plutôt que de l’envelopper.' ,
+            body  : 'On demande à la modale de se placer elle-même dans un portail, avec la prop portal, plutôt que de l’envelopper.' ,
         } ,
 
         hook :
@@ -68,10 +68,10 @@ const mountedOpen =
 
         prop :
         {
-            card  : 'Portalled by the modal itself' ,
+            card  : 'Placed in a portal by the modal itself' ,
             hint  : 'The portal prop on Modal, and the same showModal().' ,
             title : 'portal prop' ,
-            body  : 'The modal is asked to portal itself with portal, rather than being wrapped by the caller.' ,
+            body  : 'The modal is asked to place itself in a portal, through the portal prop, rather than being wrapped by the caller.' ,
         } ,
 
         hook :

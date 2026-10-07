@@ -16,7 +16,7 @@ const portalFullscreen =
         months         : [ 'Janvier' , 'Février' , 'Mars' , 'Avril' , 'Mai' , 'Juin' ] ,
 
         tipDivider : 'Une infobulle flottante' ,
-        tip        : 'Cette bulle est portaillée aussi — elle doit dégager la page dans les deux états.' ,
+        tip        : 'Cette bulle passe par un portail elle aussi — elle doit dégager la page dans les deux états.' ,
         tipTrigger : 'Survolez-moi' ,
 
         modalDivider : 'Une modale' ,
@@ -44,7 +44,7 @@ const portalFullscreen =
         months         : [ 'January' , 'February' , 'March' , 'April' , 'May' , 'June' ] ,
 
         tipDivider : 'A floating tooltip' ,
-        tip        : 'This bubble is portalled too — it has to clear the page in both states.' ,
+        tip        : 'This bubble goes through a portal too — it has to clear the page in both states.' ,
         tipTrigger : 'Hover me' ,
 
         modalDivider : 'A modal' ,
