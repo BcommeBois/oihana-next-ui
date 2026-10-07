@@ -27,6 +27,11 @@ import dayjs from '../date/configureDayjs' ;
 
 import { fragmentOf } from './fragmentOf' ;
 
+import getLocaleAlternateName from '../i18n/getLocaleAlternateName' ;
+import getLocaleName          from '../i18n/getLocaleName' ;
+import getLocaleProperty      from '../i18n/getLocaleProperty' ;
+import resolveLocaleValue     from '../i18n/resolveLocaleValue' ;
+
 /**
  * The rows a JSON-LD event shows when nothing else is asked for.
  *
@@ -50,21 +55,32 @@ export const PLAIN_FIELDS =
     { property : 'url'         , type : 'url' } ,
 ] ;
 
-/** Reads the display name of an object that could be almost anything. */
-const nameOf = ( value ) =>
-    value.name
-    ?? value.alternateName
-    ?? value.legalName
-    ?? ( value.address ? formatValue( value.address , 'place' ) : null )
+/** `legalName` is translatable like the other two, and has no reader of its own. */
+const getLocaleLegalName = getLocaleProperty( 'legalName' ) ;
+
+/**
+ * Reads the display name of an object that could be almost anything.
+ *
+ * 🚨 **Each of the three names may be TRANSLATED** — `{ fr : '…' , en : '…' }`
+ * is as legitimate a schema.org value as a bare string, and reading it raw
+ * returned an object, which React refuses as a child.
+ */
+const nameOf = ( value , lang ) =>
+    getLocaleName( value , lang )
+    ?? getLocaleAlternateName( value , lang )
+    ?? getLocaleLegalName( value , lang )
+    ?? ( value.address ? formatValue( value.address , 'place' , { lang } ) : null )
     ?? value.url
     ?? value.identifier
     ?? null ;
 
 /** Reads a `PostalAddress`, in the order a human reads one. */
-const addressOf = ( value ) => [
+const addressOf = ( value , lang ) => [
     value.streetAddress ,
     [ value.postalCode , value.addressLocality ].filter( Boolean ).join( ' ' ) ,
-    value.addressCountry && typeof value.addressCountry === 'object' ? value.addressCountry.name : value.addressCountry ,
+    value.addressCountry && typeof value.addressCountry === 'object'
+        ? getLocaleName( value.addressCountry , lang )
+        : value.addressCountry ,
 ]
 .filter( part => part !== null && part !== undefined && part !== '' )
 .join( ', ' ) ;
@@ -113,6 +129,19 @@ export const formatValue = ( value , type = 'text' , options = {} ) =>
         return value ? '✓' : null ;
     }
 
+    // 🚨 A TRANSLATED value, before anything tries to read a schema.org property
+    // off it. `value` as the fallback means a plain object — a Place, an agent —
+    // comes back untouched and falls through to the branches below ; only a map
+    // carrying the reader's language is resolved here. Without this, a
+    // translated `description` reached the last line, answered to none of the
+    // name aliases, and the row simply never drew.
+    const localised = resolveLocaleValue( value , lang , value ) ;
+
+    if ( localised !== value )
+    {
+        return localised ;
+    }
+
     if ( typeof value !== 'object' )
     {
         return String( value ) ;
@@ -122,11 +151,11 @@ export const formatValue = ( value , type = 'text' , options = {} ) =>
     {
         // A `PostalAddress` has no name and reads as one line ; everything else
         // answers to `name` under one alias or another.
-        return value.streetAddress || value.addressLocality ? ( addressOf( value ) || null ) : nameOf( value ) ;
+        return value.streetAddress || value.addressLocality ? ( addressOf( value , lang ) || null ) : nameOf( value , lang ) ;
     }
 
     // An enumeration member arrives as a URI more often than as a word.
-    return nameOf( value ) ?? fragmentOf( value.identifier ?? value.url ) ?? null ;
+    return nameOf( value , lang ) ?? fragmentOf( value.identifier ?? value.url ) ?? null ;
 } ;
 
 /**

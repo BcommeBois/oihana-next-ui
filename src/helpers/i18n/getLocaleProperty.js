@@ -15,7 +15,10 @@
  * showing the wrong language.
  *
  * It is a FACTORY : it takes the field's name and returns the reader for it, so
- * the family below is one line each.
+ * the family below is one line each. The resolution itself is
+ * {@link module:helpers/i18n/resolveLocaleValue} — reach for that one when the
+ * translated map is the value you already hold, rather than a field of
+ * something.
  *
  * ⚠️ **It reads a thing, not a bundle.** The copy of an interface — buttons, labels, sentences — comes from {@link useI18n} ;
  * this is for the DATA, whose languages are whatever was stored.
@@ -36,37 +39,13 @@
  * ```
  */
 
-import notEmpty from 'vegas-js-core/src/strings/notEmpty' ;
+import resolveLocaleValue from './resolveLocaleValue' ;
 
 const getLocaleProperty = ( key ) => (
     thing ,
     lang = null ,
     defaultValue = null ,
     defaultLang = null ,
-) =>
-{
-    const value = thing?.[ key ] ;
-
-    if ( !value ) { return defaultValue ; }
-
-    // Not translated : the field IS the text.
-    if ( notEmpty( value ) )
-    {
-        return value ;
-    }
-
-    if ( notEmpty( value[ lang ] ) )
-    {
-        return value[ lang ] ;
-    }
-
-    // The fallback language is the caller's to name : « what this record was written in », which no library can know.
-    if ( notEmpty( value[ defaultLang ] ) )
-    {
-        return value[ defaultLang ] ;
-    }
-
-    return defaultValue ;
-} ;
+) => resolveLocaleValue( thing?.[ key ] , lang , defaultValue , defaultLang ) ;
 
 export default getLocaleProperty ;

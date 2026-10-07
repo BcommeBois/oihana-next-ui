@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🩹 The scheduler read a translated field and showed nothing, or an object**
+
+- 🚨 **`helpers/schedule/eventFields` resolved no language at all**, and its result goes to `SchedulerEventField` and `useEventEditor`. A schema.org field spelled `{ fr : '…' , en : '…' }` — as legitimate as a bare string, and what a translated API serves — produced **four different wrongs**, measured on the module itself : a `description` came back `null` and **the row never drew** ; a `Place` whose `name` is translated came back an **object**, which React refuses as a child ; so did an agent's `alternateName` ; and a `PostalAddress` whose country is translated printed `« 1 rue A, 75001 Paris, [object Object] »`, which breaks nothing and reads as rubbish.
+- **New `helpers/i18n/resolveLocaleValue`** — the primitive both shapes go through, for when the translated map IS the value you hold rather than a field of something. `getLocaleProperty` is now this, reached through a field name.
+- `nameOf` reads its three names — `name`, `alternateName`, `legalName` — through that family, and an address's country with it. 🔑 **The language was already in scope** : `formatValue` has taken `options.lang` for its dates all along, and simply never passed it down. The address it builds for a nested `Place` now gets it too, where it used to fall back to English.
+- ⚠️ **A plain object still falls through untouched.** The resolution is asked with the value as its own fallback, so a `Place` or an agent — an object with no key matching the reader's language — comes back unchanged and reaches the branches that know how to read it. Only a map carrying that language is resolved.
+- ⚠️ **A map carrying none of the reader's languages still draws nothing**, as before : which language a record was written in is the caller's to name, and no library can guess it.
+
 **🗓️ Month names, and a thing's property in the reader's language**
 
 - **New `helpers/date/monthNames( locale , style )`** — the twelve names, january first, from `Intl` rather than from a translation bundle : twenty-four correctly accented strings every platform already knows, which an axis wants short and a sentence wants long.
@@ -18,7 +26,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - **Replayed before being kept** : 1 020 cases through the gathered implementation and the new one — a plain string, a translated map, an empty string, a missing language, a fallback language, a number, a boolean, an array, a `String` object, a thing of `undefined` — **not one difference**. The signature is unchanged, fallback value before fallback language included.
 - ⚠️ **They read a THING, not a bundle.** The copy of an interface comes from `useI18n` ; this is for the DATA, whose languages are whatever was stored.
 - **Not demonstrated in the lab** : neither shows anything on a page on its own.
-
 
 **🎨 A hex colour, as strict as the caller needs**
 
