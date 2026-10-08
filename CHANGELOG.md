@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.30.2] — 2026-10-08
+
 **🔁 The shared transition takes work that is not a navigation**
 
 - **`contexts/busyNavigation` : the provider's value gains `run( work )`** — the same `useTransition` that `navigate( href )` pushes through, for what is not a push : a Server Action, then a `router.refresh()` ; a mutation, then a reload. An async function keeps `busy` up until it resolves, and `BusySurface` fades the data for the whole of it, floor included. Found in a consuming application whose refresh button cleared a server-side cache then re-rendered the page : its private `useTransition` greyed the button and nothing else, while the stale figures stayed on screen for the three seconds of the read.
