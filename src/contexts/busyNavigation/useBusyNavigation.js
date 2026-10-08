@@ -3,11 +3,13 @@
 /**
  * The screen's shared navigation transition.
  *
- * Two things come out of it : `navigate`, which every control of the screen
- * pushes through so they all feed ONE pending state, and `busy`, which the
- * surface being reloaded reads to say so ({@link module:components/BusySurface}).
+ * Three things come out of it : `navigate`, which every control of the screen
+ * pushes through so they all feed ONE pending state ; `run`, for the work that
+ * is not a push — an action, then a refresh — inside the same state ; and
+ * `busy`, which the surface being reloaded reads to say so
+ * ({@link module:components/BusySurface}).
  *
- * ⚠️ **Outside a provider it answers `{ busy : false , navigate : null }`**, and
+ * ⚠️ **Outside a provider it answers `{ busy : false , navigate : null , run : null }`**, and
  * a consumer is written to fall back on its own behaviour when it does.
  *
  * 🚨 **This is `useTransition` underneath, never `useLinkStatus`.** The latter
@@ -23,6 +25,12 @@
  * const { busy , navigate } = useBusyNavigation() ;
  *
  * const goTo = ( href ) => navigate ? navigate( href ) : router.push( href ) ;
+ *
+ * const reload = () => run( async () =>
+ * {
+ *     await save() ;
+ *     run( () => router.refresh() ) ;   // after an await : inside the transition again
+ * } ) ;
  * ```
  */
 

@@ -26,6 +26,13 @@
  * reset does not send the page to the top either : these navigations replace a
  * list where it stands, and a jump to the top is the reader losing their line.
  *
+ * `run` is the same transition for work that is not a push : a Server Action
+ * followed by a `router.refresh()`, a mutation then a reload. An async
+ * function keeps `busy` up until it resolves. ⚠️ **What follows an `await`
+ * is no longer inside the transition** — React only covers the synchronous
+ * part and the promise itself — so a router call or a state update made
+ * after one is wrapped in `run` again.
+ *
  * @module contexts/busyNavigation/provider
  *
  * @param {Object}          props
@@ -37,7 +44,7 @@
  * @example
  * ```jsx
  * <BusyNavigationProvider>
- *     <Toolbar />                 // controls call navigate( href )
+ *     <Toolbar />                 // controls call navigate( href ), or run( work )
  *     <BusySurface>
  *         <Table rows={ rows } />
  *     </BusySurface>
@@ -104,7 +111,9 @@ const BusyNavigationProvider = ( { children , minimumVisible = MINIMUM_VISIBLE }
         [ router ] ,
     ) ;
 
-    const value = useMemo( () => ( { busy , navigate } ) , [ busy , navigate ] ) ;
+    const run = useCallback( ( work ) => { startNavigation( work ) ; } , [] ) ;
+
+    const value = useMemo( () => ( { busy , navigate , run } ) , [ busy , navigate , run ] ) ;
 
     return (
         <BusyNavigationContext value={ value }>

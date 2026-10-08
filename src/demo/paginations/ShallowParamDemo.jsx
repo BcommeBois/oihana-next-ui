@@ -13,7 +13,8 @@
  *   (`helpers/routes/shallowParamEvents`).
  * - `BusyNavigationProvider` + `BusySurface` for a navigation that does reload
  *   the page : one shared transition, and the data greys out for at least the
- *   provider's floor instead of flickering.
+ *   provider's floor instead of flickering. The same transition takes work
+ *   that is not a push (`run`) : here a simulated wait, then a refresh.
  *
  * The navigation writes `preview`, which the lab's shell is told not to scroll
  * for (`@configs/ui/dashboard.js`), so the card stays under the pointer.
@@ -23,7 +24,7 @@
 
 import { Suspense } from 'react' ;
 
-import { useSearchParams } from 'next/navigation' ;
+import { useRouter , useSearchParams } from 'next/navigation' ;
 
 import Button                 from '@/components/Button' ;
 import BusySurface            from '@/components/BusySurface' ;
@@ -99,6 +100,40 @@ const PreviewStepper = () =>
 } ;
 
 /**
+ * How long the simulated action takes, in milliseconds — long enough for the
+ * surface to be seen fading, short enough not to feel like a hang.
+ * @type {number}
+ */
+const SIMULATED_WORK = 800 ;
+
+/**
+ * A control that runs work, then reloads, through the same transition : the
+ * surface greys out from the click to the end of the refresh.
+ *
+ * @returns {React.ReactElement}
+ */
+const RereadButton = () =>
+{
+    const { busy , run } = useBusyNavigation() ;
+
+    const router = useRouter() ;
+
+    const reread = () => run( async () =>
+    {
+        await new Promise( resolve => setTimeout( resolve , SIMULATED_WORK ) ) ;
+
+        // After an await : inside the transition again.
+        run( () => { router.refresh() ; } ) ;
+    } ) ;
+
+    return (
+        <Button color="neutral" loading={ busy } onClick={ reread } style="outline">
+            Relire (0,8 s de travail, puis refresh)
+        </Button>
+    ) ;
+} ;
+
+/**
  * What the navigation reloads.
  *
  * @returns {React.ReactElement}
@@ -138,11 +173,15 @@ const ShallowParamDemo = () => (
                     <h3 className="font-semibold">BusyNavigationProvider + BusySurface</h3>
                     <p className="text-sm text-base-content/70">
                         La navigation passe par la transition partagée : la surface se grise au moins 0,4 s et
-                        ne prend plus les clics.
+                        ne prend plus les clics. Le second bouton ne navigue pas : il fait tourner un travail
+                        (<code>run</code>) puis un <code>router.refresh()</code> dans la même transition.
                     </p>
                     <Suspense fallback={ null }>
                         <BusyNavigationProvider>
-                            <PreviewStepper />
+                            <div className="flex flex-wrap gap-2">
+                                <PreviewStepper />
+                                <RereadButton />
+                            </div>
                             <BusySurface className="rounded-box border border-base-300 p-4">
                                 <PreviewValue />
                             </BusySurface>

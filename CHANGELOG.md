@@ -8,6 +8,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🔁 The shared transition takes work that is not a navigation**
+
+- **`contexts/busyNavigation` : the provider's value gains `run( work )`** — the same `useTransition` that `navigate( href )` pushes through, for what is not a push : a Server Action, then a `router.refresh()` ; a mutation, then a reload. An async function keeps `busy` up until it resolves, and `BusySurface` fades the data for the whole of it, floor included. Found in a consuming application whose refresh button cleared a server-side cache then re-rendered the page : its private `useTransition` greyed the button and nothing else, while the stale figures stayed on screen for the three seconds of the read.
+- ⚠️ **What follows an `await` is no longer inside the transition** — React covers the synchronous part and the promise, not the continuation — so a router call or a state update made after one is wrapped in `run` again. The hook's example says so.
+- Outside a provider `run` is `null`, like `navigate` : a consumer falls back on its own transition. Nothing written against 0.30.x moves.
+- The pagination page's demo gains a second control beside the stepper : a simulated wait, then a refresh, through `run`.
+
 ## [0.30.1] — 2026-10-07
 
 **🩹 A bottom sheet's own rows could not close it properly**

@@ -22,10 +22,11 @@ import { createContext } from 'react' ;
  * @typedef  {Object}    BusyNavigation
  * @property {boolean}   busy     - A navigation started through `navigate` is still in flight — or was, less than the provider's floor ago.
  * @property {?Function} navigate - `( href ) => void`, run inside the shared transition. `null` outside a provider.
+ * @property {?Function} run      - `( work ) => void`, any work run inside the shared transition — an async function keeps `busy` up until it resolves. `null` outside a provider.
  */
 
 /** @type {React.Context<BusyNavigation>} */
-const BusyNavigationContext = createContext( { busy : false , navigate : null } ) ;
+const BusyNavigationContext = createContext( { busy : false , navigate : null , run : null } ) ;
 
 BusyNavigationContext.displayName = 'BusyNavigationContext' ;
 
