@@ -1,11 +1,37 @@
 'use client' ;
 
-import { useCallback , useState } from 'react' ;
+import { Suspense , useCallback , useState } from 'react' ;
 
-import Container   from '@/display/Container' ;
-import InputSearch from '@/components/inputs/InputSearch' ;
+import { useSearchParams } from 'next/navigation' ;
+
+import BusyNavigationProvider from '@/contexts/busyNavigation/provider' ;
+import BusySurface            from '@/components/BusySurface' ;
+import Container              from '@/display/Container' ;
+import InputSearch            from '@/components/inputs/InputSearch' ;
+import UrlSearch              from '@/components/inputs/UrlSearch' ;
 
 import useI18n from '@/contexts/locale/useI18n' ;
+
+/**
+ * The query parameter the shared-transition demo writes — its own, so it
+ * collides with nothing else on the page.
+ * @type {string}
+ */
+const LOOKUP_PARAM = 'lookup' ;
+
+/**
+ * What the shared transition reloads : the value the URL carries.
+ *
+ * @param {Object} props
+ * @param {string} props.label
+ * @returns {React.ReactElement}
+ */
+const LookupValue = ( { label } ) =>
+{
+    const current = useSearchParams().get( LOOKUP_PARAM ) ?? '' ;
+
+    return <p className="text-sm">{ label } <code>{ current || '—' }</code></p> ;
+} ;
 
 /**
  * InputSearch demo component.
@@ -21,6 +47,8 @@ const InputSearchDemo = ( { path = 'demo.inputs.search' } = {} ) =>
     const t = useI18n( path ) ?? {} ;
 
     const [ loading , setLoading ] = useState( false ) ;
+    const [ busy    , setBusy    ] = useState( true ) ;
+    const [ shared  , setShared  ] = useState( true ) ;
     const [ results , setResults ] = useState( [] ) ;
 
     // Every value the debounced field hands to `onSearch`, newest first.
@@ -135,6 +163,58 @@ const InputSearchDemo = ( { path = 'demo.inputs.search' } = {} ) =>
                 placeholder  = { t.search }
                 onSearch     = { handleSearch }
             />
+
+            <div className="flex flex-col gap-3 rounded-box bg-base-100 p-4">
+                <h4 className="font-semibold">{ t.busy?.title }</h4>
+                <p className="text-sm text-base-content/70">{ t.busy?.note }</p>
+                <label className="flex items-center gap-2 text-sm">
+                    <input
+                        checked   = { busy }
+                        className = "toggle toggle-sm"
+                        onChange  = { event => setBusy( event.target.checked ) }
+                        type      = "checkbox"
+                    />
+                    { t.busy?.toggle }
+                </label>
+                <InputSearch
+                    busy             = { busy }
+                    defaultValue     = { t.busy?.value }
+                    onSearch         = { () => {} }
+                    placeholder      = { t.busy?.placeholder }
+                    showClearButton
+                    showSearchButton
+                />
+            </div>
+
+            <div className="flex flex-col gap-3 rounded-box bg-base-100 p-4">
+                <h4 className="font-semibold">{ t.shared?.title }</h4>
+                <p className="text-sm text-base-content/70">{ t.shared?.note }</p>
+                <label className="flex items-center gap-2 text-sm">
+                    <input
+                        checked   = { shared }
+                        className = "toggle toggle-sm"
+                        onChange  = { event => setShared( event.target.checked ) }
+                        type      = "checkbox"
+                    />
+                    { t.shared?.toggle }
+                </label>
+                <Suspense fallback={ null }>
+                    <BusyNavigationProvider>
+                        <div className="flex flex-col gap-3">
+                            <UrlSearch
+                                debounceDelay = { 400 }
+                                paramName     = { LOOKUP_PARAM }
+                                placeholder   = { t.shared?.placeholder }
+                                shared        = { shared }
+                                showClearButton
+                            />
+                            <BusySurface className="rounded-box border border-base-300 p-4">
+                                <LookupValue label={ t.shared?.value } />
+                            </BusySurface>
+                        </div>
+                    </BusyNavigationProvider>
+                </Suspense>
+            </div>
 
         </Container>
     ) ;

@@ -58,6 +58,8 @@ import { RiLayoutMasonryFill as DefaultMasonryIcon } from 'react-icons/ri' ;
 
 import { markInPlace } from '../../helpers/routes/inPlaceNavigation' ;
 
+import useBusyNavigation from '../../contexts/busyNavigation/useBusyNavigation' ;
+
 import cn                    from '../../themes/helpers/cn' ;
 import getDropdownClassNames from '../../themes/components/dropdown' ;
 import useDisplayPreference  from '../../hooks/useDisplayPreference' ;
@@ -329,11 +331,16 @@ const DisplayDropDownView =
  * @param {Object} props - See `DisplayDropDown`.
  * @returns {React.ReactElement|null}
  */
-const UrlDisplayDropDown = ( { onChange , pageKey , urlParam , value , ...rest } ) =>
+const UrlDisplayDropDown = ( { onChange , pageKey , shared = true , urlParam , value , ...rest } ) =>
 {
     const pathname     = usePathname() ;
     const router       = useRouter() ;
     const searchParams = useSearchParams() ;
+
+    // The screen's shared transition when there is one and the caller did not
+    // opt out : the list fades while it is laid out again, as it does for a
+    // filter. Outside a provider, the plain push of before.
+    const { navigate } = useBusyNavigation() ;
 
     const [ , saveDisplay ] = useDisplayPreference( pageKey , value ) ;
 
@@ -351,9 +358,16 @@ const UrlDisplayDropDown = ( { onChange , pageKey , urlParam , value , ...rest }
             const query = params.toString() ;
             const href  = query ? `${ pathname }?${ query }` : pathname ;
 
-            markInPlace( href ) ;
+            if ( shared && typeof navigate === 'function' )
+            {
+                navigate( href ) ;
+            }
+            else
+            {
+                markInPlace( href ) ;
 
-            router.push( href , { scroll : false } ) ;
+                router.push( href , { scroll : false } ) ;
+            }
         }
 
         onChange?.( mode ) ;
@@ -380,14 +394,15 @@ const UrlDisplayDropDown = ( { onChange , pageKey , urlParam , value , ...rest }
  * @param {number}                                                       [props.panelHeight=140]      - Estimated panel height for autoPosition calculation.
  * @param {number}                                                       [props.panelWidth=176]       - Estimated panel width for autoPosition calculation.
  * @param {string}                                                       [props.path='components.dropdowns.display'] - i18n path for mode labels.
+ * @param {boolean}                                                      [props.shared=true]          - With `pageKey` and a URL parameter : write it through the screen's shared transition when a `BusyNavigationProvider` is there, so the list fades while it is laid out again. `false` keeps the plain push.
  * @param {import('../../themes/components/dropdown').DropdownPlacement} [props.placement='end']      - Dropdown alignment (ignored when autoPosition=true).
  * @param {?string}                                                      [props.urlParam='display']   - With `pageKey` : the query parameter written. `null` remembers the mode without touching the URL.
  * @param {DisplayMode}                                                  [props.value='flex']         - Currently active mode.
  *
  * @returns {React.ReactElement|null}
  */
-const DisplayDropDown = ( { pageKey , urlParam = DISPLAY_URL_PARAM , ...rest } ) => pageKey
-    ? <UrlDisplayDropDown { ...rest } pageKey={ pageKey } urlParam={ urlParam } />
+const DisplayDropDown = ( { pageKey , shared = true , urlParam = DISPLAY_URL_PARAM , ...rest } ) => pageKey
+    ? <UrlDisplayDropDown { ...rest } pageKey={ pageKey } shared={ shared } urlParam={ urlParam } />
     : <DisplayDropDownView { ...rest } /> ;
 
 DisplayDropDown.displayName = 'DisplayDropDown' ;

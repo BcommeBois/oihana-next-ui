@@ -70,6 +70,7 @@ export const SEARCH_I18N_PATH = 'components.input' ;
  * @param {string}  [props.paramName='search']     - The query parameter carrying the search.
  * @param {string}  [props.path]                   - The caller's i18n bundle, read for `search.placeholder`.
  * @param {boolean} [props.persist=false]          - Mirror the query to the `search__<pageKey>` cookie.
+ * @param {boolean} [props.shared=true]           - Push through the screen's shared transition when a `BusyNavigationProvider` is there — the list fades at every pause of the typing. `false` keeps the search on its own transition : only the clear button says it is in flight.
  * @param {string}  [props.placeholder]            - An explicit placeholder, over any i18n reading.
  * @param {boolean} [props.showClearButton=true]   - Shows the clear button when the field carries a value.
  * @param {boolean} [props.showSearchButton=false] - Shows the explicit search button.
@@ -88,12 +89,13 @@ const UrlSearch =
     path ,
     persist          = false ,
     placeholder ,
+    shared           = true ,
     showClearButton  = true ,
     showSearchButton = false ,
     size ,
 }) =>
 {
-    const { pushParam } = useFilterParams( { pageKey , persist } ) ;
+    const { busy , pushParam } = useFilterParams( { pageKey , persist , shared } ) ;
 
     const own     = useI18n( path , {} ) ;
     const generic = useI18n( SEARCH_I18N_PATH , {} ) ;
@@ -112,6 +114,7 @@ const UrlSearch =
 
     return (
         <InputSearch
+            busy             = { busy }
             className        = { className }
             debounceDelay    = { debounceDelay }
             defaultValue     = { defaultValue }

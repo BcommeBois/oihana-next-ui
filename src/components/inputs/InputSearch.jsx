@@ -5,7 +5,8 @@ import { useEffect, useRef } from 'react'
 import cn from '../../themes/helpers/cn'
 import getButtonClassNames , { SQUARE } from '../../themes/components/button' ;
 
-import Input from './Input'
+import Input   from './Input'
+import Loading from '../Loading' ;
 
 import styles from './styles/InputActions.module.css' ;
 
@@ -23,6 +24,7 @@ import { MdClose as CloseIcon, MdSearch as SearchIcon } from 'react-icons/md';
  * @param {Object} props
  * @param {number} [props.debounceDelay=0] - Milliseconds of quiet before `onSearch` fires on its own. The debounced search fires for every NEW value — a return to the default value included, so a field emptied from the keyboard resets the list — and never twice for the same value : Enter or the search button already searched it. Nothing fires on mount.
  * @param {Function} [props.onClear] - Called by the clear button. When given, it is trusted to reset the search itself, so the debounced search does not fire `onSearch('')` again ; without it, the debounced search does.
+ * @param {boolean} [props.busy=false] - A search is in flight : the clear button trades its icon for a spinner and ignores clicks, `aria-busy`, but stays in the tab order — ONE sign of waiting per field, so the search button, when shown, keeps its icon and only ignores clicks. The field itself keeps taking keystrokes, so a reader can change their mind mid-wait. A native `disabled` would drop the focus of whoever pressed the button.
  * @param {import('../../themes/sizing/sizes').Size} [props.size] - Field + action button size : the clear and search buttons follow the field, as in the date and time pickers.
  */
 const InputSearch =
@@ -43,6 +45,7 @@ const InputSearch =
     searchLabel= 'Search',
 
     showClearButton = false,
+    busy = false ,
     showSearchButton = true,
     showIcon = true,
 
@@ -154,14 +157,16 @@ const InputSearch =
         actions.push
         (
             <button
-                key        = "clear"
-                type       = "button"
-                onClick    = { handleClear }
-                className  = { btnClassNames }
-                aria-label = { clearLabel }
-                title      = { clearLabel }
+                key           = "clear"
+                type          = "button"
+                onClick       = { busy ? undefined : handleClear }
+                className     = { btnClassNames }
+                aria-busy     = { busy || undefined }
+                aria-disabled = { busy || undefined }
+                aria-label    = { clearLabel }
+                title         = { clearLabel }
             >
-                <CloseIcon />
+                { busy ? <Loading animation="spinner" size="xs" /> : <CloseIcon /> }
             </button>
         );
     }
@@ -171,13 +176,15 @@ const InputSearch =
         actions.push
         (
             <button
-                key        = "search"
-                type       = "button"
-                onClick    = { handleSearch }
-                disabled   = { disabled }
-                className  = { btnClassNames }
-                aria-label = { searchLabel }
-                title      = { searchLabel }
+                key           = "search"
+                type          = "button"
+                onClick       = { busy ? undefined : handleSearch }
+                disabled      = { disabled }
+                className     = { btnClassNames }
+                aria-busy     = { busy || undefined }
+                aria-disabled = { busy || undefined }
+                aria-label    = { searchLabel }
+                title         = { searchLabel }
             >
                 { searchIcon || <SearchIcon /> }
             </button>

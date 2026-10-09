@@ -25,6 +25,12 @@
  *      expired ; without the refresh Next serves the cached, still-filtered
  *      server render.
  *
+ * 🔑 **A push always has a pending state** (`busy`) : the screen's, when the
+ * push went through its provider ; the hook's own transition otherwise. And
+ * a caller may keep its push OUT of the screen's transition (`shared :
+ * false`) — a search field whose every pause would fade the whole list, say
+ * — and still know it is in flight, to spin its own clear button.
+ *
  * Every criterion is described by an entry :
  *
  * ```
@@ -57,7 +63,7 @@
  * ```
  */
 
-import { useCallback } from 'react' ;
+import { useCallback , useTransition } from 'react' ;
 
 import { usePathname , useRouter , useSearchParams } from 'next/navigation' ;
 
@@ -113,19 +119,22 @@ const toEntries = entries => ( Array.isArray( entries ) ? entries : [ entries ] 
  * @param {string}   [options.pageKey]      - Persistence namespace of the page. Without it nothing is persisted.
  * @param {boolean}  [options.persist=true] - Mirror selections to their cookies.
  * @param {string[]} [options.resetParams=RESET_PARAMS] - Parameters dropped by every change : the pagination.
+ * @param {boolean}  [options.shared=true] - Push through the screen's shared transition when a `BusyNavigationProvider` is there. `false` keeps the push on the hook's own transition, so the screen's surface does not fade for it.
  *
  * @returns {{
  *   pushParam   : ( entry: FilterParamEntry ) => void ,
  *   pushParams  : ( entries: FilterParamEntry[] ) => void ,
  *   clearParams : ( entries: FilterParamEntry[] ) => void ,
  *   writeCookie : ( cookieKey: string , value: ?string , maxAge?: number ) => void ,
- * }} `writeCookie` stores a preference that lives in a cookie alone — which criteria are shown.
+ *   busy        : boolean ,
+ * }} `writeCookie` stores a preference that lives in a cookie alone — which criteria are shown. `busy` : a push of this hook is in flight — the screen's `busy` when shared, the hook's own otherwise.
  */
 const useFilterParams = (
 {
     pageKey ,
     persist     = true ,
     resetParams = RESET_PARAMS ,
+    shared      = true ,
 } = {} ) =>
 {
     const router       = useRouter() ;
@@ -134,7 +143,13 @@ const useFilterParams = (
 
     // `null` on every list that has not opted in — the push below then behaves
     // exactly as it did before this existed.
-    const { navigate } = useBusyNavigation() ;
+    const { busy : sharedBusy , navigate } = useBusyNavigation() ;
+
+    // The hook's own transition, for a push that does not go through the
+    // screen's : `busy` then still says it is in flight.
+    const [ pending , startTransition ] = useTransition() ;
+
+    const throughScreen = shared && typeof navigate === 'function' ;
 
     const pushParams = useCallback( ( entries ) =>
     {
@@ -168,22 +183,31 @@ const useFilterParams = (
         const query = params.toString() ;
         const href  = query ? `${ pathname }?${ query }` : pathname ;
 
-        if ( typeof navigate === 'function' )
+        if ( throughScreen )
         {
             navigate( href ) ;
+
+            if ( !hasValue )
+            {
+                router.refresh() ;
+            }
         }
         else
         {
             markInPlace( href ) ;
-            router.push( href , { scroll : false } ) ;
-        }
 
-        if ( !hasValue )
-        {
-            router.refresh() ;
+            startTransition( () =>
+            {
+                router.push( href , { scroll : false } ) ;
+
+                if ( !hasValue )
+                {
+                    router.refresh() ;
+                }
+            } ) ;
         }
     } ,
-    [ navigate , pageKey , pathname , persist , resetParams , router , searchParams ] ) ;
+    [ navigate , pageKey , pathname , persist , resetParams , router , searchParams , throughScreen ] ) ;
 
     const pushParam = useCallback( ( entry ) => pushParams( [ entry ] ) , [ pushParams ] ) ;
 
@@ -205,7 +229,7 @@ const useFilterParams = (
     } ,
     [ pageKey , persist ] ) ;
 
-    return { pushParam , pushParams , clearParams , writeCookie } ;
+    return { pushParam , pushParams , clearParams , writeCookie , busy : throughScreen ? sharedBusy : pending } ;
 } ;
 
 export default useFilterParams ;

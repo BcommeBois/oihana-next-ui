@@ -42,6 +42,24 @@ const search =
 
         disabled : { value : 'Recherche désactivée' } ,
         readOnly : { value : 'Valeur en lecture seule' } ,
+
+        busy :
+        {
+            title       : 'Pendant que la recherche s’exécute' ,
+            note        : 'Pendant « busy », la croix troque son icône contre un spinner ; la loupe garde la sienne. Les deux ignorent le clic sans quitter l’ordre de tabulation ; le champ, lui, continue d’accepter la saisie.' ,
+            toggle      : 'busy' ,
+            value       : 'une valeur à effacer' ,
+            placeholder : 'Chercher…' ,
+        } ,
+
+        shared :
+        {
+            title       : 'La recherche et le fondu de l’écran' ,
+            note        : 'Sous un BusyNavigationProvider, la recherche d’adresse passe par la transition partagée : la surface s’estompe à chaque pause de frappe, et la croix tourne. « shared » coupé, la croix tourne seule.' ,
+            toggle      : 'shared' ,
+            placeholder : 'Tapez, puis attendez le rebond…' ,
+            value       : 'Valeur lue dans l’adresse :' ,
+        } ,
     } ,
 
     en :
@@ -86,6 +104,24 @@ const search =
 
         disabled : { value : 'Disabled search' } ,
         readOnly : { value : 'Read-only value' } ,
+
+        busy :
+        {
+            title       : 'A search in flight' ,
+            note        : 'While « busy », the clear button trades its icon for a spinner ; the search button keeps its own. Both ignore clicks without leaving the tab order ; the field itself keeps taking keystrokes.' ,
+            toggle      : 'busy' ,
+            value       : 'a value to clear' ,
+            placeholder : 'Search…' ,
+        } ,
+
+        shared :
+        {
+            title       : 'The search and the screen’s transition' ,
+            note        : 'Under a BusyNavigationProvider, the URL search goes through the shared transition : the surface fades at every pause of the typing, and the clear button spins. With « shared » off, the clear button spins alone.' ,
+            toggle      : 'shared' ,
+            placeholder : 'Type, then wait for the debounce…' ,
+            value       : 'Value read from the address :' ,
+        } ,
     } ,
 } ;
 

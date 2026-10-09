@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🔍 A search that says it is in flight, and may keep out of the screen's transition**
+
+- **`hooks/useFilterParams` : option `shared` (default `true`) and a `busy` in its return.** Under a `BusyNavigationProvider` every push went through the screen's transition — a search field included, whose every pause of typing faded the whole list. `shared : false` keeps a push on the hook's own transition, so the surface does not fade for it. And `busy` always says a push is in flight : the screen's `busy` when shared, the hook's own otherwise — outside a provider, a plain push had no pending state at all until now.
+- **`components/inputs/InputSearch` : prop `busy`.** The clear button trades its icon for a spinner and ignores clicks, `aria-busy`, but stays in the tab order — one sign of waiting per field, so the search button, when shown, keeps its icon and only ignores clicks ; the field keeps taking keystrokes, so a reader can change their mind mid-wait. Not a native `disabled`, which would drop the focus of whoever pressed the button. Asked for by a consuming application whose lists fade on every filter.
+- **`components/inputs/UrlSearch` : prop `shared`** handed to the hook, and the hook's `busy` handed to the field : by default the list fades AND the clear button spins ; with `shared={ false }`, the clear button alone.
+- **`components/dropDowns/DisplayDropDown` : with `pageKey`, the mode is written through the screen's shared transition** when there is one, like a filter — the list fades while it is laid out again. `shared={ false }` keeps the plain push.
+- The inputs page's search demo gains two frames : a `busy` toggle, and a URL search under a provider with `shared` on a toggle and a surface that fades.
+
 ## [0.30.2] — 2026-10-08
 
 **🔁 The shared transition takes work that is not a navigation**
