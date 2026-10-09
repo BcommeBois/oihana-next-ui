@@ -35,6 +35,7 @@ import NavigationContext from './context' ;
  * @param {React.ReactNode} props.children - Child components.
  * @param {Object[]} props.defaultNavigation - Default navigation items.
  * @param {string} [props.i18nPath='navigation'] - Locale path for navigation labels.
+ * @param {boolean|Object} [props.pendingIndicator=false] - Every link of the menu trades its icon for an indicator while its own navigation is pending (`LinkPending`) : `true`, or its props — `{ animation : 'dots' }`. Off by default.
  * @param {'open' | 'closed' | 'auto'} [props.defaultMode='open'] - Open/closed
  *   default applied to collapse items. `'auto'` opens collapses whose
  *   subtree contains the current pathname.
@@ -61,6 +62,7 @@ const NavigationProvider =
     children ,
     defaultNavigation ,
     i18nPath = 'navigation' ,
+    pendingIndicator = false ,
     defaultMode : defaultModeProp = DEFAULT_COLLAPSE_MODE ,
     storageKey ,
 } ) =>
@@ -209,10 +211,11 @@ const NavigationProvider =
         getCollapseOpen ,
         navigation ,
         pathname ,
+        pendingIndicator ,
         setNavigation ,
         setCollapse ,
     })
-    , [ activePath , defaultMode , collapses , getCollapseOpen , navigation , pathname , setCollapse ] ) ;
+    , [ activePath , defaultMode , collapses , getCollapseOpen , navigation , pathname , pendingIndicator , setCollapse ] ) ;
 
     return (
         <NavigationContext value={ value }>

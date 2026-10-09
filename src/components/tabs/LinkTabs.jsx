@@ -75,7 +75,8 @@ import { usePathname , useSearchParams } from 'next/navigation' ;
 
 import { MdKeyboardArrowDown } from 'react-icons/md' ;
 
-import Dropdown from '../dropDowns/Dropdown' ;
+import Dropdown    from '../dropDowns/Dropdown' ;
+import LinkPending , { pendingOptions } from '../links/LinkPending' ;
 
 import useNumberFormat from '../../hooks/useNumberFormat' ;
 
@@ -217,7 +218,7 @@ const TabGroup = ( { tab , activeOf , hrefOf , indicatorId , routeKey } ) =>
  * @param {boolean}   [props.scroll]      - `false` : the link keeps the scroll position.
  * @param {LinkTab[]} props.tabs
  */
-const TabRow = ( { activeOf , className , hrefOf , indicatorId , routeKey , scroll , tabs } ) =>
+const TabRow = ( { activeOf , className , hrefOf , indicatorId , pendingIndicator , routeKey , scroll , tabs } ) =>
 (
     <div role="tablist" className={ cn( 'tabs tabs-border' , className ) }>
         { tabs.map( tab =>
@@ -247,7 +248,9 @@ const TabRow = ( { activeOf , className , hrefOf , indicatorId , routeKey , scro
                     role          = "tab"
                     scroll        = { scroll }
                 >
-                    { tab.Icon && <tab.Icon className="size-4" aria-hidden="true" /> }
+                    { pendingIndicator
+                        ? <LinkPending { ...pendingOptions( pendingIndicator ) }>{ tab.Icon && <tab.Icon className="size-4" aria-hidden="true" /> }</LinkPending>
+                        : tab.Icon && <tab.Icon className="size-4" aria-hidden="true" /> }
                     { tab.label }
                     <TabCount count={ tab.count } />
                     { active && <Indicator indicatorId={ indicatorId } /> }
@@ -262,7 +265,7 @@ const TabRow = ( { activeOf , className , hrefOf , indicatorId , routeKey , scro
  *
  * @param {Object} props - See `LinkTabs`.
  */
-const PathTabs = ( { className , indicatorId , isActive , tabs } ) =>
+const PathTabs = ( { className , indicatorId , isActive , pendingIndicator , tabs } ) =>
 {
     const pathname = usePathname() ;
 
@@ -276,9 +279,10 @@ const PathTabs = ( { className , indicatorId , isActive , tabs } ) =>
         <TabRow
             activeOf    = { activeOf }
             className   = { className }
-            hrefOf      = { tab => tab.href }
-            indicatorId = { indicatorId }
-            routeKey    = { pathname ?? '' }
+            hrefOf           = { tab => tab.href }
+            indicatorId      = { indicatorId }
+            pendingIndicator = { pendingIndicator }
+            routeKey         = { pathname ?? '' }
             tabs        = { tabs }
         />
     ) ;
@@ -290,7 +294,7 @@ const PathTabs = ( { className , indicatorId , isActive , tabs } ) =>
  *
  * @param {Object} props - See `LinkTabs`.
  */
-const QueryTabs = ( { className , indicatorId , isActive , paramName , resetParams , tabs } ) =>
+const QueryTabs = ( { className , indicatorId , isActive , paramName , pendingIndicator , resetParams , tabs } ) =>
 {
     const pathname     = usePathname() ;
     const searchParams = useSearchParams() ;
@@ -320,10 +324,11 @@ const QueryTabs = ( { className , indicatorId , isActive , paramName , resetPara
         <TabRow
             activeOf    = { activeOf }
             className   = { className }
-            hrefOf      = { hrefOf }
-            indicatorId = { indicatorId }
-            routeKey    = { `${ pathname }?${ searchParams.toString() }` }
-            scroll      = { false }
+            hrefOf           = { hrefOf }
+            indicatorId      = { indicatorId }
+            pendingIndicator = { pendingIndicator }
+            routeKey         = { `${ pathname }?${ searchParams.toString() }` }
+            scroll           = { false }
             tabs        = { tabs }
         />
     ) ;
@@ -335,18 +340,19 @@ const QueryTabs = ( { className , indicatorId , isActive , paramName , resetPara
  * @param {string}    [props.indicatorId] - The underline's `layoutId` ; unique per bar by default.
  * @param {Function}  [props.isActive]    - `( tab , { pathname , value } ) => boolean`, replacing the reading ; `value` is the parameter's, by query.
  * @param {string}    [props.paramName]   - Reads by this query parameter instead of by path.
+ * @param {boolean|Object} [props.pendingIndicator=false] - A tab trades its icon for an indicator while its own navigation is pending (`LinkPending`) : `true`, or its props — `{ animation : 'dots' }`. Off by default.
  * @param {string[]}  [props.resetParams] - By query parameter : dropped from the URL on every switch.
  * @param {LinkTab[]} props.tabs          - The tabs, in display order.
  * @returns {React.ReactElement}
  */
-const LinkTabs = ( { className , indicatorId , isActive , paramName , resetParams , tabs = [] } ) =>
+const LinkTabs = ( { className , indicatorId , isActive , paramName , pendingIndicator = false , resetParams , tabs = [] } ) =>
 {
     const generatedId = useId() ;
     const layoutId    = indicatorId ?? `link-tabs-${ generatedId }` ;
 
     return paramName
-        ? <QueryTabs className={ className } indicatorId={ layoutId } isActive={ isActive } paramName={ paramName } resetParams={ resetParams } tabs={ tabs } />
-        : <PathTabs className={ className } indicatorId={ layoutId } isActive={ isActive } tabs={ tabs } /> ;
+        ? <QueryTabs className={ className } indicatorId={ layoutId } isActive={ isActive } paramName={ paramName } pendingIndicator={ pendingIndicator } resetParams={ resetParams } tabs={ tabs } />
+        : <PathTabs className={ className } indicatorId={ layoutId } isActive={ isActive } pendingIndicator={ pendingIndicator } tabs={ tabs } /> ;
 } ;
 
 LinkTabs.displayName = 'LinkTabs' ;

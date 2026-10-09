@@ -20,6 +20,7 @@ import { MdCalendarMonth , MdEditNote , MdMenu , MdTab , MdTimer , MdTune } from
 import { useSearchParams } from 'next/navigation' ;
 
 import LinkTabs from '@/components/tabs/LinkTabs' ;
+import MenuLink from '@/components/menus/MenuLink' ;
 
 /**
  * The bar read by path : pages of the lab.
@@ -73,8 +74,8 @@ const LinkTabsDemo = () =>
                 <h2 className="card-title">LinkTabs</h2>
 
                 <div className="flex flex-col gap-2">
-                    <p className="text-sm text-base-content/70">Par chemin</p>
-                    <LinkTabs tabs={ PATH_TABS } />
+                    <p className="text-sm text-base-content/70">Par chemin — avec <code>pendingIndicator</code> : l’icône de l’onglet cliqué tourne jusqu’au premier rendu de sa page</p>
+                    <LinkTabs pendingIndicator tabs={ PATH_TABS } />
                 </div>
 
                 <div className="flex flex-col gap-2">
@@ -83,6 +84,15 @@ const LinkTabsDemo = () =>
                     <code className="rounded-box bg-base-100 p-2 text-xs">
                         { `?${ searchParams.toString() }` }
                     </code>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                    <p className="text-sm text-base-content/70">MenuLink avec <code>{ "pendingIndicator={ { animation : 'dots' } }" }</code> : même geste dans un menu, une autre animation</p>
+                    <ul className="menu menu-horizontal rounded-box bg-base-100">
+                        { PATH_TABS.filter( tab => tab.href ).map( tab => (
+                            <MenuLink href={ tab.href } icon={ <tab.Icon className="size-4" aria-hidden="true" /> } key={ tab.id } label={ tab.label } pendingIndicator={ { animation : 'dots' } } />
+                        ) ) }
+                    </ul>
                 </div>
 
             </div>

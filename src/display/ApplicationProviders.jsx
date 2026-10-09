@@ -35,6 +35,7 @@
  * @param {Array}           [props.languages]                   - Available languages.
  * @param {Object}          [props.locale]                      - The i18n dictionary, handed to the `LocaleProvider`.
  * @param {Array}           [props.navigation]                  - Navigation tree, handed to the `NavigationProvider`.
+ * @param {boolean|Object}  [props.navigationPendingIndicator=false] - Every link of the menu trades its icon for an indicator while its navigation is pending : `true`, or `LinkPending`'s props. Off by default.
  * @param {string}          [props.navigationMode='auto']       - Navigation display mode.
  * @param {string}          [props.navigationStorageKey]        - Where the navigation state is persisted. Name it per application : two applications served from one origin would otherwise share it.
  * @param {Object}          [props.splashScreen]                - Props of {@link module:display/SplashScreen}. Omitted, no splash overlay is rendered.
@@ -84,6 +85,7 @@ const ApplicationProviders = (
     languages ,
     locale ,
     navigation ,
+    navigationPendingIndicator = false ,
     navigationMode = 'auto' ,
     navigationStorageKey ,
     splashScreen ,
@@ -128,6 +130,7 @@ const ApplicationProviders = (
                             <FullScreenProvider>
                                 <NavigationProvider
                                     defaultNavigation = { navigation }
+                                    pendingIndicator  = { navigationPendingIndicator }
                                     defaultMode       = { navigationMode }
                                     storageKey        = { navigationStorageKey }
                                 >

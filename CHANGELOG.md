@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🔗 A link that says its own navigation is pending — opt-in**
+
+- **New `components/links/LinkPending`** : sits inside a `next/link`, reads Next's `useLinkStatus`, and trades its children — the icon, as a rule — for a spinner from the click to the first render of the destination. Outside a link, the children stand as they are. ⚠️ How long it shows is Next's to decide : on a route with a `loading.js` the first render is the fallback, prefetched in production, so the spinner lives milliseconds there ; it earns its keep on routes without a loading boundary, and in development, where nothing is prefetched. Hence **off by default everywhere**.
+- **`pendingIndicator` on `Link`** (an indicator after the content), **`MenuLink`** and **`LinkTabs`** (the icon trades for the indicator), and **on the navigation menu** through `NavigationProvider`'s `pendingIndicator` — `ApplicationProviders` hands it `navigationPendingIndicator`. `true` for the defaults, or `LinkPending`'s own props — `animation` (`spinner`, `ring`, `dots`, `bars`, `ball`, `infinity`), `color`, `size`, `className` — as in `pendingIndicator={ { animation : 'dots' } }`. A consuming application asked for the option to exist now, to switch on where it serves.
+- The tabs demo shows it on its path tabs, and on a row of menu links with `dots` ; the lab's own sidebar has it on.
+
 **🔍 A search that says it is in flight, and may keep out of the screen's transition**
 
 - **`hooks/useFilterParams` : option `shared` (default `true`) and a `busy` in its return.** Under a `BusyNavigationProvider` every push went through the screen's transition — a search field included, whose every pause of typing faded the whole list. `shared : false` keeps a push on the hook's own transition, so the surface does not fade for it. And `busy` always says a push is in flight : the screen's `busy` when shared, the hook's own otherwise — outside a provider, a plain push had no pending state at all until now.

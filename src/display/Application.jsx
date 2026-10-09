@@ -32,15 +32,24 @@ import splashScreen from '../@configs/ui/splashScreen' ;
 
 const NAVIGATION_STORAGE_KEY = 'oihana-next-ui:lab:nav' ;
 
+/**
+ * The lab's sidebar shows the pending spinner on the link just clicked
+ * (`LinkPending`) : in development nothing is prefetched, so it is the one
+ * place the option can be seen at leisure. Off by default elsewhere.
+ * @type {boolean}
+ */
+const NAVIGATION_PENDING_INDICATOR = true ;
+
 const Application = ( { children , initialLang } ) => (
     <ApplicationProviders
-        config               = { config }
-        initialLang          = { initialLang }
-        languages            = { languages }
-        locale               = { locale }
-        navigation           = { navigation }
-        navigationStorageKey = { NAVIGATION_STORAGE_KEY }
-        splashScreen         = { splashScreen }
+        config                     = { config }
+        initialLang                = { initialLang }
+        languages                  = { languages }
+        locale                     = { locale }
+        navigation                 = { navigation }
+        navigationPendingIndicator = { NAVIGATION_PENDING_INDICATOR }
+        navigationStorageKey       = { NAVIGATION_STORAGE_KEY }
+        splashScreen               = { splashScreen }
     >
         <Dashboard>
             { children }

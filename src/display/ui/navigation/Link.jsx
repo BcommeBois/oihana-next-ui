@@ -15,7 +15,8 @@ import notEmpty   from 'vegas-js-core/src/strings/notEmpty' ;
 
 import cn from '../../../themes/helpers/cn' ;
 
-import Badge from '../../../components/Badge' ;
+import Badge       from '../../../components/Badge' ;
+import LinkPending , { pendingOptions } from '../../../components/links/LinkPending' ;
 
 import NavigationContext from '../../../contexts/navigation/context' ;
 import isPathMatch       from '../../../contexts/navigation/helpers/isPathMatch' ;
@@ -118,6 +119,10 @@ const Link =
 
     const active = navigation ? path === navigation.activePath : isPathMatch( pathname , path ) ;
 
+    // The provider's say : a spinner in place of the icon while THIS link's
+    // navigation is pending (`LinkPending`, opt-in).
+    const pendingIndicator = navigation?.pendingIndicator || false ;
+
     // No `space-x-*` here : the daisyUI menu item already spaces its children.
     // The margin only reached the icon once a badge made it no longer the last
     // element child, widening the icon → label gap of badged items alone.
@@ -138,7 +143,9 @@ const Link =
     const content =
     (
         <>
-            { Icon && <Icon size={ iconSize } /> }
+            { pendingIndicator
+                ? <LinkPending { ...pendingOptions( pendingIndicator ) }>{ Icon && <Icon size={ iconSize } /> }</LinkPending>
+                : Icon && <Icon size={ iconSize } /> }
             { label }
             { getBadge( badge ) }
         </>

@@ -10,6 +10,8 @@ import Link from 'next/link' ;
 
 import Tooltip from '../../components/Tooltip' ;
 
+import LinkPending , { pendingOptions } from '../links/LinkPending' ;
+
 import { BOTTOM } from '../../themes/enums/positions' ;
 
 /**
@@ -20,6 +22,7 @@ import { BOTTOM } from '../../themes/enums/positions' ;
  * @param {boolean} [props.disabled] - Disabled state.
  * @param {string} [props.label] - Link label.
  * @param {React.ReactNode} [props.icon] - Link icon.
+ * @param {boolean|Object} [props.pendingIndicator=false] - Trade the icon for an indicator while this link's navigation is pending (`LinkPending`) : `true`, or its props — `{ animation : 'dots' }`. Off by default.
  * @param {string} props.href - Link URL.
  * @param {boolean} [props.showIcon=true] - Show icon.
  * @param {boolean} [props.showLabel=true] - Show label.
@@ -40,6 +43,7 @@ const MenuLink =
     label ,
     icon ,
     href ,
+    pendingIndicator = false ,
     showIcon = true ,
     showLabel = true ,
     showTooltip = false ,
@@ -61,7 +65,7 @@ const MenuLink =
 
     const content = children ?? (
         <span className={ cn( 'relative flex flex-row items-center gap-2 font-medium' , className ) }>
-            { showIcon && icon }
+            { showIcon && ( pendingIndicator ? <LinkPending { ...pendingOptions( pendingIndicator ) }>{ icon }</LinkPending> : icon ) }
             { showLabel && label }
         </span>
     ) ;
