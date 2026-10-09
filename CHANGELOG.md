@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.31.0] — 2026-10-09
+
 **🔗 A link that says its own navigation is pending — opt-in**
 
 - **New `components/links/LinkPending`** : sits inside a `next/link`, reads Next's `useLinkStatus`, and trades its children — the icon, as a rule — for a spinner from the click to the first render of the destination. Outside a link, the children stand as they are. ⚠️ How long it shows is Next's to decide : on a route with a `loading.js` the first render is the fallback, prefetched in production, so the spinner lives milliseconds there ; it earns its keep on routes without a loading boundary, and in development, where nothing is prefetched. Hence **off by default everywhere**.
