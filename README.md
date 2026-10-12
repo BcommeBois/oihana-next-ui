@@ -52,7 +52,8 @@ Every component carries its own JSDoc — props, defaults and examples — and t
 sit under `/components` and `/modules`, with `/scenarios` bringing several of them together on
 screens of use : a CRM, dashboards, a checkout, logistics. The [**wiki**](wiki/README.md) holds
 the long-form guides, one per group : which component to reach for, and the recipes that span
-several of them. So far :
+several of them. Start with [**setting up an application**](wiki/display/application/README.md),
+then the groups :
 [`components/barcodes`](wiki/components/barcodes/README.md),
 [`components/charts`](wiki/components/charts/README.md),
 [`components/maps`](wiki/components/maps/README.md),

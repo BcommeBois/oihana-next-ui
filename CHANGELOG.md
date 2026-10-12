@@ -8,12 +8,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
-**📚 Three new guides in the wiki, and the README brought up to date**
+**📚 New guides in the wiki, and the README brought up to date**
 
 - **`wiki/components/barcodes`** : drawing a code — which format for which need, the light plate, exporting to SVG or PNG for a server, GS1-128 written as on the label — and reading one : the two engines and when each runs, HTTPS, serving the WebAssembly yourself with `oihana-copy-zxing-wasm`, keeping it offline with `preloadScanner()`, the one reading `normalizeScan` makes of every engine, and `InputScan`.
 - **`wiki/contexts/feedback`** : `useFeedbackSignal` — the three signals, why a signal is never a message, what browsers allow (the first gesture, a locked signal dropped rather than queued, vibration on Android only, the iPhone's silent switch) — and the `FeedbackProvider` master switch kept on the device, with `SoundButton` and the navbar's opt-in control.
 - **`wiki/components/media`** : which of `FileInput`, `FileDropzone`, `PhotoCapture` to reach for, what `resizeImage` takes away and why it turns the photo first, keeping a position apart, the checks before a file is taken, and sending the shrunk files with a plain form.
-- **The wiki's index lists the maps guide**, which existed and was linked from nowhere, and the demo app's scenarios. **The README** lists the seven guides, the scenarios, and the five commands the package ships — `oihana-copy-maplibre-worker` was missing, `oihana-copy-zxing-wasm` is new.
+- **`wiki/display/application`** — setting up an application : `ApplicationProviders` at the root and the `Dashboard` chrome in the layouts that show it, the configuration imported on the client (a navigation tree carries functions a Server Component cannot hand down), the order of the stack and what each provider gives, the theme script and the language cookie that agree before the first frame, the keys kept on the device — and the release that empties all but the ones listed in `versionCheck.keepLocal`, key by key.
+- **The wiki's index lists the maps guide**, which existed and was linked from nowhere, and the demo app's scenarios. **The README** starts the reader on setting up an application, then lists the guides, the scenarios, and the five commands the package ships — `oihana-copy-maplibre-worker` was missing, `oihana-copy-zxing-wasm` is new.
 
 **🎬 Scenarios : screens of use that bring the components together**
 

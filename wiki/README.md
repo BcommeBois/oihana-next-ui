@@ -10,6 +10,13 @@ file can say : the shape of a group, and the recipes.
 
 ## Contents
 
+### Setting up
+
+- [`display/application`](display/application/README.md) — what an application does once, at its
+  root : `ApplicationProviders` apart from the `Dashboard` chrome, the configuration imported on
+  the client, the order of the stack, the theme and the language agreed before the first frame,
+  the keys kept on the device — and the release that empties them.
+
 ### Components
 
 - [`components/barcodes`](components/barcodes/README.md) — QR codes and linear barcodes drawn
