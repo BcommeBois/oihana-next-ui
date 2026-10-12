@@ -10,6 +10,10 @@ import useMergeRefs     from '../../hooks/useMergeRefs'
 /**
  * Toggle (switch) component for DaisyUI 5.
  *
+ * By default the label and the switch sit at the two ends of the available
+ * width, as in a list of settings. `inline` keeps them side by side, the
+ * toggle only as wide as its content — for a lone switch in a column.
+ *
  * @param {Object} props
  * @param {boolean} [props.checked] - Controlled checked state
  * @param {string} [props.className] - Additional classes for container
@@ -20,6 +24,7 @@ import useMergeRefs     from '../../hooks/useMergeRefs'
  * @param {string} [props.helper] - Helper text (always visible)
  * @param {string} [props.id] - Input ID
  * @param {boolean} [props.indeterminate=false] - Indeterminate state
+ * @param {boolean} [props.inline=false] - Keep the label next to the switch, the toggle as wide as its content, instead of spreading them over the width
  * @param {string} [props.label] - Label text
  * @param {string} [props.labelClassName] - Additional classes for label container
  * @param {'left' | 'right'} [props.labelPosition='left'] - Label position
@@ -41,6 +46,7 @@ const Toggle =
     helper ,
     id ,
     indeterminate = false ,
+    inline = false ,
     label ,
     labelClassName ,
     labelPosition = 'left' ,
@@ -97,10 +103,11 @@ const Toggle =
     ) ;
 
     return (
-        <div className={ cn( 'flex flex-col' , className ) }>
+        <div className={ cn( 'flex flex-col' , inline && 'w-fit' , className ) }>
             <label
                 className = { cn(
-                    'label cursor-pointer justify-between gap-4' ,
+                    'label cursor-pointer gap-4' ,
+                    inline ? 'justify-start' : 'justify-between' ,
                     disabled && 'cursor-not-allowed' ,
                     labelClassName
                 )}

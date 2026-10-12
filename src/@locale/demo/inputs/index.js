@@ -10,6 +10,7 @@ import hexColor   from './hexColor' ;
 import i18nInput  from './i18nInput' ;
 import i18nTextArea from './i18nTextArea' ;
 import i18nTextAreaMarkdown from './i18nTextAreaMarkdown' ;
+import keypad     from './keypad' ;
 import password   from './password' ;
 import percentage from './percentage' ;
 import pin        from './pin' ;
@@ -40,6 +41,7 @@ const inputs =
     i18nInput ,
     i18nTextArea ,
     i18nTextAreaMarkdown ,
+    keypad ,
     password ,
     percentage ,
     pin ,

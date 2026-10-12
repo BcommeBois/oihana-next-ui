@@ -48,7 +48,7 @@ const BarcodeScannerDemo = ( { path = 'demo.barcodes.scanner' } = {} ) =>
     const t = useI18n( path ) ?? {} ;
 
     const [ active  , setActive  ] = useState( true ) ;
-    const [ beep    , setBeep    ] = useState( true ) ;
+    const [ beep    , setBeep    ] = useState( false ) ;
     const [ engine  , setEngine  ] = useState( 'auto' ) ;
     const [ set     , setSet     ] = useState( 'all' ) ;
     const [ running , setRunning ] = useState( null ) ;

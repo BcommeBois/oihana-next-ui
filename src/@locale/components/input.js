@@ -18,6 +18,10 @@
  * label that says « 8 » next to a field refusing anything under 12 is worse
  * than no label. A host owning its own wording passes a `path` instead.
  *
+ * `keypad` names the keys of `NumericKeypad` that show a symbol (⌫, C, −, +),
+ * the keypad itself when the host gives it no label, and words its submit
+ * button — visible copy, that one.
+ *
  * `scan` names the camera button and window of `InputScan`, and words a refused
  * code : `invalid` when the host's `validate` says no without a reason of its
  * own, `gs1` (with `{0}`, the encoder's detail) for a GS1 string typed wrong.
@@ -53,6 +57,16 @@ const input =
         {
             latitude  : 'Latitude' ,
             longitude : 'Longitude' ,
+        } ,
+
+        keypad :
+        {
+            backspace : 'Effacer le dernier chiffre' ,
+            clear     : 'Tout effacer' ,
+            decrease  : 'Diminuer' ,
+            increase  : 'Augmenter' ,
+            label     : 'Pavé numérique' ,
+            submit    : 'Valider' ,
         } ,
 
         password :
@@ -119,6 +133,16 @@ const input =
         {
             latitude  : 'Latitude' ,
             longitude : 'Longitude' ,
+        } ,
+
+        keypad :
+        {
+            backspace : 'Delete the last digit' ,
+            clear     : 'Clear' ,
+            decrease  : 'Decrease' ,
+            increase  : 'Increase' ,
+            label     : 'Numeric keypad' ,
+            submit    : 'Confirm' ,
         } ,
 
         password :

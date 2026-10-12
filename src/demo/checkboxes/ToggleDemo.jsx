@@ -42,6 +42,23 @@ const ToggleDemo = () =>
 
             <Divider />
 
+            {/* Inline */}
+            <div className="flex flex-col gap-4">
+                <h3 className="text-xl font-semibold">Inline</h3>
+
+                <p className="text-sm text-base-content/70">
+                    By default the label and the switch sit at the two ends of the width, as in a list of settings. With inline, they stay side by side.
+                </p>
+
+                <div className="flex flex-col gap-3">
+                    <Toggle label="Spread over the width (default)" defaultChecked />
+                    <Toggle label="Inline" inline defaultChecked />
+                    <Toggle label="Inline, label on right" inline labelPosition="right" defaultChecked />
+                </div>
+            </div>
+
+            <Divider />
+
             {/* All Sizes */}
             <div className="flex flex-col gap-4">
                 <h3 className="text-xl font-semibold">All Sizes</h3>

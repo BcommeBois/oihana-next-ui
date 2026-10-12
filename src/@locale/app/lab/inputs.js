@@ -135,6 +135,11 @@ const inputs =
                 label       : 'URL et e-mail' ,
                 description : 'Deux champs qui valident ce qu’ils attendent.' ,
             } ,
+            'keypad' :
+            {
+                label       : 'Pavé numérique' ,
+                description : 'Une quantité au pouce, sans clavier système ; une touche au-delà d’une limite est refusée.' ,
+            } ,
             'scan' :
             {
                 label       : 'Scan' ,
@@ -270,6 +275,11 @@ const inputs =
             {
                 label       : 'URL & e-mail' ,
                 description : 'Two fields that validate what they expect.' ,
+            } ,
+            'keypad' :
+            {
+                label       : 'Numeric keypad' ,
+                description : 'A quantity typed with the thumb, no system keyboard ; a key past a limit is refused.' ,
             } ,
             'scan' :
             {

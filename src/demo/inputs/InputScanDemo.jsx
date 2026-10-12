@@ -6,6 +6,8 @@ import format from 'vegas-js-core/src/strings/fastformat' ;
 
 import Container from '@/display/Container' ;
 
+import Toggle from '@/components/checkboxes/Toggle' ;
+
 import InputScan from '@/components/inputs/InputScan' ;
 
 import useFeedbackSignal from '@/hooks/useFeedbackSignal' ;
@@ -29,7 +31,8 @@ const Probe = ( { empty , value } ) => (
  * InputScan demo.
  *
  * A plain scan field, then one that accepts EAN-13 only and takes a series ;
- * every outcome is printed as received, and heard through useFeedbackSignal.
+ * every outcome is printed as received, and heard through useFeedbackSignal
+ * once the sound is switched on.
  *
  * @param {Object} props
  * @param {string} [props.path='demo.inputs.scan'] - Dot notation path to the demo locale.
@@ -38,7 +41,9 @@ const InputScanDemo = ( { path = 'demo.inputs.scan' } = {} ) =>
 {
     const t = useI18n( path ) ?? {} ;
 
-    const { signal } = useFeedbackSignal() ;
+    const [ sound , setSound ] = useState( false ) ;
+
+    const { signal } = useFeedbackSignal( { sound , vibration : sound } ) ;
 
     const [ last     , setLast     ] = useState( null ) ;
     const [ rejected , setRejected ] = useState( null ) ;
@@ -60,6 +65,8 @@ const InputScanDemo = ( { path = 'demo.inputs.scan' } = {} ) =>
         <Container className="flex flex-col gap-6 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-7xl">
 
             <p className="text-sm text-base-content/70">{ t.intro }</p>
+
+            <Toggle checked={ sound } color="primary" inline label={ t.sound } onChange={ event => setSound( event.target.checked ) } />
 
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
 

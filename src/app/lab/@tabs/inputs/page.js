@@ -35,6 +35,7 @@ import InputUrlEmailDemo   from '@/demo/inputs/InputUrlEmailDemo' ;
 import InputValidatorDemo  from '@/demo/inputs/InputValidatorDemo' ;
 import FileInputDemo       from '@/demo/inputs/FileInputDemo' ;
 import InputScanDemo       from '@/demo/inputs/InputScanDemo' ;
+import NumericKeypadDemo   from '@/demo/inputs/NumericKeypadDemo' ;
 
 import {
     MdAttachFile ,
@@ -44,6 +45,7 @@ import {
     MdColorLens ,
     MdCreditCard ,
     MdDateRange ,
+    MdDialpad ,
     MdEmail ,
     MdLabel ,
     MdLock ,
@@ -97,6 +99,7 @@ const ROWS =
     { key : 'counter'           , icon : MdPlusOne       , category : 'numbers'     , component : <InputCounterDemo /> } ,
     { key : 'currency'          , icon : MdAttachMoney   , category : 'numbers'     , component : <InputCurrencyDemo /> } ,
     { key : 'percentage'        , icon : MdPercent       , category : 'numbers'     , component : <InputPercentageDemo /> } ,
+    { key : 'keypad'            , icon : MdDialpad       , category : 'numbers'     , component : <NumericKeypadDemo /> } ,
 
     { key : 'date'              , icon : MdCalendarToday , category : 'dates'       , component : <InputDateDemo /> } ,
     { key : 'date-range'        , icon : MdDateRange     , category : 'dates'       , component : <InputDateRangeDemo /> } ,

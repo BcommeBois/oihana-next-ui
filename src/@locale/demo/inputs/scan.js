@@ -2,6 +2,7 @@ const scan =
 {
     fr :
     {
+        sound    : 'Bip et vibration' ,
         intro    : 'Un code arrive par la caméra (le bouton collé au champ) ou au clavier (tapez, puis Entrée). Les deux sources rendent la même lecture. La caméra demande HTTPS : sur téléphone, passez par le lab déployé.' ,
         simple   :
         {
@@ -26,6 +27,7 @@ const scan =
 
     en :
     {
+        sound    : 'Beep and vibration' ,
         intro    : 'A code comes from the camera (the button stuck to the field) or from the keyboard (type, then Enter). Both sources give the same reading. The camera needs HTTPS : on a phone, go through the deployed lab.' ,
         simple   :
         {
