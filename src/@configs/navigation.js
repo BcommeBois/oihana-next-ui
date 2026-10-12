@@ -16,6 +16,8 @@ import {
     MdLocalShipping      as LogisticsIcon ,
     MdMoveToInbox        as ReceivingIcon ,
     MdFactCheck          as InventoryIcon ,
+    MdSpaceDashboard     as DashboardsIcon ,
+    MdInsights           as AnalyticsIcon ,
     MdWidgets            as ComponentsIcon ,
     MdTexture            as PatternsIcon ,
     MdTextSnippet        as TypographyIcon ,
@@ -309,6 +311,15 @@ const navigation =
         className : 'gap-1' ,
         items     :
         [
+            {
+                id   : 'dashboards'   ,
+                type : COLLAPSE       ,
+                Icon : DashboardsIcon ,
+                items :
+                [
+                    { id : 'analytics' , type : LINK  , Icon : AnalyticsIcon , path  : '/scenarios/dashboards/analytics' } ,
+                ]
+            } ,
             {
                 id   : 'logistics'   ,
                 type : COLLAPSE      ,

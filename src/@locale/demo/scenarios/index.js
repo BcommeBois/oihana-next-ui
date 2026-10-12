@@ -1,7 +1,9 @@
-import logistics from './logistics' ;
+import dashboards from './dashboards' ;
+import logistics  from './logistics' ;
 
 const scenarios =
 {
+    dashboards ,
     logistics ,
 } ;
 

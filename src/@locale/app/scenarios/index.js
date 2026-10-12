@@ -1,4 +1,5 @@
-import logistics from './logistics'
+import dashboards from './dashboards'
+import logistics  from './logistics'
 
 /**
  * The copy of the scenario pages : screens of use that bring several components
@@ -6,6 +7,7 @@ import logistics from './logistics'
  */
 const scenarios =
 {
+    dashboards ,
     logistics ,
 } ;
 
