@@ -63,6 +63,9 @@ const CrmProvider = ( { children } ) =>
 
             patchCustomer ,
 
+            // The whole list at once : the pipeline rewrites the order and the stages in one go.
+            setOpportunities : list => setBase( current => ( { ...current , opportunities : list } ) ) ,
+
             ready : base !== null ,
             reps  : REPS ,
             today ,
