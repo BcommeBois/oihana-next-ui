@@ -86,6 +86,7 @@ import { GrStatusPlaceholder    as StatusIcon         } from "react-icons/gr";
 import { LuTable                as TableIcon          } from "react-icons/lu";
 import { BsTextareaResize       as TextAreaIcon       } from "react-icons/bs" ;
 import { TiMessages             as ToastIcon          } from "react-icons/ti" ;
+import { TbWaveSine             as SignalIcon         } from "react-icons/tb" ;
 import { LuMessageSquareText    as TooltipIcon        } from "react-icons/lu";
 import { FaToggleOn             as ToggleIcon         } from "react-icons/fa";
 
@@ -183,6 +184,7 @@ const navigation =
                     { id : 'skeleton'       , type : LINK  , Icon : SkeletonIcon       , path  : '/lab/skeleton'       } ,
                     { id : 'spinners'       , type : LINK  , Icon : SpinnerIcon        , path  : '/lab/spinners'       } ,
                     { id : 'toasts'         , type : LINK  , Icon : ToastIcon          , path  : '/lab/toasts'         } ,
+                    { id : 'signals'        , type : LINK  , Icon : SignalIcon         , path  : '/lab/signals'        } ,
                     { id : 'tooltips'       , type : LINK  , Icon : TooltipIcon        , path  : '/lab/tooltips'       } ,
                 ]
             } ,

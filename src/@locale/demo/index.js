@@ -7,6 +7,7 @@ import metrics   from './metrics' ;
 import modals    from './modals' ;
 import passwords from './passwords' ;
 import scheduler from './scheduler' ;
+import signals   from './signals' ;
 import trees     from './trees' ;
 import typography from './typography' ;
 
@@ -21,6 +22,7 @@ const demo =
     modals ,
     passwords ,
     scheduler ,
+    signals ,
     trees ,
     typography ,
 } ;

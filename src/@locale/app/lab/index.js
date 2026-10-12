@@ -20,6 +20,7 @@ import schedulerMonth from './schedulerMonth'
 import schedulerSlots from './schedulerSlots'
 import schedulerTimeline from './schedulerTimeline'
 import schedulerWeek  from './schedulerWeek'
+import signals        from './signals'
 import textareas      from './textareas'
 import tree           from './tree'
 import typography     from './typography'
@@ -48,6 +49,7 @@ const lab =
     schedulerSlots ,
     schedulerTimeline ,
     schedulerWeek ,
+    signals        ,
     textareas      ,
     tree           ,
     typography     ,
