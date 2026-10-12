@@ -30,7 +30,8 @@ export const BARCODE_SIZES =
 export const FULL = 'full' ;
 
 /**
- * Barcode — a linear barcode drawn in SVG : Code 128, EAN-13, EAN-8, UPC-A.
+ * Barcode — a linear barcode drawn in SVG : Code 128, GS1-128, EAN-13, EAN-8,
+ * UPC-A, ITF-14.
  *
  * The bars come from {@link module:helpers/barcodes/encodeBarcode}, laid out
  * by {@link module:helpers/barcodes/layoutBarcode} and drawn with the path of
@@ -73,6 +74,12 @@ export const FULL = 'full' ;
  * // An EAN-13 : 12 digits, the check digit is computed
  * <Barcode value="400638133393" format="ean_13" size="lg" />
  *
+ * // A GS1-128 : the application identifiers in parentheses
+ * <Barcode value="(01)09501101530003(17)261231(10)LOT-42" format="gs1_128" />
+ *
+ * // An ITF-14, with the top and bottom bearer bars only
+ * <Barcode value="1540014128876" format="itf_14" bearer="bars" />
+ *
  * // The bars alone, as wide as the container
  * <Barcode value={ reference } size="full" showText={ false } className="max-w-sm" />
  *
@@ -88,12 +95,16 @@ export const FULL = 'full' ;
  *
  * @param {Object} props
  * @param {string} [props.ariaLabel] - The accessible name. Defaults to the i18n `label` key read at `path`, then `'Barcode'`.
+ * @param {'frame'|'bars'|'none'} [props.bearer='frame'] - ITF-14 only : a frame around the code and its quiet zone, the top and
+ *        bottom bars alone, or none.
  * @param {?string} [props.background='#ffffff'] - The light colour, any CSS colour ; `null` leaves it transparent.
  * @param {string} [props.className] - Additional classes on the `<svg>`.
  * @param {string} [props.fontFamily] - The face of the text, a CSS font list. Defaults to a system monospace face.
  * @param {string|number} [props.fontWeight] - The weight of the text.
  * @param {string} [props.foreground='#000000'] - The colour of the bars, and of the text unless `textColor` says otherwise.
- * @param {'code_128'|'ean_13'|'ean_8'|'upc_a'} [props.format='code_128'] - The format, named as the Barcode Detection API names it.
+ * @param {'code_128'|'gs1_128'|'ean_13'|'ean_8'|'upc_a'|'itf_14'} [props.format='code_128'] - The format, named as the Barcode
+ *        Detection API names it — which reports a GS1-128 as `code_128` and an ITF-14 as `itf`.
+ * @param {'spaced'|'compact'} [props.gs1Text='spaced'] - GS1-128 only : `(01) 09501101530003 (10) LOT-42`, or as typed.
  * @param {number} [props.height] - The height of the bars, in pixels. Overrides the preset.
  * @param {number} [props.moduleWidth] - The width of one module, in pixels. Overrides the preset ; keep it whole.
  * @param {Function} [props.onError] - `( error ) => void`, called when the content cannot be encoded.
@@ -111,11 +122,13 @@ const Barcode =
 ({
     ariaLabel ,
     background = '#ffffff' ,
+    bearer     = 'frame' ,
     className ,
     fontFamily = BARCODE_FONT ,
     fontWeight ,
     foreground = '#000000' ,
     format     = 'code_128' ,
+    gs1Text    = 'spaced' ,
     height ,
     moduleWidth ,
     onError ,
@@ -150,14 +163,14 @@ const Barcode =
 
         try
         {
-            return { symbol : layoutBarcode( encodeBarcode( value , { format } ) , { barHeight , quietZone , showText , textLayout , textScale , verticalMargin } ) } ;
+            return { symbol : layoutBarcode( encodeBarcode( value , { format , gs1Text } ) , { barHeight , bearer , quietZone , showText , textLayout , textScale , verticalMargin } ) } ;
         }
         catch ( exception )
         {
             return { error : exception } ;
         }
     }
-    , [ barHeight , empty , format , quietZone , showText , textLayout , textScale , value , verticalMargin ] ) ;
+    , [ barHeight , bearer , empty , format , gs1Text , quietZone , showText , textLayout , textScale , value , verticalMargin ] ) ;
 
     const d = useMemo( () => symbolToPath( symbol?.rects ) , [ symbol ] ) ;
 

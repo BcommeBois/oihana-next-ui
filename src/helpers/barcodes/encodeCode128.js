@@ -33,6 +33,14 @@ export const CODE_B = 100 ; // in sets A and C
 export const CODE_C = 99 ;  // in sets A and B
 export const FNC1   = 102 ;
 
+/**
+ * Stands for a FNC1 separator inside the character codes handed to
+ * `pickValues` : not a character, so it never reads as a digit or a letter.
+ *
+ * @type {number}
+ */
+export const FNC1_MARK = -1 ;
+
 const isDigit = code => code >= 48 && code <= 57 ;
 
 const digitRun = ( codes , from ) =>
@@ -50,6 +58,10 @@ const prefersA = ( codes , from ) =>
 {
     for ( let index = from ; index < codes.length ; index++ )
     {
+        if ( codes[ index ] === FNC1_MARK )
+        {
+            continue ;
+        }
         if ( codes[ index ] < 32 )
         {
             return true ;
@@ -116,7 +128,11 @@ export const closeSymbols = values =>
  * for the switch is encoded there : four at the start or the end, six in the
  * middle. Set A is used only for control characters, set B for the rest.
  *
- * @param {number[]} codes - The character codes, all below 128.
+ * A `FNC1_MARK` among the codes is written as FNC1, in whatever set is current :
+ * the symbol exists in all three, so a run of digits on either side of it
+ * stays in set C.
+ *
+ * @param {number[]} codes - The character codes, all below 128, and `FNC1_MARK` where a separator goes.
  * @param {Object} [options]
  * @param {number[]} [options.prefix=[]] - Values written right after the start symbol (FNC1 for GS1-128).
  * @returns {number[]} The start symbol and the data symbols, without check and stop.
@@ -146,6 +162,13 @@ export const pickValues = ( codes , { prefix = [] } = {} ) =>
 
     while ( index < length )
     {
+        if ( codes[ index ] === FNC1_MARK )
+        {
+            values.push( FNC1 ) ;
+            index++ ;
+            continue ;
+        }
+
         if ( set === 'C' )
         {
             if ( index + 1 < length && isDigit( codes[ index ] ) && isDigit( codes[ index + 1 ] ) )

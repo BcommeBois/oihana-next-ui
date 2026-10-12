@@ -24,9 +24,11 @@ import useI18n from '@/contexts/locale/useI18n' ;
 const FORMATS =
 [
     { key : 'code_128' , label : 'Code 128' } ,
+    { key : 'gs1_128'  , label : 'GS1-128' } ,
     { key : 'ean_13'   , label : 'EAN-13' } ,
     { key : 'ean_8'    , label : 'EAN-8' } ,
     { key : 'upc_a'    , label : 'UPC-A' } ,
+    { key : 'itf_14'   , label : 'ITF-14' } ,
 ] ;
 
 const SAMPLES =
@@ -35,7 +37,18 @@ const SAMPLES =
     ean_13   : '4006381333931' ,
     ean_8    : '96385074' ,
     upc_a    : '036000291452' ,
+    gs1_128  : '(01)09501101530003(17)261231(10)LOT-42' ,
+    itf_14   : '15400141288763' ,
 } ;
+
+const GS1_SAMPLES =
+[
+    '(00)106141411234567897' ,
+    '(01)09501101530003(17)261231(10)LOT-42' ,
+    '(02)09501101530003(37)24(400)PO-2026-118' ,
+] ;
+
+const BEARERS = [ 'frame' , 'bars' , 'none' ] ;
 
 const SIZES = [ 'xs' , 'sm' , 'md' , 'lg' , 'xl' ] ;
 
@@ -81,14 +94,20 @@ const download = ( blob , name ) =>
  */
 const describe = ( reasons , error ) =>
 {
-    const sentence = reasons?.[ error?.reason ] ?? error?.message ?? '' ;
-    const { data = {} } = error ?? {} ;
+    const { data = {} , reason } = error ?? {} ;
 
-    switch ( error?.reason )
+    const prefix = data.ai ? `(${ data.ai }) ` : '' ;
+
+    switch ( reason )
     {
-        case 'length'     : return format( sentence , ...( data.expected ?? [] ) , data.length ) ;
-        case 'checkDigit' : return format( sentence , data.expected , data.given ) ;
-        default           : return sentence ;
+        case 'length' :
+            return prefix + ( Array.isArray( data.expected )
+                ? format( reasons?.length ?? '' , ...data.expected , data.length )
+                : format( reasons?.lengthOne ?? '' , data.expected , data.length ) ) ;
+        case 'checkDigit' :
+            return prefix + format( reasons?.checkDigit ?? '' , data.expected , data.given ) ;
+        default :
+            return prefix + ( reasons?.[ reason ] ?? error?.message ?? '' ) ;
     }
 } ;
 
@@ -129,6 +148,8 @@ const BarcodeDemo = ( { path = 'demo.barcodes.barcode' } = {} ) =>
     const [ font  , setFont  ] = useState( 'mono' ) ;
     const [ bold  , setBold  ] = useState( 'normal' ) ;
     const [ grow  , setGrow  ] = useState( 1 ) ;
+    const [ gs1   , setGs1   ] = useState( 'spaced' ) ;
+    const [ frame , setFrame ] = useState( 'frame' ) ;
 
     const retail = RETAIL_FORMATS.includes( kind ) ;
 
@@ -144,14 +165,14 @@ const BarcodeDemo = ( { path = 'demo.barcodes.barcode' } = {} ) =>
     {
         try
         {
-            return { symbol : layoutBarcode( encodeBarcode( value , { format : kind } ) , { barHeight : BAR_HEIGHT , showText , textLayout , textScale : grow } ) } ;
+            return { symbol : layoutBarcode( encodeBarcode( value , { format : kind , gs1Text : gs1 } ) , { barHeight : BAR_HEIGHT , bearer : frame , showText , textLayout , textScale : grow } ) } ;
         }
         catch ( exception )
         {
             return { problem : exception } ;
         }
     }
-    , [ grow , kind , showText , textLayout , value ] ) ;
+    , [ frame , grow , gs1 , kind , showText , textLayout , value ] ) ;
 
     const changeFormat = next =>
     {
@@ -172,7 +193,7 @@ const BarcodeDemo = ( { path = 'demo.barcodes.barcode' } = {} ) =>
             <section className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
 
                 <div className="flex flex-col items-center justify-center gap-2 overflow-x-auto">
-                    <Barcode value={ value } format={ kind } showText={ showText } size="md" textLayout={ textLayout } textScale={ grow } { ...typeface } />
+                    <Barcode value={ value } format={ kind } bearer={ frame } gs1Text={ gs1 } showText={ showText } size="md" textLayout={ textLayout } textScale={ grow } { ...typeface } />
                     { symbol && (
                         <span className="text-xs font-mono text-base-content/60">
                             { format( t.playground?.width ?? '{0}' , symbol.width ) }
@@ -200,6 +221,30 @@ const BarcodeDemo = ( { path = 'demo.barcodes.barcode' } = {} ) =>
                         <span className="label text-sm">{ t.playground?.text }</span>
                         <SegmentedControl ariaLabel={ t.playground?.text } items={ textModes } onChange={ setText } value={ textMode } />
                     </div>
+
+                    { kind === 'gs1_128' && showText && (
+                        <div className="flex flex-col gap-1">
+                            <span className="label text-sm">gs1Text</span>
+                            <SegmentedControl
+                                ariaLabel = "gs1Text"
+                                items     = { [ { key : 'spaced' , label : t.gs1?.spaced } , { key : 'compact' , label : t.gs1?.compact } ] }
+                                onChange  = { setGs1 }
+                                value     = { gs1 }
+                            />
+                        </div>
+                    ) }
+
+                    { kind === 'itf_14' && (
+                        <div className="flex flex-col gap-1">
+                            <span className="label text-sm">bearer</span>
+                            <SegmentedControl
+                                ariaLabel = "bearer"
+                                items     = { BEARERS.map( key => ( { key , label : t.itf?.bearers?.[ key ] ?? key } ) ) }
+                                onChange  = { setFrame }
+                                value     = { frame }
+                            />
+                        </div>
+                    ) }
 
                     { showText && (
                         <div className="flex flex-wrap gap-4">
@@ -354,6 +399,39 @@ const BarcodeDemo = ( { path = 'demo.barcodes.barcode' } = {} ) =>
                     <Cell caption={ `fontFamily="system-ui…" · textColor="#64748b"` }>
                         <Barcode value="LOT-2026-001234" fontFamily={ FONTS.sans } textColor="#64748b" />
                     </Cell>
+                </div>
+            </section>
+
+            <Divider />
+
+            {/* GS1-128 */}
+            <section className="flex flex-col gap-4">
+                <h3 className="text-xl font-bold">{ t.gs1?.title }</h3>
+                <p className="text-sm text-base-content/70">{ t.gs1?.note }</p>
+                <div className="flex flex-wrap items-end gap-8">
+                    { GS1_SAMPLES.map( ( sample , index ) => (
+                        <Cell key={ sample } caption={ t.gs1?.captions?.[ index ] }>
+                            <Barcode value={ sample } format="gs1_128" />
+                        </Cell>
+                    ) ) }
+                    <Cell caption={ `gs1Text="compact" · ${ t.gs1?.compact }` }>
+                        <Barcode value={ SAMPLES.gs1_128 } format="gs1_128" gs1Text="compact" />
+                    </Cell>
+                </div>
+            </section>
+
+            <Divider />
+
+            {/* ITF-14 */}
+            <section className="flex flex-col gap-4">
+                <h3 className="text-xl font-bold">{ t.itf?.title }</h3>
+                <p className="text-sm text-base-content/70">{ t.itf?.note }</p>
+                <div className="flex flex-wrap items-end gap-8">
+                    { BEARERS.map( bearer => (
+                        <Cell key={ bearer } caption={ `bearer="${ bearer }" · ${ t.itf?.bearers?.[ bearer ] }` }>
+                            <Barcode value={ SAMPLES.itf_14 } format="itf_14" bearer={ bearer } size="sm" />
+                        </Cell>
+                    ) ) }
                 </div>
             </section>
 

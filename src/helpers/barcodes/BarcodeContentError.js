@@ -5,8 +5,9 @@
  *
  * - `empty` : nothing to encode ;
  * - `characters` : a character the format does not carry (a letter in an EAN, an `é` in Code 128) ;
- * - `length` : the wrong number of digits for the format ;
+ * - `length` : the wrong number of digits or characters for the format ;
  * - `checkDigit` : the last digit is not the check digit of the others ;
+ * - `syntax` : a GS1-128 element string that is not `(AI)data(AI)data…` ;
  * - `format` : the format itself is unknown.
  *
  * @module helpers/barcodes/BarcodeContentError
@@ -27,7 +28,7 @@ class BarcodeContentError extends RangeError
      * @param {string} message
      * @param {Object} details
      * @param {string} details.format - The requested format.
-     * @param {'empty'|'characters'|'length'|'checkDigit'|'format'} details.reason - Why the content was refused.
+     * @param {'empty'|'characters'|'length'|'checkDigit'|'syntax'|'format'} details.reason - Why the content was refused.
      * @param {Object} [details.data] - Anything that helps saying more (the expected check digit, the offending character…).
      */
     constructor( message , { data = {} , format , reason } )

@@ -55,6 +55,9 @@ const clamp = ( value , [ min , max ] ) => Math.min( max , Math.max( min , Numbe
  * @param {Object} encoded - What {@link module:helpers/barcodes/encodeBarcode} returns.
  * @param {Object} [options]
  * @param {number} [options.barHeight=40] - The height of the bars, in modules.
+ * @param {'frame'|'bars'|'none'} [options.bearer] - The bearer bars of an ITF-14 : a frame around the code and its quiet zone
+ *        (the default, as GS1 recommends), the top and bottom bars alone, or none. Ignored by the other formats. The quiet
+ *        zone lives inside the bearers, so the plate gets a margin outside them on the left and right, as wide as the top one.
  * @param {number|{left:number,right:number}} [options.quietZone] - The side margins, in modules. Defaults to the format's own.
  * @param {boolean} [options.showText=true] - Draw the human-readable text.
  * @param {'retail'|'simple'} [options.textLayout] - Defaults to `retail` when the format has one, `simple` otherwise.
@@ -70,7 +73,7 @@ const clamp = ( value , [ min , max ] ) => Math.min( max , Math.max( min , Numbe
  * symbol.width ; // → 81 : 7 + 67 + 7
  * ```
  */
-const layoutBarcode = ( encoded , { barHeight = 40 , quietZone , showText = true , textLayout , textScale = 1 , verticalMargin = VERTICAL_MARGIN } = {} ) =>
+const layoutBarcode = ( encoded , { barHeight = 40 , bearer = 'frame' , quietZone , showText = true , textLayout , textScale = 1 , verticalMargin = VERTICAL_MARGIN } = {} ) =>
 {
     const { modules , retail , text } = encoded ;
 
@@ -85,9 +88,19 @@ const layoutBarcode = ( encoded , { barHeight = 40 , quietZone , showText = true
         ? { bottom : verticalMargin , top : verticalMargin }
         : { bottom : VERTICAL_MARGIN , top : VERTICAL_MARGIN , ...verticalMargin } ;
 
-    const top   = Math.max( 0 , vertical.top ) ;
-    const left  = margins.left ;
-    const width = margins.left + modules.length + margins.right ;
+    // The bearer bars touch the top and the bottom of the bars ; a frame also closes the sides, outside the quiet zone.
+    const thickness = encoded.bearer && bearer !== 'none' ? encoded.bearer.thickness : 0 ;
+    const side      = bearer === 'frame' ? thickness : 0 ;
+
+    const top = Math.max( 0 , vertical.top ) ;
+
+    // The quiet zone lives inside the bearers : the plate needs room of its own outside them, as much as above.
+    const outer = thickness > 0 ? top : 0 ;
+
+    const left  = outer + side + margins.left ;
+    const width = outer + side + margins.left + modules.length + margins.right + side + outer ;
+
+    const barsTop = top + thickness ;
 
     const isExtended = index => isRetail && retail.extended.some( ( [ from , to ] ) => index >= from && index < to ) ;
 
@@ -115,13 +128,29 @@ const layoutBarcode = ( encoded , { barHeight = 40 , quietZone , showText = true
             height : barHeight + ( isExtended( start ) ? GUARD_EXTENSION : 0 ) ,
             width  : index - start ,
             x      : left + start ,
-            y      : top ,
+            y      : barsTop ,
         } ) ;
+    }
+
+    if ( thickness > 0 )
+    {
+        const frameHeight = barHeight + 2 * thickness ;
+
+        const span = width - 2 * outer ;
+
+        rects.push( { height : thickness , width : span , x : outer , y : top } ) ;
+        rects.push( { height : thickness , width : span , x : outer , y : barsTop + barHeight } ) ;
+
+        if ( side > 0 )
+        {
+            rects.push( { height : frameHeight , width : side , x : outer , y : top } ) ;
+            rects.push( { height : frameHeight , width : side , x : width - outer - side , y : top } ) ;
+        }
     }
 
     const texts = [] ;
 
-    let bottom = top + barHeight ;
+    let bottom = barsTop + barHeight + thickness ;
 
     if ( isRetail )
     {
@@ -139,7 +168,7 @@ const layoutBarcode = ( encoded , { barHeight = 40 , quietZone , showText = true
     else if ( showText && text )
     {
         const size     = TEXT_SIZES.simple * clamp( textScale , TEXT_SCALE_RANGE.simple ) ;
-        const baseline = top + barHeight + 2 + ASCENT * size ;
+        const baseline = bottom + 2 + ASCENT * size ;
 
         texts.push( { size , value : text , x : left + modules.length / 2 , y : baseline } ) ;
 

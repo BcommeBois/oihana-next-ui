@@ -1,3 +1,5 @@
+import BarcodeContentError from './BarcodeContentError' ;
+
 /**
  * The GS1 check digit of a string of digits (modulo 10).
  *
@@ -27,6 +29,62 @@ const gs1CheckDigit = digits =>
     }
 
     return ( 10 - ( sum % 10 ) ) % 10 ;
+} ;
+
+/**
+ * Checks a GS1 number, then completes or verifies its check digit.
+ *
+ * With one digit short of `length`, the check digit is computed and appended ;
+ * with `length` digits, the last one is verified.
+ *
+ * @param {string} format
+ * @param {string} value
+ * @param {number} length - The full length, check digit included.
+ * @returns {string} The full number, check digit included.
+ * @throws {BarcodeContentError} `empty`, `characters`, `length` or `checkDigit`.
+ */
+export const completeGS1Number = ( format , value , length ) =>
+{
+    const digits = String( value ?? '' ).trim() ;
+
+    if ( digits === '' )
+    {
+        throw new BarcodeContentError( 'Nothing to encode.' , { format , reason : 'empty' } ) ;
+    }
+
+    if ( !/^[0-9]+$/.test( digits ) )
+    {
+        throw new BarcodeContentError( `${ format } carries digits only.` , { format , reason : 'characters' } ) ;
+    }
+
+    if ( digits.length === length - 1 )
+    {
+        return digits + gs1CheckDigit( digits ) ;
+    }
+
+    if ( digits.length !== length )
+    {
+        throw new BarcodeContentError( `${ format } takes ${ length - 1 } digits, or ${ length } with the check digit : ${ digits.length } given.` ,
+        {
+            data   : { expected : [ length - 1 , length ] , length : digits.length } ,
+            format ,
+            reason : 'length' ,
+        } ) ;
+    }
+
+    const expected = gs1CheckDigit( digits.slice( 0 , -1 ) ) ;
+
+    if ( Number( digits.at( -1 ) ) !== expected )
+    {
+        throw new BarcodeContentError( `The check digit of ${ digits } should be ${ expected }.` ,
+        {
+            data   : { expected , given : Number( digits.at( -1 ) ) } ,
+            format ,
+            reason : 'checkDigit' ,
+        } ) ;
+    }
+
+    return digits ;
 } ;
 
 export default gs1CheckDigit ;

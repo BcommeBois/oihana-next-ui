@@ -1,5 +1,4 @@
-import BarcodeContentError from './BarcodeContentError' ;
-import gs1CheckDigit       from './gs1CheckDigit' ;
+import { completeGS1Number } from './gs1CheckDigit' ;
 
 /**
  * The three digit sets of the EAN / UPC family, 7 modules per digit.
@@ -32,58 +31,6 @@ const CENTER = '01010' ;
 
 const toModules = bits => Array.from( bits , bit => bit === '1' ) ;
 
-/**
- * Checks a string of digits, completes or verifies its check digit.
- *
- * @param {string} format
- * @param {string} value
- * @param {number} length - The full length, check digit included.
- * @returns {string} The full number, check digit included.
- */
-const complete = ( format , value , length ) =>
-{
-    const digits = String( value ?? '' ).trim() ;
-
-    if ( digits === '' )
-    {
-        throw new BarcodeContentError( 'Nothing to encode.' , { format , reason : 'empty' } ) ;
-    }
-
-    if ( !/^[0-9]+$/.test( digits ) )
-    {
-        throw new BarcodeContentError( `${ format } carries digits only.` , { format , reason : 'characters' } ) ;
-    }
-
-    if ( digits.length === length - 1 )
-    {
-        return digits + gs1CheckDigit( digits ) ;
-    }
-
-    if ( digits.length !== length )
-    {
-        throw new BarcodeContentError( `${ format } takes ${ length - 1 } digits, or ${ length } with the check digit : ${ digits.length } given.` ,
-        {
-            data   : { expected : [ length - 1 , length ] , length : digits.length } ,
-            format ,
-            reason : 'length' ,
-        } ) ;
-    }
-
-    const expected = gs1CheckDigit( digits.slice( 0 , -1 ) ) ;
-
-    if ( Number( digits.at( -1 ) ) !== expected )
-    {
-        throw new BarcodeContentError( `The check digit of ${ digits } should be ${ expected }.` ,
-        {
-            data   : { expected , given : Number( digits.at( -1 ) ) } ,
-            format ,
-            reason : 'checkDigit' ,
-        } ) ;
-    }
-
-    return digits ;
-} ;
-
 const center = ( from , index ) => from + 7 * index + 3.5 ;
 
 /**
@@ -100,7 +47,7 @@ const center = ( from , index ) => from + 7 * index + 3.5 ;
  */
 export const encodeEAN13 = value =>
 {
-    const number = complete( 'ean_13' , value , 13 ) ;
+    const number = completeGS1Number( 'ean_13' , value , 13 ) ;
     const digits = Array.from( number , Number ) ;
     const parity = EAN13_PARITY[ digits[ 0 ] ] ;
 
@@ -134,7 +81,7 @@ export const encodeEAN13 = value =>
  */
 export const encodeEAN8 = value =>
 {
-    const number = complete( 'ean_8' , value , 8 ) ;
+    const number = completeGS1Number( 'ean_8' , value , 8 ) ;
     const digits = Array.from( number , Number ) ;
 
     const left  = digits.slice( 0 , 4 ).map( digit => EAN_DIGITS.L[ digit ] ).join( '' ) ;
@@ -171,7 +118,7 @@ export const encodeEAN8 = value =>
  */
 export const encodeUPCA = value =>
 {
-    const number = complete( 'upc_a' , value , 12 ) ;
+    const number = completeGS1Number( 'upc_a' , value , 12 ) ;
     const digits = Array.from( number , Number ) ;
 
     const left  = digits.slice( 0 , 6 ).map( digit => EAN_DIGITS.L[ digit ] ).join( '' ) ;

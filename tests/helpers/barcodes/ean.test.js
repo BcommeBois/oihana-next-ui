@@ -116,7 +116,7 @@ describe( 'encodeBarcode' , () =>
 {
     test( 'speaks the names of the Barcode Detection API' , () =>
     {
-        expect( BARCODE_FORMATS ).toEqual( [ 'code_128' , 'ean_13' , 'ean_8' , 'upc_a' ] ) ;
+        expect( BARCODE_FORMATS ).toEqual( [ 'code_128' , 'ean_13' , 'ean_8' , 'gs1_128' , 'itf_14' , 'upc_a' ] ) ;
     } ) ;
 
     test( 'refuses an unknown format' , () =>

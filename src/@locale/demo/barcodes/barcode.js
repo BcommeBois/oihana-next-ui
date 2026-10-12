@@ -20,8 +20,10 @@ const barcode =
         reasons :
         {
             empty      : 'Rien à encoder.' ,
-            characters : 'Ce format ne porte pas ce caractère : des chiffres seulement en EAN et UPC, de l’ASCII seulement en Code 128.' ,
+            characters : 'Ce caractère n’est pas permis ici : des chiffres seulement en EAN, UPC, ITF-14 et dans les identifiants GS1 numériques ; de l’ASCII seulement en Code 128 ; le jeu de caractères GS1 en GS1-128.' ,
             length     : 'Mauvais nombre de chiffres : {0} ou {1} attendus, {2} saisis.' ,
+            lengthOne  : 'Mauvaise longueur : {0} attendus au plus (ou exactement), {1} saisis.' ,
+            syntax     : 'Écrivez chaque identifiant entre parenthèses, suivi de sa donnée : (01)09501101530003(10)LOT-42.' ,
             checkDigit : 'Le chiffre de contrôle devrait être {0}, pas {1}.' ,
             format     : 'Format inconnu.' ,
         } ,
@@ -46,8 +48,22 @@ const barcode =
         } ,
         formats :
         {
-            title : 'Les quatre formats' ,
-            note  : 'EAN-13 et EAN-8 pour les articles, UPC-A pour l’Amérique du Nord (les mêmes barres qu’un EAN-13 commençant par 0), Code 128 pour tout texte ASCII.' ,
+            title : 'Les six formats' ,
+            note  : 'EAN-13 et EAN-8 pour les articles, UPC-A pour l’Amérique du Nord (les mêmes barres qu’un EAN-13 commençant par 0), Code 128 pour tout texte ASCII, GS1-128 pour les étiquettes logistiques, ITF-14 pour les cartons.' ,
+        } ,
+        gs1 :
+        {
+            title    : 'GS1-128 : les étiquettes logistiques' ,
+            note     : 'Un Code 128 qui porte des identifiants GS1 entre parenthèses : (00) le SSCC d’une palette, (01) le GTIN de l’article, (10) le lot, (17) la péremption… Les longueurs fixes et les chiffres de contrôle sont vérifiés ; un séparateur est placé après chaque identifiant à longueur variable. Un scanner le rapporte comme code_128.' ,
+            spaced   : 'espacé' ,
+            compact  : 'compact' ,
+            captions : [ 'SSCC d’une palette' , 'GTIN, péremption, lot' , 'GTIN contenu, quantité, commande' ] ,
+        } ,
+        itf :
+        {
+            title   : 'ITF-14 : les cartons' ,
+            note    : 'Le code des unités logistiques, imprimé en grand sur le carton : barres larges 2,5 fois plus larges que les fines, et un cadre (barres de support) qui protège la lecture quand l’impression bave. Un scanner le rapporte comme itf.' ,
+            bearers : { frame : 'cadre' , bars : 'haut et bas' , none : 'aucun' } ,
         } ,
         layouts :
         {
@@ -105,8 +121,10 @@ const barcode =
         reasons :
         {
             empty      : 'Nothing to encode.' ,
-            characters : 'This format does not carry that character : digits only in EAN and UPC, ASCII only in Code 128.' ,
+            characters : 'That character is not allowed here : digits only in EAN, UPC, ITF-14 and the numeric GS1 identifiers ; ASCII only in Code 128 ; the GS1 character set in GS1-128.' ,
             length     : 'Wrong number of digits : {0} or {1} expected, {2} typed.' ,
+            lengthOne  : 'Wrong length : {0} expected at most (or exactly), {1} typed.' ,
+            syntax     : 'Write every identifier in parentheses, followed by its data : (01)09501101530003(10)LOT-42.' ,
             checkDigit : 'The check digit should be {0}, not {1}.' ,
             format     : 'Unknown format.' ,
         } ,
@@ -131,8 +149,22 @@ const barcode =
         } ,
         formats :
         {
-            title : 'The four formats' ,
-            note  : 'EAN-13 and EAN-8 for products, UPC-A for North America (the bars of an EAN-13 starting with 0), Code 128 for any ASCII text.' ,
+            title : 'The six formats' ,
+            note  : 'EAN-13 and EAN-8 for products, UPC-A for North America (the bars of an EAN-13 starting with 0), Code 128 for any ASCII text, GS1-128 for logistics labels, ITF-14 for cartons.' ,
+        } ,
+        gs1 :
+        {
+            title    : 'GS1-128 : logistics labels' ,
+            note     : 'A Code 128 carrying GS1 identifiers in parentheses : (00) the SSCC of a pallet, (01) the GTIN of the product, (10) the lot, (17) the expiry… Fixed lengths and check digits are verified ; a separator follows every identifier of variable length. A scanner reports it as code_128.' ,
+            spaced   : 'spaced' ,
+            compact  : 'compact' ,
+            captions : [ 'SSCC of a pallet' , 'GTIN, expiry, lot' , 'Contained GTIN, count, order' ] ,
+        } ,
+        itf :
+        {
+            title   : 'ITF-14 : cartons' ,
+            note    : 'The code of trade units, printed large on the carton : wide bars 2.5 times the narrow ones, and a frame (bearer bars) that keeps it readable when the print bleeds. A scanner reports it as itf.' ,
+            bearers : { frame : 'frame' , bars : 'top and bottom' , none : 'none' } ,
         } ,
         layouts :
         {
