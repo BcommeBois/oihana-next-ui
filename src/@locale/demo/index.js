@@ -6,6 +6,7 @@ import inputs    from './inputs' ;
 import metrics   from './metrics' ;
 import modals    from './modals' ;
 import passwords from './passwords' ;
+import radios    from './radios' ;
 import scheduler from './scheduler' ;
 import signals   from './signals' ;
 import trees     from './trees' ;
@@ -21,6 +22,7 @@ const demo =
     metrics ,
     modals ,
     passwords ,
+    radios ,
     scheduler ,
     signals ,
     trees ,

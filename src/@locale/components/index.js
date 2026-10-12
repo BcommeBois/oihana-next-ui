@@ -12,6 +12,7 @@ import modal      from './modal'
 import pagination from './pagination'
 import picker     from './picker'
 import pwa        from './pwa'
+import radio      from './radio'
 import retry      from './retry'
 import scheduler  from './scheduler'
 import sortable   from './sortable'
@@ -34,6 +35,7 @@ const components =
     pagination ,
     picker ,
     pwa ,
+    radio ,
     retry ,
     scheduler ,
     sortable ,

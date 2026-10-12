@@ -1,6 +1,7 @@
 'use client' ;
 
-import RadioDemo from '@/demo/radios/RadioDemo';
+import RadioDemo       from '@/demo/radios/RadioDemo';
+import RadioFilterDemo from '@/demo/radios/RadioFilterDemo' ;
 import Container from '@/display/Container';
 import Page      from '@/display/Page' ;
 
@@ -23,6 +24,8 @@ const RadiosShowcase = ({ path = 'app.test' }) =>
             </Container>
 
             <RadioDemo />
+
+            <RadioFilterDemo />
 
         </Page>
     ) ;
