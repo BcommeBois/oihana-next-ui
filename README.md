@@ -59,8 +59,9 @@ then the groups :
 [`components/maps`](wiki/components/maps/README.md),
 [`components/media`](wiki/components/media/README.md),
 [`components/metrics`](wiki/components/metrics/README.md),
-[`components/scheduler`](wiki/components/scheduler/README.md) and
-[`contexts/feedback`](wiki/contexts/feedback/README.md).
+[`components/scheduler`](wiki/components/scheduler/README.md),
+[`contexts/feedback`](wiki/contexts/feedback/README.md) and
+[`contexts/locale`](wiki/contexts/locale/README.md).
 
 ### Scripts
 
@@ -107,7 +108,9 @@ import auth from './auth' ; // your own component bundles
 export default { ...components , auth } ;
 ```
 
-A family you redefine replaces the library's one as a whole.
+A family you redefine replaces the library's one as a whole. The
+[translations guide](wiki/contexts/locale/README.md) covers the rest : writing the bundles, the
+server side, numbers and dates.
 
 ### CSS
 

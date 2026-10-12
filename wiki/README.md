@@ -45,6 +45,9 @@ file can say : the shape of a group, and the recipes.
 
 ### Contexts
 
+- [`contexts/locale`](contexts/locale/README.md) — translations : bundles whose leaves carry the
+  languages, reading them with `useI18n` and `NO_LOCALE`, merging the labels the library ships,
+  the server side, numbers and dates by locale, and content written in several languages.
 - [`contexts/feedback`](contexts/feedback/README.md) — a sound and a vibration that tell what
   just happened without looking : `useFeedbackSignal`, what browsers allow, and the
   `FeedbackProvider` master switch kept on the device, with `SoundButton`.
