@@ -28,10 +28,10 @@ import containsActivePath from './containsActivePath' ;
  * findActiveAncestorIds(
  *     [{ id: 'lab', type: 'collapse', items: [
  *         { id: 'navigation', type: 'collapse', items: [
- *             { type: 'link', path: '/lab/menus' }
+ *             { type: 'link', path: '/components/menus' }
  *         ] }
  *     ] }],
- *     '/lab/menus'
+ *     '/components/menus'
  * ) ; // → [ 'lab' , 'navigation' ]
  * ```
  */

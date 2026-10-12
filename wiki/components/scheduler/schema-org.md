@@ -252,7 +252,7 @@ Two caveats worth knowing before writing a descriptor :
 
 ## Reading a payload before writing any interface
 
-`/lab/schedulerModel` puts raw objects through the adapter and prints what comes out — the
+`/modules/schedulerModel` puts raw objects through the adapter and prints what comes out — the
 fastest way to find out whether a payload is read the way you think it is. The same thing in
 code :
 
@@ -278,4 +278,4 @@ asked for without a `window`.
   [`expandSchedule`](../../../src/helpers/schedule/expandSchedule.js),
   [`toSchemaPatch`](../../../src/helpers/schedule/toSchemaPatch.js). **Their JSDoc is the
   reference.**
-- `/lab/schedulerModel` — the adapter, running on awkward payloads.
+- `/modules/schedulerModel` — the adapter, running on awkward payloads.

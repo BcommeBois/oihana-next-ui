@@ -341,5 +341,5 @@ rows, or a set of sparklines stays aligned with the chart above it.
 - [adding a chart](adding-a-chart.md) — the thirteenth, and the traps that cost the most.
 - [`components/metrics`](../metrics/README.md) — the smaller readings, and `MetricLegend` /
   `MetricScale`, which the charts draw their legends with.
-- `/lab/charts`, `/lab/circulars`, `/lab/grids` in the demo app — the twelve, running, with a
+- `/modules/charts`, `/modules/circulars`, `/modules/grids` in the demo app — the twelve, running, with a
   palette picker.

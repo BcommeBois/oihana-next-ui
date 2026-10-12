@@ -415,10 +415,10 @@ file is the reference** ; this is only the map.
 
 ## See also
 
-- The live demos : `/lab/scheduler` (agenda, panel, permissions, reservations),
-  `/lab/schedulerWeek` (grid, gestures, keyboard, touch), `/lab/schedulerMonth`,
-  `/lab/schedulerTimeline`, `/lab/schedulerSlots` (free slots),
-  `/lab/schedulerModel` (the adapter, on raw payloads).
+- The live demos : `/modules/scheduler` (agenda, panel, permissions, reservations),
+  `/modules/schedulerWeek` (grid, gestures, keyboard, touch), `/modules/schedulerMonth`,
+  `/modules/schedulerTimeline`, `/modules/schedulerSlots` (free slots),
+  `/modules/schedulerModel` (the adapter, on raw payloads).
 - [**schema.org, on the wire**](schema-org.md) — the data model, its traps, and extending it.
 - The sources : [`src/components/scheduler`](../../../src/components/scheduler),
   [`src/helpers/schedule`](../../../src/helpers/schedule) and

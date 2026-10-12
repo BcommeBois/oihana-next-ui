@@ -39,7 +39,7 @@ const demoItems =
         Icon  : GroupIcon ,
         items :
         [
-            { id : 'a-menus' , type : LINK , label : 'Menus page' , path : '/lab/menus' , Icon : LinkIcon } ,
+            { id : 'a-menus' , type : LINK , label : 'Menus page' , path : '/components/menus' , Icon : LinkIcon } ,
             { id : 'a-other' , type : LINK , label : 'Fictive page' , path : '/demo/a/other' , Icon : LinkIcon } ,
         ] ,
     } ,
@@ -199,7 +199,7 @@ const CollapsePersistenceDemo = () =>
 
         <DemoCard
             title       = "defaultMode = 'auto' + storageKey"
-            description = "Group A opens automatically on /lab/menus (its 'Menus page' link matches the current pathname). Group B starts closed via per-item defaultOpen=false override."
+            description = "Group A opens automatically on /components/menus (its 'Menus page' link matches the current pathname). Group B starts closed via per-item defaultOpen=false override."
             defaultMode = "auto"
             storageKey  = { STORAGE_KEY_AUTO }
         />

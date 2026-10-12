@@ -55,10 +55,10 @@ const ActiveLinkDemo = () =>
                         <Link activeClassName={ LIT } className={ LINK } href={ pathname }>Cette page (exact)</Link>
                     </Row>
                     <Row expected="allumé, aria-current=&quot;true&quot;, le clic navigue">
-                        <Link activeClassName={ LIT } className={ LINK } exact={ false } href="/lab">/lab (section)</Link>
+                        <Link activeClassName={ LIT } className={ LINK } exact={ false } href="/components">/components (section)</Link>
                     </Row>
                     <Row expected="éteint">
-                        <Link activeClassName={ LIT } className={ LINK } href="/lab">/lab (exact)</Link>
+                        <Link activeClassName={ LIT } className={ LINK } href="/components">/components (exact)</Link>
                     </Row>
                     <Row expected="éteint : la racine est jugée strictement">
                         <Link activeClassName={ LIT } className={ LINK } exact={ false } href="/">/ (section)</Link>

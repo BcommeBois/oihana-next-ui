@@ -10,7 +10,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 **🗂️ The lab's menu : Components and Modules**
 
-- **« Lab » gives way to two sections.** **Components** — the daisyUI components and the library's own, with no trade in them : Actions, Layouts, Display, Navigation, Feedback, Form, Files & media. **Modules** — whole families an application adopts or not, most of them on an optional dependency : Codes, Maps, Kanban, Scheduler, Charts. Only the menu changes : the pages and their addresses stay as they were.
+- **« Lab » gives way to two sections.** **Components** — the daisyUI components and the library's own, with no trade in them : Actions, Layouts, Display, Navigation, Feedback, Form, Files & media. **Modules** — whole families an application adopts or not, most of them on an optional dependency : Codes, Maps, Kanban, Scheduler, Charts.
+- **The addresses follow** : `/components/…` and `/modules/…` instead of `/lab/…` — the lab was the experimental place, and these pages show finished components. 🔑 **No link breaks** : `next.config.mjs` redirects every former address for good (308), each module by name to `/modules/…`, every other page to `/components/…`. The pages sit in a route group, `app/(showcase)/`, whose layout holds the `PreviousPathProvider` above both sections — a move from a component to a module keeps what `BackLink smart` remembers. The links written in the demos, the Markdown examples' loader, the README and the wiki follow ; the bundles keep their `app.lab.*` paths, which nobody sees.
 
 **📥 Files dropped from the desktop, checked before they are taken**
 

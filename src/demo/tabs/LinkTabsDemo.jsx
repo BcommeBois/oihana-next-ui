@@ -28,23 +28,23 @@ import MenuLink from '@/components/menus/MenuLink' ;
  */
 const PATH_TABS =
 [
-    { id : 'tabs'  , href : '/lab/tabs'  , label : 'Onglets' , exact : true , Icon : MdTab } ,
-    { id : 'menus' , href : '/lab/menus' , label : 'Menus'   , Icon : MdMenu } ,
+    { id : 'tabs'  , href : '/components/tabs'  , label : 'Onglets' , exact : true , Icon : MdTab } ,
+    { id : 'menus' , href : '/components/menus' , label : 'Menus'   , Icon : MdMenu } ,
     {
         id       : 'form' ,
         label    : 'Formulaire' ,
         Icon     : MdEditNote ,
         children :
         [
-            { id : 'inputs'  , href : '/lab/inputs'  , label : 'Champs'     , Icon : MdEditNote , count : 14 } ,
-            { id : 'selects' , href : '/lab/selects' , label : 'Sélecteurs' , Icon : MdTune     , count : 6 } ,
+            { id : 'inputs'  , href : '/components/inputs'  , label : 'Champs'     , Icon : MdEditNote , count : 14 } ,
+            { id : 'selects' , href : '/components/selects' , label : 'Sélecteurs' , Icon : MdTune     , count : 6 } ,
             {
                 id       : 'datesSection' ,
                 label    : 'Dates' ,
                 children :
                 [
-                    { id : 'dates' , href : '/lab/dates' , label : 'Calendrier' , Icon : MdCalendarMonth } ,
-                    { id : 'times' , href : '/lab/times' , label : 'Heure'      , Icon : MdTimer , count : 0 } ,
+                    { id : 'dates' , href : '/components/dates' , label : 'Calendrier' , Icon : MdCalendarMonth } ,
+                    { id : 'times' , href : '/components/times' , label : 'Heure'      , Icon : MdTimer , count : 0 } ,
                 ] ,
             } ,
         ] ,

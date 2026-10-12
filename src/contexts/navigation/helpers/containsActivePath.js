@@ -27,8 +27,8 @@ import isPathMatch from './isPathMatch' ;
  * @example
  * ```js
  * containsActivePath(
- *     { items: [ { path: '/lab/grid' } ] } ,
- *     '/lab/grid'
+ *     { items: [ { path: '/components/grid' } ] } ,
+ *     '/components/grid'
  * ) ; // → true
  * ```
  */

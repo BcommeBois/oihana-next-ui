@@ -38,6 +38,10 @@ const nextConfig =
     redirects : async  () =>
     [
         { source: '/' , destination : '/home' , permanent : true } ,
+
+        // The lab's former addresses : the modules by name, every other page to the components.
+        { source: '/lab/:page(barcodes|charts|circulars|grids|kanban|maps|mapsMarkers|mapsModel|mapsPicker|mapsRoutes|mapsZones|metrics|scanField|scanner|scheduler|schedulerModel|schedulerMonth|schedulerSlots|schedulerTimeline|schedulerWeek)' , destination : '/modules/:page' , permanent : true } ,
+        { source: '/lab/:path*' , destination : '/components/:path*' , permanent : true } ,
     ],
 
     // Customize Turbopack

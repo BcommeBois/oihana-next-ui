@@ -56,7 +56,7 @@ const GalleryCard = ( { item , ...rest } ) =>
                 { item.locked ? 'Hors de portée' : '1920 × 1080' }
             </span>
         }
-        href        = { `/lab/layout#${ item.id }` }
+        href        = { `/components/layout#${ item.id }` }
         imageUrl    = { `https://picsum.photos/480/360?random=${ item.seed }` }
         navigable   = { !item.locked }
         title       = { item.title }

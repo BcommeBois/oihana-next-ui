@@ -41,4 +41,4 @@ file can say : the shape of a group, and the recipes.
 
 - [`README.md`](../README.md) — install, requirements, Tailwind and DaisyUI setup, release.
 - [`CHANGELOG.md`](../CHANGELOG.md) — what changed, and why it went that way.
-- `/lab` in the demo app — every component, running.
+- `/components` and `/modules` in the demo app — every component, running.

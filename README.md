@@ -49,7 +49,7 @@ import useThemes from 'oihana-next-ui/contexts/themes/useThemes'
 ```
 
 Every component carries its own JSDoc — props, defaults and examples — and the live demos
-sit under `/lab`. The [**wiki**](wiki/README.md) holds the long-form guides, one per group :
+sit under `/components` and `/modules`. The [**wiki**](wiki/README.md) holds the long-form guides, one per group :
 which component to reach for, and the recipes that span several of them. So far :
 [`components/charts`](wiki/components/charts/README.md),
 [`components/metrics`](wiki/components/metrics/README.md) and

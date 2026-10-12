@@ -119,7 +119,7 @@ The same list every component in this library follows, in order :
 2. **Component** — `src/components/charts/XChart.jsx`. `'use client'`, `displayName`,
    `nivoProps` spread **last**, and `ChartFrame` around it.
 3. **Demo** — a card in the matching `src/demo/charts/*Demo.jsx`.
-4. **Lab page** — already there : `/lab/charts` (cartesian), `/lab/circulars`, `/lab/grids`.
+4. **Demo page** — already there : `/modules/charts` (cartesian), `/modules/circulars`, `/modules/grids`.
    A new chart joins the page its `kind` belongs to rather than opening a fourth.
 5. **Nav registry** — nothing to do, the three pages are registered.
 6. **Locale** — nothing to do either, for the same reason.

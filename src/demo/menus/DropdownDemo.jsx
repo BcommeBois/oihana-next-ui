@@ -49,8 +49,8 @@ export default function DropdownDemo()
     // here, the lab going through its splash screen again.
     const nativeItems =
     [
-        { id : 'next'   , label : 'Lien next/link (navigation client)' , href : '/lab/buttons' } ,
-        { id : 'native' , label : 'Lien native (rechargement complet)' , href : '/lab/buttons' , native : true , icon : <LogoutIcon /> } ,
+        { id : 'next'   , label : 'Lien next/link (navigation client)' , href : '/components/buttons' } ,
+        { id : 'native' , label : 'Lien native (rechargement complet)' , href : '/components/buttons' , native : true , icon : <LogoutIcon /> } ,
     ] ;
 
     return (

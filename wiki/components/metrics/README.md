@@ -260,7 +260,7 @@ The part no screenshot shows, and the reason these are components rather than sn
 
 ## See also
 
-- The live demos : `/lab/metrics` — one tab per component.
+- The live demos : `/modules/metrics` — one tab per component.
 - The sources : [`src/components/metrics`](../../../src/components/metrics) and their
   generators in [`src/themes/components`](../../../src/themes/components). **The JSDoc there
   is the API reference** : props, defaults and examples live in the files rather than in a

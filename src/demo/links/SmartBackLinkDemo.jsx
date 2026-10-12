@@ -20,7 +20,7 @@ import resolveSmartHref  from '@/helpers/routes/resolveSmartHref' ;
  * The page a smart link is declared to go back to.
  * @type {string}
  */
-const HOME = '/lab/headers' ;
+const HOME = '/components/headers' ;
 
 /**
  * Where to go, so there is something to come back from.
@@ -30,7 +30,7 @@ const EXITS =
 [
     { href : `${ HOME }?offset=40&sort=name` , label : 'Headers, page 3, sorted by name' } ,
     { href : `${ HOME }?offset=0&sort=date`  , label : 'Headers, page 1, sorted by date' } ,
-    { href : '/lab/tabs'                     , label : 'Tabs — another page entirely'    } ,
+    { href : '/components/tabs'                     , label : 'Tabs — another page entirely'    } ,
 ] ;
 
 const SmartBackLinkDemo = () =>

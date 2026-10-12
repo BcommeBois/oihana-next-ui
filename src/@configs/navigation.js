@@ -113,11 +113,11 @@ const navigation =
                 Icon : ActionIcon ,
                 items :
                 [
-                    { id : 'buttons'     , type : LINK  , Icon : ButtonIcon     , path  : '/lab/buttons'     } ,
-                    { id : 'fab'         , type : LINK  , Icon : FabIcon        , path  : '/lab/fab'         } ,
-                    { id : 'modals'      , type : LINK  , Icon : ModalIcon      , path  : '/lab/modals'      } ,
-                    { id : 'panels'      , type : LINK  , Icon : PanelIcon      , path  : '/lab/panels'      } ,
-                    { id : 'assignments' , type : LINK  , Icon : AssignmentIcon , path  : '/lab/assignments' } ,
+                    { id : 'buttons'     , type : LINK  , Icon : ButtonIcon     , path  : '/components/buttons'     } ,
+                    { id : 'fab'         , type : LINK  , Icon : FabIcon        , path  : '/components/fab'         } ,
+                    { id : 'modals'      , type : LINK  , Icon : ModalIcon      , path  : '/components/modals'      } ,
+                    { id : 'panels'      , type : LINK  , Icon : PanelIcon      , path  : '/components/panels'      } ,
+                    { id : 'assignments' , type : LINK  , Icon : AssignmentIcon , path  : '/components/assignments' } ,
                 ]
             } ,
             {
@@ -126,16 +126,16 @@ const navigation =
                 Icon : LayoutIcon ,
                 items :
                 [
-                    { id : 'flex'           , type : LINK  , Icon : FlexIcon           , path  : '/lab/flex'           } ,
-                    { id : 'grid'           , type : LINK  , Icon : GridIcon           , path  : '/lab/grid'           } ,
-                    { id : 'masonry'        , type : LINK  , Icon : MasonryIcon        , path  : '/lab/masonry'        } ,
-                    { id : 'infiniteScroll' , type : LINK  , Icon : InfiniteScrollIcon , path  : '/lab/infiniteScroll' } ,
-                    { id : 'layout'         , type : LINK  , Icon : LayoutIcon         , path  : '/lab/layout'         } ,
-                    { id : 'collapse'       , type : LINK  , Icon : CollapseIcon       , path  : '/lab/collapse'       } ,
-                    { id : 'accordion'      , type : LINK  , Icon : AccordionIcon      , path  : '/lab/accordion'      } ,
-                    { id : 'table'          , type : LINK  , Icon : TableIcon          , path  : '/lab/table'          } ,
-                    { id : 'tree'           , type : LINK  , Icon : TreeIcon           , path  : '/lab/tree'           } ,
-                    { id : 'patterns'       , type : LINK  , Icon : PatternsIcon       , path  : '/lab/patterns'       } ,
+                    { id : 'flex'           , type : LINK  , Icon : FlexIcon           , path  : '/components/flex'           } ,
+                    { id : 'grid'           , type : LINK  , Icon : GridIcon           , path  : '/components/grid'           } ,
+                    { id : 'masonry'        , type : LINK  , Icon : MasonryIcon        , path  : '/components/masonry'        } ,
+                    { id : 'infiniteScroll' , type : LINK  , Icon : InfiniteScrollIcon , path  : '/components/infiniteScroll' } ,
+                    { id : 'layout'         , type : LINK  , Icon : LayoutIcon         , path  : '/components/layout'         } ,
+                    { id : 'collapse'       , type : LINK  , Icon : CollapseIcon       , path  : '/components/collapse'       } ,
+                    { id : 'accordion'      , type : LINK  , Icon : AccordionIcon      , path  : '/components/accordion'      } ,
+                    { id : 'table'          , type : LINK  , Icon : TableIcon          , path  : '/components/table'          } ,
+                    { id : 'tree'           , type : LINK  , Icon : TreeIcon           , path  : '/components/tree'           } ,
+                    { id : 'patterns'       , type : LINK  , Icon : PatternsIcon       , path  : '/components/patterns'       } ,
                 ]
             } ,
             {
@@ -144,23 +144,23 @@ const navigation =
                 Icon : DisplayIcon ,
                 items :
                 [
-                    { id : 'avatars'    , type : LINK  , Icon : AvatarIcon     , path  : '/lab/avatars'    } ,
-                    { id : 'badges'     , type : LINK  , Icon : BadgeIcon      , path  : '/lab/badges'     , badge : { label : '3' , color : 'primary' , size : 'sm' } } ,
-                    { id : 'card'       , type : LINK  , Icon : CardIcon       , path  : '/lab/card'       } ,
-                    { id : 'effects'    , type : LINK  , Icon : EffectIcon     , path  : '/lab/effects'    } ,
-                    { id : 'emptyState' , type : LINK  , Icon : EmptyStateIcon , path  : '/lab/emptyState' } ,
-                    { id : 'images'     , type : LINK  , Icon : ImageIcon      , path  : '/lab/images'     } ,
-                    { id : 'indicator'  , type : LINK  , Icon : IndicatorIcon  , path  : '/lab/indicator'  } ,
-                    { id : 'lists'      , type : LINK  , Icon : ListIcon       , path  : '/lab/lists'      } ,
-                    { id : 'masks'      , type : LINK  , Icon : MaskIcon       , path  : '/lab/masks'      } ,
-                    { id : 'markdown'   , type : LINK  , Icon : MarkdownIcon   , path  : '/lab/markdown'   } ,
-                    { id : 'typography' , type : LINK  , Icon : TypographyIcon , path  : '/lab/typography' } ,
-                    { id : 'motion'     , type : LINK  , Icon : MotionIcon     , path  : '/lab/motion'     } ,
-                    { id : 'headers'    , type : LINK  , Icon : HeaderIcon     , path  : '/lab/headers'    } ,
-                    { id : 'network'    , type : LINK  , Icon : NetworkIcon    , path  : '/lab/network'    } ,
-                    { id : 'stat'       , type : LINK  , Icon : StatIcon       , path  : '/lab/stat'       } ,
-                    { id : 'steps'      , type : LINK  , Icon : StepsIcon      , path  : '/lab/steps'      } ,
-                    { id : 'status'     , type : LINK  , Icon : StatusIcon     , path  : '/lab/status'     } ,
+                    { id : 'avatars'    , type : LINK  , Icon : AvatarIcon     , path  : '/components/avatars'    } ,
+                    { id : 'badges'     , type : LINK  , Icon : BadgeIcon      , path  : '/components/badges'     , badge : { label : '3' , color : 'primary' , size : 'sm' } } ,
+                    { id : 'card'       , type : LINK  , Icon : CardIcon       , path  : '/components/card'       } ,
+                    { id : 'effects'    , type : LINK  , Icon : EffectIcon     , path  : '/components/effects'    } ,
+                    { id : 'emptyState' , type : LINK  , Icon : EmptyStateIcon , path  : '/components/emptyState' } ,
+                    { id : 'images'     , type : LINK  , Icon : ImageIcon      , path  : '/components/images'     } ,
+                    { id : 'indicator'  , type : LINK  , Icon : IndicatorIcon  , path  : '/components/indicator'  } ,
+                    { id : 'lists'      , type : LINK  , Icon : ListIcon       , path  : '/components/lists'      } ,
+                    { id : 'masks'      , type : LINK  , Icon : MaskIcon       , path  : '/components/masks'      } ,
+                    { id : 'markdown'   , type : LINK  , Icon : MarkdownIcon   , path  : '/components/markdown'   } ,
+                    { id : 'typography' , type : LINK  , Icon : TypographyIcon , path  : '/components/typography' } ,
+                    { id : 'motion'     , type : LINK  , Icon : MotionIcon     , path  : '/components/motion'     } ,
+                    { id : 'headers'    , type : LINK  , Icon : HeaderIcon     , path  : '/components/headers'    } ,
+                    { id : 'network'    , type : LINK  , Icon : NetworkIcon    , path  : '/components/network'    } ,
+                    { id : 'stat'       , type : LINK  , Icon : StatIcon       , path  : '/components/stat'       } ,
+                    { id : 'steps'      , type : LINK  , Icon : StepsIcon      , path  : '/components/steps'      } ,
+                    { id : 'status'     , type : LINK  , Icon : StatusIcon     , path  : '/components/status'     } ,
                 ]
             } ,
             {
@@ -169,12 +169,12 @@ const navigation =
                 Icon : NavigationIcon ,
                 items :
                 [
-                    { id : 'breadcrumbs' , type : LINK  , Icon : BreadcrumbsIcon , path  : '/lab/breadcrumbs' } ,
-                    { id : 'dock'        , type : LINK  , Icon : DockIcon        , path  : '/lab/dock'        } ,
-                    { id : 'pagination'  , type : LINK  , Icon : PaginationIcon  , path  : '/lab/pagination'  } ,
-                    { id : 'menus'       , type : LINK  , Icon : MenuIcon        , path  : '/lab/menus'       } ,
-                    { id : 'megamenu'    , type : LINK  , Icon : MegamenuIcon    , path  : '/lab/megamenu'    } ,
-                    { id : 'tabs'        , type : LINK  , Icon : TabsIcon        , path  : '/lab/tabs'        } ,
+                    { id : 'breadcrumbs' , type : LINK  , Icon : BreadcrumbsIcon , path  : '/components/breadcrumbs' } ,
+                    { id : 'dock'        , type : LINK  , Icon : DockIcon        , path  : '/components/dock'        } ,
+                    { id : 'pagination'  , type : LINK  , Icon : PaginationIcon  , path  : '/components/pagination'  } ,
+                    { id : 'menus'       , type : LINK  , Icon : MenuIcon        , path  : '/components/menus'       } ,
+                    { id : 'megamenu'    , type : LINK  , Icon : MegamenuIcon    , path  : '/components/megamenu'    } ,
+                    { id : 'tabs'        , type : LINK  , Icon : TabsIcon        , path  : '/components/tabs'        } ,
                 ]
             } ,
             {
@@ -183,15 +183,15 @@ const navigation =
                 Icon : FeedbackIcon ,
                 items :
                 [
-                    { id : 'alerts'         , type : LINK  , Icon : AlertIcon          , path  : '/lab/alerts'         } ,
-                    { id : 'loading'        , type : LINK  , Icon : LoadingIcon        , path  : '/lab/loading'        } ,
-                    { id : 'progress'       , type : LINK  , Icon : ProgressIcon       , path  : '/lab/progress'       } ,
-                    { id : 'radialProgress' , type : LINK  , Icon : RadialProgressIcon , path  : '/lab/radialProgress' } ,
-                    { id : 'skeleton'       , type : LINK  , Icon : SkeletonIcon       , path  : '/lab/skeleton'       } ,
-                    { id : 'spinners'       , type : LINK  , Icon : SpinnerIcon        , path  : '/lab/spinners'       } ,
-                    { id : 'toasts'         , type : LINK  , Icon : ToastIcon          , path  : '/lab/toasts'         } ,
-                    { id : 'tooltips'       , type : LINK  , Icon : TooltipIcon        , path  : '/lab/tooltips'       } ,
-                    { id : 'signals'        , type : LINK  , Icon : SignalIcon         , path  : '/lab/signals'        } ,
+                    { id : 'alerts'         , type : LINK  , Icon : AlertIcon          , path  : '/components/alerts'         } ,
+                    { id : 'loading'        , type : LINK  , Icon : LoadingIcon        , path  : '/components/loading'        } ,
+                    { id : 'progress'       , type : LINK  , Icon : ProgressIcon       , path  : '/components/progress'       } ,
+                    { id : 'radialProgress' , type : LINK  , Icon : RadialProgressIcon , path  : '/components/radialProgress' } ,
+                    { id : 'skeleton'       , type : LINK  , Icon : SkeletonIcon       , path  : '/components/skeleton'       } ,
+                    { id : 'spinners'       , type : LINK  , Icon : SpinnerIcon        , path  : '/components/spinners'       } ,
+                    { id : 'toasts'         , type : LINK  , Icon : ToastIcon          , path  : '/components/toasts'         } ,
+                    { id : 'tooltips'       , type : LINK  , Icon : TooltipIcon        , path  : '/components/tooltips'       } ,
+                    { id : 'signals'        , type : LINK  , Icon : SignalIcon         , path  : '/components/signals'        } ,
                 ]
             } ,
             {
@@ -200,19 +200,19 @@ const navigation =
                 Icon : FormIcon ,
                 items :
                 [
-                    { id : 'checkboxes' , type : LINK  , Icon : CheckBoxIcon  , path  : '/lab/checkboxes' } ,
-                    { id : 'colors'     , type : LINK  , Icon : ColorIcon     , path  : '/lab/colors'     } ,
-                    { id : 'dates'      , type : LINK  , Icon : DatesIcon     , path  : '/lab/dates'      } ,
-                    { id : 'filters'    , type : LINK  , Icon : FilterCriterionIcon , path  : '/lab/filters' } ,
-                    { id : 'times'      , type : LINK  , Icon : TimesIcon     , path  : '/lab/times'      } ,
-                    { id : 'inputs'     , type : LINK  , Icon : InputIcon     , path  : '/lab/inputs'     } ,
-                    { id : 'pickers'    , type : LINK  , Icon : ChoosePickerIcon , path  : '/lab/pickers'    } ,
-                    { id : 'radios'     , type : LINK  , Icon : RadioIcon     , path  : '/lab/radios'     } ,
-                    { id : 'ranges'     , type : LINK  , Icon : RangeIcon     , path  : '/lab/ranges'     } ,
-                    { id : 'rating'     , type : LINK  , Icon : RatingIcon    , path  : '/lab/rating'     } ,
-                    { id : 'selects'    , type : LINK  , Icon : SelectIcon    , path  : '/lab/selects'    } ,
-                    { id : 'textareas'  , type : LINK  , Icon : TextAreaIcon  , path  : '/lab/textareas'  } ,
-                    { id : 'toggles'    , type : LINK  , Icon : ToggleIcon    , path  : '/lab/toggles'    } ,
+                    { id : 'checkboxes' , type : LINK  , Icon : CheckBoxIcon  , path  : '/components/checkboxes' } ,
+                    { id : 'colors'     , type : LINK  , Icon : ColorIcon     , path  : '/components/colors'     } ,
+                    { id : 'dates'      , type : LINK  , Icon : DatesIcon     , path  : '/components/dates'      } ,
+                    { id : 'filters'    , type : LINK  , Icon : FilterCriterionIcon , path  : '/components/filters' } ,
+                    { id : 'times'      , type : LINK  , Icon : TimesIcon     , path  : '/components/times'      } ,
+                    { id : 'inputs'     , type : LINK  , Icon : InputIcon     , path  : '/components/inputs'     } ,
+                    { id : 'pickers'    , type : LINK  , Icon : ChoosePickerIcon , path  : '/components/pickers'    } ,
+                    { id : 'radios'     , type : LINK  , Icon : RadioIcon     , path  : '/components/radios'     } ,
+                    { id : 'ranges'     , type : LINK  , Icon : RangeIcon     , path  : '/components/ranges'     } ,
+                    { id : 'rating'     , type : LINK  , Icon : RatingIcon    , path  : '/components/rating'     } ,
+                    { id : 'selects'    , type : LINK  , Icon : SelectIcon    , path  : '/components/selects'    } ,
+                    { id : 'textareas'  , type : LINK  , Icon : TextAreaIcon  , path  : '/components/textareas'  } ,
+                    { id : 'toggles'    , type : LINK  , Icon : ToggleIcon    , path  : '/components/toggles'    } ,
                 ]
             } ,
             {
@@ -221,9 +221,9 @@ const navigation =
                 Icon : MediaIcon ,
                 items :
                 [
-                    { id : 'fileInput' , type : LINK  , Icon : FileInputIcon , path  : '/lab/fileInput' } ,
-                    { id : 'dropzone'  , type : LINK  , Icon : DropzoneIcon  , path  : '/lab/dropzone'  } ,
-                    { id : 'photo'     , type : LINK  , Icon : PhotoIcon     , path  : '/lab/photo'     } ,
+                    { id : 'fileInput' , type : LINK  , Icon : FileInputIcon , path  : '/components/fileInput' } ,
+                    { id : 'dropzone'  , type : LINK  , Icon : DropzoneIcon  , path  : '/components/dropzone'  } ,
+                    { id : 'photo'     , type : LINK  , Icon : PhotoIcon     , path  : '/components/photo'     } ,
                 ]
             } ,
         ]
@@ -241,9 +241,9 @@ const navigation =
                 Icon : BarcodeIcon ,
                 items :
                 [
-                    { id : 'barcodes'  , type : LINK  , Icon : BarcodeIcon   , path  : '/lab/barcodes'  } ,
-                    { id : 'scanner'   , type : LINK  , Icon : ScannerIcon   , path  : '/lab/scanner'   } ,
-                    { id : 'scanField' , type : LINK  , Icon : ScanFieldIcon , path  : '/lab/scanField' } ,
+                    { id : 'barcodes'  , type : LINK  , Icon : BarcodeIcon   , path  : '/modules/barcodes'  } ,
+                    { id : 'scanner'   , type : LINK  , Icon : ScannerIcon   , path  : '/modules/scanner'   } ,
+                    { id : 'scanField' , type : LINK  , Icon : ScanFieldIcon , path  : '/modules/scanField' } ,
                 ]
             } ,
             {
@@ -252,12 +252,12 @@ const navigation =
                 Icon : MapIcon  ,
                 items :
                 [
-                    { id : 'mapsView'    , type : LINK  , Icon : MapIcon        , path  : '/lab/maps'        } ,
-                    { id : 'mapsMarkers' , type : LINK  , Icon : MapMarkerIcon  , path  : '/lab/mapsMarkers' } ,
-                    { id : 'mapsPicker'  , type : LINK  , Icon : PickerIcon     , path  : '/lab/mapsPicker'  } ,
-                    { id : 'mapsRoutes'  , type : LINK  , Icon : RouteIcon      , path  : '/lab/mapsRoutes'  } ,
-                    { id : 'mapsZones'   , type : LINK  , Icon : ZoneIcon       , path  : '/lab/mapsZones'   } ,
-                    { id : 'mapsModel'   , type : LINK  , Icon : SchemaIcon     , path  : '/lab/mapsModel'   } ,
+                    { id : 'mapsView'    , type : LINK  , Icon : MapIcon        , path  : '/modules/maps'        } ,
+                    { id : 'mapsMarkers' , type : LINK  , Icon : MapMarkerIcon  , path  : '/modules/mapsMarkers' } ,
+                    { id : 'mapsPicker'  , type : LINK  , Icon : PickerIcon     , path  : '/modules/mapsPicker'  } ,
+                    { id : 'mapsRoutes'  , type : LINK  , Icon : RouteIcon      , path  : '/modules/mapsRoutes'  } ,
+                    { id : 'mapsZones'   , type : LINK  , Icon : ZoneIcon       , path  : '/modules/mapsZones'   } ,
+                    { id : 'mapsModel'   , type : LINK  , Icon : SchemaIcon     , path  : '/modules/mapsModel'   } ,
                 ]
             } ,
             {
@@ -266,7 +266,7 @@ const navigation =
                 Icon : KanbanIcon ,
                 items :
                 [
-                    { id : 'kanbanBoard' , type : LINK  , Icon : KanbanIcon , path  : '/lab/kanban' } ,
+                    { id : 'kanbanBoard' , type : LINK  , Icon : KanbanIcon , path  : '/modules/kanban' } ,
                 ]
             } ,
             {
@@ -275,12 +275,12 @@ const navigation =
                 Icon : SchedulerIcon ,
                 items :
                 [
-                    { id : 'schedulerAgenda' , type : LINK  , Icon : AgendaIcon , path  : '/lab/scheduler'      } ,
-                    { id : 'schedulerWeek'   , type : LINK  , Icon : WeekIcon      , path  : '/lab/schedulerWeek'  } ,
-                    { id : 'schedulerMonth'  , type : LINK  , Icon : SchedulerIcon , path  : '/lab/schedulerMonth' } ,
-                    { id : 'schedulerTimeline' , type : LINK , Icon : TimelineIcon  , path  : '/lab/schedulerTimeline' } ,
-                    { id : 'schedulerSlots'  , type : LINK  , Icon : SlotsIcon     , path  : '/lab/schedulerSlots' } ,
-                    { id : 'schedulerModel'  , type : LINK  , Icon : SchemaIcon    , path  : '/lab/schedulerModel' } ,
+                    { id : 'schedulerAgenda' , type : LINK  , Icon : AgendaIcon , path  : '/modules/scheduler'      } ,
+                    { id : 'schedulerWeek'   , type : LINK  , Icon : WeekIcon      , path  : '/modules/schedulerWeek'  } ,
+                    { id : 'schedulerMonth'  , type : LINK  , Icon : SchedulerIcon , path  : '/modules/schedulerMonth' } ,
+                    { id : 'schedulerTimeline' , type : LINK , Icon : TimelineIcon  , path  : '/modules/schedulerTimeline' } ,
+                    { id : 'schedulerSlots'  , type : LINK  , Icon : SlotsIcon     , path  : '/modules/schedulerSlots' } ,
+                    { id : 'schedulerModel'  , type : LINK  , Icon : SchemaIcon    , path  : '/modules/schedulerModel' } ,
                 ]
             } ,
             {
@@ -289,10 +289,10 @@ const navigation =
                 Icon : ChartIcon ,
                 items :
                 [
-                    { id : 'chartsCartesian' , type : LINK  , Icon : ChartIcon         , path  : '/lab/charts'    } ,
-                    { id : 'chartsCirculars' , type : LINK  , Icon : ChartCircularIcon , path  : '/lab/circulars' } ,
-                    { id : 'chartsGrids'     , type : LINK  , Icon : ChartGridIcon     , path  : '/lab/grids'     } ,
-                    { id : 'chartsMetrics'   , type : LINK  , Icon : MetricsIcon       , path  : '/lab/metrics'   } ,
+                    { id : 'chartsCartesian' , type : LINK  , Icon : ChartIcon         , path  : '/modules/charts'    } ,
+                    { id : 'chartsCirculars' , type : LINK  , Icon : ChartCircularIcon , path  : '/modules/circulars' } ,
+                    { id : 'chartsGrids'     , type : LINK  , Icon : ChartGridIcon     , path  : '/modules/grids'     } ,
+                    { id : 'chartsMetrics'   , type : LINK  , Icon : MetricsIcon       , path  : '/modules/metrics'   } ,
                 ]
             } ,
         ]

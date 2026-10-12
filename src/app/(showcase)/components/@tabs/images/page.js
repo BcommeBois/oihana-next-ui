@@ -7,7 +7,7 @@
  * `@locale/demo/images/picture`, so the page follows the language switch
  * like every other one.
  *
- * @module app/lab/@tabs/images/page
+ * @module app/(showcase)/components/@tabs/images/page
  */
 
 import Container from '@/display/Container' ;
