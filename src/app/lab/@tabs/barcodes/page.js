@@ -6,7 +6,10 @@ import useI18n   from '@/contexts/locale/useI18n' ;
 import Container from '@/display/Container' ;
 import Page      from '@/display/Page' ;
 
-import QRCodeDemo from '@/demo/barcodes/QRCodeDemo' ;
+import Divider from '@/components/Divider' ;
+
+import BarcodeDemo from '@/demo/barcodes/BarcodeDemo' ;
+import QRCodeDemo  from '@/demo/barcodes/QRCodeDemo' ;
 
 /**
  * QR code and barcode showcase page.
@@ -16,7 +19,7 @@ import QRCodeDemo from '@/demo/barcodes/QRCodeDemo' ;
  */
 const BarcodesShowcase = ( { path = 'app.lab.barcodes' } = {} ) =>
 {
-    const { description , title } = useI18n( path ) ?? {} ;
+    const { barcode , description , qrCode , title } = useI18n( path ) ?? {} ;
 
     return (
         <Page full className='gap-8'>
@@ -32,7 +35,21 @@ const BarcodesShowcase = ( { path = 'app.lab.barcodes' } = {} ) =>
                 </p>
             </Container>
 
+            <Container className="flex flex-col gap-2" maxWidth="max-w-7xl">
+                <h2 className="text-3xl font-bold text-primary">{ qrCode?.title }</h2>
+                <p className="text-base-content/70">{ qrCode?.description }</p>
+            </Container>
+
             <QRCodeDemo />
+
+            <Divider />
+
+            <Container className="flex flex-col gap-2" maxWidth="max-w-7xl">
+                <h2 className="text-3xl font-bold text-primary">{ barcode?.title }</h2>
+                <p className="text-base-content/70">{ barcode?.description }</p>
+            </Container>
+
+            <BarcodeDemo />
 
         </Page>
     ) ;

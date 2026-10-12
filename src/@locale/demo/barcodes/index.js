@@ -1,7 +1,9 @@
-import qrCode from './qrCode' ;
+import barcode from './barcode' ;
+import qrCode  from './qrCode' ;
 
 const barcodes =
 {
+    barcode ,
     qrCode ,
 } ;
 

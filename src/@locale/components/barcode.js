@@ -8,12 +8,14 @@ const barcode =
 {
     fr :
     {
-        qrCode : { label : 'Code QR' } ,
+        barcode : { label : 'Code-barres' } ,
+        qrCode  : { label : 'Code QR' } ,
     } ,
 
     en :
     {
-        qrCode : { label : 'QR code' } ,
+        barcode : { label : 'Barcode' } ,
+        qrCode  : { label : 'QR code' } ,
     } ,
 } ;
 
