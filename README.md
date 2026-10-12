@@ -60,8 +60,9 @@ then the groups :
 [`components/media`](wiki/components/media/README.md),
 [`components/metrics`](wiki/components/metrics/README.md),
 [`components/scheduler`](wiki/components/scheduler/README.md),
-[`contexts/feedback`](wiki/contexts/feedback/README.md) and
-[`contexts/locale`](wiki/contexts/locale/README.md).
+[`contexts/feedback`](wiki/contexts/feedback/README.md),
+[`contexts/locale`](wiki/contexts/locale/README.md) and
+[`contexts/navigation`](wiki/contexts/navigation/README.md).
 
 ### Scripts
 

@@ -48,6 +48,10 @@ file can say : the shape of a group, and the recipes.
 - [`contexts/locale`](contexts/locale/README.md) — translations : bundles whose leaves carry the
   languages, reading them with `useI18n` and `NO_LOCALE`, merging the labels the library ships,
   the server side, numbers and dates by locale, and content written in several languages.
+- [`contexts/navigation`](contexts/navigation/README.md) — the menu as data, its labels by id,
+  the groups that stay open, the one active link ; links, `LinkPending` and the screen-wide
+  transition of `BusyNavigationProvider` ; state in the URL, with or without the server ; and
+  `BackLink smart`, which brings a list back as it was left.
 - [`contexts/feedback`](contexts/feedback/README.md) — a sound and a vibration that tell what
   just happened without looking : `useFeedbackSignal`, what browsers allow, and the
   `FeedbackProvider` master switch kept on the device, with `SoundButton`.
