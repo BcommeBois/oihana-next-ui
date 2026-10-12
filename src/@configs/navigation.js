@@ -6,11 +6,13 @@ import {
     MdOutlineSmartButton as ButtonIcon ,
     MdColorLens          as ColorIcon ,
     MdCalendarMonth      as DatesIcon ,
-    MdDashboard          as DashboardIcon ,
+    MdHome               as HomeIcon ,
     MdDisplaySettings    as DisplayIcon ,
     MdDynamicForm        as FormIcon ,
     MdFeedback           as FeedbackIcon ,
     MdExtension          as ModulesIcon ,
+    MdAutoStories        as ScenariosIcon ,
+    MdInventory          as PickingIcon ,
     MdWidgets            as ComponentsIcon ,
     MdTexture            as PatternsIcon ,
     MdTextSnippet        as TypographyIcon ,
@@ -99,7 +101,7 @@ import { FaToggleOn             as ToggleIcon         } from "react-icons/fa";
 
 const navigation =
 [
-    { id : 'home' , type  : LINK  , Icon  : DashboardIcon , path  : '/home' } ,
+    { id : 'home' , type  : LINK  , Icon  : HomeIcon , path  : '/home' } ,
     {
         id        : 'components' ,
         type      : COLLAPSE ,
@@ -295,6 +297,16 @@ const navigation =
                     { id : 'chartsMetrics'   , type : LINK  , Icon : MetricsIcon       , path  : '/modules/metrics'   } ,
                 ]
             } ,
+        ]
+    } ,
+    {
+        id        : 'scenarios' ,
+        type      : COLLAPSE ,
+        Icon      : ScenariosIcon ,
+        className : 'gap-1' ,
+        items     :
+        [
+            { id : 'picking' , type : LINK , Icon : PickingIcon , path : '/scenarios/picking' } ,
         ]
     } ,
 ]

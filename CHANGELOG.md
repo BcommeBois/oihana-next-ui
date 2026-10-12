@@ -8,6 +8,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🎬 Scenarios : screens of use that bring the components together**
+
+- **A third section in the demo app's menu, « Scenarios »** (`/scenarios/…`), after Components and Modules : where a page shows one component and its options, a scenario shows a whole screen of use, built of several. It sits in the same route group, so `BackLink smart` remembers across the three sections. Home takes a house for its icon, which the Components' squares too much resembled.
+- **First scenario, « Order picking »** (`/scenarios/picking`) : a picking line from end to end. Scan the location, then the product, with `InputScan` — a wrong code buzzes, says what was expected and stays on the step ; enter the quantity picked on a `NumericKeypad` in a `BottomSheet`, the expected quantity as its `max` ; when it falls short, choose a reason with `RadioFilter`, and for damage take its photo with `PhotoCapture`, required ; confirming prints the record the application would send — location, product, expected and picked, the gap, the reason, the photo shrunk, the time. `Steps` follows the line. The labels to scan are drawn on the page with `Barcode` — two right, two wrong : a phone scans them off the screen, or they are typed, or used with a click — and the beep and vibration of `useFeedbackSignal` wait for their switch. At the bottom, each component used leads to its own page.
+
 **🗂️ The lab's menu : Components and Modules**
 
 - **« Lab » gives way to two sections.** **Components** — the daisyUI components and the library's own, with no trade in them : Actions, Layouts, Display, Navigation, Feedback, Form, Files & media. **Modules** — whole families an application adopts or not, most of them on an optional dependency : Codes, Maps, Kanban, Scheduler, Charts.
