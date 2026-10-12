@@ -22,6 +22,7 @@ import { TbAlertSquareRounded   as AlertIcon          } from "react-icons/tb";
 import { TbMap2                 as MapIcon            } from "react-icons/tb";
 import { TbQrcode               as BarcodeIcon        } from "react-icons/tb";
 import { TbScan                 as ScannerIcon        } from "react-icons/tb";
+import { TbForms                as ScanFieldIcon      } from "react-icons/tb";
 import { TbMapPin               as MapMarkerIcon      } from "react-icons/tb";
 import { TbMapPinCog            as PickerIcon         } from "react-icons/tb";
 import { TbRoute                as RouteIcon          } from "react-icons/tb";
@@ -155,8 +156,6 @@ const navigation =
                     { id : 'stat'       , type : LINK  , Icon : StatIcon       , path  : '/lab/stat'       } ,
                     { id : 'steps'      , type : LINK  , Icon : StepsIcon      , path  : '/lab/steps'      } ,
                     { id : 'status'     , type : LINK  , Icon : StatusIcon     , path  : '/lab/status'     } ,
-                    { id : 'barcodes'   , type : LINK  , Icon : BarcodeIcon    , path  : '/lab/barcodes'   } ,
-                    { id : 'scanner'    , type : LINK  , Icon : ScannerIcon    , path  : '/lab/scanner'    } ,
                 ]
             } ,
             {
@@ -258,6 +257,17 @@ const navigation =
                     { id : 'mapsRoutes'  , type : LINK  , Icon : RouteIcon      , path  : '/lab/mapsRoutes'  } ,
                     { id : 'mapsZones'   , type : LINK  , Icon : ZoneIcon       , path  : '/lab/mapsZones'   } ,
                     { id : 'mapsModel'   , type : LINK  , Icon : SchemaIcon     , path  : '/lab/mapsModel'   } ,
+                ]
+            } ,
+            {
+                id   : 'codes'     ,
+                type : COLLAPSE    ,
+                Icon : BarcodeIcon ,
+                items :
+                [
+                    { id : 'barcodes'  , type : LINK  , Icon : BarcodeIcon   , path  : '/lab/barcodes'  } ,
+                    { id : 'scanner'   , type : LINK  , Icon : ScannerIcon   , path  : '/lab/scanner'   } ,
+                    { id : 'scanField' , type : LINK  , Icon : ScanFieldIcon , path  : '/lab/scanField' } ,
                 ]
             } ,
         ]

@@ -19,6 +19,7 @@ import schedulerModel from './schedulerModel'
 import schedulerMonth from './schedulerMonth'
 import schedulerSlots from './schedulerSlots'
 import schedulerTimeline from './schedulerTimeline'
+import scanField      from './scanField'
 import scanner        from './scanner'
 import schedulerWeek  from './schedulerWeek'
 import signals        from './signals'
@@ -49,6 +50,7 @@ const lab =
     schedulerMonth ,
     schedulerSlots ,
     schedulerTimeline ,
+    scanField      ,
     scanner        ,
     schedulerWeek ,
     signals        ,
