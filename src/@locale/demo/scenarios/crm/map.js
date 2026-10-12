@@ -15,6 +15,7 @@ const map =
         stops     : '{0} étape(s)' ,
         legend    : 'Statut' ,
         revenue   : 'CA annuel : {0}' ,
+        open      : 'Ouvrir la fiche' ,
     } ,
 
     en :
@@ -32,6 +33,7 @@ const map =
         stops     : '{0} stop(s)' ,
         legend    : 'Status' ,
         revenue   : 'Annual revenue : {0}' ,
+        open      : 'Open the sheet' ,
     } ,
 } ;
 

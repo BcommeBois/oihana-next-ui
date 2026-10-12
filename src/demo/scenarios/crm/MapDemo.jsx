@@ -10,10 +10,13 @@ import Container from '@/display/Container' ;
 
 import Badge            from '@/components/Badge' ;
 import Button           from '@/components/Button' ;
+import Card             from '@/components/Card' ;
 import MapMarkers       from '@/components/maps/MapMarkers' ;
 import MapPopup         from '@/components/maps/MapPopup' ;
 import MapRoute         from '@/components/maps/MapRoute' ;
 import MapView          from '@/components/maps/Map' ;
+import SidePanel        from '@/components/panels/SidePanel' ;
+import useModal         from '@/components/modals/hooks/useModal' ;
 import SegmentedControl from '@/components/SegmentedControl' ;
 import Toggle           from '@/components/checkboxes/Toggle' ;
 
@@ -25,7 +28,7 @@ import config from '@/@configs' ;
 
 import { DAY , UsedComponents } from '@/demo/scenarios/shared' ;
 
-import { STATUS_COLORS } from './CustomerSheet' ;
+import CustomerSheet , { STATUS_COLORS } from './CustomerSheet' ;
 import { useCrm } from './CrmProvider' ;
 import { STATUSES } from './data' ;
 
@@ -43,6 +46,8 @@ const USED =
     { href : '/modules/mapsRoutes'  , name : 'MapRoute' } ,
     { href : '/components/buttons'  , name : 'SegmentedControl' } ,
     { href : '/components/toggles'  , name : 'Toggle' } ,
+    { href : '/components/card'     , name : 'Card' } ,
+    { href : '/components/panels'   , name : 'SidePanel' } ,
 ] ;
 
 /** The day number of a date held as a Date or as milliseconds. */
@@ -76,7 +81,7 @@ const workingDay = ( day , step ) =>
  */
 const MapDemo = ( { path = 'demo.scenarios.crm' } = {} ) =>
 {
-    const { common = {} , map : t = {} , planning = {} } = useI18n( path ) ?? {} ;
+    const { common = {} , customers : customersCopy = {} , map : t = {} , planning = {} } = useI18n( path ) ?? {} ;
 
     const crm = useCrm() ;
 
@@ -86,6 +91,9 @@ const MapDemo = ( { path = 'demo.scenarios.crm' } = {} ) =>
     const [ day      , setDay      ] = useState( null ) ;
     const [ all      , setAll      ] = useState( true ) ;
     const [ selected , setSelected ] = useState( null ) ;
+    const [ sheet    , setSheet    ] = useState( null ) ;
+
+    const { modalRef , open : openSheet } = useModal() ;
 
     if ( !crm?.ready )
     {
@@ -165,15 +173,22 @@ const MapDemo = ( { path = 'demo.scenarios.crm' } = {} ) =>
                         ) }
                         { chosen?.geo && (
                             <MapPopup latitude={ chosen.geo.latitude } longitude={ chosen.geo.longitude } onClose={ () => setSelected( null ) }>
-                                <div className="flex flex-col gap-1 text-sm">
-                                    <span className="font-semibold">{ chosen.name }</span>
-                                    <span>{ chosen.contact.name }</span>
-                                    <span className="text-xs text-base-content/60">{ chosen.address.postalCode } { chosen.address.locality }</span>
-                                    <span className="flex items-center gap-2">
-                                        <Badge color={ STATUS_COLORS[ chosen.status ] } size="sm" style="soft">{ common.statuses?.[ chosen.status ] }</Badge>
-                                        <span className="text-xs">{ format( t.revenue ?? '{0}' , euros( chosen.revenue ) ) }</span>
-                                    </span>
-                                </div>
+                                <Card
+                                    actions   = { <Button color="primary" onClick={ () => { setSheet( chosen.id ) ; openSheet() ; } } size="sm">{ t.open }</Button> }
+                                    className = "w-64 shadow-none"
+                                    size      = "sm"
+                                    title     = { chosen.name }
+                                    titleAs   = "h3"
+                                >
+                                    <div className="flex flex-col gap-1 text-sm">
+                                        <span>{ chosen.contact.name }</span>
+                                        <span className="text-xs text-base-content/60">{ chosen.address.streetAddress }, { chosen.address.postalCode } { chosen.address.locality }</span>
+                                        <div className="mt-1 flex flex-wrap items-center gap-2">
+                                            <Badge color={ STATUS_COLORS[ chosen.status ] } size="sm" style="soft">{ common.statuses?.[ chosen.status ] }</Badge>
+                                            <span className="text-xs tabular-nums">{ format( t.revenue ?? '{0}' , euros( chosen.revenue ) ) }</span>
+                                        </div>
+                                    </div>
+                                </Card>
                             </MapPopup>
                         ) }
                     </MapView>
@@ -218,6 +233,10 @@ const MapDemo = ( { path = 'demo.scenarios.crm' } = {} ) =>
             </div>
 
             <UsedComponents items={ USED } note={ common.used?.note } title={ common.used?.title } />
+
+            <SidePanel ref={ modalRef } title={ customerOf( sheet )?.name } width="w-full sm:w-[34rem]">
+                { customerOf( sheet ) && <CustomerSheet common={ common } customer={ customerOf( sheet ) } key={ sheet } t={ customersCopy.sheet ?? {} } /> }
+            </SidePanel>
 
         </Container>
     ) ;
