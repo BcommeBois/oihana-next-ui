@@ -8,6 +8,11 @@ const PROMPT  = 'prompt'  ;
 /**
  * React hook to manage media permissions.
  *
+ * 🚨 **`request()` asks, it does not keep.** Asking means opening the device :
+ * the stream it returns is stopped at once, track by track. Left open, the
+ * camera light stays on and the device stays busy until the tab closes — the
+ * component that films opens its own stream when it needs one.
+ *
  * @param {'camera' | 'microphone'} type - The permission type.
  */
 const useMediaPermission = ( type ) =>
@@ -17,6 +22,12 @@ const useMediaPermission = ( type ) =>
     useEffect( () =>
     {
         let mounted = true ;
+        let status  = null ;
+
+        const onChange = () =>
+        {
+            if ( mounted ) setPermissionState( status.state ) ;
+        } ;
 
         const checkPermission = async () =>
         {
@@ -24,12 +35,12 @@ const useMediaPermission = ( type ) =>
             {
                 const result = await navigator.permissions.query( { name: type } ) ;
 
-                if ( mounted ) setPermissionState( result.state ) ;
+                // Unmounted while the query ran : nothing to listen for.
+                if ( !mounted ) return ;
 
-                result.addEventListener( 'change' , () =>
-                {
-                    if ( mounted ) setPermissionState( result.state ) ;
-                } ) ;
+                status = result ;
+                setPermissionState( result.state ) ;
+                result.addEventListener( 'change' , onChange ) ;
             }
             catch
             {
@@ -39,7 +50,11 @@ const useMediaPermission = ( type ) =>
 
         void checkPermission() ;
 
-        return () => { mounted = false ; } ;
+        return () =>
+        {
+            mounted = false ;
+            status?.removeEventListener( 'change' , onChange ) ;
+        } ;
     }
     , [ type ] ) ;
 
@@ -48,7 +63,11 @@ const useMediaPermission = ( type ) =>
         try
         {
             const constraints = type === 'camera' ? { video: true } : { audio: true } ;
-            await navigator.mediaDevices.getUserMedia( constraints ) ;
+            const stream = await navigator.mediaDevices.getUserMedia( constraints ) ;
+            for ( const track of stream.getTracks() )
+            {
+                track.stop() ;
+            }
             setPermissionState( GRANTED ) ;
         }
         catch ( err )

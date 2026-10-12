@@ -8,6 +8,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🩹 Asking for the camera no longer leaves it filming**
+
+- 🚨 **`hooks/useMediaPermission` : `request()` stopped nothing it opened.** To ask for the camera or the microphone it opens the device — and it kept the stream : the camera light stayed on and the device stayed busy until the tab was closed, with nothing on screen using it. The stream is now stopped, track by track, as soon as the permission is granted ; the component that films opens its own when it needs one. Found while preparing the camera scanner, which relies on this hook.
+- **`hooks/useMediaPermission` : the `change` listener is removed on unmount.** It was attached to the permission status and never taken off — harmless thanks to the mounted guard, but left behind for every mount ; and a query that answers after unmount no longer attaches one at all.
+
 **🔔 A sound and a vibration that tell what just happened**
 
 - **New `hooks/useFeedbackSignal`** : `signal( 'success' | 'warning' | 'error' | … )` plays a short sound and vibrates, so an outcome — a code scanned and accepted, one refused — is known without looking at the screen. Three signals told apart by ear : one short high beep (1 kHz, 80 ms) for `success`, two beeps for `warning`, a long low buzz (220 Hz square, 350 ms) for `error`, each with its own vibration pattern. `signals` adds others or replaces these — a sequence of tones (frequency, duration in ms, wave, silence before) and a `navigator.vibrate` pattern. `sound`, `vibration` and `volume` are the screen's settings. Returns `{ signal , unlock , unlocked , supports }`.
