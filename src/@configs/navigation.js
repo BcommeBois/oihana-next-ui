@@ -40,6 +40,9 @@ import { FaPager                as HeaderIcon         } from "react-icons/fa6";
 import { SlPicture              as ImageIcon          } from "react-icons/sl";
 import { RiInputField           as InputIcon          } from "react-icons/ri" ;
 import { MdPermMedia            as MediaIcon          } from "react-icons/md" ;
+import { MdAttachFile           as FileInputIcon      } from "react-icons/md" ;
+import { MdCloudUpload          as DropzoneIcon       } from "react-icons/md" ;
+import { MdAddAPhoto            as PhotoIcon          } from "react-icons/md" ;
 import { TbInfinity             as InfiniteScrollIcon } from "react-icons/tb";
 import { LuLayoutDashboard      as LayoutIcon         } from "react-icons/lu";
 import { TbLayoutKanban         as KanbanIcon         } from "react-icons/tb";
@@ -202,7 +205,6 @@ const navigation =
                     { id : 'filters'    , type : LINK  , Icon : FilterCriterionIcon , path  : '/lab/filters' } ,
                     { id : 'times'      , type : LINK  , Icon : TimesIcon     , path  : '/lab/times'      } ,
                     { id : 'inputs'     , type : LINK  , Icon : InputIcon     , path  : '/lab/inputs'     } ,
-                    { id : 'media'      , type : LINK  , Icon : MediaIcon     , path  : '/lab/media'      } ,
                     { id : 'pickers'    , type : LINK  , Icon : ChoosePickerIcon , path  : '/lab/pickers'    } ,
                     { id : 'radios'     , type : LINK  , Icon : RadioIcon     , path  : '/lab/radios'     } ,
                     { id : 'ranges'     , type : LINK  , Icon : RangeIcon     , path  : '/lab/ranges'     } ,
@@ -210,6 +212,17 @@ const navigation =
                     { id : 'selects'    , type : LINK  , Icon : SelectIcon    , path  : '/lab/selects'    } ,
                     { id : 'textareas'  , type : LINK  , Icon : TextAreaIcon  , path  : '/lab/textareas'  } ,
                     { id : 'toggles'    , type : LINK  , Icon : ToggleIcon    , path  : '/lab/toggles'    } ,
+                ]
+            } ,
+            {
+                id   : 'media'   ,
+                type : COLLAPSE  ,
+                Icon : MediaIcon ,
+                items :
+                [
+                    { id : 'fileInput' , type : LINK  , Icon : FileInputIcon , path  : '/lab/fileInput' } ,
+                    { id : 'dropzone'  , type : LINK  , Icon : DropzoneIcon  , path  : '/lab/dropzone'  } ,
+                    { id : 'photo'     , type : LINK  , Icon : PhotoIcon     , path  : '/lab/photo'     } ,
                 ]
             } ,
             {

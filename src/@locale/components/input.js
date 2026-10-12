@@ -22,10 +22,6 @@
  * the keypad itself when the host gives it no label, and words its submit
  * button — visible copy, that one.
  *
- * `photo` is the copy of `PhotoCapture` : its two buttons, the name of each
- * thumbnail and of its remove button (`{0}`, the photo's rank), the message
- * while a photo is prepared, and a file refused — `{0}`, its name — by reason.
- *
  * `scan` names the camera button and window of `InputScan`, and words a refused
  * code : `invalid` when the host's `validate` says no without a reason of its
  * own, `gs1` (with `{0}`, the encoder's detail) for a GS1 string typed wrong.
@@ -93,22 +89,6 @@ const input =
                 medium : 'Moyen' ,
                 strong : 'Fort' ,
                 weak   : 'Faible' ,
-            } ,
-        } ,
-
-        photo :
-        {
-            take       : 'Prendre une photo' ,
-            gallery    : 'Galerie' ,
-            alt        : 'Photo {0}' ,
-            remove     : 'Retirer la photo {0}' ,
-            processing : 'Préparation de la photo…' ,
-            count      : '{0} / {1}' ,
-            errors     :
-            {
-                type   : '« {0} » n’est pas une image.' ,
-                decode : 'Impossible de lire « {0} » : format non pris en charge par ce navigateur.' ,
-                encode : 'Impossible de réduire « {0} ».' ,
             } ,
         } ,
 
@@ -185,22 +165,6 @@ const input =
                 medium : 'Medium' ,
                 strong : 'Strong' ,
                 weak   : 'Weak' ,
-            } ,
-        } ,
-
-        photo :
-        {
-            take       : 'Take a photo' ,
-            gallery    : 'Gallery' ,
-            alt        : 'Photo {0}' ,
-            remove     : 'Remove photo {0}' ,
-            processing : 'Preparing the photo…' ,
-            count      : '{0} / {1}' ,
-            errors     :
-            {
-                type   : '“{0}” is not an image.' ,
-                decode : 'Cannot read “{0}” : this browser does not support its format.' ,
-                encode : 'Cannot shrink “{0}”.' ,
             } ,
         } ,
 

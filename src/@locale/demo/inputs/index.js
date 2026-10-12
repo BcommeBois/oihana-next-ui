@@ -13,7 +13,6 @@ import i18nTextAreaMarkdown from './i18nTextAreaMarkdown' ;
 import keypad     from './keypad' ;
 import password   from './password' ;
 import percentage from './percentage' ;
-import photo      from './photo' ;
 import pin        from './pin' ;
 import scan       from './scan' ;
 import search     from './search' ;
@@ -45,7 +44,6 @@ const inputs =
     keypad ,
     password ,
     percentage ,
-    photo ,
     pin ,
     scan ,
     search ,

@@ -3,6 +3,8 @@ import assignments    from './assignments'
 import badges         from './badges'
 import barcodes       from './barcodes'
 import buttons        from './buttons'
+import dropzone       from './dropzone'
+import fileInput      from './fileInput'
 import i18n           from './i18n'
 import images         from './images'
 import inputs         from './inputs'
@@ -12,7 +14,6 @@ import mapsPicker     from './mapsPicker'
 import mapsRoutes     from './mapsRoutes'
 import mapsZones      from './mapsZones'
 import mapsView       from './mapsView'
-import media          from './media'
 import metrics        from './metrics'
 import modals         from './modals'
 import scheduler      from './scheduler'
@@ -20,6 +21,7 @@ import schedulerModel from './schedulerModel'
 import schedulerMonth from './schedulerMonth'
 import schedulerSlots from './schedulerSlots'
 import schedulerTimeline from './schedulerTimeline'
+import photo          from './photo'
 import scanField      from './scanField'
 import scanner        from './scanner'
 import schedulerWeek  from './schedulerWeek'
@@ -35,6 +37,8 @@ const lab =
     badges         ,
     barcodes       ,
     buttons        ,
+    dropzone       ,
+    fileInput      ,
     i18n           ,
     images         ,
     inputs         ,
@@ -44,7 +48,6 @@ const lab =
     mapsRoutes     ,
     mapsZones      ,
     mapsView       ,
-    media          ,
     metrics        ,
     modals         ,
     scheduler      ,
@@ -52,6 +55,7 @@ const lab =
     schedulerMonth ,
     schedulerSlots ,
     schedulerTimeline ,
+    photo          ,
     scanField      ,
     scanner        ,
     schedulerWeek ,

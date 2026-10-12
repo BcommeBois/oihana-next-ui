@@ -80,7 +80,7 @@ const prepare = async ( file , resize , readLocation ) =>
  * Keeping the photos until the network comes back is the application's
  * business, as is sending them.
  *
- * @module components/inputs/PhotoCapture
+ * @module components/media/PhotoCapture
  *
  * @example
  * ```jsx
@@ -108,7 +108,7 @@ const prepare = async ( file , resize , readLocation ) =>
  * @param {string} [props.name] - Sends the shrunk files with a `<form>`, under this name.
  * @param {Function} [props.onChange] - `( photos ) => void`.
  * @param {Function} [props.onError] - `( error : ImageResizeError , file ) => void`, for a file refused.
- * @param {string} [props.path='components.input.photo'] - i18n path of the labels.
+ * @param {string} [props.path='components.media.photo'] - i18n path of the labels.
  * @param {boolean} [props.readLocation=false] - Read the position from the original into `location`.
  * @param {{ maxSize? : ?number , quality? : number , type? : string }} [props.resize] - The options of `resizeImage` : 1600 pixels, 0.8, JPEG by default.
  * @param {'sm'|'md'|'lg'|'xl'} [props.size='md'] - The size of the buttons.
@@ -128,7 +128,7 @@ const PhotoCapture =
     name ,
     onChange ,
     onError ,
-    path         = 'components.input.photo' ,
+    path         = 'components.media.photo' ,
     readLocation = false ,
     resize       = RESIZE_DEFAULTS ,
     size         = 'md' ,

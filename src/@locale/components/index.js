@@ -8,6 +8,7 @@ import dropdowns  from './dropdowns'
 import filter     from './filter'
 import input      from './input'
 import map        from './map'
+import media      from './media'
 import modal      from './modal'
 import pagination from './pagination'
 import picker     from './picker'
@@ -31,6 +32,7 @@ const components =
     filter ,
     input ,
     map ,
+    media ,
     modal ,
     pagination ,
     picker ,

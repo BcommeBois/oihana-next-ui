@@ -6,7 +6,7 @@ import Container from '@/display/Container' ;
 
 import Button           from '@/components/Button' ;
 import FileInput        from '@/components/inputs/FileInput' ;
-import PhotoCapture     from '@/components/inputs/PhotoCapture' ;
+import PhotoCapture     from '@/components/media/PhotoCapture' ;
 import SegmentedControl from '@/components/SegmentedControl' ;
 import Toggle           from '@/components/checkboxes/Toggle' ;
 
@@ -39,9 +39,9 @@ const head = file => file.slice( 0 , EXIF_READ_LENGTH ).arrayBuffer() ;
  * original and the result side by side, the EXIF present then gone.
  *
  * @param {Object} props
- * @param {string} [props.path='demo.inputs.photo'] - Dot notation path to the demo locale.
+ * @param {string} [props.path='demo.media.photo'] - Dot notation path to the demo locale.
  */
-const PhotoCaptureDemo = ( { path = 'demo.inputs.photo' } = {} ) =>
+const PhotoCaptureDemo = ( { path = 'demo.media.photo' } = {} ) =>
 {
     const t = useI18n( path ) ?? {} ;
 

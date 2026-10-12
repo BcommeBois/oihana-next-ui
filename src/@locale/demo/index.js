@@ -2,6 +2,7 @@ import assignments from './assignments' ;
 import barcodes  from './barcodes' ;
 import filters   from './filters' ;
 import images    from './images' ;
+import media     from './media' ;
 import inputs    from './inputs' ;
 import metrics   from './metrics' ;
 import modals    from './modals' ;
@@ -18,6 +19,7 @@ const demo =
     barcodes ,
     filters ,
     images ,
+    media ,
     inputs ,
     metrics ,
     modals ,
