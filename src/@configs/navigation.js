@@ -226,6 +226,17 @@ const navigation =
                 ]
             } ,
             {
+                id   : 'codes'     ,
+                type : COLLAPSE    ,
+                Icon : BarcodeIcon ,
+                items :
+                [
+                    { id : 'barcodes'  , type : LINK  , Icon : BarcodeIcon   , path  : '/lab/barcodes'  } ,
+                    { id : 'scanner'   , type : LINK  , Icon : ScannerIcon   , path  : '/lab/scanner'   } ,
+                    { id : 'scanField' , type : LINK  , Icon : ScanFieldIcon , path  : '/lab/scanField' } ,
+                ]
+            } ,
+            {
                 id   : 'scheduler'   ,
                 type : COLLAPSE      ,
                 Icon : SchedulerIcon ,
@@ -272,17 +283,6 @@ const navigation =
                     { id : 'mapsRoutes'  , type : LINK  , Icon : RouteIcon      , path  : '/lab/mapsRoutes'  } ,
                     { id : 'mapsZones'   , type : LINK  , Icon : ZoneIcon       , path  : '/lab/mapsZones'   } ,
                     { id : 'mapsModel'   , type : LINK  , Icon : SchemaIcon     , path  : '/lab/mapsModel'   } ,
-                ]
-            } ,
-            {
-                id   : 'codes'     ,
-                type : COLLAPSE    ,
-                Icon : BarcodeIcon ,
-                items :
-                [
-                    { id : 'barcodes'  , type : LINK  , Icon : BarcodeIcon   , path  : '/lab/barcodes'  } ,
-                    { id : 'scanner'   , type : LINK  , Icon : ScannerIcon   , path  : '/lab/scanner'   } ,
-                    { id : 'scanField' , type : LINK  , Icon : ScanFieldIcon , path  : '/lab/scanField' } ,
                 ]
             } ,
         ]
