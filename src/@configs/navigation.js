@@ -25,6 +25,8 @@ import {
     MdViewKanban         as CrmPipelineIcon ,
     MdEditCalendar       as CrmPlanningIcon ,
     MdRoute              as CrmMapIcon ,
+    MdStorefront         as EcommerceIcon ,
+    MdShoppingCartCheckout as CheckoutIcon ,
     MdWidgets            as ComponentsIcon ,
     MdTexture            as PatternsIcon ,
     MdTextSnippet        as TypographyIcon ,
@@ -339,6 +341,15 @@ const navigation =
                     { id : 'analytics' , type : LINK  , Icon : AnalyticsIcon , path  : '/scenarios/dashboards/analytics' } ,
                     { id : 'customers' , type : LINK  , Icon : CustomersIcon , path  : '/scenarios/dashboards/customers' } ,
                     { id : 'project'   , type : LINK  , Icon : ProjectIcon   , path  : '/scenarios/dashboards/project'   } ,
+                ]
+            } ,
+            {
+                id   : 'ecommerce'   ,
+                type : COLLAPSE      ,
+                Icon : EcommerceIcon ,
+                items :
+                [
+                    { id : 'checkout' , type : LINK  , Icon : CheckoutIcon , path  : '/scenarios/ecommerce/checkout' } ,
                 ]
             } ,
             {
