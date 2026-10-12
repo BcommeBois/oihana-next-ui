@@ -13,6 +13,8 @@ import {
     MdExtension          as ModulesIcon ,
     MdAutoStories        as ScenariosIcon ,
     MdInventory          as PickingIcon ,
+    MdLocalShipping      as LogisticsIcon ,
+    MdMoveToInbox        as ReceivingIcon ,
     MdWidgets            as ComponentsIcon ,
     MdTexture            as PatternsIcon ,
     MdTextSnippet        as TypographyIcon ,
@@ -306,7 +308,16 @@ const navigation =
         className : 'gap-1' ,
         items     :
         [
-            { id : 'picking' , type : LINK , Icon : PickingIcon , path : '/scenarios/picking' } ,
+            {
+                id   : 'logistics'   ,
+                type : COLLAPSE      ,
+                Icon : LogisticsIcon ,
+                items :
+                [
+                    { id : 'picking'   , type : LINK  , Icon : PickingIcon   , path  : '/scenarios/logistics/picking'   } ,
+                    { id : 'receiving' , type : LINK  , Icon : ReceivingIcon , path  : '/scenarios/logistics/receiving' } ,
+                ]
+            } ,
         ]
     } ,
 ]

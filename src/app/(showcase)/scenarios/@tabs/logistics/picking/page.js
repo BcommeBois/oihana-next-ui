@@ -6,15 +6,15 @@ import useI18n   from '@/contexts/locale/useI18n' ;
 import Container from '@/display/Container' ;
 import Page      from '@/display/Page' ;
 
-import PickingDemo from '@/demo/scenarios/PickingDemo' ;
+import PickingDemo from '@/demo/scenarios/logistics/PickingDemo' ;
 
 /**
  * Order picking scenario page — a picking line from end to end.
  *
  * @param {Object} props
- * @param {string} [props.path='app.scenarios.picking'] - Dot notation path to the page locale.
+ * @param {string} [props.path='app.scenarios.logistics.picking'] - Dot notation path to the page locale.
  */
-const PickingScenario = ( { path = 'app.scenarios.picking' } = {} ) =>
+const PickingScenario = ( { path = 'app.scenarios.logistics.picking' } = {} ) =>
 {
     const { description , title } = useI18n( path ) ?? {} ;
 

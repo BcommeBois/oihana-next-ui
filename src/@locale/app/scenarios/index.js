@@ -1,11 +1,12 @@
-import picking from './picking'
+import logistics from './logistics'
 
 /**
- * The copy of the scenario pages : screens of use that bring several components together.
+ * The copy of the scenario pages : screens of use that bring several components
+ * together, grouped by trade.
  */
 const scenarios =
 {
-    picking ,
+    logistics ,
 } ;
 
 export default scenarios ;

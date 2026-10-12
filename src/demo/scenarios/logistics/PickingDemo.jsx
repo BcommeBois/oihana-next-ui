@@ -75,9 +75,9 @@ const USED =
  * a click.
  *
  * @param {Object} props
- * @param {string} [props.path='demo.scenarios.picking'] - Dot notation path to the demo locale.
+ * @param {string} [props.path='demo.scenarios.logistics.picking'] - Dot notation path to the demo locale.
  */
-const PickingDemo = ( { path = 'demo.scenarios.picking' } = {} ) =>
+const PickingDemo = ( { path = 'demo.scenarios.logistics.picking' } = {} ) =>
 {
     const t = useI18n( path ) ?? {} ;
 

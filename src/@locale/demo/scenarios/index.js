@@ -1,8 +1,8 @@
-import picking from './picking' ;
+import logistics from './logistics' ;
 
 const scenarios =
 {
-    picking ,
+    logistics ,
 } ;
 
 export default scenarios ;
