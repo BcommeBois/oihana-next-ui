@@ -49,15 +49,21 @@ import useThemes from 'oihana-next-ui/contexts/themes/useThemes'
 ```
 
 Every component carries its own JSDoc — props, defaults and examples — and the live demos
-sit under `/components` and `/modules`. The [**wiki**](wiki/README.md) holds the long-form guides, one per group :
-which component to reach for, and the recipes that span several of them. So far :
+sit under `/components` and `/modules`, with `/scenarios` bringing several of them together on
+screens of use : a CRM, dashboards, a checkout, logistics. The [**wiki**](wiki/README.md) holds
+the long-form guides, one per group : which component to reach for, and the recipes that span
+several of them. So far :
+[`components/barcodes`](wiki/components/barcodes/README.md),
 [`components/charts`](wiki/components/charts/README.md),
-[`components/metrics`](wiki/components/metrics/README.md) and
-[`components/scheduler`](wiki/components/scheduler/README.md).
+[`components/maps`](wiki/components/maps/README.md),
+[`components/media`](wiki/components/media/README.md),
+[`components/metrics`](wiki/components/metrics/README.md),
+[`components/scheduler`](wiki/components/scheduler/README.md) and
+[`contexts/feedback`](wiki/contexts/feedback/README.md).
 
 ### Scripts
 
-Three build-time scripts ship with the package, as commands run from the root of
+Five build-time scripts ship with the package, as commands run from the root of
 the host application :
 
 | Command | What it writes |
@@ -65,12 +71,15 @@ the host application :
 | `oihana-inject-version` | `src/version.js`, `public/version.json` (`version` and the deployed `commit`) and `public/sw.js`, from `version` and the `pwa` block of your `package.json` (`offline`, `cachePrefix`) |
 | `oihana-cache-size` | nothing — it reports the weight of `.next` and its Turbopack caches (`--all` for the full breakdown) |
 | `oihana-generate-splash` | the iOS splash screens under `public/assets/splash` (`--bg`, `--landscape`, `--force`) ; requires `sharp` in the host |
+| `oihana-copy-maplibre-worker` | the map engine's worker under `public/maplibre/` — only needed with `maplibre-gl` 6, which loads its worker from a file ; the library stays on 5, which needs none — see the [maps guide](wiki/components/maps/README.md) |
+| `oihana-copy-zxing-wasm` | the barcode reader's WebAssembly under `public/zxing/<version>/`, so the camera scanner reads without a CDN and offline ; exits `0` when the optional `zxing-wasm` is absent — see the [barcodes guide](wiki/components/barcodes/README.md) |
 
 ```json
 {
   "scripts": {
     "dev": "oihana-inject-version && next dev",
-    "predev": "oihana-cache-size",
+    "predev": "oihana-cache-size && oihana-copy-zxing-wasm",
+    "prebuild": "oihana-copy-zxing-wasm",
     "generate-splash": "oihana-generate-splash --bg \"#ffffff\""
   },
   "pwa": { "offline": true, "cachePrefix": "my-app" }

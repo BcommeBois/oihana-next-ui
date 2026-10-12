@@ -8,6 +8,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**📚 Three new guides in the wiki, and the README brought up to date**
+
+- **`wiki/components/barcodes`** : drawing a code — which format for which need, the light plate, exporting to SVG or PNG for a server, GS1-128 written as on the label — and reading one : the two engines and when each runs, HTTPS, serving the WebAssembly yourself with `oihana-copy-zxing-wasm`, keeping it offline with `preloadScanner()`, the one reading `normalizeScan` makes of every engine, and `InputScan`.
+- **`wiki/contexts/feedback`** : `useFeedbackSignal` — the three signals, why a signal is never a message, what browsers allow (the first gesture, a locked signal dropped rather than queued, vibration on Android only, the iPhone's silent switch) — and the `FeedbackProvider` master switch kept on the device, with `SoundButton` and the navbar's opt-in control.
+- **`wiki/components/media`** : which of `FileInput`, `FileDropzone`, `PhotoCapture` to reach for, what `resizeImage` takes away and why it turns the photo first, keeping a position apart, the checks before a file is taken, and sending the shrunk files with a plain form.
+- **The wiki's index lists the maps guide**, which existed and was linked from nowhere, and the demo app's scenarios. **The README** lists the seven guides, the scenarios, and the five commands the package ships — `oihana-copy-maplibre-worker` was missing, `oihana-copy-zxing-wasm` is new.
+
 **🎬 Scenarios : screens of use that bring the components together**
 
 - **New `helpers/barcodes/parseGS1Date( 'YYMMDD' , { today } )`** — a GS1 date as an ISO date, and `GS1_DATE_AIS` : the AIs that carry one, (11) to (17). 🔑 The century slides around today as GS1 sets it — more than 50 years ahead is the past century, more than 49 back the next one — and day `00` is the last day of the month, February of a leap year included ; anything that is no date gives `null`. **6 more tests** (259 in all).
