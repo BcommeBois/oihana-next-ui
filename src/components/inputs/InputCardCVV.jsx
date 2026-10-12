@@ -8,6 +8,12 @@ import useValue     from '../../hooks/useValue'
 import useMergeRefs from '../../hooks/useMergeRefs'
 
 import readInputValue from '../../helpers/react/readInputValue'
+import { CARD_BRANDS } from '../../helpers/validators/getCardBrand'
+
+import useFieldValidity from '../../hooks/useFieldValidity'
+
+import useI18n   from '../../contexts/locale/useI18n'
+import NO_LOCALE from '../../contexts/locale/noLocale'
 
 import Input from './Input'
 
@@ -20,7 +26,12 @@ import { MdLock as LockIcon } from 'react-icons/md'
  * @param {string} [props.defaultValue=''] - Default value
  * @param {string} [props.value] - Controlled value
  * @param {Function} [props.onChange] - Change handler
- * @param {number} [props.length=3] - CVV length (3 for Visa/MC, 4 for Amex)
+ * @param {string} [props.brand] - The card's brand, as `InputCardNumber`'s `onCardTypeChange` gives it : sets the length — 4 for an Amex, 3 otherwise.
+ * @param {number} [props.length] - CVV length. Wins over `brand` ; 3 when neither is given.
+ * @param {boolean} [props.validate=false] - Say the code is incomplete once the field is left short. `error` wins over it.
+ * @param {Function} [props.onValidChange] - `( valid ) => void`, on mount and whenever the validity changes.
+ * @param {string} [props.invalidLabel] - What to say for an incomplete code. Defaults to the i18n `cvv` key read at `path`.
+ * @param {string} [props.path='components.input.card'] - i18n path the message is read from.
  * @param {React.ReactNode} [props.icon] - Icon component (default: LockIcon)
  * @param {string} [props.iconClassName] - Icon container classes
  * @param {boolean} [props.showIcon=true] - Show icon
@@ -49,7 +60,13 @@ const InputCardCVV =
     onChange: onChangeFromProps ,
     value: valueFromProps ,
 
-    length = 3 ,
+    brand ,
+    invalidLabel ,
+    length : lengthFromProps ,
+    onBlur ,
+    onValidChange ,
+    path = 'components.input.card' ,
+    validate = false ,
 
     icon ,
     iconClassName ,
@@ -74,6 +91,8 @@ const InputCardCVV =
 }) =>
 {
     const [ value , setValue ] = useValue( defaultValue, valueFromProps, onChangeFromProps ) ;
+
+    const length = lengthFromProps ?? CARD_BRANDS.find( item => item.type === brand )?.cvvLength ?? 3 ;
 
     const internalRef = useRef( null ) ;
 
@@ -106,11 +125,25 @@ const InputCardCVV =
 
     const defaultPlaceholder = '0'.repeat( length ) ;
 
+    const { cvv : invalidFromI18n = 'The security code is incomplete.' } = useI18n( path , NO_LOCALE , false ) ;
+
+    const digits = String( value ?? '' ).replace( /\D/g , '' ) ;
+
+    const check = useFieldValidity(
+    {
+        empty    : digits.length === 0 ,
+        enabled  : validate ,
+        message  : invalidLabel ?? invalidFromI18n ,
+        onBlur ,
+        onValidChange ,
+        valid    : digits.length === length ,
+    } ) ;
+
     return (
         <Input
             autoComplete  = "cc-csc"
             disabled      = { disabled }
-            error         = { error }
+            error         = { error ?? check.error ?? undefined }
             helper        = { helper }
             icon          = { iconElement }
             iconClassName = { iconClassName }
@@ -118,6 +151,7 @@ const InputCardCVV =
             label         = { label }
             legend        = { legend }
             maxLength     = { length }
+            onBlur        = { check.onBlur }
             onChange      = { handleChange }
             placeholder   = { placeholder || defaultPlaceholder }
             readOnly      = { readOnly }

@@ -9,6 +9,7 @@ import Container from '@/display/Container' ;
 import InputCardNumber from '@/components/inputs/InputCardNumber' ;
 import InputCardExpiry from '@/components/inputs/InputCardExpiry' ;
 import InputCardCVV    from '@/components/inputs/InputCardCVV' ;
+import Button          from '@/components/Button' ;
 
 import useI18n from '@/contexts/locale/useI18n' ;
 
@@ -32,6 +33,25 @@ const InputCardDemo = ( { path = 'demo.inputs.card' } = {} ) =>
     const [ cvv , setCvv ] = useState( '' ) ;
     const [ cardType , setCardType ] = useState( 'unknown' ) ;
     const [ cvvLength , setCvvLength ] = useState( 3 ) ;
+
+    const [ checked , setChecked ] = useState( { cvv : '' , expiry : '' , number : '' } ) ;
+    const [ brand   , setBrand   ] = useState( 'unknown' ) ;
+    const [ valid   , setValid   ] = useState( { cvv : false , expiry : false , number : false } ) ;
+
+    const fieldValid = key => isValid => setValid( current => ( current[ key ] === isValid ? current : { ...current , [ key ] : isValid } ) ) ;
+    const allValid   = valid.number && valid.expiry && valid.cvv ;
+
+    const fillTestCard = () =>
+    {
+        const now = new Date() ;
+        setChecked(
+        {
+            cvv    : '123' ,
+            expiry : `${ String( now.getMonth() + 1 ).padStart( 2 , '0' ) }/${ String( ( now.getFullYear() + 3 ) % 100 ).padStart( 2 , '0' ) }` ,
+            number : '4242 4242 4242 4242' ,
+        } ) ;
+        setBrand( 'visa' ) ;
+    } ;
 
     const handleCardTypeChange = ( type ) =>
     {
@@ -95,6 +115,47 @@ const InputCardDemo = ( { path = 'demo.inputs.card' } = {} ) =>
                         { t.submit }
                     </button>
                 </form>
+            </div>
+
+            <div className="flex flex-col gap-4">
+                <h3 className="text-xl font-semibold">{ t.sections?.validated }</h3>
+                <p className="text-sm text-base-content/70">{ t.validated?.note }</p>
+
+                <div>
+                    <Button onClick={ fillTestCard } size="sm" style="outline">{ t.validated?.fill }</Button>
+                </div>
+
+                <InputCardNumber
+                    label            = { t.number?.label }
+                    onCardTypeChange = { setBrand }
+                    onChange         = { number => setChecked( current => ( { ...current , number } ) ) }
+                    onValidChange    = { fieldValid( 'number' ) }
+                    validate
+                    value            = { checked.number }
+                />
+
+                <div className="grid grid-cols-2 gap-4">
+                    <InputCardExpiry
+                        label         = { t.expiry?.label }
+                        onChange      = { expiry => setChecked( current => ( { ...current , expiry } ) ) }
+                        onValidChange = { fieldValid( 'expiry' ) }
+                        validate
+                        value         = { checked.expiry }
+                    />
+                    <InputCardCVV
+                        brand         = { brand }
+                        label         = { t.cvv?.label }
+                        onChange      = { cvv => setChecked( current => ( { ...current , cvv } ) ) }
+                        onValidChange = { fieldValid( 'cvv' ) }
+                        validate
+                        value         = { checked.cvv }
+                    />
+                </div>
+
+                <div className="flex flex-wrap items-center gap-3">
+                    <Button color="primary" disabled={ !allValid }>{ t.validated?.pay }</Button>
+                    <span className="text-sm text-base-content/70">{ allValid ? t.validated?.ready : t.validated?.waiting }</span>
+                </div>
             </div>
 
             <div className="flex flex-col gap-4">

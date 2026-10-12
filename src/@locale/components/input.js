@@ -22,6 +22,9 @@
  * the keypad itself when the host gives it no label, and words its submit
  * button — visible copy, that one.
  *
+ * `card` words what the card fields say when their `validate` is on : a number
+ * that fails its checks, an expiry past or incomplete, a security code too short.
+ *
  * `scan` names the camera button and window of `InputScan`, and words a refused
  * code : `invalid` when the host's `validate` says no without a reason of its
  * own, `gs1` (with `{0}`, the encoder's detail) for a GS1 string typed wrong.
@@ -45,6 +48,13 @@ const input =
             empty     : 'Aucune adresse trouvée' ,
             error     : 'La recherche a échoué' ,
             searching : 'Recherche…' ,
+        } ,
+
+        card :
+        {
+            number : 'Ce numéro de carte n’est pas valide.' ,
+            expiry : 'Cette date est passée ou incomplète.' ,
+            cvv    : 'Le cryptogramme est incomplet.' ,
         } ,
 
         counter :
@@ -121,6 +131,13 @@ const input =
             empty     : 'No address found' ,
             error     : 'The search failed' ,
             searching : 'Searching…' ,
+        } ,
+
+        card :
+        {
+            number : 'This card number is not valid.' ,
+            expiry : 'This date is past or incomplete.' ,
+            cvv    : 'The security code is incomplete.' ,
         } ,
 
         counter :

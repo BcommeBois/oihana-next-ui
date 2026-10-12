@@ -8,6 +8,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**💳 Card fields that say when a card cannot be right**
+
+- **New `helpers/validators`** for payment cards, pure and tested : **`isLuhn( value )`** — the checksum every card carries, catching a mistyped digit or two swapped neighbours (modulo 10 like `gs1CheckDigit`, but not the same weights) ; **`getCardBrand( value )`** — the brand from the first digits, `visa`, `mastercard` (51–55 and the 2-series, 2221–2720, which the field did not recognise until now), `amex`, `discover` or `unknown`, with its grouping, its valid lengths and the length of its security code ; **`isCardNumber( value )`** — a length the brand allows, and the checksum ; **`isCardExpiry( 'MM/YY' , { now } )`** — complete, a real month, not past, the month in progress still counting. **11 more tests** (275 in all), on the public test numbers.
+- **`InputCardNumber`, `InputCardExpiry` and `InputCardCVV` : a `validate` option**, off by default. 🔑 **Never while typing** : the error shows once the entry is complete or the field is left, and stays until it is fixed ; an empty field says nothing, « required » being the form's business ; the host's own `error` still wins. **`onValidChange( valid )`** tells the host when the validity changes — not on every keystroke — for a button that waits for a valid card. The messages come from the new `components.input.card` bundle, or `invalidLabel`. The rule lives in a new hook, **`hooks/useFieldValidity`**, for any field that should speak up only once there is something to judge.
+- **`InputCardCVV` takes `brand`**, as `onCardTypeChange` gives it : four digits for an Amex, three otherwise. An explicit `length` still wins. `InputCardNumber` now reads its brand and grouping from `getCardBrand`.
+- The card demo gains a « With validation » section — a test card to fill in, and a « Pay » button waiting for the three fields ; the checkout scenario drops its own copies of the checks for the helpers.
+
 ## [0.40.0] — 2026-10-12
 
 A large release, built around field work — a warehouse, a delivery, a counter — and usable far

@@ -3,10 +3,16 @@
 import { useMemo , useRef } from 'react'
 import { useMaskito } from '@maskito/react'
 
-import useValue     from '../../hooks/useValue'
-import useMergeRefs from '../../hooks/useMergeRefs'
+import useValue         from '../../hooks/useValue'
+import useMergeRefs     from '../../hooks/useMergeRefs'
+import useFieldValidity from '../../hooks/useFieldValidity'
+
+import useI18n   from '../../contexts/locale/useI18n'
+import NO_LOCALE from '../../contexts/locale/noLocale'
 
 import readInputValue from '../../helpers/react/readInputValue'
+import getCardBrand   from '../../helpers/validators/getCardBrand'
+import isCardNumber   from '../../helpers/validators/isCardNumber'
 
 import Input from './Input'
 
@@ -19,7 +25,11 @@ import { FaCreditCard as CardIcon } from 'react-icons/fa' ;
  * @param {string} [props.defaultValue=''] - Default value
  * @param {string} [props.value] - Controlled value
  * @param {Function} [props.onChange] - Change handler
- * @param {Function} [props.onCardTypeChange] - Callback when card type is detected (visa, mastercard, etc.)
+ * @param {Function} [props.onCardTypeChange] - Callback when card type is detected (visa, mastercard, amex, discover, unknown)
+ * @param {boolean} [props.validate=false] - Check the number — its length for the brand and the Luhn checksum — and say so once it is complete or the field is left. `error` wins over it.
+ * @param {Function} [props.onValidChange] - `( valid ) => void`, on mount and whenever the validity changes.
+ * @param {string} [props.invalidLabel] - What to say for a wrong number. Defaults to the i18n `number` key read at `path`.
+ * @param {string} [props.path='components.input.card'] - i18n path the message is read from.
  * @param {React.ReactNode} [props.icon] - Icon component (default: CardIcon)
  * @param {string} [props.iconClassName] - Icon container classes
  * @param {boolean} [props.showIcon=true] - Show icon
@@ -41,7 +51,12 @@ import { FaCreditCard as CardIcon } from 'react-icons/fa' ;
 const InputCardNumber =
 ({
      defaultValue = '',
+     invalidLabel ,
+     onBlur ,
      onCardTypeChange ,
+     onValidChange ,
+     path = 'components.input.card' ,
+     validate = false ,
      onChange : onChangeFromProps,
      value : valueFromProps,
 
@@ -70,23 +85,12 @@ const InputCardNumber =
 
     const internalRef = useRef( null ) ;
 
-    const getCardType = cardNumber =>
-    {
-        const cleaned = String( cardNumber ?? '' ).replace( /\s/g, '' ) ;
-
-        if ( /^4/.test          ( cleaned ) ) return { type: 'visa'       , pattern: [ 4 , 4 , 4 , 4 ] } ;
-        if ( /^5[1-5]/.test     ( cleaned ) ) return { type: 'mastercard' , pattern: [ 4 , 4 , 4 , 4 ] } ;
-        if ( /^3[47]/.test      ( cleaned ) ) return { type: 'amex'       , pattern: [ 4 , 6 , 5 ] } ;
-        if ( /^6(?:011|5)/.test ( cleaned ) ) return { type: 'discover'   , pattern: [ 4 , 4 , 4 , 4 ] } ;
-
-        return { type: 'unknown' , pattern: [ 4 , 4 , 4 , 4 ] } ;
-    } ;
 
     const maskOptions = useMemo( () =>
     ({
         mask : val =>
         {
-            const { pattern } = getCardType( val ) ;
+            const { pattern } = getCardBrand( val ) ;
 
             const mask = [] ;
 
@@ -118,10 +122,25 @@ const InputCardNumber =
 
         if ( onCardTypeChange )
         {
-            const { type } = getCardType( inputValue ) ;
+            const { type } = getCardBrand( inputValue ) ;
             onCardTypeChange( type ) ;
         }
     } ;
+
+    const { number : invalidFromI18n = 'This card number is not valid.' } = useI18n( path , NO_LOCALE , false ) ;
+
+    const digits = String( value ?? '' ).replace( /\D/g , '' ) ;
+
+    const check = useFieldValidity(
+    {
+        complete : digits.length >= Math.max( ...getCardBrand( digits ).lengths ) ,
+        empty    : digits.length === 0 ,
+        enabled  : validate ,
+        message  : invalidLabel ?? invalidFromI18n ,
+        onBlur ,
+        onValidChange ,
+        valid    : isCardNumber( digits ) ,
+    } ) ;
 
     const iconElement = showIcon && (
         <div className="flex items-center justify-center opacity-50">
@@ -133,13 +152,14 @@ const InputCardNumber =
         <Input
             autoComplete  = "cc-number"
             disabled      = { disabled }
-            error         = { error }
+            error         = { error ?? check.error ?? undefined }
             helper        = { helper }
             icon          = { iconElement }
             iconClassName = { iconClassName }
             inputMode     = "numeric"
             label         = { label }
             legend        = { legend }
+            onBlur        = { check.onBlur }
             onChange      = { handleChange }
             readOnly      = { readOnly }
             placeholder   = { placeholder }

@@ -28,7 +28,9 @@ import useToast from '@/contexts/toasts/useToast' ;
 
 import useNumberFormat from '@/hooks/useNumberFormat' ;
 
-import ban from '@/helpers/geo/adapters/ban' ;
+import ban          from '@/helpers/geo/adapters/ban' ;
+import isCardExpiry from '@/helpers/validators/isCardExpiry' ;
+import isCardNumber from '@/helpers/validators/isCardNumber' ;
 
 import useI18n from '@/contexts/locale/useI18n' ;
 
@@ -77,60 +79,6 @@ const USED =
     { href : '/components/toasts'                 , name : 'useToast' } ,
 ] ;
 
-/**
- * Whether a card number passes the Luhn check — the checksum every payment
- * card carries, which catches a mistyped digit before anything is sent.
- *
- * @param {string} value
- * @returns {boolean}
- */
-const luhn = value =>
-{
-    const digits = String( value ?? '' ).replace( /\D/g , '' ) ;
-
-    if ( digits.length < 12 )
-    {
-        return false ;
-    }
-
-    let sum = 0 ;
-
-    for ( let index = 0 ; index < digits.length ; index++ )
-    {
-        let digit = Number( digits[ digits.length - 1 - index ] ) ;
-        if ( index % 2 === 1 )
-        {
-            digit *= 2 ;
-            if ( digit > 9 ) { digit -= 9 ; }
-        }
-        sum += digit ;
-    }
-
-    return sum % 10 === 0 ;
-} ;
-
-/**
- * Whether an `MM/YY` expiry is complete and not past.
- *
- * @param {string} value
- * @param {Date} now
- * @returns {boolean}
- */
-const validExpiry = ( value , now ) =>
-{
-    const match = /^(\d{2})\/(\d{2})$/.exec( String( value ?? '' ) ) ;
-
-    if ( !match )
-    {
-        return false ;
-    }
-
-    const month = Number( match[ 1 ] ) ;
-    const year  = 2000 + Number( match[ 2 ] ) ;
-
-    return month >= 1 && month <= 12 && ( year > now.getFullYear() || ( year === now.getFullYear() && month >= now.getMonth() + 1 ) ) ;
-} ;
-
 /** The first working day `count` working days after `day`. */
 const addWorkingDays = ( day , count ) =>
 {
@@ -159,7 +107,7 @@ const localDate = day =>
  *
  * Quantities on counters, a promo code, a delivery mode on choice cards, an
  * address from the national base and a working day ; a test card checked —
- * Luhn, expiry, security code — then a simulated bank confirmation by code ;
+ * through `isCardNumber` and `isCardExpiry` — then a simulated bank confirmation by code ;
  * an order number to copy, a QR code to collect in store, a toast. Nothing is
  * paid and nothing leaves the page : the record printed at the end keeps only
  * the card's brand and its last four digits.
@@ -219,9 +167,9 @@ const CheckoutDemo = ( { path = 'demo.scenarios.ecommerce.checkout' } = {} ) =>
     const errors =
     {
         cvv    : cvv.length < ( brand === 'amex' ? 4 : 3 ) ? t.payment?.invalidCvv : null ,
-        expiry : validExpiry( expiry , new Date() ) ? null : t.payment?.invalidExpiry ,
+        expiry : isCardExpiry( expiry ) ? null : t.payment?.invalidExpiry ,
         holder : holder.trim() ? null : t.payment?.invalidHolder ,
-        number : luhn( number ) ? null : t.payment?.invalidNumber ,
+        number : isCardNumber( number ) ? null : t.payment?.invalidNumber ,
     } ;
 
     const paymentOk = Object.values( errors ).every( error => error === null ) ;
@@ -488,7 +436,7 @@ const CheckoutDemo = ( { path = 'demo.scenarios.ecommerce.checkout' } = {} ) =>
                                     />
                                 </div>
                                 <InputCardExpiry disabled={ securing } error={ tried ? errors.expiry ?? undefined : undefined } label={ t.payment?.expiry } onChange={ setExpiry } value={ expiry } />
-                                <InputCardCVV disabled={ securing } error={ tried ? errors.cvv ?? undefined : undefined } label={ t.payment?.cvv } length={ brand === 'amex' ? 4 : 3 } onChange={ setCvv } value={ cvv } />
+                                <InputCardCVV disabled={ securing } error={ tried ? errors.cvv ?? undefined : undefined } brand={ brand } label={ t.payment?.cvv } onChange={ setCvv } value={ cvv } />
                             </div>
 
                             { securing ? (
