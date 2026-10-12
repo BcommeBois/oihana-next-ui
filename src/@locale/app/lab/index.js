@@ -12,6 +12,7 @@ import mapsPicker     from './mapsPicker'
 import mapsRoutes     from './mapsRoutes'
 import mapsZones      from './mapsZones'
 import mapsView       from './mapsView'
+import media          from './media'
 import metrics        from './metrics'
 import modals         from './modals'
 import scheduler      from './scheduler'
@@ -43,6 +44,7 @@ const lab =
     mapsRoutes     ,
     mapsZones      ,
     mapsView       ,
+    media          ,
     metrics        ,
     modals         ,
     scheduler      ,

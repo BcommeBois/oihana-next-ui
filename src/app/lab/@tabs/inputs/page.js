@@ -1,7 +1,5 @@
 'use client' ;
 
-import { useState } from 'react' ;
-
 import format from 'vegas-js-core/src/strings/fastformat' ;
 
 import Badge    from '@/components/Badge' ;
@@ -12,6 +10,8 @@ import Page      from '@/display/Page' ;
 
 import I18nMetas from '@/components/i18n/I18nMetas' ;
 import useI18n   from '@/contexts/locale/useI18n' ;
+
+import useShallowParam from '@/hooks/useShallowParam' ;
 
 import I18nInputDemo       from '@/demo/inputs/I18nInputDemo' ;
 import InputActionDemo     from '@/demo/inputs/InputActionDemo' ;
@@ -33,14 +33,10 @@ import InputTimeDemo       from '@/demo/inputs/InputTimeDemo' ;
 import InputTransformDemo  from '@/demo/inputs/InputTransformDemo' ;
 import InputUrlEmailDemo   from '@/demo/inputs/InputUrlEmailDemo' ;
 import InputValidatorDemo  from '@/demo/inputs/InputValidatorDemo' ;
-import FileInputDemo       from '@/demo/inputs/FileInputDemo' ;
 import InputScanDemo       from '@/demo/inputs/InputScanDemo' ;
 import NumericKeypadDemo   from '@/demo/inputs/NumericKeypadDemo' ;
-import PhotoCaptureDemo    from '@/demo/inputs/PhotoCaptureDemo' ;
 
 import {
-    MdAddAPhoto ,
-    MdAttachFile ,
     MdAttachMoney ,
     MdCalendarToday ,
     MdClear ,
@@ -63,6 +59,11 @@ import {
     MdStraighten ,
     MdTranslate ,
     MdVerified ,
+    MdEvent ,
+    MdNumbers ,
+    MdSecurity ,
+    MdShortText ,
+    MdTune ,
     MdViewModule ,
 } from 'react-icons/md' ;
 
@@ -76,6 +77,27 @@ import {
  * @type {string[]}
  */
 const CATEGORIES = [ 'text' , 'numbers' , 'dates' , 'security' , 'specialized' ] ;
+
+/**
+ * The tab the page opens on : a category. Not `all` : every demo of the page
+ * mounted at once is a long page, and a heavy one.
+ *
+ * @type {string}
+ */
+const DEFAULT_FILTER = 'text' ;
+
+/**
+ * The icon of each category's tab.
+ * @type {Object.<string,React.ElementType>}
+ */
+const CATEGORY_ICONS =
+{
+    dates       : MdEvent ,
+    numbers     : MdNumbers ,
+    security    : MdSecurity ,
+    specialized : MdTune ,
+    text        : MdShortText ,
+} ;
 
 /**
  * The page's rows : what each one shows, and where it belongs.
@@ -115,8 +137,6 @@ const ROWS =
     { key : 'card'              , icon : MdCreditCard    , category : 'specialized' , component : <InputCardDemo /> } ,
     { key : 'hex-color'         , icon : MdColorLens     , category : 'specialized' , component : <InputHexColorDemo /> } ,
     { key : 'url-email'         , icon : MdEmail         , category : 'specialized' , component : <InputUrlEmailDemo /> } ,
-    { key : 'file'              , icon : MdAttachFile    , category : 'specialized' , component : <FileInputDemo /> } ,
-    { key : 'photo'             , icon : MdAddAPhoto     , category : 'specialized' , component : <PhotoCaptureDemo /> } ,
     { key : 'scan'              , icon : MdQrCodeScanner , category : 'specialized' , component : <InputScanDemo /> } ,
 ] ;
 
@@ -130,7 +150,13 @@ const Inputs = ( { path = 'app.lab.inputs' } = {} ) =>
 {
     const { categories , count , description , items , tip , title } = useI18n( path ) ;
 
-    const [ filter , setFilter ] = useState( 'all' ) ;
+    // In the address, so a link opens on a category ; one category by default, not all of them at once.
+    const [ param , setFilter ] = useShallowParam( 'filter' , DEFAULT_FILTER ) ;
+
+    const filter = param === 'all' || CATEGORIES.includes( param ) || ROWS.some( row => row.key === param ) ? param : DEFAULT_FILTER ;
+
+    const isCategory = CATEGORIES.includes( filter ) ;
+    const grouped    = filter === 'all' || isCategory ;
 
     const filterConfig = ROWS.map( row => (
     {
@@ -139,11 +165,25 @@ const Inputs = ( { path = 'app.lab.inputs' } = {} ) =>
         label       : items?.[ row.key ]?.label ,
     } ) ) ;
 
-    const componentsToShow = filter === 'all'
-        ? filterConfig.filter( item => item.component !== null )
-        : filterConfig.filter( item => item.key === filter ) ;
+    // The tab bar : everything, then each category's tab followed by its fields.
+    const tabs =
+    [
+        filterConfig[ 0 ] ,
+        ...CATEGORIES.flatMap( category =>
+        [
+            { category : true , icon : CATEGORY_ICONS[ category ] , key : category , label : categories?.[ category ] } ,
+            ...filterConfig.filter( item => item.category === category ) ,
+        ] ) ,
+    ] ;
 
-    const activeFilter = filterConfig.find( item => item.key === filter ) ;
+    const componentsToShow = filterConfig.filter( item =>
+        item.component !== null && ( filter === 'all' || item.key === filter || item.category === filter ) ) ;
+
+    const shownCategories = CATEGORIES.filter( category => componentsToShow.some( item => item.category === category ) ) ;
+
+    const activeFilter = isCategory
+        ? { icon : CATEGORY_ICONS[ filter ] , label : categories?.[ filter ] }
+        : filterConfig.find( item => item.key === filter ) ;
 
     const handleFilterChange = ( key ) =>
     {
@@ -176,12 +216,13 @@ const Inputs = ( { path = 'app.lab.inputs' } = {} ) =>
                 <div className="flex flex-col gap-4">
                     <div className="overflow-x-auto">
                         <div role="tablist" className="tabs tabs-boxed bg-base-200 p-2 rounded-box shadow-inner inline-flex min-w-full">
-                            { filterConfig.map( ({ key , label , icon: Icon }) => (
+                            { tabs.map( ({ category , key , label , icon: Icon }) => (
                                 <button
                                     key       = { key }
                                     role      = "tab"
-                                    className = { `tab gap-2 whitespace-nowrap ${ filter === key ? 'tab-active' : '' }` }
+                                    className = { `tab gap-2 whitespace-nowrap ${ filter === key ? 'tab-active' : '' } ${ category ? 'ml-2 border-l border-base-content/15 font-bold' : '' }` }
                                     onClick   = { () => handleFilterChange( key ) }
+                                    type      = "button"
                                 >
                                     <Icon size={ 18 } />
                                     <span className="hidden sm:inline">{ label }</span>
@@ -203,7 +244,7 @@ const Inputs = ( { path = 'app.lab.inputs' } = {} ) =>
                                 )}
                             </div>
                             <Badge style="ghost" size="sm">
-                                { format( count ?? '{0}' , filter === 'all' ? componentsToShow.length : 1 ) }
+                                { format( count ?? '{0}' , componentsToShow.length ) }
                             </Badge>
                         </div>
                     )}
@@ -213,8 +254,8 @@ const Inputs = ( { path = 'app.lab.inputs' } = {} ) =>
             <Divider />
 
             <Container className="flex flex-col gap-8" maxWidth="max-w-7xl">
-                { filter === 'all' ? (
-                    CATEGORIES.map( category =>
+                { grouped ? (
+                    shownCategories.map( category =>
                     {
                         const categoryComponents = componentsToShow.filter( item => item.category === category ) ;
 
@@ -253,7 +294,7 @@ const Inputs = ( { path = 'app.lab.inputs' } = {} ) =>
                                     ))}
                                 </div>
 
-                                { category !== CATEGORIES[ CATEGORIES.length - 1 ] && (
+                                { category !== shownCategories[ shownCategories.length - 1 ] && (
                                     <Divider className="my-4" />
                                 )}
 

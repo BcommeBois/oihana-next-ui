@@ -39,6 +39,7 @@ import { IoMdGrid               as GridIcon           } from "react-icons/io";
 import { FaPager                as HeaderIcon         } from "react-icons/fa6";
 import { SlPicture              as ImageIcon          } from "react-icons/sl";
 import { RiInputField           as InputIcon          } from "react-icons/ri" ;
+import { MdPermMedia            as MediaIcon          } from "react-icons/md" ;
 import { TbInfinity             as InfiniteScrollIcon } from "react-icons/tb";
 import { LuLayoutDashboard      as LayoutIcon         } from "react-icons/lu";
 import { TbLayoutKanban         as KanbanIcon         } from "react-icons/tb";
@@ -201,6 +202,7 @@ const navigation =
                     { id : 'filters'    , type : LINK  , Icon : FilterCriterionIcon , path  : '/lab/filters' } ,
                     { id : 'times'      , type : LINK  , Icon : TimesIcon     , path  : '/lab/times'      } ,
                     { id : 'inputs'     , type : LINK  , Icon : InputIcon     , path  : '/lab/inputs'     } ,
+                    { id : 'media'      , type : LINK  , Icon : MediaIcon     , path  : '/lab/media'      } ,
                     { id : 'pickers'    , type : LINK  , Icon : ChoosePickerIcon , path  : '/lab/pickers'    } ,
                     { id : 'radios'     , type : LINK  , Icon : RadioIcon     , path  : '/lab/radios'     } ,
                     { id : 'ranges'     , type : LINK  , Icon : RangeIcon     , path  : '/lab/ranges'     } ,
