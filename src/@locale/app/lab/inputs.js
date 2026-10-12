@@ -135,6 +135,11 @@ const inputs =
                 label       : 'URL et e-mail' ,
                 description : 'Deux champs qui valident ce qu’ils attendent.' ,
             } ,
+            'scan' :
+            {
+                label       : 'Scan' ,
+                description : 'Un code par la caméra ou au clavier ; Entrée ne soumet pas le formulaire.' ,
+            } ,
             'file' :
             {
                 label       : 'Fichier' ,
@@ -265,6 +270,11 @@ const inputs =
             {
                 label       : 'URL & e-mail' ,
                 description : 'Two fields that validate what they expect.' ,
+            } ,
+            'scan' :
+            {
+                label       : 'Scan' ,
+                description : 'A code from the camera or the keyboard ; Enter does not submit the form.' ,
             } ,
             'file' :
             {

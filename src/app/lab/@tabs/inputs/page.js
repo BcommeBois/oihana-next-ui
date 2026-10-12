@@ -34,6 +34,7 @@ import InputTransformDemo  from '@/demo/inputs/InputTransformDemo' ;
 import InputUrlEmailDemo   from '@/demo/inputs/InputUrlEmailDemo' ;
 import InputValidatorDemo  from '@/demo/inputs/InputValidatorDemo' ;
 import FileInputDemo       from '@/demo/inputs/FileInputDemo' ;
+import InputScanDemo       from '@/demo/inputs/InputScanDemo' ;
 
 import {
     MdAttachFile ,
@@ -51,6 +52,7 @@ import {
     MdPassword ,
     MdPlaylistAdd ,
     MdPlusOne ,
+    MdQrCodeScanner ,
     MdSearch ,
     MdTextFields ,
     MdSchedule ,
@@ -109,6 +111,7 @@ const ROWS =
     { key : 'hex-color'         , icon : MdColorLens     , category : 'specialized' , component : <InputHexColorDemo /> } ,
     { key : 'url-email'         , icon : MdEmail         , category : 'specialized' , component : <InputUrlEmailDemo /> } ,
     { key : 'file'              , icon : MdAttachFile    , category : 'specialized' , component : <FileInputDemo /> } ,
+    { key : 'scan'              , icon : MdQrCodeScanner , category : 'specialized' , component : <InputScanDemo /> } ,
 ] ;
 
 /**

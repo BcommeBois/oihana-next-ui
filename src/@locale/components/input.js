@@ -18,6 +18,10 @@
  * label that says « 8 » next to a field refusing anything under 12 is worse
  * than no label. A host owning its own wording passes a `path` instead.
  *
+ * `scan` names the camera button and window of `InputScan`, and words a refused
+ * code : `invalid` when the host's `validate` says no without a reason of its
+ * own, `gs1` (with `{0}`, the encoder's detail) for a GS1 string typed wrong.
+ *
  * `tags` is both : `add` and `remove` name the two controls of `InputTags`,
  * while `duplicate` and `invalid` are the sentences a refused entry shows — a
  * field that silently drops what was typed tells nobody why. A host with a
@@ -72,6 +76,14 @@ const input =
                 strong : 'Fort' ,
                 weak   : 'Faible' ,
             } ,
+        } ,
+
+        scan :
+        {
+            camera  : 'Scanner avec la caméra' ,
+            title   : 'Scanner un code' ,
+            invalid : 'Ce code n’est pas accepté ici.' ,
+            gs1     : 'Code GS1 invalide : {0}' ,
         } ,
 
         search :
@@ -130,6 +142,14 @@ const input =
                 strong : 'Strong' ,
                 weak   : 'Weak' ,
             } ,
+        } ,
+
+        scan :
+        {
+            camera  : 'Scan with the camera' ,
+            title   : 'Scan a code' ,
+            invalid : 'This code is not accepted here.' ,
+            gs1     : 'Invalid GS1 code : {0}' ,
         } ,
 
         search :

@@ -128,6 +128,27 @@ export const splitGS1 = text =>
 } ;
 
 /**
+ * Joins GS1 elements into the element string a reader returns : AIs and data
+ * run together, a separator after each variable-length element that is not
+ * last. The inverse of `splitGS1`.
+ *
+ * @param {Array<{ ai : string , data : string }>} elements
+ * @returns {string}
+ *
+ * @example
+ * ```js
+ * joinGS1( [ { ai : '10' , data : 'AB12' } , { ai : '17' , data : '261231' } ] ) ;
+ * // → '10AB12' + GS + '17261231'
+ * ```
+ */
+export const joinGS1 = elements => elements.map( ( { ai , data } , index ) =>
+{
+    const fixed = GS1_PREDEFINED[ ai.slice( 0 , 2 ) ]?.ai === ai.length ;
+    const last  = index === elements.length - 1 ;
+    return ai + data + ( fixed || last ? '' : GS ) ;
+} ).join( '' ) ;
+
+/**
  * Makes one reading look the same whichever engine read it.
  *
  * The engines disagree on GS1 : a native detector may put the AIM symbology

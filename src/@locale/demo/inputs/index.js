@@ -13,6 +13,7 @@ import i18nTextAreaMarkdown from './i18nTextAreaMarkdown' ;
 import password   from './password' ;
 import percentage from './percentage' ;
 import pin        from './pin' ;
+import scan       from './scan' ;
 import search     from './search' ;
 import sizes      from './sizes' ;
 import tags       from './tags' ;
@@ -42,6 +43,7 @@ const inputs =
     password ,
     percentage ,
     pin ,
+    scan ,
     search ,
     sizes ,
     tags ,
