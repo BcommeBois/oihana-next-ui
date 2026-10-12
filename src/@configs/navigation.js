@@ -19,6 +19,7 @@ import {
     MdSpaceDashboard     as DashboardsIcon ,
     MdInsights           as AnalyticsIcon ,
     MdSupportAgent       as CustomersIcon ,
+    MdTimeline           as ProjectIcon ,
     MdWidgets            as ComponentsIcon ,
     MdTexture            as PatternsIcon ,
     MdTextSnippet        as TypographyIcon ,
@@ -320,6 +321,7 @@ const navigation =
                 [
                     { id : 'analytics' , type : LINK  , Icon : AnalyticsIcon , path  : '/scenarios/dashboards/analytics' } ,
                     { id : 'customers' , type : LINK  , Icon : CustomersIcon , path  : '/scenarios/dashboards/customers' } ,
+                    { id : 'project'   , type : LINK  , Icon : ProjectIcon   , path  : '/scenarios/dashboards/project'   } ,
                 ]
             } ,
             {
