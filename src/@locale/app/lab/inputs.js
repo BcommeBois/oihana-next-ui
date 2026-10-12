@@ -150,6 +150,11 @@ const inputs =
                 label       : 'Fichier' ,
                 description : 'Le sélecteur de fichier natif ; le gestionnaire reçoit les fichiers, pas l’événement.' ,
             } ,
+            'photo' :
+            {
+                label       : 'Photo' ,
+                description : 'Une photo prise sur place, réduite et sans ses métadonnées (GPS compris) avant de partir.' ,
+            } ,
         } ,
     } ,
 
@@ -290,6 +295,11 @@ const inputs =
             {
                 label       : 'File' ,
                 description : 'The native file picker ; the handler receives the files, not the event.' ,
+            } ,
+            'photo' :
+            {
+                label       : 'Photo' ,
+                description : 'A photo taken on the spot, shrunk and stripped of its metadata (GPS included) before it leaves.' ,
             } ,
         } ,
     } ,

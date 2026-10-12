@@ -36,8 +36,10 @@ import InputValidatorDemo  from '@/demo/inputs/InputValidatorDemo' ;
 import FileInputDemo       from '@/demo/inputs/FileInputDemo' ;
 import InputScanDemo       from '@/demo/inputs/InputScanDemo' ;
 import NumericKeypadDemo   from '@/demo/inputs/NumericKeypadDemo' ;
+import PhotoCaptureDemo    from '@/demo/inputs/PhotoCaptureDemo' ;
 
 import {
+    MdAddAPhoto ,
     MdAttachFile ,
     MdAttachMoney ,
     MdCalendarToday ,
@@ -114,6 +116,7 @@ const ROWS =
     { key : 'hex-color'         , icon : MdColorLens     , category : 'specialized' , component : <InputHexColorDemo /> } ,
     { key : 'url-email'         , icon : MdEmail         , category : 'specialized' , component : <InputUrlEmailDemo /> } ,
     { key : 'file'              , icon : MdAttachFile    , category : 'specialized' , component : <FileInputDemo /> } ,
+    { key : 'photo'             , icon : MdAddAPhoto     , category : 'specialized' , component : <PhotoCaptureDemo /> } ,
     { key : 'scan'              , icon : MdQrCodeScanner , category : 'specialized' , component : <InputScanDemo /> } ,
 ] ;
 
