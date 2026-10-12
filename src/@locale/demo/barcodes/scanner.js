@@ -2,7 +2,7 @@ const scanner =
 {
     fr :
     {
-        intro      : 'Ouvrez cette page sur un téléphone et visez les codes de la page « QR et codes-barres » affichée sur un ordinateur — ou n’importe quel code-barres d’un emballage. La caméra demande HTTPS : le lab déployé l’est.' ,
+        intro      : 'Ouvrez cette page sur un téléphone et visez les codes de la page « QR et codes-barres » affichée sur un ordinateur — ou n’importe quel code-barres d’un emballage. La caméra demande HTTPS : le lab déployé l’est. Chaque lecture est normalisée : la même valeur quel que soit le moteur, et pour un GS1-128 ses identifiants (AI) découpés. ␝ marque un séparateur GS1.' ,
         settings   : 'Réglages' ,
         active     : 'Caméra active' ,
         sound      : 'Bip et vibration' ,
@@ -27,7 +27,7 @@ const scanner =
 
     en :
     {
-        intro      : 'Open this page on a phone and aim at the codes of the « QR & barcodes » page shown on a computer — or at any barcode on a package. The camera needs HTTPS : the deployed lab has it.' ,
+        intro      : 'Open this page on a phone and aim at the codes of the « QR & barcodes » page shown on a computer — or at any barcode on a package. The camera needs HTTPS : the deployed lab has it. Every reading is normalized : the same value whichever engine read it, and for a GS1-128 its application identifiers split. ␝ marks a GS1 separator.' ,
         settings   : 'Settings' ,
         active     : 'Camera on' ,
         sound      : 'Beep and vibration' ,

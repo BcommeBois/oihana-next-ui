@@ -79,7 +79,6 @@
     "@nivo/radial-bar": "^0.99.0",
     "@nivo/waffle": "^0.99.0",
     "@vis.gl/react-maplibre": "^8.1.2",
-    "barcode-detector": "^3.0.0",
     "daisyui": "^5.0.0",
     "maplibre-gl": "^6.4.1",
     "next": "^16.0.0",
@@ -88,7 +87,8 @@
     "supercluster": "^9.0.0",
     "tailwindcss": "^4.0.0",
     "terra-draw": "^1.32.0",
-    "terra-draw-maplibre-gl-adapter": "^1.4.0"
+    "terra-draw-maplibre-gl-adapter": "^1.4.0",
+    "zxing-wasm": "^3.1.0"
   },
   "peerDependenciesMeta": {
     "@nivo/arcs": {
@@ -130,9 +130,6 @@
     "@vis.gl/react-maplibre": {
       "optional": true
     },
-    "barcode-detector": {
-      "optional": true
-    },
     "maplibre-gl": {
       "optional": true
     },
@@ -143,6 +140,9 @@
       "optional": true
     },
     "terra-draw-maplibre-gl-adapter": {
+      "optional": true
+    },
+    "zxing-wasm": {
       "optional": true
     }
   },
@@ -195,7 +195,6 @@
     "@types/sanitize-html": "^2.16.2",
     "@vis.gl/react-maplibre": "^8.1.3",
     "babel-plugin-react-compiler": "1.0.0",
-    "barcode-detector": "^3.2.2",
     "daisyui": "^5.7.47",
     "maplibre-gl": "^6.12.0",
     "next": "^16.3.8",
@@ -209,7 +208,8 @@
     "tailwindcss-animated": "^2.1.0",
     "tailwindcss-opentype": "^1.2.0",
     "terra-draw": "^1.36.0",
-    "terra-draw-maplibre-gl-adapter": "^1.4.1"
+    "terra-draw-maplibre-gl-adapter": "^1.4.1",
+    "zxing-wasm": "^3.1.5"
   },
   "resolutions": {
     "serialize-javascript": "6.0.2"

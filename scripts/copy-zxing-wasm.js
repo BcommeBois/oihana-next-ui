@@ -7,9 +7,9 @@
  * ### Why a copy is needed at all
  *
  * Where a browser has no native `BarcodeDetector` — every iPhone, Firefox,
- * Chrome on Windows — the camera scanner reads through `barcode-detector`,
- * which runs ZXing compiled to WebAssembly. 🚨 **By default that binary is
- * fetched from the jsDelivr CDN.** Three failures in one : no reading without
+ * Chrome on Windows — the camera scanner reads through `zxing-wasm`, ZXing
+ * compiled to WebAssembly. 🚨 **By default that binary is fetched from the
+ * jsDelivr CDN.** Three failures in one : no reading without
  * a network (a warehouse yard, the back of a shed), a request to a third party
  * on every first scan, and a strict Content-Security-Policy that blocks it.
  * Served from `public/`, the binary comes from the application's own origin,
@@ -19,8 +19,8 @@
  *
  * The JavaScript that loads the binary and the binary itself must match. The
  * folder is named after the installed `zxing-wasm`, and the scanner asks for
- * `/zxing/<ZXING_WASM_VERSION>/` — the version `barcode-detector` exports — so
- * an upgrade can never pair a new loader with a cached old binary. Older
+ * `/zxing/<ZXING_WASM_VERSION>/` — the version the package exports — so an
+ * upgrade can never pair a new loader with a cached old binary. Older
  * folders are removed on every run.
  *
  * ### Why at build time rather than at install time
@@ -31,12 +31,12 @@
  *
  * ### Why it never fails a build
  *
- * `barcode-detector` is an OPTIONAL peer — most applications consuming this
+ * `zxing-wasm` is an OPTIONAL peer — most applications consuming this
  * library never open a camera, and many that do only target devices with a
  * native detector. Finding it absent is an ordinary outcome : the script says
  * so in one line and exits `0`.
  *
- * @see {@link https://github.com/Sec-ant/barcode-detector}
+ * @see {@link https://github.com/Sec-ant/zxing-wasm}
  */
 
 import { copyFileSync , mkdirSync , readFileSync , rmSync } from 'node:fs' ;
@@ -62,32 +62,30 @@ const FILE = 'zxing_reader.wasm' ;
 const DESTINATION = join( 'public' , 'zxing' ) ;
 
 /**
- * Locates the reader `barcode-detector` itself loads.
+ * Locates the installed reader.
  *
- * Resolution starts from the application being built, then from
- * `barcode-detector` : that package pins its `zxing-wasm` exactly, and the
- * binary must be the one its loader expects — not whatever another package
- * may have hoisted.
+ * Resolution starts from the application being built rather than from this
+ * file : run as an installed binary, the script sits under
+ * `node_modules/oihana-next-ui/scripts`, and a resolution from there could find
+ * a copy nested under the library before the one the application installed —
+ * the version the bundle will actually load.
  *
  * @returns {{ file : string , version : string }|null} The reader, or `null` when the scanner's engine is absent.
  */
 const findReader = () =>
 {
-    const fromApplication = createRequire( resolve( process.cwd() , 'package.json' ) ) ;
+    const require = createRequire( resolve( process.cwd() , 'package.json' ) ) ;
 
-    let detector ;
+    let manifest ;
 
     try
     {
-        detector = fromApplication.resolve( 'barcode-detector/package.json' ) ;
+        manifest = require.resolve( 'zxing-wasm/package.json' ) ;
     }
     catch
     {
         return null ;
     }
-
-    const fromDetector = createRequire( detector ) ;
-    const manifest     = fromDetector.resolve( 'zxing-wasm/package.json' ) ;
 
     return {
         file    : join( dirname( manifest ) , 'dist' , 'reader' , FILE ) ,
@@ -99,7 +97,7 @@ const reader = findReader() ;
 
 if ( !reader )
 {
-    console.log( 'barcode-detector is not installed — no barcode reader to serve.' ) ;
+    console.log( 'zxing-wasm is not installed — no barcode reader to serve.' ) ;
     process.exit( 0 ) ;
 }
 

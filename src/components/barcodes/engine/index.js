@@ -3,9 +3,17 @@
  * reads every requested format, ZXing in WebAssembly everywhere else.
  *
  * Kept in one module, as the map engine is, so the rest of the library never
- * names `barcode-detector` : the optional peer is imported here and only here,
- * and only when it is needed — on a phone with a native detector, neither its
+ * names `zxing-wasm` : the optional peer is imported here and only here, and
+ * only when it is needed — on a phone with a native detector, neither its
  * JavaScript nor its WebAssembly is ever downloaded.
+ *
+ * 🔑 **ZXing is called directly, not through a `BarcodeDetector` ponyfill.**
+ * A ponyfill must return what the standard API returns — and the standard has
+ * no field for the AIM symbology identifier. ZXing knows a GS1-128 from a plain
+ * Code 128 (`]C1` against `]C0`) ; through a ponyfill that knowledge is thrown
+ * away, and a pallet label `(00)…` reads as twenty digits like any other. Both
+ * engines here return `symbologyIdentifier` and `contentType` beside the
+ * standard fields, and `normalizeScan` makes the two agree.
  *
  * @module components/barcodes/engine
  */
@@ -32,18 +40,44 @@ export const SCANNER_FORMATS = [ 'qr_code' , 'code_128' , 'ean_13' , 'ean_8' , '
 export const NATIVE = 'native' ;
 export const ZXING  = 'zxing' ;
 
-let ponyfill  = null ;
+/**
+ * The formats, from the names of the Barcode Detection API to ZXing's.
+ *
+ * @type {Object.<string,string>}
+ */
+export const ZXING_FORMATS =
+{
+    aztec       : 'Aztec' ,
+    codabar     : 'Codabar' ,
+    code_128    : 'Code128' ,
+    code_39     : 'Code39' ,
+    code_93     : 'Code93' ,
+    data_matrix : 'DataMatrix' ,
+    ean_13      : 'EAN13' ,
+    ean_8       : 'EAN8' ,
+    itf         : 'ITF' ,
+    pdf417      : 'PDF417' ,
+    qr_code     : 'QRCode' ,
+    upc_a       : 'UPCA' ,
+    upc_e       : 'UPCE' ,
+} ;
+
+const FROM_ZXING = Object.fromEntries( Object.entries( ZXING_FORMATS ).map( ( [ name , zxing ] ) => [ zxing , name ] ) ) ;
+
+FROM_ZXING.ITF14 = 'itf' ;
+
+let reader    = null ;
 let overrides = null ;
 
 /**
- * Loads the ponyfill once, and points it at the reader served by the
+ * Loads the reader once, and points it at the binary served by the
  * application instead of its default CDN.
  *
- * @returns {Promise<Object>} The `barcode-detector/ponyfill` module.
+ * @returns {Promise<Object>} The `zxing-wasm/reader` module.
  */
-const loadPonyfill = () =>
+const loadReader = () =>
 {
-    ponyfill ??= import( 'barcode-detector/ponyfill' ).then( module =>
+    reader ??= import( 'zxing-wasm/reader' ).then( module =>
     {
         // One object, kept : the module compares its overrides to decide whether to load the WebAssembly again.
         overrides =
@@ -56,8 +90,76 @@ const loadPonyfill = () =>
         return module ;
     } ) ;
 
-    return ponyfill ;
+    return reader ;
 } ;
+
+/**
+ * A detector with the shape of `BarcodeDetector`, reading through ZXing.
+ *
+ * Each frame is copied into a canvas, then handed to ZXing in « Plain » text
+ * mode — the data as encoded, a GS1 separator where a FNC1 stood — with the
+ * symbology identifier and the content type kept.
+ */
+class ZXingDetector
+{
+    /**
+     * @param {Object} module - The `zxing-wasm/reader` module.
+     * @param {string[]} formats - Under the names of the Barcode Detection API.
+     */
+    constructor( module , formats )
+    {
+        this.module  = module ;
+        this.formats = formats.map( format => ZXING_FORMATS[ format ] ).filter( Boolean ) ;
+        this.canvas  = null ;
+    }
+
+    /**
+     * @param {HTMLVideoElement|HTMLImageElement|HTMLCanvasElement|ImageBitmap} source
+     * @returns {Promise<Array<{ boundingBox : Object , contentType : string , cornerPoints : Array , format : string , rawValue : string , symbologyIdentifier : string }>>}
+     */
+    async detect( source )
+    {
+        const width  = source.videoWidth  || source.naturalWidth  || source.width ;
+        const height = source.videoHeight || source.naturalHeight || source.height ;
+
+        if ( !width || !height )
+        {
+            return [] ;
+        }
+
+        if ( !this.canvas || this.canvas.width !== width || this.canvas.height !== height )
+        {
+            this.canvas = typeof OffscreenCanvas === 'function' ? new OffscreenCanvas( width , height ) : Object.assign( document.createElement( 'canvas' ) , { height , width } ) ;
+        }
+
+        const context = this.canvas.getContext( '2d' , { willReadFrequently : true } ) ;
+
+        context.drawImage( source , 0 , 0 , width , height ) ;
+
+        const results = await this.module.readBarcodes( context.getImageData( 0 , 0 , width , height ) ,
+        {
+            formats   : this.formats ,
+            textMode  : 'Plain' ,
+            tryHarder : true ,
+        } ) ;
+
+        return results.filter( result => result.isValid ).map( ( { contentType , format , position , symbologyIdentifier , text } ) =>
+        {
+            const { bottomLeft , bottomRight , topLeft , topRight } = position ;
+            const xs = [ topLeft.x , topRight.x , bottomRight.x , bottomLeft.x ] ;
+            const ys = [ topLeft.y , topRight.y , bottomRight.y , bottomLeft.y ] ;
+
+            return {
+                boundingBox  : { height : Math.max( ...ys ) - Math.min( ...ys ) , width : Math.max( ...xs ) - Math.min( ...xs ) , x : Math.min( ...xs ) , y : Math.min( ...ys ) } ,
+                contentType ,
+                cornerPoints : [ topLeft , topRight , bottomRight , bottomLeft ] ,
+                format       : FROM_ZXING[ format ] ?? String( format ).toLowerCase() ,
+                rawValue     : text ,
+                symbologyIdentifier ,
+            } ;
+        } ) ;
+    }
+}
 
 /**
  * Whether the browser's own detector reads every requested format.
@@ -107,9 +209,7 @@ export const createDetector = async ( formats = SCANNER_FORMATS , { engine = 'au
         throw new Error( 'This browser has no native BarcodeDetector for these formats.' ) ;
     }
 
-    const { BarcodeDetector } = await loadPonyfill() ;
-
-    return { detector : new BarcodeDetector( { formats } ) , engine : ZXING } ;
+    return { detector : new ZXingDetector( await loadReader() , formats ) , engine : ZXING } ;
 } ;
 
 /**
@@ -144,7 +244,7 @@ export const preloadScanner = async ( { formats = SCANNER_FORMATS , force = fals
 
     try
     {
-        const module = await loadPonyfill() ;
+        const module = await loadReader() ;
         await module.prepareZXingModule( { fireImmediately : true , overrides } ) ;
         return true ;
     }

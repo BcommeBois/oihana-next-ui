@@ -12,6 +12,8 @@ import Loading from '../Loading' ;
 import useI18n   from '../../contexts/locale/useI18n' ;
 import NO_LOCALE from '../../contexts/locale/noLocale' ;
 
+import normalizeScan from '../../helpers/barcodes/normalizeScan' ;
+
 import { SCANNER_FORMATS , createDetector } from './engine' ;
 
 export const IDLE      = 'idle' ;
@@ -76,17 +78,29 @@ const usePageVisible = () =>
  * BarcodeScanner — the camera, reading codes.
  *
  * Films with the back camera and reports every code it reads through
- * `onDetect( { rawValue , format , cornerPoints , boundingBox } )`. It reads
+ * `onDetect( reading )`. It reads
  * QR codes and the linear formats the library draws by default ; `formats`
  * narrows or widens that, under the names of the Barcode Detection API.
  *
  * 🔑 **Two engines, one API.** Where the browser has its own `BarcodeDetector`
  * reading every requested format — Chrome on Android and macOS — it is used ;
  * everywhere else — every iPhone, Firefox, Chrome on Windows — ZXing compiled to
- * WebAssembly, through the optional peer `barcode-detector`, loaded only then.
+ * WebAssembly, through the optional peer `zxing-wasm`, loaded only then.
  * Its binary is served by the application (`oihana-copy-zxing-wasm`) and kept by
  * the offline service worker ; `preloadScanner()` fetches it ahead of need.
  * `onReady( { engine } )` says which one runs.
+ *
+ * 🔑 **The same reading from either engine.** The two disagree on GS1 — a native
+ * detector may put the symbology identifier in the text (`]C1…` on Android),
+ * ZXing keeps it apart — so every reading goes through
+ * {@link module:helpers/barcodes/normalizeScan} :
+ *
+ * - `value` : the data alone, the field to use ;
+ * - `rawValue` : the text as the engine gave it, untouched ;
+ * - `format` : under the names of the Barcode Detection API (a GS1-128 is a `code_128`) ;
+ * - `symbology` : the AIM identifier (`]C1`, `]E0`…) when known ;
+ * - `gs1` and `elements` : whether the code carries GS1 data, and its elements `[ { ai , data } ]` ;
+ * - `cornerPoints` and `boundingBox` : where it was, in the video's pixels.
  *
  * 🔑 **The camera is held only while it films.** It opens when `active` and the
  * page is shown, and every track is stopped when either stops, and on unmount :
@@ -94,7 +108,8 @@ const usePageVisible = () =>
  *
  * 🔑 **One code, one call.** A code held in view is read many times a second ;
  * it is reported once, then again only after it has left the view for
- * `dedupeDelay` milliseconds.
+ * `dedupeDelay` milliseconds. The same code read by both engines is the same
+ * `value`, so it counts once.
  *
  * It draws its own states — opening, refused, no camera, no HTTPS — with a
  * retry where one can help. It makes no sound : pair it with
@@ -123,7 +138,7 @@ const usePageVisible = () =>
  * @param {'environment'|'user'} [props.facingMode='environment'] - The back or the front camera.
  * @param {string[]} [props.formats] - The formats to read. Defaults to `SCANNER_FORMATS`.
  * @param {number} [props.interval=100] - The pause between two readings, in milliseconds : ten a second is plenty, and spares the battery.
- * @param {Function} [props.onDetect] - `( { rawValue , format , cornerPoints , boundingBox } ) => void`.
+ * @param {Function} [props.onDetect] - `( { value , rawValue , format , symbology , gs1 , elements , cornerPoints , boundingBox } ) => void`.
  * @param {Function} [props.onError] - `( error , status ) => void`, when the camera or the engine fails.
  * @param {Function} [props.onReady] - `( { engine , formats } ) => void`, once the camera films and the engine reads.
  * @param {string} [props.path='components.barcode.scanner'] - i18n path of the labels.
@@ -223,16 +238,17 @@ const BarcodeScanner =
         {
             const now = performance.now() ;
 
-            for ( const { boundingBox , cornerPoints , format , rawValue } of codes )
+            for ( const code of codes )
             {
-                const key  = `${ format }:${ rawValue }` ;
-                const last = seen.get( key ) ;
+                const reading = normalizeScan( code ) ;
+                const key     = `${ reading.format }:${ reading.value }` ;
+                const last    = seen.get( key ) ;
 
                 seen.set( key , now ) ;
 
                 if ( last === undefined || now - last > dedupeDelay )
                 {
-                    callbacks.current.onDetect?.( { boundingBox , cornerPoints , format , rawValue } ) ;
+                    callbacks.current.onDetect?.( { ...reading , boundingBox : code.boundingBox , cornerPoints : code.cornerPoints } ) ;
                 }
             }
         } ;

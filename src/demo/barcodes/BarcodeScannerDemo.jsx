@@ -73,10 +73,10 @@ const BarcodeScannerDemo = ( { path = 'demo.barcodes.scanner' } = {} ) =>
 
     const { signal } = useFeedbackSignal( { sound : beep , vibration : beep } ) ;
 
-    const onDetect = useCallback( ( { format : kind , rawValue } ) =>
+    const onDetect = useCallback( reading =>
     {
         signal( 'success' ) ;
-        setCodes( list => [ { at : new Date() , format : kind , id : `${ Date.now() }-${ rawValue }` , rawValue } , ...list ].slice( 0 , KEEP ) ) ;
+        setCodes( list => [ { ...reading , at : new Date() , id : `${ Date.now() }-${ reading.value }` } , ...list ].slice( 0 , KEEP ) ) ;
     }
     , [ signal ] ) ;
 
@@ -185,11 +185,29 @@ const BarcodeScannerDemo = ( { path = 'demo.barcodes.scanner' } = {} ) =>
                     <p className="text-sm text-base-content/60">{ t.empty }</p>
                 ) : (
                     <ul className="flex flex-col gap-2">
-                        { codes.map( ( { at , format : kind , id , rawValue } ) => (
-                            <li key={ id } className="flex flex-wrap items-center gap-2 rounded-box bg-base-100 px-3 py-2">
-                                <Badge color="primary" size="sm">{ kind }</Badge>
-                                <span className="font-mono text-sm break-all">{ rawValue }</span>
-                                <span className="ml-auto text-xs text-base-content/50">{ at.toLocaleTimeString() }</span>
+                        { codes.map( ( { at , elements , format : kind , gs1 , id , rawValue , symbology , value } ) => (
+                            <li key={ id } className="flex flex-col gap-2 rounded-box bg-base-100 px-3 py-2">
+                                <div className="flex flex-wrap items-center gap-2">
+                                    <Badge color="primary" size="sm">{ kind }</Badge>
+                                    { gs1 && <Badge color="secondary" size="sm">GS1</Badge> }
+                                    { symbology && <Badge size="sm" style="outline">{ symbology }</Badge> }
+                                    <span className="font-mono text-sm break-all">{ value.replaceAll( '\u001d' , '␝' ) }</span>
+                                    <span className="ml-auto text-xs text-base-content/50">{ at.toLocaleTimeString() }</span>
+                                </div>
+                                { elements && (
+                                    <div className="flex flex-wrap gap-2">
+                                        { elements.map( ( { ai , data } ) => (
+                                            <span key={ ai + data } className="rounded-box bg-base-200 px-2 py-0.5 font-mono text-xs">
+                                                ({ ai }) { data }
+                                            </span>
+                                        ) ) }
+                                    </div>
+                                ) }
+                                { rawValue !== value && (
+                                    <span className="font-mono text-xs text-base-content/50 break-all">
+                                        rawValue : { rawValue.replaceAll( '\u001d' , '␝' ) }
+                                    </span>
+                                ) }
                             </li>
                         ) ) }
                     </ul>

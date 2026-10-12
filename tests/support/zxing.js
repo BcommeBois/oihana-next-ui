@@ -4,9 +4,9 @@ import { dirname , join } from 'node:path' ;
 
 import { prepareZXingModule , readBarcodes } from 'zxing-wasm/reader' ;
 
-// The reader barcode-detector itself loads, read from disk : no network in a test.
-const require = createRequire( import.meta.url ) ;
-const manifest = createRequire( require.resolve( 'barcode-detector/package.json' ) ).resolve( 'zxing-wasm/package.json' ) ;
+// The very binary the scanner serves, read from disk : no network in a test.
+const require  = createRequire( import.meta.url ) ;
+const manifest = require.resolve( 'zxing-wasm/package.json' ) ;
 const binary   = readFileSync( join( dirname( manifest ) , 'dist' , 'reader' , 'zxing_reader.wasm' ) ) ;
 
 let ready = null ;
@@ -80,10 +80,11 @@ export const symbolImage = ( symbol , scale = 3 ) =>
  * Reads every code in an image with ZXing.
  *
  * @param {Uint8Array} image
- * @returns {Promise<Array<{ format : string , text : string , symbologyIdentifier : string }>>}
+ * @param {Object} [options] - Reader options, over `{ formats : [] , tryHarder : true }`. `textMode : 'Plain'` reads as the scanner does.
+ * @returns {Promise<Array<{ format : string , text : string , symbologyIdentifier : string , contentType : string }>>}
  */
-export const read = async image =>
+export const read = async ( image , options = {} ) =>
 {
     await prepare() ;
-    return readBarcodes( image , { formats : [] , tryHarder : true } ) ;
+    return readBarcodes( image , { formats : [] , tryHarder : true , ...options } ) ;
 } ;
