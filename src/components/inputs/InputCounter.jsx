@@ -16,6 +16,9 @@ import cn           from '../../themes/helpers/cn' ;
 import getButtonClassNames , { SQUARE } from '../../themes/components/button' ;
 import styles       from './styles/InputActions.module.css' ;
 import useMergeRefs from '../../hooks/useMergeRefs'
+import usePressRepeat from '../../hooks/usePressRepeat' ;
+
+import { PRESS_REPEAT_DELAY , PRESS_REPEAT_INTERVAL } from '../../helpers/timers/createPressRepeat' ;
 
 import readInputValue from '../../helpers/react/readInputValue'
 
@@ -42,6 +45,9 @@ import { MdAdd as MoreIcon, MdRemove as LessIcon } from 'react-icons/md'
  * @param {React.ReactNode} [props.moreIcon] - Custom more button icon (default: MdAdd)
  * @param {boolean} [props.showIcon=true] - Show icon
  * @param {boolean} [props.showStepper=true] - Show increment/decrement buttons
+ * @param {boolean} [props.repeat=false] - Held down, the buttons repeat : after `repeatDelay`, one step every `repeatInterval`, until a bound is reached
+ * @param {number} [props.repeatDelay=400] - Before a button held down starts repeating, in milliseconds
+ * @param {number} [props.repeatInterval=100] - Between two repeated steps, in milliseconds
  * @param {string} [props.decreaseLabel] - A11y label for the decrease button. Defaults to the i18n `decrease` key read at `path`, then `'Decrease'`.
  * @param {string} [props.path='components.input.counter'] - i18n path the stepper labels are read from.
  * @param {string} [props.increaseLabel] - A11y label for the increase button. Defaults to the i18n `increase` key read at `path`, then `'Increase'`.
@@ -83,6 +89,10 @@ const InputCounter =
 
     showIcon = true,
     showStepper = true,
+
+    repeat = false ,
+    repeatDelay = PRESS_REPEAT_DELAY ,
+    repeatInterval = PRESS_REPEAT_INTERVAL ,
 
     disabled = false,
     readOnly = false,
@@ -140,25 +150,23 @@ const InputCounter =
         onBlurFromProps?.( event ) ;
     };
 
-    const handleLess = event =>
+    // Returns whether the value moved : clamped at a bound, it did not, which ends a held press.
+    const stepBy = direction =>
     {
-        event?.preventDefault() ;
-
         const currentValue = value === '' || isNaN(value) ? defaultValue : parseFloat(value) ;
-        setValue( normalizeValue( currentValue - step ) ) ;
+        const nextValue    = normalizeValue( currentValue + direction * step ) ;
+
+        setValue( nextValue ) ;
 
         requestAnimationFrame(() => internalRef.current?.focus() ) ;
+
+        return nextValue !== currentValue ;
     };
 
-    const handleMore = event =>
-    {
-        event?.preventDefault() ;
+    const repeatOptions = { delay : repeatDelay , enabled : repeat , interval : repeatInterval } ;
 
-        const currentValue = value === '' || isNaN(value) ? defaultValue : parseFloat(value);
-        setValue( normalizeValue( currentValue + step ) ) ;
-
-        requestAnimationFrame(() => internalRef.current?.focus() ) ;
-    };
+    const lessHandlers = usePressRepeat( () => stepBy( -1 ) , repeatOptions ) ;
+    const moreHandlers = usePressRepeat( () => stepBy( 1 ) , repeatOptions ) ;
 
     // Icon element
     const iconElement = showIcon &&
@@ -173,7 +181,7 @@ const InputCounter =
     const btnClassNames = cn
     (
         getButtonClassNames({ shape : SQUARE , size }) ,
-        'join-item font-semibold' ,
+        'join-item font-semibold select-none touch-manipulation' ,
         styles.btnInput ,
         error && styles.btnInputError
     ) ;
@@ -184,22 +192,22 @@ const InputCounter =
         <button
             key        = "less"
             type       = "button"
-            onClick    = { handleLess }
             disabled   = { disabled || numericValue <= min }
             className  = { btnClassNames }
             aria-label = { decreaseText }
             title      = { decreaseText }
+            { ...lessHandlers }
         >
             { lessIcon || <LessIcon /> }
         </button>,
         <button
             key        = "more"
             type       = "button"
-            onClick    = { handleMore }
             disabled   = { disabled || numericValue >= max }
             className  = { btnClassNames }
             aria-label = { increaseText }
             title      = { increaseText }
+            { ...moreHandlers }
         >
             { moreIcon || <MoreIcon /> }
         </button>

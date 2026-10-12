@@ -129,6 +129,7 @@ const NumericKeypadDemo = ( { path = 'demo.inputs.keypad' } = {} ) =>
                         } }
                         onLimit  = { onLimit }
                         onSubmit = { onSubmit }
+                        repeat
                         step     = { 0.5 }
                         unit     = "m³"
                         value    = { volume }

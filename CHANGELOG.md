@@ -8,6 +8,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**⏩ − and + that go on stepping while held down**
+
+- **`NumericKeypad` and `InputCounter` : new `repeat` option** (off by default), with **`repeatDelay`** (400 ms) and **`repeatInterval`** (100 ms). A press steps at once, on the pointer going down ; held past the delay, it steps again every interval — ten a second, a steady pace that does not overshoot — until the pointer is lifted, leaves the button or is cancelled, the window loses the focus or the page is hidden. 🔑 **It stops at the first step refused** : the keypad at its `min` or `max` calls `onLimit` once, not ten times a second, and the counter stops at its bound. Nothing else changes : a short tap is still one step, a keyboard click still one step, and holding `+` or `-` on a physical keyboard already repeats at the system's pace. The two buttons no longer open the context menu on a long press, select no text and do not wait for a double tap.
+- **New `hooks/usePressRepeat( action , { delay , enabled , interval } )`** : the handlers to spread on any button that should repeat while held ; the action returns `false` to stop. The latest action is always the one called, so a repeat steps from the value on screen. Disabled, it is a plain `onClick`.
+- **New `helpers/timers/createPressRepeat`**, the timing alone with injectable timers, and `PRESS_REPEAT_DELAY`, `PRESS_REPEAT_INTERVAL`. **8 more tests** (223 in all), against a fake clock : a tap is one step, the delay then the pace, the options, a refusal that ends the repeat and is made once, a press refused at once, a restart that never runs two clocks.
+- In the lab, the m³ keypad repeats, and the counter demo gains a quantity from 0 to 500 that does.
+
 **🔢 A numeric keypad for the thumb**
 
 - **New `components/inputs/NumericKeypad`** : a quantity typed on large keys that never move — made for a phone held in one hand, a glove on, eyes on the shelf. The number shows big in an `<output>` with its `unit` (`m³`, `kg`, `pieces`) ; 🔑 **the display is not a field, so no system keyboard ever opens** and slides over the screen. Keys 1 to 9 and 0, ⌫ (the last character), C (everything), the language's decimal separator (`,` in French) when **`decimals`** is above 0, **−/+** around the display stepping by **`step`** (`showStepper`, on by default), and a confirm button when **`onSubmit`** is given. **`layout`** : `'phone'` puts 1-2-3 on top (the default), `'calculator'` 7-8-9. **`size`** : `md`, `lg`, `xl` — keys of 48, 56 or 64 pixels, never under 48. Controlled or not : **`value`** / **`defaultValue`** / **`onChange`**.

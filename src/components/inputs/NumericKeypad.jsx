@@ -13,6 +13,7 @@ import { LG , MD , XL } from '../../themes/sizing/sizes' ;
 import useI18n         from '../../contexts/locale/useI18n' ;
 import NO_LOCALE       from '../../contexts/locale/noLocale' ;
 import useNumberFormat from '../../hooks/useNumberFormat' ;
+import usePressRepeat  from '../../hooks/usePressRepeat' ;
 import useValue        from '../../hooks/useValue' ;
 
 import applyKeypadKey ,
@@ -24,6 +25,8 @@ import applyKeypadKey ,
     parseKeypadText ,
     toKeypadText ,
 } from '../../helpers/numbers/applyKeypadKey' ;
+
+import { PRESS_REPEAT_DELAY , PRESS_REPEAT_INTERVAL } from '../../helpers/timers/createPressRepeat' ;
 
 export const PHONE      = 'phone' ;
 export const CALCULATOR = 'calculator' ;
@@ -98,7 +101,10 @@ const iconSizeMap =
  * never brings it back inside the range.
  *
  * The decimal separator is the language's (`,` in French), shown only when
- * `decimals` is above 0. −/+ around the display step by `step`.
+ * `decimals` is above 0. −/+ around the display step by `step` ; with
+ * `repeat`, held down they go on stepping — after `repeatDelay`, one step every
+ * `repeatInterval` — and stop at the first step refused, so `onLimit` is
+ * called once.
  *
  * With the focus on it, the physical keyboard works too : digits, `.` or `,`,
  * Backspace, Delete and Escape (clear), `+` and `-` (when the stepper shows),
@@ -142,6 +148,9 @@ const iconSizeMap =
  * @param {Function} [props.onSubmit] - `( value : number ) => void`. Shows the confirm button.
  * @param {string} [props.path='components.input.keypad'] - i18n path of the labels.
  * @param {React.ReactNode} [props.placeholder] - Shown while nothing is typed.
+ * @param {boolean} [props.repeat=false] - Held down, − and + repeat : after `repeatDelay`, one step every `repeatInterval`, stopping at a limit.
+ * @param {number} [props.repeatDelay=400] - Before − or + held down starts repeating, in milliseconds.
+ * @param {number} [props.repeatInterval=100] - Between two repeated steps, in milliseconds.
  * @param {boolean} [props.showStepper=true] - Show −/+ around the display.
  * @param {'md'|'lg'|'xl'} [props.size='md'] - Keys of 48, 56 or 64 pixels.
  * @param {number} [props.step=1] - What −/+ take or add.
@@ -165,6 +174,9 @@ const NumericKeypad =
     onSubmit ,
     path         = 'components.input.keypad' ,
     placeholder ,
+    repeat         = false ,
+    repeatDelay    = PRESS_REPEAT_DELAY ,
+    repeatInterval = PRESS_REPEAT_INTERVAL ,
     showStepper  = true ,
     size         = MD ,
     step         = 1 ,
@@ -192,11 +204,13 @@ const NumericKeypad =
 
     const options = { decimals , max , min , step } ;
 
+    const repeatOptions = { delay : repeatDelay , enabled : repeat , interval : repeatInterval } ;
+
     const press = key =>
     {
         if ( disabled )
         {
-            return ;
+            return false ;
         }
 
         const next = applyKeypadKey( text , key , options ) ;
@@ -204,7 +218,7 @@ const NumericKeypad =
         if ( next.refused )
         {
             onLimit?.( next.refused ) ;
-            return ;
+            return false ;
         }
 
         if ( key === KEYPAD_KEYS.SUBMIT )
@@ -213,7 +227,7 @@ const NumericKeypad =
             {
                 onSubmit?.( next.value ) ;
             }
-            return ;
+            return true ;
         }
 
         setTyped( next.text ) ;
@@ -222,7 +236,12 @@ const NumericKeypad =
         {
             setValue( next.value ) ;
         }
+
+        return true ;
     } ;
+
+    const decrease = usePressRepeat( () => press( KEYPAD_KEYS.DECREMENT ) , repeatOptions ) ;
+    const increase = usePressRepeat( () => press( KEYPAD_KEYS.INCREMENT ) , repeatOptions ) ;
 
     const onKeyDown = event =>
     {
@@ -314,13 +333,13 @@ const NumericKeypad =
                 { showStepper && (
                     <button
                         aria-label  = { labels.decrease }
-                        className   = { cn( getButtonClassNames( { style : OUTLINE } ) , 'shrink-0' , stepperSizeMap[ size ] ?? stepperSizeMap[ MD ] ) }
+                        className   = { cn( getButtonClassNames( { style : OUTLINE } ) , 'shrink-0 select-none touch-manipulation' , stepperSizeMap[ size ] ?? stepperSizeMap[ MD ] ) }
                         disabled    = { disabled }
-                        onClick     = { () => press( KEYPAD_KEYS.DECREMENT ) }
                         onMouseDown = { keepFocus }
                         tabIndex    = { -1 }
                         title       = { labels.decrease }
                         type        = "button"
+                        { ...decrease }
                     >
                         <MdRemove aria-hidden="true" className={ iconClassName } />
                     </button>
@@ -347,13 +366,13 @@ const NumericKeypad =
                 { showStepper && (
                     <button
                         aria-label  = { labels.increase }
-                        className   = { cn( getButtonClassNames( { style : OUTLINE } ) , 'shrink-0' , stepperSizeMap[ size ] ?? stepperSizeMap[ MD ] ) }
+                        className   = { cn( getButtonClassNames( { style : OUTLINE } ) , 'shrink-0 select-none touch-manipulation' , stepperSizeMap[ size ] ?? stepperSizeMap[ MD ] ) }
                         disabled    = { disabled }
-                        onClick     = { () => press( KEYPAD_KEYS.INCREMENT ) }
                         onMouseDown = { keepFocus }
                         tabIndex    = { -1 }
                         title       = { labels.increase }
                         type        = "button"
+                        { ...increase }
                     >
                         <MdAdd aria-hidden="true" className={ iconClassName } />
                     </button>

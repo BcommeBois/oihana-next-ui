@@ -20,7 +20,7 @@ const keypad =
         {
             title : 'Trois décimales, entre 0,5 et 50' ,
             label : 'Volume' ,
-            note  : 'step={ 0.5 } sur les boutons − et +. Essayez une quatrième décimale, ou 51.' ,
+            note  : 'step={ 0.5 } sur les boutons − et +, et repeat : gardez-les appuyés, la valeur avance seule et s’arrête à 0,5 ou à 50. Essayez aussi une quatrième décimale, ou 51.' ,
         } ,
 
         sheet :
@@ -69,7 +69,7 @@ const keypad =
         {
             title : 'Three decimals, between 0.5 and 50' ,
             label : 'Volume' ,
-            note  : 'step={ 0.5 } on the − and + buttons. Try a fourth decimal, or 51.' ,
+            note  : 'step={ 0.5 } on the − and + buttons, and repeat : hold them down, the value moves on its own and stops at 0.5 or 50. Try a fourth decimal too, or 51.' ,
         } ,
 
         sheet :

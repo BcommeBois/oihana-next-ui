@@ -77,6 +77,19 @@ const InputCounterDemo = ( { path = 'demo.inputs.counter' } = {} ) =>
             />
 
             <InputCounter
+                repeat
+                useFieldset
+                legend       = { t.repeat?.legend }
+                icon         = { <CartIcon /> }
+                defaultValue = { 10 }
+                min          = { 0 }
+                max          = { 500 }
+                step         = { 1 }
+                precision    = { 0 }
+                helper       = { t.repeat?.helper }
+            />
+
+            <InputCounter
                 useFieldset
                 legend       = { t.price?.legend }
                 defaultValue = { 0 }
