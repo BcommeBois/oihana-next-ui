@@ -1,4 +1,5 @@
 import assignments from './assignments' ;
+import barcodes  from './barcodes' ;
 import filters   from './filters' ;
 import images    from './images' ;
 import inputs    from './inputs' ;
@@ -12,6 +13,7 @@ import typography from './typography' ;
 const demo =
 {
     assignments ,
+    barcodes ,
     filters ,
     images ,
     inputs ,

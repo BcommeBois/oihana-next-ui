@@ -1,6 +1,7 @@
 import alerts         from './alerts'
 import assignments    from './assignments'
 import badges         from './badges'
+import barcodes       from './barcodes'
 import buttons        from './buttons'
 import i18n           from './i18n'
 import images         from './images'
@@ -28,6 +29,7 @@ const lab =
     alerts         ,
     assignments    ,
     badges         ,
+    barcodes       ,
     buttons        ,
     i18n           ,
     images         ,

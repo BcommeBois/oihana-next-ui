@@ -1,6 +1,7 @@
 import alert      from './alert'
 import assignment from './assignment'
 import badges     from './badges'
+import barcode    from './barcode'
 import buttons    from './buttons'
 import dates      from './dates'
 import dropdowns  from './dropdowns'
@@ -22,6 +23,7 @@ const components =
     alert ,
     assignment ,
     badges ,
+    barcode ,
     buttons ,
     dates ,
     dropdowns,

@@ -20,6 +20,7 @@ import { LuSquareMousePointer   as ActionIcon         } from "react-icons/lu";
 import { LuListChecks          as AssignmentIcon     } from "react-icons/lu";
 import { TbAlertSquareRounded   as AlertIcon          } from "react-icons/tb";
 import { TbMap2                 as MapIcon            } from "react-icons/tb";
+import { TbQrcode               as BarcodeIcon        } from "react-icons/tb";
 import { TbMapPin               as MapMarkerIcon      } from "react-icons/tb";
 import { TbMapPinCog            as PickerIcon         } from "react-icons/tb";
 import { TbRoute                as RouteIcon          } from "react-icons/tb";
@@ -152,6 +153,7 @@ const navigation =
                     { id : 'stat'       , type : LINK  , Icon : StatIcon       , path  : '/lab/stat'       } ,
                     { id : 'steps'      , type : LINK  , Icon : StepsIcon      , path  : '/lab/steps'      } ,
                     { id : 'status'     , type : LINK  , Icon : StatusIcon     , path  : '/lab/status'     } ,
+                    { id : 'barcodes'   , type : LINK  , Icon : BarcodeIcon    , path  : '/lab/barcodes'   } ,
                 ]
             } ,
             {
