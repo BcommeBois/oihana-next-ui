@@ -184,8 +184,8 @@ const navigation =
                     { id : 'skeleton'       , type : LINK  , Icon : SkeletonIcon       , path  : '/lab/skeleton'       } ,
                     { id : 'spinners'       , type : LINK  , Icon : SpinnerIcon        , path  : '/lab/spinners'       } ,
                     { id : 'toasts'         , type : LINK  , Icon : ToastIcon          , path  : '/lab/toasts'         } ,
-                    { id : 'signals'        , type : LINK  , Icon : SignalIcon         , path  : '/lab/signals'        } ,
                     { id : 'tooltips'       , type : LINK  , Icon : TooltipIcon        , path  : '/lab/tooltips'       } ,
+                    { id : 'signals'        , type : LINK  , Icon : SignalIcon         , path  : '/lab/signals'        } ,
                 ]
             } ,
             {
