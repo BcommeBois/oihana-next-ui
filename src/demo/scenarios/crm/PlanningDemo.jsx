@@ -76,6 +76,12 @@ const BookingModal = ( { onBooked , onClose , t } ) =>
 
     const onSave = () =>
     {
+        // Booked, the slot is no longer free : the picker lets it go, and a second press finds nothing to book.
+        if ( !slot )
+        {
+            return false ;
+        }
+
         addAppointment( { customerId , end : slot.end , repId , start : slot.start , type } ) ;
         onBooked?.( customer?.name , stamp( slot.start ) ) ;
         return true ;
