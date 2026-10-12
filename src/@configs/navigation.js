@@ -15,6 +15,7 @@ import {
     MdInventory          as PickingIcon ,
     MdLocalShipping      as LogisticsIcon ,
     MdMoveToInbox        as ReceivingIcon ,
+    MdFactCheck          as InventoryIcon ,
     MdWidgets            as ComponentsIcon ,
     MdTexture            as PatternsIcon ,
     MdTextSnippet        as TypographyIcon ,
@@ -316,6 +317,7 @@ const navigation =
                 [
                     { id : 'picking'   , type : LINK  , Icon : PickingIcon   , path  : '/scenarios/logistics/picking'   } ,
                     { id : 'receiving' , type : LINK  , Icon : ReceivingIcon , path  : '/scenarios/logistics/receiving' } ,
+                    { id : 'inventory' , type : LINK  , Icon : InventoryIcon , path  : '/scenarios/logistics/inventory' } ,
                 ]
             } ,
         ]
