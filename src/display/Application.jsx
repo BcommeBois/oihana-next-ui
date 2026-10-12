@@ -32,6 +32,15 @@ import splashScreen from '../@configs/ui/splashScreen' ;
 
 const NAVIGATION_STORAGE_KEY = 'oihana-next-ui:lab:nav' ;
 
+const FEEDBACK_STORAGE_KEY = 'oihana-next-ui:lab:feedback' ;
+
+/**
+ * The lab's navbar shows the sound switch, off by default elsewhere : the
+ * signals, scanner and scan field pages all make sounds.
+ * @type {Object}
+ */
+const NAVBAR_PROPS = { controls : { sound : true } } ;
+
 /**
  * The lab's sidebar shows the pending spinner on the link just clicked
  * (`LinkPending`) : in development nothing is prefetched, so it is the one
@@ -43,6 +52,7 @@ const NAVIGATION_PENDING_INDICATOR = true ;
 const Application = ( { children , initialLang } ) => (
     <ApplicationProviders
         config                     = { config }
+        feedbackStorageKey         = { FEEDBACK_STORAGE_KEY }
         initialLang                = { initialLang }
         languages                  = { languages }
         locale                     = { locale }
@@ -51,7 +61,7 @@ const Application = ( { children , initialLang } ) => (
         navigationStorageKey       = { NAVIGATION_STORAGE_KEY }
         splashScreen               = { splashScreen }
     >
-        <Dashboard>
+        <Dashboard navbarProps={ NAVBAR_PROPS }>
             { children }
         </Dashboard>
     </ApplicationProviders>

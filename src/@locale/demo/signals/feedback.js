@@ -2,6 +2,14 @@ const feedback =
 {
     fr :
     {
+        master :
+        {
+            title     : 'L’interrupteur général de l’appareil' ,
+            note      : 'FeedbackProvider garde ces réglages sur l’appareil et commande tous les signaux de l’application : coupé ici, plus rien ne sonne, quels que soient les réglages de l’écran plus bas — un écran peut couper, jamais rallumer. Le même SoundButton est dans la barre du haut.' ,
+            sound     : 'Son' ,
+            vibration : 'Vibration' ,
+            volume    : 'Volume par défaut' ,
+        } ,
         state :
         {
             title    : 'État de l’appareil' ,
@@ -16,11 +24,12 @@ const feedback =
         } ,
         settings :
         {
-            title      : 'Réglages' ,
-            note       : 'Ce sont des réglages de l’écran — une préférence du profil, par exemple — pas du hook.' ,
+            title      : 'Réglages de l’écran' ,
+            note       : 'Ceux que l’écran passe au hook : ils ne peuvent que couper ce que l’interrupteur général autorise.' ,
             sound      : 'Son' ,
             vibration  : 'Vibration' ,
             volume     : 'Volume' ,
+            device     : 'appareil' ,
             silent     : 'Jouer malgré le bouton silencieux (iPhone)' ,
             silentHelp : 'ignoreSilentMode : désactivé par défaut, puisqu’il passe outre un choix de l’utilisateur. Safari 17 et plus.' ,
         } ,
@@ -52,6 +61,14 @@ const feedback =
 
     en :
     {
+        master :
+        {
+            title     : 'The device’s master switch' ,
+            note      : 'FeedbackProvider keeps these settings on the device and rules every signal of the application : off here, nothing sounds, whatever the screen’s settings below say — a screen can silence, never sound again. The same SoundButton sits in the top bar.' ,
+            sound     : 'Sound' ,
+            vibration : 'Vibration' ,
+            volume    : 'Default volume' ,
+        } ,
         state :
         {
             title    : 'Device state' ,
@@ -66,11 +83,12 @@ const feedback =
         } ,
         settings :
         {
-            title      : 'Settings' ,
-            note       : 'These are the screen’s settings — a profile preference, say — not the hook’s.' ,
+            title      : 'The screen’s settings' ,
+            note       : 'The ones the screen hands to the hook : they can only silence what the master switch allows.' ,
             sound      : 'Sound' ,
             vibration  : 'Vibration' ,
             volume     : 'Volume' ,
+            device     : 'device' ,
             silent     : 'Play through the silent switch (iPhone)' ,
             silentHelp : 'ignoreSilentMode : off by default, since it overrides a choice the user made. Safari 17 and later.' ,
         } ,

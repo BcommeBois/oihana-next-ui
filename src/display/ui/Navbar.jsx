@@ -13,6 +13,7 @@ import cn from '../../themes/helpers/cn'
 import LangDropDown     from '../../components/dropDowns/LangDropDown';
 import Link             from '../../components/links/Link';
 import FullscreenButton from '../../components/buttons/FullscreenButton';
+import SoundButton      from '../../components/buttons/SoundButton';
 import ThemeButton      from '../../components/buttons/ThemeButton';
 
 import useConfig from '../../contexts/config/useConfig' ;
@@ -34,7 +35,7 @@ from '../../themes/components/navbar' ;
  * @param {React.ReactNode} [props.children] - Children (replaces default layout).
  * @param {string} [props.className] - Additional class names.
  * @param {string} [props.configPath='navbar'] - Config context path.
- * @param {Object} [props.controls] - Visibility of the three end-section controls, keyed `fullscreen`, `lang` and `theme`. Each value is `true` (shown, the default), `false` (not rendered), or a class name applied to a wrapper — `'hidden lg:inline-flex'` keeps a control off a hand-held screen without this component knowing the application's breakpoint. Ignored when `children` replaces the layout.
+ * @param {Object} [props.controls] - Visibility of the end-section controls, keyed `fullscreen`, `lang`, `sound` and `theme`. Each value is `true` (shown), `false` (not rendered), or a class name applied to a wrapper — `'hidden lg:inline-flex'` keeps a control off a hand-held screen without this component knowing the application's breakpoint. `fullscreen`, `lang` and `theme` are shown by default ; `sound` — the master switch of every signal, a `SoundButton` — is opt-in, and draws nothing without a `FeedbackProvider`. Ignored when `children` replaces the layout.
  * @param {React.ReactNode} [props.left] - Extra content in the start section.
  * @param {import('../layout/position').PositionValue} [props.position] - CSS position.
  * @param {React.Ref} [props.ref] - Forwarded ref.
@@ -74,15 +75,17 @@ const Navbar =
     /**
      * Renders one end-section control according to its `controls` entry :
      * absent or `true` renders it, `false` drops it, and a string wraps it so
-     * the caller can hide it at a width of its own choosing.
+     * the caller can hide it at a width of its own choosing. An absent entry
+     * falls back on `shown`.
      *
-     * @param {string} key - `fullscreen`, `lang` or `theme`.
+     * @param {string} key - `fullscreen`, `lang`, `sound` or `theme`.
      * @param {React.ReactElement} control
+     * @param {boolean} [shown=true] - Whether an absent entry renders the control.
      * @returns {?React.ReactElement}
      */
-    const renderControl = ( key , control ) =>
+    const renderControl = ( key , control , shown = true ) =>
     {
-        const setting = controls?.[ key ] ?? true ;
+        const setting = controls?.[ key ] ?? shown ;
 
         if ( setting === false ) { return null ; }
 
@@ -145,6 +148,8 @@ const Navbar =
                 { renderControl( 'fullscreen' , <FullscreenButton tooltipAlign="end" tooltipPosition="bottom" /> ) }
 
                 { renderControl( 'lang' , <LangDropDown tooltipAlign="end" tooltipPosition="bottom" /> ) }
+
+                { renderControl( 'sound' , <SoundButton tooltipAlign="end" tooltipPosition="bottom" /> , false ) }
 
                 { renderControl( 'theme' , <ThemeButton tooltipAlign="end" tooltipPosition="bottom" /> ) }
 

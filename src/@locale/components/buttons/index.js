@@ -9,6 +9,7 @@ import refresh    from './refresh'
 import remove     from './remove'
 import revoke     from './revoke'
 import save       from './save'
+import sound      from './sound'
 import theme      from './theme'
 
 const buttons =
@@ -24,6 +25,7 @@ const buttons =
     remove ,
     revoke ,
     save ,
+    sound ,
     theme ,
 };
 

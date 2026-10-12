@@ -31,6 +31,7 @@
  * @param {Object}          props
  * @param {React.ReactNode} props.children                      - The application tree.
  * @param {Object}          [props.config]                      - Application configuration, handed to the `ConfigProvider` ; its `defaultLang`, `version` and `versionCheck` are read here.
+ * @param {string}          [props.feedbackStorageKey]          - Where the device's sound and vibration settings are kept (`FeedbackProvider`). Name it per application : two applications served from one origin would otherwise share them.
  * @param {string}          [props.initialLang]                 - Language resolved on the server (a cookie, a header), so the first render agrees with the client.
  * @param {Array}           [props.languages]                   - Available languages.
  * @param {Object}          [props.locale]                      - The i18n dictionary, handed to the `LocaleProvider`.
@@ -64,6 +65,7 @@ import { AnimatePresence , motion } from 'motion/react' ;
 
 import ApplicationProvider from '../contexts/application/provider' ;
 import ConfigProvider      from '../contexts/config/provider' ;
+import FeedbackProvider    from '../contexts/feedback/provider' ;
 import FullScreenProvider  from '../contexts/fullscreen/provider' ;
 import LangProvider        from '../contexts/lang/provider' ;
 import LoadingProvider     from '../contexts/loading/provider' ;
@@ -81,6 +83,7 @@ const ApplicationProviders = (
 {
     children ,
     config ,
+    feedbackStorageKey ,
     initialLang ,
     languages ,
     locale ,
@@ -136,9 +139,11 @@ const ApplicationProviders = (
                                 >
                                     <LoadingProvider>
                                         <ToastProvider>
-                                            <SelectProvider>
-                                                { children }
-                                            </SelectProvider>
+                                            <FeedbackProvider storageKey={ feedbackStorageKey }>
+                                                <SelectProvider>
+                                                    { children }
+                                                </SelectProvider>
+                                            </FeedbackProvider>
                                         </ToastProvider>
                                     </LoadingProvider>
                                 </NavigationProvider>

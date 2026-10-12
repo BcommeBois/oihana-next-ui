@@ -3,6 +3,9 @@
 import { useCallback , useEffect , useMemo , useState , useSyncExternalStore } from 'react' ;
 
 import playTones , { DEFAULT_SIGNALS } from '../helpers/audio/playTones' ;
+import resolveFeedback               from '../helpers/audio/resolveFeedback' ;
+
+import useFeedback from '../contexts/feedback/useFeedback' ;
 
 import {
     getAudioContext ,
@@ -46,6 +49,14 @@ const NONE = { audio : false , vibration : false } ;
  *   (off by default) plays through it on Safari 17+ — overriding a choice the
  *   user made, so it is the screen's call to make.
  *
+ * ### The device has the last word
+ *
+ * Under a `FeedbackProvider` — `ApplicationProviders` mounts one — the device's
+ * settings are a master switch : `sound` and `vibration` here can only silence
+ * what the settings allow, never sound what they turned off ; `volume` here wins
+ * when given, the settings' otherwise. Without a provider, what is asked here
+ * plays.
+ *
  * One audio context serves the whole page, created on the first unlock.
  *
  * @module hooks/useFeedbackSignal
@@ -54,9 +65,9 @@ const NONE = { audio : false , vibration : false } ;
  * @param {boolean} [options.autoUnlock=true] - Unlock the sound on the first click or key press anywhere on the page.
  * @param {boolean} [options.ignoreSilentMode=false] - On an iPhone, play through the silent switch (Safari 17+).
  * @param {Object.<string,import('../helpers/audio/playTones').Signal>} [options.signals] - Signals to add, or to put in place of `success`, `warning`, `error`.
- * @param {boolean} [options.sound=true] - Play the tones.
- * @param {boolean} [options.vibration=true] - Vibrate.
- * @param {number} [options.volume=0.6] - From 0 to 1.
+ * @param {boolean} [options.sound=true] - Play the tones — if the device's settings allow it.
+ * @param {boolean} [options.vibration=true] - Vibrate — if the device's settings allow it.
+ * @param {number} [options.volume] - From 0 to 1. Defaults to the device's settings, then 0.6.
  *
  * @returns {{ signal : (name : string) => boolean , unlock : () => Promise<boolean> , unlocked : boolean , supports : { audio : boolean , vibration : boolean } }}
  *   `signal` returns whether the name is known.
@@ -80,12 +91,14 @@ const useFeedbackSignal =
     autoUnlock       = true ,
     ignoreSilentMode = false ,
     signals ,
-    sound            = true ,
-    vibration        = true ,
-    volume           = 0.6 ,
+
+    // sound , vibration , volume : what the screen asks for, under the device's settings.
+    ...wishes
 }
 = {} ) =>
 {
+    const { sound , vibration , volume } = resolveFeedback( useFeedback() , wishes ) ;
+
     const unlocked = useSyncExternalStore( subscribeAudio , isAudioRunning , NOT_RUNNING ) ;
 
     // Read after hydration : the server knows nothing of the device.

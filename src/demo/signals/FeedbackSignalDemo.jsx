@@ -10,12 +10,18 @@ import Button           from '@/components/Button' ;
 import Divider          from '@/components/Divider' ;
 import SegmentedControl from '@/components/SegmentedControl' ;
 import Toggle           from '@/components/checkboxes/Toggle' ;
+import SoundButton      from '@/components/buttons/SoundButton' ;
+
+import useFeedback from '@/contexts/feedback/useFeedback' ;
 
 import useFeedbackSignal from '@/hooks/useFeedbackSignal' ;
 
 import useI18n from '@/contexts/locale/useI18n' ;
 
 const VOLUMES = [ 0.2 , 0.6 , 1 ] ;
+
+// The page names no volume of its own : the device's applies.
+const DEVICE = 'device' ;
 
 // Defined outside the component : a new object on every render would rebuild the catalog for nothing.
 const SIGNALS =
@@ -43,9 +49,11 @@ const FeedbackSignalDemo = ( { path = 'demo.signals.feedback' } = {} ) =>
 
     const [ sound     , setSound     ] = useState( true ) ;
     const [ vibration , setVibration ] = useState( true ) ;
-    const [ volume    , setVolume    ] = useState( 0.6 ) ;
+    const [ volume    , setVolume    ] = useState( DEVICE ) ;
     const [ silent    , setSilent    ] = useState( false ) ;
     const [ scan      , setScan      ] = useState( null ) ;
+
+    const device = useFeedback() ;
 
     const { signal , supports , unlock , unlocked } = useFeedbackSignal(
     {
@@ -53,7 +61,7 @@ const FeedbackSignalDemo = ( { path = 'demo.signals.feedback' } = {} ) =>
         signals          : SIGNALS ,
         sound ,
         vibration ,
-        volume ,
+        volume           : volume === DEVICE ? undefined : volume ,
     } ) ;
 
     const onScan = good =>
@@ -66,6 +74,38 @@ const FeedbackSignalDemo = ( { path = 'demo.signals.feedback' } = {} ) =>
 
     return (
         <Container className="flex flex-col gap-8 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-5xl">
+
+            {/* The device's master switch */}
+            { device && (
+                <>
+                    <section className="flex flex-col gap-3">
+                        <h3 className="text-xl font-bold">{ t.master?.title }</h3>
+                        <p className="text-sm text-base-content/70">{ t.master?.note }</p>
+                        <div className="flex flex-wrap items-center gap-6">
+                            <div className="flex items-center gap-2">
+                                <SoundButton style="outline" />
+                                <span className="text-sm">SoundButton</span>
+                            </div>
+                            <Toggle checked={ device.sound } color="primary" label={ t.master?.sound } onChange={ event => device.setSound( event.target.checked ) } />
+                            <Toggle checked={ device.vibration } color="primary" label={ t.master?.vibration } onChange={ event => device.setVibration( event.target.checked ) } />
+                            <div className="flex items-center gap-2">
+                                <span className="text-sm">{ t.master?.volume }</span>
+                                <SegmentedControl
+                                    ariaLabel = { t.master?.volume }
+                                    items     = { VOLUMES.map( item => ( { key : item , label : `${ Math.round( item * 100 ) } %` } ) ) }
+                                    onChange  = { device.setVolume }
+                                    value     = { device.volume }
+                                />
+                            </div>
+                        </div>
+                        <pre className="rounded-box bg-base-100 p-3 text-xs">
+                            useFeedback() → { JSON.stringify( { sound : device.sound , vibration : device.vibration , volume : device.volume } ) }
+                        </pre>
+                    </section>
+
+                    <Divider />
+                </>
+            ) }
 
             {/* Device state */}
             <section className="flex flex-col gap-3">
@@ -96,7 +136,7 @@ const FeedbackSignalDemo = ( { path = 'demo.signals.feedback' } = {} ) =>
                         <span className="text-sm">{ t.settings?.volume }</span>
                         <SegmentedControl
                             ariaLabel = { t.settings?.volume }
-                            items     = { VOLUMES.map( item => ( { key : item , label : `${ Math.round( item * 100 ) } %` } ) ) }
+                            items     = { [ { key : DEVICE , label : t.settings?.device } , ...VOLUMES.map( item => ( { key : item , label : `${ Math.round( item * 100 ) } %` } ) ) ] }
                             onChange  = { setVolume }
                             value     = { volume }
                         />
