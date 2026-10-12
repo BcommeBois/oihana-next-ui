@@ -145,15 +145,16 @@ Name the keys per application : two applications served from one origin share on
 
 🚨 **A new version empties the storage.** When `config.version` changes, `ApplicationProviders`
 clears `localStorage` and `sessionStorage` — a fresh start after a release — **except the keys
-listed** in `config.versionCheck.keepLocal` and `keepSession`. The list is matched **key by key** :
-`[ 'lang' , 'theme' ]` by default, so the sound settings and the menu's state are lost on every
-release unless you add their keys.
+listed** in `config.versionCheck.keepLocal` and `keepSession` — by name, or by a prefix ending
+with `*`. The default is `[ 'lang' , 'theme' ]` : the sound settings and the menu's state are lost
+on every release unless you add them.
 
 ```js
 versionCheck :
 {
     storageKey : 'my-app-version' ,
-    keepLocal  : [ 'lang' , 'theme' , 'my-app:nav:v1' , 'my-app:feedback:sound' , 'my-app:feedback:vibration' , 'my-app:feedback:volume' ] ,
+    // A prefix ending with * keeps every key under it : a setting added later is kept too.
+    keepLocal  : [ 'lang' , 'theme' , 'my-app:nav:v1' , 'my-app:feedback:*' ] ,
 }
 ```
 

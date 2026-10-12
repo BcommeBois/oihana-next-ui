@@ -10,8 +10,8 @@ import clearStorage from '../helpers/storage/clearStorage'
  * @param {string} version - Current app version.
  * @param {Object} [options]
  * @param {string} [options.storageKey='app-version'] - LocalStorage key for version.
- * @param {string[]} [options.keepLocal=['lang', 'theme']] - Keys to preserve in localStorage.
- * @param {string[]} [options.keepSession=[]] - Keys to preserve in sessionStorage.
+ * @param {string[]} [options.keepLocal=['lang', 'theme']] - Keys to preserve in localStorage : exact names, or prefixes ending with `*` (`'my-app:feedback:*'`). Anything not listed is lost on a new version — the menu's state and the device's sound settings included.
+ * @param {string[]} [options.keepSession=[]] - Keys to preserve in sessionStorage, written the same way.
  *
  * @example
  * ```jsx
@@ -30,7 +30,7 @@ import clearStorage from '../helpers/storage/clearStorage'
  * // With options
  * useVersionCheck( version , {
  *     storageKey  : 'my-app-version' ,
- *     keepLocal   : [ 'lang' , 'theme' , 'user-preferences' ] ,
+ *     keepLocal   : [ 'lang' , 'theme' , 'my-app:nav:v1' , 'my-app:feedback:*' ] ,
  *     keepSession : [ 'auth-token' ]
  * } ) ;
  * ```

@@ -45,7 +45,8 @@ const config =
     versionCheck :
     {
         storageKey  : process.env.NEXT_PUBLIC_APP_NAME + '-version' ,
-        keepLocal   : [ 'lang' , 'theme' ] ,
+        // The menu's open groups and the device's sound settings outlive a release, like the language and the theme.
+        keepLocal   : [ 'lang' , 'theme' , 'oihana-next-ui:lab:nav' , 'oihana-next-ui:lab:feedback:*' ] ,
         keepSession : [] ,
     } ,
 

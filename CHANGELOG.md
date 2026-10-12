@@ -8,6 +8,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**🩹 A release no longer wipes the device's settings it was told to keep**
+
+- 🚨 **`config.versionCheck.keepLocal` matched its keys one by one**, so the settings written under a prefix — the sound, vibration and volume of `FeedbackProvider`, one key each — had to be listed one by one, and an application that listed `my-app:feedback` kept none of them : on every new version, `ApplicationProviders` emptied the storage and the device's settings went with it. **`helpers/storage/clearStorage` now takes a prefix ending with `*`** — `'my-app:feedback:*'` keeps every key under it, a setting added later included — and exact names as before. `useVersionCheck`'s `keepLocal` and `keepSession` read it the same way. **5 more tests** (264 in all).
+- **The lab keeps its menu and its sound settings across releases** : its `keepLocal` gains `oihana-next-ui:lab:nav` and `oihana-next-ui:lab:feedback:*`.
+
 **📚 New guides in the wiki, and the README brought up to date**
 
 - **`wiki/components/barcodes`** : drawing a code — which format for which need, the light plate, exporting to SVG or PNG for a server, GS1-128 written as on the label — and reading one : the two engines and when each runs, HTTPS, serving the WebAssembly yourself with `oihana-copy-zxing-wasm`, keeping it offline with `preloadScanner()`, the one reading `normalizeScan` makes of every engine, and `InputScan`.
