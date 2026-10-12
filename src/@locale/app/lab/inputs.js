@@ -135,6 +135,11 @@ const inputs =
                 label       : 'URL et e-mail' ,
                 description : 'Deux champs qui valident ce qu’ils attendent.' ,
             } ,
+            'file' :
+            {
+                label       : 'Fichier' ,
+                description : 'Le sélecteur de fichier natif ; le gestionnaire reçoit les fichiers, pas l’événement.' ,
+            } ,
         } ,
     } ,
 
@@ -260,6 +265,11 @@ const inputs =
             {
                 label       : 'URL & e-mail' ,
                 description : 'Two fields that validate what they expect.' ,
+            } ,
+            'file' :
+            {
+                label       : 'File' ,
+                description : 'The native file picker ; the handler receives the files, not the event.' ,
             } ,
         } ,
     } ,

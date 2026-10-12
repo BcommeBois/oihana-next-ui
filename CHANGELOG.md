@@ -8,6 +8,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**⌨️ Two daisyUI components the library did not wrap yet : `kbd` and `file-input`**
+
+- **New `components/Kbd`** : a key of the keyboard, or a short code typed by hand, rendered as the HTML `<kbd>` element with daisyUI's `kbd` and its five sizes (`xs` → `xl`, no colour : daisyUI ships none). **`keys`** draws a combination — `<Kbd keys={ [ '⌘' , 'K' ] } />` — as a `<kbd>` of `<kbd>`s, the nesting HTML uses to say « press these together », with a `separator` (`'+'` by default) that a screen reader reads out — any node : a word for a sequence (« G then G » is not a combination), an icon, an emoji ; `keyClassName` and `separatorClassName` style the parts. ⚠️ An icon separator is silent to a screen reader : pair it with `sr-only` text, as the JSDoc and the demo show. Renders nothing without a key. No `'use client'` : usable from a server component.
+- **New `components/inputs/FileInput`** : the native file picker with daisyUI's `file-input` — eight colours, `ghost`, five sizes — laid out like `Input` (`label`, or `legend` with `useFieldset` ; `error`, which turns the field red, or `helper` below ; `aria-invalid` and `aria-describedby` wired). 🔑 **`onChange` receives the files** — an array of `File`, empty when the selection is cancelled — with the event as a second argument, the same contract as `Input`, whose handler receives the value. `accept`, `multiple`, `capture`, `name`, `required`, `disabled` and `ref` reach the `<input type="file">`. ⚠️ The button's text is the browser's own, in the browser's language, and nothing changes it ; ⚠️ `capture` (`'environment'` / `'user'`) opens a camera on a phone and is ignored on a desktop.
+- **New generators `themes/components/kbd` and `themes/components/fileInput`** (`getKbdClasses`, `getFileInputClasses`), with their literal class maps.
+- The typography page gains a `Kbd` section (single keys, sizes, combinations, an icon separator with its hidden text, keys inside a sentence) ; the inputs page a « File » row under its specialised fields, every handler printing the files it received.
+
 ## [0.31.0] — 2026-10-09
 
 **🔗 A link that says its own navigation is pending — opt-in**

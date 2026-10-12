@@ -18,6 +18,7 @@ import ErrorLabel       from '@/components/labels/ErrorLabel' ;
 import HelperLabel      from '@/components/labels/HelperLabel' ;
 
 import I18nTextDemo from '@/demo/typography/I18nTextDemo';
+import KbdDemo      from '@/demo/typography/KbdDemo' ;
 import SanitizeDemo from '@/demo/typography/SanitizeDemo' ;
 
 /**
@@ -260,6 +261,9 @@ const TypographyShowcase = ({ path = 'app.test' }) =>
                         </div>
                     </div>
                 </section>
+
+                {/* Kbd — a key, or a short code typed by hand */}
+                <KbdDemo />
 
                 {/* Labels — the three lines that sit under a field */}
                 <section className="card bg-base-200 shadow-xl">

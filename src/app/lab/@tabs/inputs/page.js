@@ -33,8 +33,10 @@ import InputTimeDemo       from '@/demo/inputs/InputTimeDemo' ;
 import InputTransformDemo  from '@/demo/inputs/InputTransformDemo' ;
 import InputUrlEmailDemo   from '@/demo/inputs/InputUrlEmailDemo' ;
 import InputValidatorDemo  from '@/demo/inputs/InputValidatorDemo' ;
+import FileInputDemo       from '@/demo/inputs/FileInputDemo' ;
 
 import {
+    MdAttachFile ,
     MdAttachMoney ,
     MdCalendarToday ,
     MdClear ,
@@ -106,6 +108,7 @@ const ROWS =
     { key : 'card'              , icon : MdCreditCard    , category : 'specialized' , component : <InputCardDemo /> } ,
     { key : 'hex-color'         , icon : MdColorLens     , category : 'specialized' , component : <InputHexColorDemo /> } ,
     { key : 'url-email'         , icon : MdEmail         , category : 'specialized' , component : <InputUrlEmailDemo /> } ,
+    { key : 'file'              , icon : MdAttachFile    , category : 'specialized' , component : <FileInputDemo /> } ,
 ] ;
 
 /**

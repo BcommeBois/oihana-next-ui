@@ -5,6 +5,7 @@ import counter    from './counter' ;
 import currency   from './currency' ;
 import date       from './date' ;
 import dateRange  from './dateRange' ;
+import fileInput  from './fileInput' ;
 import hexColor   from './hexColor' ;
 import i18nInput  from './i18nInput' ;
 import i18nTextArea from './i18nTextArea' ;
@@ -33,6 +34,7 @@ const inputs =
     currency ,
     date ,
     dateRange ,
+    fileInput ,
     hexColor ,
     i18nInput ,
     i18nTextArea ,
