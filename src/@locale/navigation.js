@@ -3,7 +3,8 @@ const navigation =
     fr :
     {
         home         : 'Accueil' ,
-        lab          : 'Labo' ,
+        components   : 'Composants' ,
+        modules      : 'Modules' ,
             actions      : 'Actions' ,
                 buttons        : 'Boutons' ,
                 fab            : 'FAB' ,
@@ -105,7 +106,8 @@ const navigation =
     en :
     {
         home         : 'Home' ,
-        lab          : 'Lab' ,
+        components   : 'Components' ,
+        modules      : 'Modules' ,
             actions      : 'Actions' ,
                 buttons        : 'Buttons' ,
                 fab            : 'FAB' ,

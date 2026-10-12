@@ -10,7 +10,8 @@ import {
     MdDisplaySettings    as DisplayIcon ,
     MdDynamicForm        as FormIcon ,
     MdFeedback           as FeedbackIcon ,
-    MdScience            as LabIcon ,
+    MdExtension          as ModulesIcon ,
+    MdWidgets            as ComponentsIcon ,
     MdTexture            as PatternsIcon ,
     MdTextSnippet        as TypographyIcon ,
     MdAccessTime         as TimesIcon ,
@@ -100,9 +101,9 @@ const navigation =
 [
     { id : 'home' , type  : LINK  , Icon  : DashboardIcon , path  : '/home' } ,
     {
-        id        : 'lab' ,
+        id        : 'components' ,
         type      : COLLAPSE ,
-        Icon      : LabIcon ,
+        Icon      : ComponentsIcon ,
         className : 'gap-1' ,
         items     :
         [
@@ -225,6 +226,15 @@ const navigation =
                     { id : 'photo'     , type : LINK  , Icon : PhotoIcon     , path  : '/lab/photo'     } ,
                 ]
             } ,
+        ]
+    } ,
+    {
+        id        : 'modules' ,
+        type      : COLLAPSE ,
+        Icon      : ModulesIcon ,
+        className : 'gap-1' ,
+        items     :
+        [
             {
                 id   : 'codes'     ,
                 type : COLLAPSE    ,
@@ -234,6 +244,29 @@ const navigation =
                     { id : 'barcodes'  , type : LINK  , Icon : BarcodeIcon   , path  : '/lab/barcodes'  } ,
                     { id : 'scanner'   , type : LINK  , Icon : ScannerIcon   , path  : '/lab/scanner'   } ,
                     { id : 'scanField' , type : LINK  , Icon : ScanFieldIcon , path  : '/lab/scanField' } ,
+                ]
+            } ,
+            {
+                id   : 'maps'   ,
+                type : COLLAPSE ,
+                Icon : MapIcon  ,
+                items :
+                [
+                    { id : 'mapsView'    , type : LINK  , Icon : MapIcon        , path  : '/lab/maps'        } ,
+                    { id : 'mapsMarkers' , type : LINK  , Icon : MapMarkerIcon  , path  : '/lab/mapsMarkers' } ,
+                    { id : 'mapsPicker'  , type : LINK  , Icon : PickerIcon     , path  : '/lab/mapsPicker'  } ,
+                    { id : 'mapsRoutes'  , type : LINK  , Icon : RouteIcon      , path  : '/lab/mapsRoutes'  } ,
+                    { id : 'mapsZones'   , type : LINK  , Icon : ZoneIcon       , path  : '/lab/mapsZones'   } ,
+                    { id : 'mapsModel'   , type : LINK  , Icon : SchemaIcon     , path  : '/lab/mapsModel'   } ,
+                ]
+            } ,
+            {
+                id   : 'kanban'   ,
+                type : COLLAPSE   ,
+                Icon : KanbanIcon ,
+                items :
+                [
+                    { id : 'kanbanBoard' , type : LINK  , Icon : KanbanIcon , path  : '/lab/kanban' } ,
                 ]
             } ,
             {
@@ -251,15 +284,6 @@ const navigation =
                 ]
             } ,
             {
-                id   : 'kanban'   ,
-                type : COLLAPSE   ,
-                Icon : KanbanIcon ,
-                items :
-                [
-                    { id : 'kanbanBoard' , type : LINK  , Icon : KanbanIcon , path  : '/lab/kanban' } ,
-                ]
-            } ,
-            {
                 id   : 'charts'  ,
                 type : COLLAPSE  ,
                 Icon : ChartIcon ,
@@ -271,22 +295,8 @@ const navigation =
                     { id : 'chartsMetrics'   , type : LINK  , Icon : MetricsIcon       , path  : '/lab/metrics'   } ,
                 ]
             } ,
-            {
-                id   : 'maps'   ,
-                type : COLLAPSE ,
-                Icon : MapIcon  ,
-                items :
-                [
-                    { id : 'mapsView'    , type : LINK  , Icon : MapIcon        , path  : '/lab/maps'        } ,
-                    { id : 'mapsMarkers' , type : LINK  , Icon : MapMarkerIcon  , path  : '/lab/mapsMarkers' } ,
-                    { id : 'mapsPicker'  , type : LINK  , Icon : PickerIcon     , path  : '/lab/mapsPicker'  } ,
-                    { id : 'mapsRoutes'  , type : LINK  , Icon : RouteIcon      , path  : '/lab/mapsRoutes'  } ,
-                    { id : 'mapsZones'   , type : LINK  , Icon : ZoneIcon       , path  : '/lab/mapsZones'   } ,
-                    { id : 'mapsModel'   , type : LINK  , Icon : SchemaIcon     , path  : '/lab/mapsModel'   } ,
-                ]
-            } ,
         ]
-    },
+    } ,
 ]
 
 export default navigation ;
