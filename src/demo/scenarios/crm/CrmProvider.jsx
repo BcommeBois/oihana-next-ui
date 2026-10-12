@@ -48,6 +48,8 @@ const CrmProvider = ( { children } ) =>
         return {
             ...base ,
 
+            addAppointment : appointment => setBase( current => ( { ...current , appointments : [ ...current.appointments , { ...appointment , id : `appointment-new-${ ++lastId }` } ] } ) ) ,
+
             addCustomer : customer =>
             {
                 const id = `customer-new-${ ++lastId }` ;
@@ -62,6 +64,8 @@ const CrmProvider = ( { children } ) =>
             } ) ) ,
 
             patchCustomer ,
+
+            setAppointments : list => setBase( current => ( { ...current , appointments : list } ) ) ,
 
             // The whole list at once : the pipeline rewrites the order and the stages in one go.
             setOpportunities : list => setBase( current => ( { ...current , opportunities : list } ) ) ,

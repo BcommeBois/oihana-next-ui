@@ -29,6 +29,25 @@ export const STAGES = [ 'prospect' , 'qualified' , 'proposal' , 'negotiation' , 
 
 export const INTERACTIONS = [ 'call' , 'email' , 'visit' , 'meeting' ] ;
 
+/** The kinds of appointment, and how long each one lasts, in minutes. */
+export const APPOINTMENTS = { call : 30 , meeting : 90 , visit : 60 } ;
+
+/** When an appointment may start, in minutes from midnight : the mornings and afternoons of a working day. */
+const STARTS = [ 9 * 60 , 10 * 60 + 30 , 14 * 60 , 15 * 60 + 30 , 17 * 60 ] ;
+
+/**
+ * A local date for a day number and a time of day, in minutes.
+ *
+ * @param {number} day - Days since the epoch.
+ * @param {number} minutes - From midnight.
+ * @returns {Date}
+ */
+export const atTime = ( day , minutes ) =>
+{
+    const date = new Date( day * 24 * 60 * 60 * 1000 ) ;
+    return new Date( date.getUTCFullYear() , date.getUTCMonth() , date.getUTCDate() , Math.floor( minutes / 60 ) , minutes % 60 ) ;
+} ;
+
 /** The towns the customers are in, with their position. */
 export const TOWNS =
 [
@@ -74,7 +93,7 @@ const pick = ( list , seed ) => list[ Math.floor( noise( seed ) * list.length ) 
  * Builds the whole base, dated from `today`.
  *
  * @param {number} today - The day number of today.
- * @returns {{ customers : Object[] , interactions : Object[] , opportunities : Object[] }}
+ * @returns {{ appointments : Object[] , customers : Object[] , interactions : Object[] , opportunities : Object[] }}
  */
 const generate = today =>
 {
@@ -157,7 +176,50 @@ const generate = today =>
         }
     }
 
-    return { customers , interactions , opportunities } ;
+    // Three weeks of appointments around today, working days only, a few a day for each rep.
+    const appointments = [] ;
+
+    for ( let offset = -7 ; offset <= 14 ; offset++ )
+    {
+        const day     = today + offset ;
+        const weekday = new Date( day * 24 * 60 * 60 * 1000 ).getUTCDay() ;
+
+        if ( weekday === 0 || weekday === 6 )
+        {
+            continue ;
+        }
+
+        REPS.forEach( ( rep , repIndex ) =>
+        {
+            const theirs = customers.filter( customer => customer.repId === rep.id ) ;
+            const count  = Math.floor( noise( day * 7 + repIndex ) * 4 ) ;
+            const taken  = STARTS.filter( ( _ , slot ) => noise( day * 13 + repIndex * 5 + slot ) < count / STARTS.length + 0.05 ).slice( 0 , count ) ;
+
+            taken.forEach( ( start , rank ) =>
+            {
+                const types    = Object.keys( APPOINTMENTS ) ;
+                const type     = types[ Math.floor( noise( day * 17 + repIndex * 3 + rank ) * types.length ) ] ;
+                const customer = theirs[ Math.floor( noise( day * 19 + repIndex + rank ) * theirs.length ) ] ;
+
+                if ( !customer )
+                {
+                    return ;
+                }
+
+                appointments.push(
+                {
+                    customerId : customer.id ,
+                    end        : atTime( day , start + APPOINTMENTS[ type ] ) ,
+                    id         : `appointment-${ day }-${ repIndex }-${ rank }` ,
+                    repId      : rep.id ,
+                    start      : atTime( day , start ) ,
+                    type ,
+                } ) ;
+            } ) ;
+        } ) ;
+    }
+
+    return { appointments , customers , interactions , opportunities } ;
 } ;
 
 export default generate ;

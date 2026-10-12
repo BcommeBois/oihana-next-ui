@@ -23,6 +23,7 @@ import {
     MdHandshake          as CrmIcon ,
     MdContacts           as CrmCustomersIcon ,
     MdViewKanban         as CrmPipelineIcon ,
+    MdEditCalendar       as CrmPlanningIcon ,
     MdWidgets            as ComponentsIcon ,
     MdTexture            as PatternsIcon ,
     MdTextSnippet        as TypographyIcon ,
@@ -324,6 +325,7 @@ const navigation =
                 [
                     { id : 'crmCustomers' , type : LINK  , Icon : CrmCustomersIcon , path  : '/scenarios/crm/customers' } ,
                     { id : 'crmPipeline'  , type : LINK  , Icon : CrmPipelineIcon  , path  : '/scenarios/crm/pipeline'  } ,
+                    { id : 'crmPlanning'  , type : LINK  , Icon : CrmPlanningIcon  , path  : '/scenarios/crm/planning'  } ,
                 ]
             } ,
             {
