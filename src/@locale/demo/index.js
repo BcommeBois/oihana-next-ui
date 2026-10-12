@@ -7,6 +7,7 @@ import modals    from './modals' ;
 import passwords from './passwords' ;
 import scheduler from './scheduler' ;
 import trees     from './trees' ;
+import typography from './typography' ;
 
 const demo =
 {
@@ -19,6 +20,7 @@ const demo =
     passwords ,
     scheduler ,
     trees ,
+    typography ,
 } ;
 
 export default demo ;

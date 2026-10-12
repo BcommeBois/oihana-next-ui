@@ -17,9 +17,22 @@ import DescriptionLabel from '@/components/labels/DescriptionLabel' ;
 import ErrorLabel       from '@/components/labels/ErrorLabel' ;
 import HelperLabel      from '@/components/labels/HelperLabel' ;
 
+import I18nMetas from '@/components/i18n/I18nMetas' ;
+import useI18n   from '@/contexts/locale/useI18n' ;
+
 import I18nTextDemo from '@/demo/typography/I18nTextDemo';
 import KbdDemo      from '@/demo/typography/KbdDemo' ;
 import SanitizeDemo from '@/demo/typography/SanitizeDemo' ;
+
+// The heading components, in level order : the locale lists one entry per level.
+const HEADINGS = [ H1 , H2 , H3 , H4 , H5 , H6 ] ;
+
+// The hierarchy demo sets H3 to H6 under the page's H1 and H2.
+const SUBHEADINGS = [ H3 , H4 , H5 , H6 ] ;
+
+const LOREM = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.' ;
+
+const LOREM_LONG = `${ LOREM } Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.` ;
 
 /**
  * Typography showcase page.
@@ -27,25 +40,34 @@ import SanitizeDemo from '@/demo/typography/SanitizeDemo' ;
  * Displays all typography components with variations.
  *
  * @param {Object} props
- * @param {string} [props.path='app.test'] - SEO path identifier.
+ * @param {string} [props.path='app.lab.typography'] - Dot notation path to the page locale.
  */
-const TypographyShowcase = ({ path = 'app.test' }) =>
+const TypographyShowcase = ( { path = 'app.lab.typography' } = {} ) =>
 {
-    const htmlContent = '<strong>Citation importante</strong> avec du <em>HTML</em>.' ;
-    const complexHtml = `
-        <p>Premier paragraphe avec <strong>texte en gras</strong>.</p>
-        <p>Deuxième paragraphe avec <em>italique</em> et <u>souligné</u>.</p>
-    ` ;
+    const t = useI18n( path ) ?? {} ;
+
+    const {
+        blockquote ,
+        headings ,
+        hierarchy ,
+        htmlString ,
+        labels ,
+        paragraph ,
+        responsive ,
+        typography ,
+    } = t ;
 
     return (
         <Page full className='gap-8'>
 
+            <I18nMetas path={ path } />
+
             <Container className="text-center" maxWidth="max-w-4xl">
                 <h1 className="text-4xl font-bold bg-linear-to-r from-secondary to-primary inline-block text-transparent bg-clip-text">
-                    Typography Components
+                    { t.title }
                 </h1>
                 <p className="text-base-content/70">
-                    Démonstration des composants de typographie avec différentes variations
+                    { t.description }
                 </p>
             </Container>
 
@@ -54,26 +76,15 @@ const TypographyShowcase = ({ path = 'app.test' }) =>
                 {/* Headings Section */}
                 <section className="card bg-base-200 shadow-xl">
                     <div className="card-body">
-                        <h3 className="card-title">Headings (H1-H6)</h3>
+                        <h3 className="card-title">{ headings?.title }</h3>
 
                         <div className="space-y-4">
-                            <div className="divider">H1 - Titre Principal</div>
-                            <H1>Titre de niveau 1</H1>
-
-                            <div className="divider">H2 - Titre Secondaire</div>
-                            <H2>Titre de niveau 2</H2>
-
-                            <div className="divider">H3 - Titre Tertiaire</div>
-                            <H3>Titre de niveau 3</H3>
-
-                            <div className="divider">H4 - Sous-titre</div>
-                            <H4>Titre de niveau 4</H4>
-
-                            <div className="divider">H5 - Petit titre</div>
-                            <H5>Titre de niveau 5</H5>
-
-                            <div className="divider">H6 - Mini titre</div>
-                            <H6>Titre de niveau 6</H6>
+                            { HEADINGS.map( ( Heading , index ) => (
+                                <div key={ Heading.displayName ?? index } className="space-y-4">
+                                    <div className="divider">{ headings?.levels?.[ index ]?.divider }</div>
+                                    <Heading>{ headings?.levels?.[ index ]?.text }</Heading>
+                                </div>
+                            ) ) }
                         </div>
                     </div>
                 </section>
@@ -81,20 +92,20 @@ const TypographyShowcase = ({ path = 'app.test' }) =>
                 {/* Paragraph Section */}
                 <section className="card bg-base-200 shadow-xl">
                     <div className="card-body">
-                        <h3 className="card-title">Paragraph</h3>
+                        <h3 className="card-title">{ paragraph?.title }</h3>
 
                         <div className="space-y-6">
                             <div>
-                                <p className="text-sm font-semibold mb-2">Paragraphe standard</p>
+                                <p className="text-sm font-semibold mb-2">{ paragraph?.standard }</p>
                                 <Paragraph>
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                                    { LOREM_LONG }
                                 </Paragraph>
                             </div>
 
                             <div>
-                                <p className="text-sm font-semibold mb-2">Paragraphe avec className personnalisée</p>
+                                <p className="text-sm font-semibold mb-2">{ paragraph?.custom }</p>
                                 <Paragraph className="text-secondary">
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                                    { LOREM }
                                 </Paragraph>
                             </div>
                         </div>
@@ -104,41 +115,41 @@ const TypographyShowcase = ({ path = 'app.test' }) =>
                 {/* Blockquote Section */}
                 <section className="card bg-base-200 shadow-xl">
                     <div className="card-body">
-                        <h3 className="card-title">Blockquote</h3>
+                        <h3 className="card-title">{ blockquote?.title }</h3>
 
                         <div className="space-y-6">
                             <div>
-                                <p className="text-sm font-semibold mb-2">Citation simple</p>
+                                <p className="text-sm font-semibold mb-2">{ blockquote?.simple?.label }</p>
                                 <Blockquote>
-                                    Ceci est une citation simple sans icône.
+                                    { blockquote?.simple?.text }
                                 </Blockquote>
                             </div>
 
                             <div>
-                                <p className="text-sm font-semibold mb-2">Citation avec icône</p>
+                                <p className="text-sm font-semibold mb-2">{ blockquote?.icon?.label }</p>
                                 <Blockquote showIcon>
-                                    Ceci est une citation avec icône.
+                                    { blockquote?.icon?.text }
                                 </Blockquote>
                             </div>
 
                             <div>
-                                <p className="text-sm font-semibold mb-2">Citation avec HTML</p>
+                                <p className="text-sm font-semibold mb-2">{ blockquote?.html?.label }</p>
                                 <Blockquote showIcon html>
-                                    <strong>Citation importante</strong> avec du <em>HTML</em>.
+                                    <strong>{ blockquote?.html?.strong }</strong> { blockquote?.html?.rest } <em>HTML</em>.
                                 </Blockquote>
                             </div>
 
                             <div>
-                                <p className="text-sm font-semibold mb-2">Citation avec bordure personnalisée</p>
+                                <p className="text-sm font-semibold mb-2">{ blockquote?.primary?.label }</p>
                                 <Blockquote showIcon className="border-l-primary">
-                                    Citation avec bordure primaire.
+                                    { blockquote?.primary?.text }
                                 </Blockquote>
                             </div>
 
                             <div>
-                                <p className="text-sm font-semibold mb-2">Citation avec bordure accent</p>
+                                <p className="text-sm font-semibold mb-2">{ blockquote?.accent?.label }</p>
                                 <Blockquote showIcon className="border-l-accent">
-                                    Citation avec bordure accent.
+                                    { blockquote?.accent?.text }
                                 </Blockquote>
                             </div>
                         </div>
@@ -148,20 +159,20 @@ const TypographyShowcase = ({ path = 'app.test' }) =>
                 {/* With a HTML string variable */}
                 <section className="card bg-base-200 shadow-xl">
                     <div className="card-body">
-                        <h3 className="card-title">Citation avec une chaine string HTML</h3>
+                        <h3 className="card-title">{ htmlString?.title }</h3>
 
                         <div className="space-y-4">
                             <div>
-                                <p className="text-sm font-semibold mb-2">HTML simple</p>
+                                <p className="text-sm font-semibold mb-2">{ htmlString?.simpleLabel }</p>
                                 <Blockquote showIcon html>
-                                    { htmlContent }
+                                    { htmlString?.simple }
                                 </Blockquote>
                             </div>
 
                             <div>
-                                <p className="text-sm font-semibold mb-2">HTML complexe</p>
+                                <p className="text-sm font-semibold mb-2">{ htmlString?.complexLabel }</p>
                                 <Blockquote showIcon html>
-                                    { complexHtml }
+                                    { htmlString?.complex }
                                 </Blockquote>
                             </div>
                         </div>
@@ -171,18 +182,18 @@ const TypographyShowcase = ({ path = 'app.test' }) =>
                 {/* Typography Component */}
                 <section className="card bg-base-200 shadow-xl">
                     <div className="card-body">
-                        <h3 className="card-title">Typography Component</h3>
+                        <h3 className="card-title">{ typography?.title }</h3>
 
                         <div className="space-y-6">
                             <div className="space-y-4">
-                                <p className="text-sm font-semibold mb-2">Typography avec contenu mixte</p>
+                                <p className="text-sm font-semibold mb-2">{ typography?.label }</p>
                                 <Typography className="space-y-4">
-                                    <H2>Titre dans Typography</H2>
+                                    <H2>{ typography?.heading }</H2>
                                     <Paragraph>
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                                        { LOREM }
                                     </Paragraph>
                                     <Blockquote showIcon>
-                                        Une citation dans le composant Typography.
+                                        { typography?.quote }
                                     </Blockquote>
                                     <Paragraph>
                                         Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
@@ -196,37 +207,26 @@ const TypographyShowcase = ({ path = 'app.test' }) =>
                 {/* Hierarchy Demo */}
                 <section className="card bg-base-200 shadow-xl">
                     <div className="card-body">
-                        <h3 className="card-title">Hiérarchie complète</h3>
+                        <h3 className="card-title">{ hierarchy?.title }</h3>
 
                         <div className="space-y-2">
-                            <H1>H1 - Oihana Next UI</H1>
-                            <H2>H2 - UI Library based on DaisyUI and TailwindCSS</H2>
+                            <H1>H1 — Oihana Next UI</H1>
+                            <H2>{ hierarchy?.subtitle }</H2>
                             <Paragraph>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                                { LOREM }
                             </Paragraph>
 
-                            <H3>H3 - Les niveaux de titre</H3>
-                            <Paragraph>
-                                Six niveaux, du titre de page au sous-titre de paragraphe, chacun avec sa graisse et son interligne.
-                            </Paragraph>
-
-                            <H4>H4 - La hiérarchie</H4>
-                            <Paragraph>
-                                Un niveau sauté se voit : la page perd son plan, et un lecteur au clavier perd ses repères.
-                            </Paragraph>
-
-                            <H5>H5 - Les réglages</H5>
-                            <Paragraph>
-                                Taille, graisse, interligne et marges verticales, en une seule échelle pour toute la page.
-                            </Paragraph>
-
-                            <H6>H6 - Le dernier niveau</H6>
-                            <Paragraph>
-                                Plus bas, un paragraphe en gras dit la même chose sans promettre une section.
-                            </Paragraph>
+                            { SUBHEADINGS.map( ( Heading , index ) => (
+                                <div key={ Heading.displayName ?? index } className="space-y-2">
+                                    <Heading>{ hierarchy?.sections?.[ index ]?.heading }</Heading>
+                                    <Paragraph>
+                                        { hierarchy?.sections?.[ index ]?.text }
+                                    </Paragraph>
+                                </div>
+                            ) ) }
 
                             <Blockquote showIcon className="border-l-primary">
-                                « Une page bien composée se lit avant d'être regardée. »
+                                { hierarchy?.quote }
                             </Blockquote>
                         </div>
                     </div>
@@ -235,26 +235,26 @@ const TypographyShowcase = ({ path = 'app.test' }) =>
                 {/* Responsive Demo */}
                 <section className="card bg-base-200 shadow-xl">
                     <div className="card-body">
-                        <h3 className="card-title">Test responsive</h3>
+                        <h3 className="card-title">{ responsive?.title }</h3>
                         <p className="text-sm text-base-content/70 mb-4">
-                            Redimensionnez la fenêtre pour voir les tailles s'adapter
+                            { responsive?.hint }
                         </p>
 
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                             <div className="card bg-base-100">
                                 <div className="card-body">
-                                    <H3>Mobile</H3>
+                                    <H3>{ responsive?.mobile?.title }</H3>
                                     <Paragraph>
-                                        Les titres s'adaptent automatiquement à la taille de l'écran.
+                                        { responsive?.mobile?.text }
                                     </Paragraph>
                                 </div>
                             </div>
 
                             <div className="card bg-base-100">
                                 <div className="card-body">
-                                    <H3>Desktop</H3>
+                                    <H3>{ responsive?.desktop?.title }</H3>
                                     <Paragraph>
-                                        Les classes responsive permettent une lecture optimale sur tous les appareils.
+                                        { responsive?.desktop?.text }
                                     </Paragraph>
                                 </div>
                             </div>
@@ -268,27 +268,27 @@ const TypographyShowcase = ({ path = 'app.test' }) =>
                 {/* Labels — the three lines that sit under a field */}
                 <section className="card bg-base-200 shadow-xl">
                     <div className="card-body gap-4">
-                        <h3 className="card-title">Labels</h3>
+                        <h3 className="card-title">{ labels?.title }</h3>
                         <p className="text-sm text-base-content/70">
-                            Les trois lignes qui se posent sous un champ : une erreur, une aide, une description.
+                            { labels?.hint }
                         </p>
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                             <div className="card bg-base-100">
                                 <div className="card-body gap-1">
                                     <span className="font-mono text-sm">ErrorLabel</span>
-                                    <ErrorLabel>Ce champ est obligatoire.</ErrorLabel>
+                                    <ErrorLabel>{ labels?.error }</ErrorLabel>
                                 </div>
                             </div>
                             <div className="card bg-base-100">
                                 <div className="card-body gap-1">
                                     <span className="font-mono text-sm">HelperLabel</span>
-                                    <HelperLabel>Au moins 8 caractères, dont un chiffre.</HelperLabel>
+                                    <HelperLabel>{ labels?.helper }</HelperLabel>
                                 </div>
                             </div>
                             <div className="card bg-base-100">
                                 <div className="card-body gap-1">
                                     <span className="font-mono text-sm">DescriptionLabel</span>
-                                    <DescriptionLabel>Visible par tous les membres de l'équipe.</DescriptionLabel>
+                                    <DescriptionLabel>{ labels?.description }</DescriptionLabel>
                                 </div>
                             </div>
                         </div>

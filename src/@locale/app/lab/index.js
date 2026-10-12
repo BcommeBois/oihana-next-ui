@@ -21,6 +21,7 @@ import schedulerTimeline from './schedulerTimeline'
 import schedulerWeek  from './schedulerWeek'
 import textareas      from './textareas'
 import tree           from './tree'
+import typography     from './typography'
 
 const lab =
 {
@@ -47,6 +48,7 @@ const lab =
     schedulerWeek ,
     textareas      ,
     tree           ,
+    typography     ,
 };
 
 export default lab ;

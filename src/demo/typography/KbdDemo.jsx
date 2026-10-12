@@ -4,98 +4,109 @@ import { MdAdd } from 'react-icons/md' ;
 
 import Kbd from '@/components/Kbd' ;
 
+import useI18n from '@/contexts/locale/useI18n' ;
+
 const SIZES = [ 'xs' , 'sm' , 'md' , 'lg' , 'xl' ] ;
 
-const ICON_PLUS =
-(
+/**
+ * An icon separator, with the hidden word a screen reader needs.
+ *
+ * @param {string} label - The word read out in place of the icon.
+ */
+const iconPlus = label => (
     <>
         <MdAdd aria-hidden="true" />
-        <span className="sr-only">plus</span>
+        <span className="sr-only">{ label }</span>
     </>
 ) ;
 
 /**
  * Kbd demo : one key, the sizes, combinations, and keys inside a sentence.
+ *
+ * @param {Object} props
+ * @param {string} [props.path='demo.typography.kbd'] - Dot notation path to the demo locale.
  */
-const KbdDemo = () => (
-    <section className="card bg-base-200 shadow-xl">
-        <div className="card-body gap-6">
-            <h3 className="card-title">Kbd</h3>
-            <p className="text-sm text-base-content/70">
-                Une touche du clavier, ou un code court à taper à la main. Le rendu est l'élément HTML <code>&lt;kbd&gt;</code>.
-            </p>
+const KbdDemo = ( { path = 'demo.typography.kbd' } = {} ) =>
+{
+    const t = useI18n( path ) ?? {} ;
 
-            <div className="flex flex-col gap-2">
-                <span className="font-mono text-sm">Une touche</span>
-                <div className="flex flex-wrap items-center gap-2">
-                    <Kbd>Esc</Kbd>
-                    <Kbd>Tab</Kbd>
-                    <Kbd>Entrée</Kbd>
-                    <Kbd>⌫</Kbd>
-                    <Kbd>▲</Kbd>
-                    <Kbd>A</Kbd>
-                </div>
-            </div>
-
-            <div className="flex flex-col gap-2">
-                <span className="font-mono text-sm">size</span>
-                <div className="flex flex-wrap items-end gap-4">
-                    { SIZES.map( size => (
-                        <div key={ size } className="flex flex-col items-center gap-1">
-                            <Kbd size={ size }>Shift</Kbd>
-                            <span className="text-xs font-mono text-base-content/60">{ size }</span>
-                        </div>
-                    ) ) }
-                </div>
-            </div>
-
-            <div className="flex flex-col gap-2">
-                <span className="font-mono text-sm">keys — une combinaison</span>
+    return (
+        <section className="card bg-base-200 shadow-xl">
+            <div className="card-body gap-6">
+                <h3 className="card-title">Kbd</h3>
                 <p className="text-sm text-base-content/70">
-                    Chaque touche a son propre <code>&lt;kbd&gt;</code>, l'ensemble est enveloppé dans un <code>&lt;kbd&gt;</code> :
-                    c'est la manière HTML de dire « ensemble ». Le séparateur est du texte, lu par un lecteur d'écran.
+                    { t.intro } <code>&lt;kbd&gt;</code>.
                 </p>
-                <div className="flex flex-wrap items-center gap-6">
-                    <Kbd keys={ [ '⌘' , 'K' ] } />
-                    <Kbd keys={ [ 'Ctrl' , 'Shift' , 'P' ] } />
-                    <Kbd keys={ [ 'Alt' , 'F4' ] } size="lg" />
-                    <Kbd keys={ [ 'G' , 'G' ] } separator="puis" size="sm" separatorClassName="text-xs text-base-content/60" />
+
+                <div className="flex flex-col gap-2">
+                    <span className="font-mono text-sm">{ t.single }</span>
+                    <div className="flex flex-wrap items-center gap-2">
+                        <Kbd>Esc</Kbd>
+                        <Kbd>Tab</Kbd>
+                        <Kbd>{ t.enter }</Kbd>
+                        <Kbd>⌫</Kbd>
+                        <Kbd>▲</Kbd>
+                        <Kbd>A</Kbd>
+                    </div>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                    <span className="font-mono text-sm">size</span>
+                    <div className="flex flex-wrap items-end gap-4">
+                        { SIZES.map( size => (
+                            <div key={ size } className="flex flex-col items-center gap-1">
+                                <Kbd size={ size }>Shift</Kbd>
+                                <span className="text-xs font-mono text-base-content/60">{ size }</span>
+                            </div>
+                        ) ) }
+                    </div>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                    <span className="font-mono text-sm">{ t.combination }</span>
+                    <p className="text-sm text-base-content/70">
+                        { t.nesting?.[ 0 ] } <code>&lt;kbd&gt;</code>{ t.nesting?.[ 1 ] } <code>&lt;kbd&gt;</code>{ t.nesting?.[ 2 ] }
+                    </p>
+                    <div className="flex flex-wrap items-center gap-6">
+                        <Kbd keys={ [ '⌘' , 'K' ] } />
+                        <Kbd keys={ [ 'Ctrl' , 'Shift' , 'P' ] } />
+                        <Kbd keys={ [ 'Alt' , 'F4' ] } size="lg" />
+                        <Kbd keys={ [ 'G' , 'G' ] } separator={ t.sequence } size="sm" separatorClassName="text-xs text-base-content/60" />
+                    </div>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                    <span className="font-mono text-sm">{ t.icon }</span>
+                    <p className="text-sm text-base-content/70">
+                        { t.iconNote }<code>sr-only</code>{ t.iconNoteEnd }
+                    </p>
+                    <div className="flex flex-wrap items-center gap-6">
+                        <Kbd
+                            keys               = { [ 'Alt' , 'Tab' ] }
+                            separator          = { iconPlus( t.plus ) }
+                            separatorClassName = "inline-flex items-center text-base-content/60"
+                        />
+                        <Kbd
+                            keys               = { [ 'Ctrl' , 'Shift' , 'Esc' ] }
+                            separator          = { iconPlus( t.plus ) }
+                            separatorClassName = "inline-flex items-center text-primary"
+                            size               = "lg"
+                        />
+                    </div>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                    <span className="font-mono text-sm">{ t.sentence }</span>
+                    <p>
+                        { t.search?.[ 0 ] } <Kbd keys={ [ '⌘' , 'K' ] } size="sm" /> { t.search?.[ 1 ] } <Kbd size="sm">Esc</Kbd> { t.search?.[ 2 ] }
+                    </p>
+                    <p>
+                        { t.checkCode?.[ 0 ] } <Kbd size="sm">7K</Kbd> { t.checkCode?.[ 1 ] }
+                    </p>
                 </div>
             </div>
-
-            <div className="flex flex-col gap-2">
-                <span className="font-mono text-sm">separator — une icône</span>
-                <p className="text-sm text-base-content/70">
-                    Un lecteur d'écran lit un séparateur texte, mais rien pour une icône : il faut lui adjoindre un texte
-                    masqué (<code>sr-only</code>). Un emoji, lui, est lu par son nom Unicode.
-                </p>
-                <div className="flex flex-wrap items-center gap-6">
-                    <Kbd
-                        keys               = { [ 'Alt' , 'Tab' ] }
-                        separator          = { ICON_PLUS }
-                        separatorClassName = "inline-flex items-center text-base-content/60"
-                    />
-                    <Kbd
-                        keys               = { [ 'Ctrl' , 'Shift' , 'Esc' ] }
-                        separator          = { ICON_PLUS }
-                        separatorClassName = "inline-flex items-center text-primary"
-                        size               = "lg"
-                    />
-                </div>
-            </div>
-
-            <div className="flex flex-col gap-2">
-                <span className="font-mono text-sm">Dans une phrase</span>
-                <p>
-                    Appuyez sur <Kbd keys={ [ '⌘' , 'K' ] } size="sm" /> pour ouvrir la recherche,
-                    puis sur <Kbd size="sm">Esc</Kbd> pour la fermer.
-                </p>
-                <p>
-                    Si l'étiquette est illisible, tapez le code de contrôle <Kbd size="sm">7K</Kbd> affiché dessous.
-                </p>
-            </div>
-        </div>
-    </section>
-) ;
+        </section>
+    ) ;
+} ;
 
 export default KbdDemo ;

@@ -4,6 +4,8 @@ import H3        from '@/components/typography/H3' ;
 import Paragraph from '@/components/typography/Paragraph' ;
 import I18nText  from '@/components/i18n/I18nText' ;
 
+import useI18n from '@/contexts/locale/useI18n' ;
+
 /**
  * I18nText demo component.
  *
@@ -12,10 +14,16 @@ import I18nText  from '@/components/i18n/I18nText' ;
  * Switch the global language from the app's flag menu and every value
  * below updates live.
  *
- * Reads from the `app.lab.i18n` demo bundle (`@locale/app/lab/i18n.js`).
+ * Reads from the `app.lab.i18n` demo bundle (`@locale/app/lab/i18n.js`) ;
+ * the demo's own captions and fallbacks come from `path`.
+ *
+ * @param {Object} props
+ * @param {string} [props.path='demo.typography.i18nText'] - Dot notation path to the demo locale.
  */
-const I18nTextDemo = () =>
+const I18nTextDemo = ( { path = 'demo.typography.i18nText' } = {} ) =>
 {
+    const t = useI18n( path ) ?? {} ;
+
     return (
         <section className="card bg-base-200 shadow-xl">
             <div className="card-body gap-4">
@@ -57,13 +65,13 @@ const I18nTextDemo = () =>
                     {/* Missing field → fallback (still interpolated) */}
                     <div className="card bg-base-100">
                         <div className="card-body">
-                            <H3 size="base" className="font-mono">missing field → fallback</H3>
+                            <H3 size="base" className="font-mono">{ t.missing }</H3>
                             <Paragraph>
                                 <I18nText
                                     path     = "app.lab.i18n"
                                     field    = "does.not.exist"
-                                    fallback = "Fallback shown for {0}"
-                                    args     = { [ 'this key' ] }
+                                    fallback = { t.missingText }
+                                    args     = { [ t.missingArg ] }
                                 />
                             </Paragraph>
                         </div>
@@ -72,12 +80,12 @@ const I18nTextDemo = () =>
                     {/* The key holds a sub-object → fallback, the page stays up */}
                     <div className="card bg-base-100">
                         <div className="card-body">
-                            <H3 size="base" className="font-mono">field="error" (sous-objet) → fallback</H3>
+                            <H3 size="base" className="font-mono">{ t.subObject }</H3>
                             <Paragraph>
                                 <I18nText
                                     path     = "app.lab.i18n"
                                     field    = "error"
-                                    fallback = "« error » est un objet { description } : le texte de repli s'affiche."
+                                    fallback = { t.subObjectText }
                                 />
                             </Paragraph>
                         </div>
