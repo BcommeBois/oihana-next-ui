@@ -23,7 +23,7 @@ import useNumberFormat from '@/hooks/useNumberFormat' ;
 
 import useI18n from '@/contexts/locale/useI18n' ;
 
-import { byMonth , DAY , noise , Panel , PERIODS , UsedComponents , useToday } from './shared' ;
+import { byMonth , DAY , noise , Panel , PERIODS , UsedComponents , useToday } from '@/demo/scenarios/shared' ;
 
 /** The project started this many days ago, and ends this many days from now. */
 const STARTED = 200 ;

@@ -21,7 +21,7 @@ import useNumberFormat from '@/hooks/useNumberFormat' ;
 
 import useI18n from '@/contexts/locale/useI18n' ;
 
-import { byMonth , DAY , noise , Panel , PERIODS , UsedComponents , useToday } from './shared' ;
+import { byMonth , DAY , noise , Panel , PERIODS , UsedComponents , useToday } from '@/demo/scenarios/shared' ;
 
 const SOURCES = [ [ 'search' , 0.42 ] , [ 'direct' , 0.24 ] , [ 'social' , 0.16 ] , [ 'referral' , 0.11 ] , [ 'email' , 0.07 ] ] ;
 

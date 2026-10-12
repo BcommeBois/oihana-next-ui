@@ -20,6 +20,8 @@ import {
     MdInsights           as AnalyticsIcon ,
     MdSupportAgent       as CustomersIcon ,
     MdTimeline           as ProjectIcon ,
+    MdHandshake          as CrmIcon ,
+    MdContacts           as CrmCustomersIcon ,
     MdWidgets            as ComponentsIcon ,
     MdTexture            as PatternsIcon ,
     MdTextSnippet        as TypographyIcon ,
@@ -313,6 +315,15 @@ const navigation =
         className : 'gap-1' ,
         items     :
         [
+            {
+                id   : 'crm'   ,
+                type : COLLAPSE ,
+                Icon : CrmIcon  ,
+                items :
+                [
+                    { id : 'crmCustomers' , type : LINK  , Icon : CrmCustomersIcon , path  : '/scenarios/crm/customers' } ,
+                ]
+            } ,
             {
                 id   : 'dashboards'   ,
                 type : COLLAPSE       ,

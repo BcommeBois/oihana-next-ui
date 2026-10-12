@@ -23,7 +23,7 @@ import useNumberFormat from '@/hooks/useNumberFormat' ;
 
 import useI18n from '@/contexts/locale/useI18n' ;
 
-import { byMonth , DAY , noise , Panel , PERIODS , UsedComponents , useToday } from './shared' ;
+import { byMonth , DAY , noise , Panel , PERIODS , UsedComponents , useToday } from '@/demo/scenarios/shared' ;
 
 const CATEGORIES = [ [ 'furniture' , 0.38 ] , [ 'lighting' , 0.21 ] , [ 'textile' , 0.17 ] , [ 'decoration' , 0.15 ] , [ 'kitchen' , 0.09 ] ] ;
 
