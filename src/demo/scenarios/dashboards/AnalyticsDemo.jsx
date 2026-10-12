@@ -1,6 +1,6 @@
 'use client' ;
 
-import { useEffect , useMemo , useState } from 'react' ;
+import { useMemo , useState } from 'react' ;
 
 import format from 'vegas-js-core/src/strings/fastformat' ;
 
@@ -10,7 +10,6 @@ import BarList          from '@/components/metrics/BarList' ;
 import Delta            from '@/components/metrics/Delta' ;
 import HeatMapChart     from '@/components/charts/HeatMapChart' ;
 import LineChart        from '@/components/charts/LineChart' ;
-import Link             from '@/components/links/Link' ;
 import PieChart         from '@/components/charts/PieChart' ;
 import SegmentedControl from '@/components/SegmentedControl' ;
 import Sparkline        from '@/components/metrics/Sparkline' ;
@@ -22,10 +21,7 @@ import useNumberFormat from '@/hooks/useNumberFormat' ;
 
 import useI18n from '@/contexts/locale/useI18n' ;
 
-const DAY = 24 * 60 * 60 * 1000 ;
-
-/** How many days each period covers ; a year is drawn month by month. */
-const PERIODS = { month : 30 , week : 7 , year : 365 } ;
+import { byMonth , DAY , noise , Panel , PERIODS , UsedComponents , useToday } from './shared' ;
 
 const SOURCES = [ [ 'search' , 0.42 ] , [ 'direct' , 0.24 ] , [ 'social' , 0.16 ] , [ 'referral' , 0.11 ] , [ 'email' , 0.07 ] ] ;
 
@@ -36,21 +32,6 @@ const PAGES = [ '/' , '/produits' , '/blog/bien-choisir-son-bois' , '/tarifs' , 
 /** Two-hour slots, and how busy each one is through a day. */
 const SLOTS = Array.from( { length : 12 } , ( _ , index ) => index * 2 ) ;
 const HOURLY = [ 0.15 , 0.08 , 0.1 , 0.45 , 0.9 , 1 , 0.85 , 0.95 , 0.8 , 0.7 , 0.6 , 0.3 ] ;
-
-/**
- * A number between 0 and 1 drawn from a seed : the same seed, the same number.
- * (mulberry32)
- */
-const noise = seed =>
-{
-    let value = ( seed + 0x6d2b79f5 ) | 0 ;
-    value = Math.imul( value ^ ( value >>> 15 ) , value | 1 ) ;
-    value ^= value + Math.imul( value ^ ( value >>> 7 ) , value | 61 ) ;
-    return ( ( value ^ ( value >>> 14 ) ) >>> 0 ) / 4294967296 ;
-} ;
-
-/** The number of a day since the epoch : the seed of everything measured that day. */
-const dayNumber = date => Math.floor( Date.UTC( date.getFullYear() , date.getMonth() , date.getDate() ) / DAY ) ;
 
 /**
  * What a site measured on one day — the same figures every time the day is asked for.
@@ -88,21 +69,6 @@ const summarize = days =>
 } ;
 
 /**
- * Groups the days of a year into months, oldest first.
- */
-const byMonth = days =>
-{
-    const months = new Map() ;
-    for ( const day of days )
-    {
-        const date = new Date( day.day * DAY ) ;
-        const key  = `${ date.getUTCFullYear() }-${ String( date.getUTCMonth() + 1 ).padStart( 2 , '0' ) }` ;
-        months.set( key , [ ...( months.get( key ) ?? [] ) , day ] ) ;
-    }
-    return [ ...months ].map( ( [ key , list ] ) => ( { key , ...summarize( list ) , days : list } ) ) ;
-} ;
-
-/**
  * The components the screen is built of, and the page that shows each one.
  */
 const USED =
@@ -117,16 +83,6 @@ const USED =
     { href : '/modules/metrics'    , name : 'Tracker' } ,
     { href : '/components/buttons' , name : 'SegmentedControl' } ,
 ] ;
-
-/**
- * A card of the dashboard : a title, then its content.
- */
-const Panel = ( { children , className = '' , title } ) => (
-    <section className={ `flex min-w-0 flex-col gap-3 rounded-box bg-base-100 p-4 shadow-sm ${ className }` }>
-        <h4 className="font-semibold">{ title }</h4>
-        { children }
-    </section>
-) ;
 
 /**
  * A site's audience, as a dashboard.
@@ -146,12 +102,7 @@ const AnalyticsDemo = ( { path = 'demo.scenarios.dashboards.analytics' } = {} ) 
 
     const { formatNumber , formatPercent , locale } = useNumberFormat() ;
 
-    // Read in the browser only : the server and the first render must agree, a date of the day may not.
-    const [ today , setToday ] = useState( null ) ;
-    useEffect( () =>
-    {
-        setToday( dayNumber( new Date() ) ) ;
-    } , [] ) ;
+    const today = useToday() ;
 
     const [ period , setPeriod ] = useState( 'month' ) ;
 
@@ -165,7 +116,7 @@ const AnalyticsDemo = ( { path = 'demo.scenarios.dashboards.analytics' } = {} ) 
         const length   = PERIODS[ period ] ;
         const current  = lastDays( today , length ) ;
         const previous = lastDays( today - length , length ) ;
-        const points   = period === 'year' ? byMonth( current ).slice( -12 ) : current ;
+        const points   = period === 'year' ? byMonth( current ).slice( -12 ).map( ( { days , key } ) => ( { key , ...summarize( days ) } ) ) : current ;
 
         return { current , now : summarize( current ) , points , before : summarize( previous ) } ;
     }
@@ -343,18 +294,7 @@ const AnalyticsDemo = ( { path = 'demo.scenarios.dashboards.analytics' } = {} ) 
 
             </div>
 
-            {/* The components used */}
-            <section className="flex flex-col gap-2">
-                <h4 className="font-semibold">{ t.used?.title }</h4>
-                <p className="text-xs text-base-content/60">{ t.used?.note }</p>
-                <ul className="flex flex-wrap gap-2">
-                    { USED.map( ( { href , name } ) => (
-                        <li key={ name }>
-                            <Link className="badge badge-outline badge-sm font-mono hover:badge-primary" href={ href }>{ name }</Link>
-                        </li>
-                    ) ) }
-                </ul>
-            </section>
+            <UsedComponents items={ USED } note={ t.used?.note } title={ t.used?.title } />
 
         </Container>
     ) ;
