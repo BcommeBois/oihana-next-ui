@@ -65,3 +65,6 @@ pnpm-lock.yaml
 
 # Map engine worker, served from public/ by oihana-copy-maplibre-worker
 /public/maplibre/
+
+# Barcode reader WebAssembly, served from public/ by oihana-copy-zxing-wasm
+/public/zxing/

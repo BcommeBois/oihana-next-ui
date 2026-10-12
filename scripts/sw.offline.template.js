@@ -27,8 +27,33 @@ self.addEventListener( 'activate' , ( event ) =>
     self.clients.claim() ;
 }) ;
 
+// Served under its version (oihana-copy-zxing-wasm), so a cached copy never goes stale : cache first.
+const ZXING_PATH = '/zxing/' ;
+
 self.addEventListener( 'fetch' , ( event ) =>
 {
+    const url = new URL( event.request.url ) ;
+
+    // The barcode reader's WebAssembly : kept after its first fetch, so a camera scan works offline.
+    if ( event.request.method === 'GET' && url.origin === self.location.origin && url.pathname.startsWith( ZXING_PATH ) )
+    {
+        event.respondWith
+        (
+            caches.open( CACHE_NAME ).then( ( cache ) =>
+            {
+                return cache.match( event.request ).then( ( cached ) =>
+                {
+                    return cached || fetch( event.request ).then( ( response ) =>
+                    {
+                        if ( response.ok ) cache.put( event.request , response.clone() ) ;
+                        return response ;
+                    }) ;
+                }) ;
+            })
+        ) ;
+        return ;
+    }
+
     if ( event.request.mode === 'navigate' )
     {
         event.respondWith

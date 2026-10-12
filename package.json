@@ -34,6 +34,7 @@
     "src",
     "scripts/cache-size.js",
     "scripts/copy-maplibre-worker.js",
+    "scripts/copy-zxing-wasm.js",
     "scripts/generate-splash.js",
     "scripts/inject-version.js",
     "scripts/sw.minimal.template.js",
@@ -46,6 +47,7 @@
   "bin": {
     "oihana-cache-size": "./scripts/cache-size.js",
     "oihana-copy-maplibre-worker": "./scripts/copy-maplibre-worker.js",
+    "oihana-copy-zxing-wasm": "./scripts/copy-zxing-wasm.js",
     "oihana-generate-splash": "./scripts/generate-splash.js",
     "oihana-inject-version": "./scripts/inject-version.js"
   },
@@ -77,6 +79,7 @@
     "@nivo/radial-bar": "^0.99.0",
     "@nivo/waffle": "^0.99.0",
     "@vis.gl/react-maplibre": "^8.1.2",
+    "barcode-detector": "^3.0.0",
     "daisyui": "^5.0.0",
     "maplibre-gl": "^6.4.1",
     "next": "^16.0.0",
@@ -125,6 +128,9 @@
       "optional": true
     },
     "@vis.gl/react-maplibre": {
+      "optional": true
+    },
+    "barcode-detector": {
       "optional": true
     },
     "maplibre-gl": {
@@ -189,6 +195,7 @@
     "@types/sanitize-html": "^2.16.2",
     "@vis.gl/react-maplibre": "^8.1.3",
     "babel-plugin-react-compiler": "1.0.0",
+    "barcode-detector": "^3.2.2",
     "daisyui": "^5.7.47",
     "maplibre-gl": "^6.12.0",
     "next": "^16.3.8",
@@ -221,7 +228,7 @@
   "scripts": {
     "dev": "bun inject-version && next dev -p 3666",
     "build": "next build",
-    "prebuild": "bun run ./scripts/copy-maplibre-worker.js",
+    "prebuild": "bun run ./scripts/copy-maplibre-worker.js && bun run ./scripts/copy-zxing-wasm.js",
     "start": "next start",
     "lint": "biome check",
     "test": "bun test",
@@ -229,11 +236,12 @@
     "clean": "rm -rf .next",
     "clean:cache": "rm -rf .next/dev/cache .next/cache",
     "cache:size": "bun run ./scripts/cache-size.js --all",
-    "predev": "bun run ./scripts/cache-size.js && bun run ./scripts/copy-maplibre-worker.js",
+    "predev": "bun run ./scripts/cache-size.js && bun run ./scripts/copy-maplibre-worker.js && bun run ./scripts/copy-zxing-wasm.js",
     "inject-version": "bun run ./scripts/inject-version.js",
     "generate-exports": "bun run ./scripts/generate-exports.js",
     "check-deps": "bun run ./scripts/check-deps.js",
     "copy-maplibre-worker": "bun run ./scripts/copy-maplibre-worker.js",
+    "copy-zxing-wasm": "bun run ./scripts/copy-zxing-wasm.js",
     "generate-splash": "bun run ./scripts/generate-splash.js --bg \"#D9CFC4\" --force",
     "preversion": "bun check-deps",
     "version": "bun inject-version && bun generate-exports && git add src/version.js",
