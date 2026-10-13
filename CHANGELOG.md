@@ -35,6 +35,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - The demo app gains a **« Documents » group** under Modules, with a page that loads the engine,
   says where its files come from, and draws the first page of a hand-written two-page sample
   (`public/documents/sample.pdf`, which embeds no font : the proof that the served fonts work).
+- On a phone, the demo app's drawer now takes the whole screen but a strip of overlay to close it
+  (`w-[calc(100%-2.5rem)] max-w-md`) : three levels of entries did not fit in two thirds of it.
 
 ## [0.41.0] — 2026-10-13
 

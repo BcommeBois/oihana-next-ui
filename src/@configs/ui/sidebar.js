@@ -29,7 +29,9 @@
  */
 const sidebar =
 {
-    className : 'bg-base-200 w-8/12 lg:w-76 lg:max-w-none pattern-lines-diagonal-right after:text-base-content/10' ,
+    // On a phone the drawer takes the whole screen but a strip of overlay to close it : three levels of
+    // entries (« Scénarios › Tableaux de bord › Ventes et support client ») need the room.
+    className : 'bg-base-200 w-[calc(100%-2.5rem)] max-w-md sm:w-8/12 lg:w-76 lg:max-w-none pattern-lines-diagonal-right after:text-base-content/10' ,
     navigation :
     {
         show : true ,

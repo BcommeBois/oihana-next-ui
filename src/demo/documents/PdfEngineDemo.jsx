@@ -73,7 +73,12 @@ const PdfEngineDemo = ( { path = 'demo.documents.engine' } = {} ) =>
                 { missing
                     ? <Alert color="warning" showIcon>{ t.missing }</Alert>
                     : engine
-                        ? <Badge color="success">{ format( t.ready ?? '' , engine.version , `${ PDFJS_PATH }/${ engine.version }/` ) }</Badge>
+                        ? (
+                            <>
+                                <Badge color="success">{ format( t.ready ?? '' , engine.version ) }</Badge>
+                                <code className="text-xs text-base-content/70">{ format( t.served ?? '' , `${ PDFJS_PATH }/${ engine.version }/` ) }</code>
+                            </>
+                        )
                         : <Badge style="ghost">{ t.waiting }</Badge> }
             </div>
 
