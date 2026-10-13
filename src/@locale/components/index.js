@@ -4,6 +4,7 @@ import badges     from './badges'
 import barcode    from './barcode'
 import buttons    from './buttons'
 import dates      from './dates'
+import connection from './connection'
 import document   from './document'
 import signature  from './signature'
 import dropdowns  from './dropdowns'
@@ -32,6 +33,7 @@ const components =
     barcode ,
     buttons ,
     dates ,
+    connection ,
     document ,
     signature ,
     dropdowns,

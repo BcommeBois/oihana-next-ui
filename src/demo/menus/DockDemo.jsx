@@ -14,6 +14,7 @@ import Dock     from '@/components/menus/Dock' ;
 import DockItem from '@/components/menus/DockItem' ;
 
 import {
+    MdCheck as CheckIcon ,
     MdHome as HomeIcon ,
     MdInbox as InboxIcon ,
     MdSettings as SettingsIcon ,
@@ -84,6 +85,25 @@ export default function DockDemo()
                     <h2 className="card-title text-sm">Dock — couleurs custom</h2>
                     <Frame>
                         <Dock items={ items } position="relative" className="bg-neutral text-neutral-content" />
+                    </Frame>
+                </div>
+            </div>
+
+            {/* Actions : the thumb bar of a field screen */}
+            <div className="card bg-base-200 shadow-xl">
+                <div className="card-body">
+                    <h2 className="card-title text-sm">Dock — variant=&quot;actions&quot;</h2>
+                    <p className="text-xs text-base-content/70">La barre du pouce : des boutons de la lib, le principal à droite, sans page courante. Fixée, elle réserve sa place dans la page et reste au-dessus du clavier virtuel.</p>
+                    <Frame>
+                        <Dock
+                            className = "border border-base-300"
+                            items     = { [
+                                { id : 'cancel'  , label : 'Annuler' , onClick : () => alert( 'Annuler' ) , style : 'ghost' } ,
+                                { id : 'confirm' , label : 'Valider' , onClick : () => alert( 'Valider' ) , color : 'primary' , icon : CheckIcon } ,
+                            ] }
+                            position  = "relative"
+                            variant   = "actions"
+                        />
                     </Frame>
                 </div>
             </div>

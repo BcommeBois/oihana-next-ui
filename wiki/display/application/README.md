@@ -201,3 +201,29 @@ A component reached outside the stack does not throw where it can help it : `use
 returns `null` and every signal plays, `useNumberFormat()` falls back to the default locale, a
 label read through `useI18n` falls back to the component's own English. That is a safety net,
 not a set-up : mount the stack.
+
+## In the field
+
+A screen held in a hand — a dock, a van, a shop floor — asks for a few things before any
+component, and the library has them :
+
+- **The screen stays on.** `useWakeLock( { enabled } )` holds the Screen Wake Lock, and asks
+  for it again when the tab comes back to the front — the browser lets go of it in the
+  background, and nothing brings it back otherwise. `WakeLockToggle` is the button, drawn only
+  where the API exists ; keeping the screen on is a choice of the moment, nothing is stored.
+- **The network is really there.** `navigator.onLine` says an interface is up, not that the
+  server answers. `useOnline( { url } )` confirms each change of the browser's word with a small
+  `HEAD` of a file the application serves — `/version.json`, which `oihana-inject-version`
+  writes — and tries again every half minute while offline. `ConnectionStatus` is the band :
+  a word offline, a word when back, nothing otherwise, never a toast ; its `onChange` is what
+  an outbox listens to.
+- **The thumb bar.** `Dock variant="actions"` is one to three `Button`s fixed at the bottom,
+  the primary one at the end : « Finish », « Confirm ». Fixed, the dock reserves its height in
+  the page and stays above the virtual keyboard by following the visual viewport. The default
+  `variant="navigation"` stays daisyUI's bottom navigation.
+- **Keys that act.** `useHotkeys( { 'F1' : fn , 'v' : fn , 'ctrl+s' : fn , 120 : fn } )` — the
+  function keys of a hand-held, a trigger that sends a `keyCode`, a letter at a desk. A bare
+  letter typed into a field stays a letter ; function keys and Escape go through whatever has
+  the focus.
+
+The Logistics › Receiving scenario uses all four ; the Scanner page shows them alone.

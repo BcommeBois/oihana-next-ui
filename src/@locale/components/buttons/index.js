@@ -10,6 +10,7 @@ import remove     from './remove'
 import revoke     from './revoke'
 import save       from './save'
 import sound      from './sound'
+import wakeLock   from './wakeLock'
 import theme      from './theme'
 
 const buttons =
@@ -26,6 +27,7 @@ const buttons =
     revoke ,
     save ,
     sound ,
+    wakeLock ,
     theme ,
 };
 

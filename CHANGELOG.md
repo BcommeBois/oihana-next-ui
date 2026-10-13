@@ -8,6 +8,36 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### In the field
+
+- **New `hooks/useWakeLock`** and **`WakeLockToggle`** (`components/buttons`) : the screen
+  stays on — a picking list read for ten minutes. On the Screen Wake Lock API ; 🔑 the browser
+  lets go of the lock when the tab goes to the background, and nothing brings it back : the
+  hook asks again on `visibilitychange`. The toggle is drawn only where the API exists ;
+  keeping the screen on is a choice of the moment, nothing is stored. New
+  `components.buttons.wakeLock` bundle.
+- **New `hooks/useOnline`**, **`helpers/net/checkConnection`** and **`display/ConnectionStatus`** :
+  whether the server can be reached, not whether an interface is up — `navigator.onLine` says
+  « online » on a Wi-Fi portal that answers nothing. The browser's `online` / `offline` events
+  are confirmed by a small `HEAD` of `/version.json` (or `url`), tried again every 30 s while
+  offline. `ConnectionStatus` is a discreet band : a word offline, a word for three seconds
+  when back, nothing otherwise — a status announced politely, never a toast ; `onChange`
+  hands the state to what waits for the network. New `components.connection` bundle.
+- **`Dock` takes `variant="actions"`** : the thumb bar of a hand-held screen, one to three
+  `Button`s of the library — `color`, `style`, `loading`, `disabled`, `type`, `icon` on each
+  item — the primary one at the end, no notion of a current page, `role="toolbar"`. And, for
+  both variants, fixed : **`spacer`** reserves the dock's height in the page's flow (on by
+  default), **`avoidKeyboard`** keeps it above the virtual keyboard by following the visual
+  viewport — a `fixed` element on its own stays under the keyboard on Android and iOS.
+- **New `hooks/useHotkeys( map , { enabled , scope , inFields } )`** : the function keys of a
+  hand-held, a trigger that sends a `keyCode`, `ctrl+s`, a letter at a desk — each named as
+  text or a number, with a handler. 🔑 A bare letter typed into a field stays a letter ;
+  function keys and Escape go through whatever has the focus. `helpers/keyboard/parseHotkey`,
+  `matchesHotkey`, `isEditableTarget` are the pure part, tested with `checkConnection`.
+- The Scanner page opens with **« In the field »** — the network, the screen, the keys — and
+  the Logistics › Receiving scenario gets its thumb bar (`Dock` actions) and keys (F1, F2, V) ;
+  the Dock page shows the actions variant. The application guide gains **In the field**.
+
 ## [0.45.0] — 2026-10-13
 
 A release that **touches a PDF received** — where 0.42.0 read one, 0.43.0 wrote one and 0.44.0

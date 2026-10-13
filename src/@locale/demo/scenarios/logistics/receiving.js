@@ -2,6 +2,7 @@ const receiving =
 {
     fr :
     {
+        keys  : 'Au clavier d’un terminal : F1 utilise l’étiquette de la palette attendue, F2 celle du chêne, V passe à l’étape suivante.' ,
         intro : 'Une palette arrive au quai : on l’identifie, on contrôle chaque ligne contre la commande, on justifie les écarts, on photographie le bon de livraison signé. Les étiquettes GS1 portent l’article, le lot, la date limite et la quantité : un scan suffit à tout lire.' ,
         sound : 'Bip et vibration' ,
 
@@ -83,6 +84,7 @@ const receiving =
             sign       : 'Signature du réceptionnaire' ,
             signHelp   : 'Obligatoire. Signez en grand avec le bouton du coin : on tend le téléphone au chauffeur. Le tracé est gardé avec l’empreinte de ce qui a été signé : les lignes et l’heure.' ,
             receipt    : 'Télécharger le bon de réception' ,
+            back       : 'Retour aux lignes' ,
             validate   : 'Valider la réception' ,
             done       : 'Réception validée.' ,
             next       : 'Nouvelle réception' ,
@@ -128,6 +130,7 @@ const receiving =
 
     en :
     {
+        keys  : 'At a hand-held’s keyboard: F1 uses the expected pallet’s label, F2 the oak’s, V goes to the next step.' ,
         intro : 'A pallet reaches the dock : identify it, check each line against the order, account for the discrepancies, photograph the signed delivery note. GS1 labels carry the product, the lot, the expiry date and the quantity : one scan reads it all.' ,
         sound : 'Beep and vibration' ,
 
@@ -209,6 +212,7 @@ const receiving =
             sign       : 'Receiver’s signature' ,
             signHelp   : 'Required. Sign full screen with the corner button: the phone is handed to the driver. The strokes are kept with the digest of what was signed: the lines and the time.' ,
             receipt    : 'Download the receipt' ,
+            back       : 'Back to the lines' ,
             validate   : 'Confirm the receipt' ,
             done       : 'Receipt confirmed.' ,
             next       : 'New receipt' ,

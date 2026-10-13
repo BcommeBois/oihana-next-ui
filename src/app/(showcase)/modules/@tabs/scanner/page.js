@@ -7,6 +7,7 @@ import Container from '@/display/Container' ;
 import Page      from '@/display/Page' ;
 
 import BarcodeScannerDemo from '@/demo/barcodes/BarcodeScannerDemo' ;
+import FieldDemo          from '@/demo/field/FieldDemo' ;
 
 /**
  * Camera scanner showcase page.
@@ -31,6 +32,8 @@ const ScannerShowcase = ( { path = 'app.lab.scanner' } = {} ) =>
                     { description }
                 </p>
             </Container>
+
+            <FieldDemo />
 
             <BarcodeScannerDemo />
 

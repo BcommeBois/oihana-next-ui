@@ -1,6 +1,7 @@
 import assignments from './assignments' ;
 import barcodes  from './barcodes' ;
 import documents from './documents' ;
+import field     from './field' ;
 import buttons   from './buttons' ;
 import filters   from './filters' ;
 import images    from './images' ;
@@ -23,6 +24,7 @@ const demo =
     barcodes ,
     buttons ,
     documents ,
+    field ,
     filters ,
     images ,
     media ,

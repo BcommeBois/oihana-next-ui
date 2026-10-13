@@ -19,10 +19,12 @@ import Steps         from '@/components/steps/Steps' ;
 import Toggle        from '@/components/checkboxes/Toggle' ;
 import Link          from '@/components/links/Link' ;
 import BottomSheet   from '@/components/modals/BottomSheet' ;
+import Dock          from '@/components/menus/Dock' ;
 
 import PdfDownloadButton from '@/components/documents/PdfDownloadButton' ;
 
 import useFeedbackSignal from '@/hooks/useFeedbackSignal' ;
+import useHotkeys        from '@/hooks/useHotkeys' ;
 import useNumberFormat   from '@/hooks/useNumberFormat' ;
 
 import { completeGS1Number } from '@/helpers/barcodes/gs1CheckDigit' ;
@@ -105,6 +107,8 @@ const USED =
     { href : '/components/inputs?filter=signature' , name : 'SignaturePad' } ,
     { href : '/modules/documentsCreate'         , name : 'PdfDownloadButton' } ,
     { href : '/components/steps'                , name : 'Steps' } ,
+    { href : '/components/dock'                 , name : 'Dock' } ,
+    { href : '/modules/scanner'                 , name : 'useHotkeys' } ,
 ] ;
 
 const emptyLines = () => LINES.map( line => ( { ...line , lots : [] , reason : null , received : 0 } ) ) ;
@@ -345,12 +349,25 @@ const ReceivingDemo = ( { path = 'demo.scenarios.logistics.receiving' } = {} ) =
             : null
     , [ Receipt , locale , record , signature , t.delivery , t.products , t.receipt , t.review ] ) ;
 
+    // The keys of a hand-held : F1 uses the expected pallet's label, F2 the first line's, V goes on.
+    useHotkeys(
+    {
+        'F1' : () => { if ( scanning && labels[ 0 ] ) onUse( labels[ 0 ].value ) ; } ,
+        'F2' : () => { if ( scanning && labels[ 2 ] ) onUse( labels[ 2 ].value ) ; } ,
+        'v'  : () =>
+        {
+            if ( step === 'lines' && !lines.every( line => line.received === 0 ) ) setStep( 'review' ) ;
+            else if ( step === 'review' && complete ) onConfirm() ;
+        } ,
+    } , { enabled : !editing } ) ;
+
     const editedLine = lines.find( line => line.gtin === editing ) ;
 
     return (
         <Container className="flex flex-col gap-6 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-7xl">
 
             <p className="text-sm text-base-content/70">{ t.intro }</p>
+            <p className="text-xs text-base-content/60">{ t.keys }</p>
 
             <Toggle checked={ sound } color="primary" inline label={ t.sound } onChange={ event => setSound( event.target.checked ) } />
 
@@ -436,11 +453,15 @@ const ReceivingDemo = ( { path = 'demo.scenarios.logistics.receiving' } = {} ) =
                     ) }
 
                     { step === 'lines' && (
-                        <div>
-                            <Button color="primary" disabled={ lines.every( line => line.received === 0 ) } onClick={ () => setStep( 'review' ) } size="lg">
-                                { t.lines?.finish }
-                            </Button>
-                        </div>
+                        <Dock
+                            className = "rounded-box"
+                            items     = { [
+                                { id : 'reset'  , label : t.review?.next , onClick : reset , style : 'ghost' } ,
+                                { id : 'finish' , color : 'primary' , disabled : lines.every( line => line.received === 0 ) , label : t.lines?.finish , onClick : () => setStep( 'review' ) } ,
+                            ] }
+                            position  = "relative"
+                            variant   = "actions"
+                        />
                     ) }
 
                     { ( step === 'review' || step === 'done' ) && (
@@ -479,16 +500,24 @@ const ReceivingDemo = ( { path = 'demo.scenarios.logistics.receiving' } = {} ) =
                                 value    = { signature }
                             />
 
-                            <div className="flex flex-wrap gap-2">
-                                { step === 'done'
-                                    ? (
-                                        <>
-                                            <PdfDownloadButton color="primary" document={ receipt } fileName={ `${ t.receipt?.fileName ?? 'receipt' }-${ ORDER }.pdf` } size="lg">{ t.review?.receipt }</PdfDownloadButton>
-                                            <Button onClick={ reset } size="lg" style="outline">{ t.review?.next }</Button>
-                                        </>
-                                    )
-                                    : <Button color="primary" disabled={ !complete } onClick={ onConfirm } size="lg">{ t.review?.validate }</Button> }
-                            </div>
+                            { step === 'done'
+                                ? (
+                                    <div className="flex flex-wrap gap-2">
+                                        <PdfDownloadButton color="primary" document={ receipt } fileName={ `${ t.receipt?.fileName ?? 'receipt' }-${ ORDER }.pdf` } size="lg">{ t.review?.receipt }</PdfDownloadButton>
+                                        <Button onClick={ reset } size="lg" style="outline">{ t.review?.next }</Button>
+                                    </div>
+                                )
+                                : (
+                                    <Dock
+                                        className = "rounded-box"
+                                        items     = { [
+                                            { id : 'back'     , label : t.review?.back , onClick : () => setStep( 'lines' ) , style : 'ghost' } ,
+                                            { id : 'validate' , color : 'primary' , disabled : !complete , label : t.review?.validate , onClick : onConfirm } ,
+                                        ] }
+                                        position  = "relative"
+                                        variant   = "actions"
+                                    />
+                                ) }
 
                             { record && (
                                 <div className="flex flex-col gap-1">
