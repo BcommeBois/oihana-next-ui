@@ -44,6 +44,7 @@ const MockupCodeBlock =
                         onClick    = { handleCopy }
                         className  = "absolute top-4 right-4 btn btn-xs btn-ghost btn-square opacity-0 group-hover:opacity-100 transition-opacity z-10"
                         aria-label = "Copy code"
+                        type       = "button"
                     >
                         { copied ? '✓' : '📋' }
                     </button>

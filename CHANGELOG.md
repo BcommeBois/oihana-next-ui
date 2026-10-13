@@ -8,6 +8,29 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Upgrading
+
+- 🚨 **`Button` is now `type="button"` by default — it no longer sends the form it sits in.** A
+  `<button>` without a `type` is a `submit` one, and `Button` set none : so any button of the
+  library inside a `<form>` sent it on click — the `+` and `−` of an `InputCounter`, a
+  `Pagination` page, the `Scheduler` toolbar, a `PopoverButton`… A form that relied on it,
+  knowingly or not, **stops sending without a word** : give the button that should send it
+  **`type="submit"`** — `SaveButton`, `AddButton` and the other wrappers take it too.
+
+**🔘 Buttons that stay out of the form's business**
+
+- **`Button` takes `type`**, `'button'` by default, set only when the element is a real
+  `<button>` : with `as` (`label`, `div`, a link, a component) none is added, and a given `type` is
+  passed as is. The buttons of `components/buttons`, and every component that draws a `Button`,
+  follow without a line. The six plain `<button>`s that still had no `type` get one —
+  `Megamenu` (two : inside a form, the browser ignores `popovertarget` on a `submit` button),
+  `Dashboard`, `CodeBlock`, `MockupCodeBlock`, `LangDropDown` —, and so do the demo app's error
+  pages. The JSDoc now shows the `type="submit"` case.
+- **The first component test** : `tests/components/Button.test.jsx` renders `Button` to static
+  HTML — `button` by default, `submit` when asked, nothing on a `label` or a link. 279 tests.
+- The Buttons page gains an « In a form » section : a counter, lines to add and remove, and a
+  send count that only the `type="submit"` button moves.
+
 **💳 Card fields that say when a card cannot be right**
 
 - **New `helpers/validators`** for payment cards, pure and tested : **`isLuhn( value )`** — the checksum every card carries, catching a mistyped digit or two swapped neighbours (modulo 10 like `gs1CheckDigit`, but not the same weights) ; **`getCardBrand( value )`** — the brand from the first digits, `visa`, `mastercard` (51–55 and the 2-series, 2221–2720, which the field did not recognise until now), `amex`, `discover` or `unknown`, with its grouping, its valid lengths and the length of its security code ; **`isCardNumber( value )`** — a length the brand allows, and the checksum ; **`isCardExpiry( 'MM/YY' , { now } )`** — complete, a real month, not past, the month in progress still counting. **11 more tests** (275 in all), on the public test numbers.

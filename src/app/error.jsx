@@ -56,6 +56,7 @@ const Error = ( { error , reset } ) =>
             <button
                 className = "btn btn-warning btn-wide"
                 onClick   = { reset }
+                type      = "button"
             >
                 { labels.retry }
             </button>

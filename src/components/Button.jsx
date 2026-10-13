@@ -22,7 +22,12 @@
  * <Button icon={MdStar} active activeColor="warning" color="neutral" title="Favourite" />
  *
  * // Disabled
- * <Button path="actions.submit" color="primary" disabled />
+ * <Button path="actions.save" color="primary" disabled />
+ *
+ * // Submits its form : a Button is `type="button"` unless told otherwise
+ * <form onSubmit={ save }>
+ *     <Button color="primary" type="submit">Save</Button>
+ * </form>
  *
  * // Busy while its action runs : looks disabled, ignores clicks, KEEPS the keyboard focus
  * <Button icon={MdSave} color="primary" busy={ saving } onClick={ save } tooltip="Save" />
@@ -99,6 +104,7 @@ const SPINNER_SIZES =
  * @param {import('../themes/components/tooltip').TooltipColorValue} [props.tooltipColor] - Tooltip color.
  * @param {boolean} [props.tooltipFloat=false] - Draw the bubble as a portaled element instead of a pseudo-element. **Needed wherever an ancestor hides its overflow** — a modal header, a table cell, a scrolling list — since a pseudo-element cannot leave the box that clips it, and no `z-index` or placement can lift it out. See `Tooltip`'s own note : it also opens on focus, never on touch, and carries no rich `tooltip-content`.
  * @param {import('../themes/components/tooltip').TooltipPosition} [props.tooltipPosition] - Tooltip position.
+ * @param {'button'|'reset'|'submit'} [props.type='button'] - The button's type. **`'button'` by default, not the browser's `'submit'`** : a button inside a `<form>` does not send it unless it says so — write `type="submit"` for the one that should. Set only when the rendered element is a `<button>` ; with `as`, a given `type` is passed as is and none is added.
  * @param {boolean} [props.wide] - Wide button modifier.
  * @param {Object} props.rest - Other props passed to Button
  */
@@ -136,6 +142,7 @@ const Button =
     tooltipColor ,
     tooltipFloat = false ,
     tooltipPosition ,
+    type ,
     wide ,
 
     ...rest
@@ -148,6 +155,10 @@ const Button =
     const resolvedColor   = active ? activeColor : color ;
 
     const Component = as || 'button' ;
+
+    // A <button> with no type submits its form : the default is 'button', and
+    // only on a real <button>, where the attribute means that.
+    const resolvedType = Component === 'button' ? ( type ?? 'button' ) : type ;
 
     const busy = busyProp || loading ;
 
@@ -199,6 +210,7 @@ const Button =
                 onClick  = { handleClick }
                 ref      = { ref }
                 tabIndex = { tabIndex }
+                type     = { resolvedType }
                 { ...rest }
             >
                 {

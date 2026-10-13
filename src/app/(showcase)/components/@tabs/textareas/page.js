@@ -112,6 +112,7 @@ const TextAreas = ( { path = 'app.lab.textareas' } = {} ) =>
                                 role      = "tab"
                                 className = { `tab gap-2 ${ filter === key ? 'tab-active' : '' }` }
                                 onClick   = { () => handleFilterChange( key ) }
+                                type      = "button"
                             >
                                 <Icon size={ 18 } />
                                 <span className="hidden sm:inline">{ label }</span>

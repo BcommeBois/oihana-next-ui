@@ -147,6 +147,7 @@ const LangDropDown =
                                         isCurrent ? 'btn-neutral text-neutral-content pointer-events-none' : 'btn-ghost hover:bg-base-200 active:scale-95'
                                     ) }
                                     onClick   = { select( code ) }
+                                    type      = "button"
                                 >
                                     <Flag lang={ code } />
                                     { getDisplayName( code , style ) }

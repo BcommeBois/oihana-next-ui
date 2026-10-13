@@ -1,6 +1,7 @@
 'use client' ;
 
 import ButtonDemo from '@/demo/buttons/ButtonDemo' ;
+import ButtonFormDemo from '@/demo/buttons/ButtonFormDemo' ;
 import SegmentedControlDemo from '@/demo/buttons/SegmentedControlDemo' ;
 import Container  from '@/display/Container' ;
 import I18nMetas  from '@/components/i18n/I18nMetas';
@@ -47,6 +48,11 @@ export default function ButtonsPage( { path = 'app.lab.buttons' })
             {/* Buttons Showcase */}
             <Container maxWidth="max-w-6xl">
                 <ButtonDemo />
+            </Container>
+
+            {/* Buttons inside a form */}
+            <Container maxWidth="max-w-6xl">
+                <ButtonFormDemo />
             </Container>
 
             {/* A group of toggles — not a tab bar */}

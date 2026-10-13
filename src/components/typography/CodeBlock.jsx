@@ -85,6 +85,7 @@ const CodeBlock =
                         onClick    = { handleCopy }
                         className  = "absolute top-2 right-2 btn btn-xs btn-ghost opacity-0 group-hover:opacity-100 transition-opacity z-10"
                         aria-label = "Copy code"
+                        type       = "button"
                     >
                         { copied ? copiedButtonText : copyButtonText }
                     </button>

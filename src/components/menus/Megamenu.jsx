@@ -135,7 +135,7 @@ const Megamenu =
     return (
         <>
             { responsive && (
-                <button className={ cn( 'btn sm:hidden' , triggerClassName ) } popoverTarget={ containerId }>
+                <button className={ cn( 'btn sm:hidden' , triggerClassName ) } popoverTarget={ containerId } type="button">
                     { triggerLabel }
                 </button>
             )}
@@ -148,7 +148,7 @@ const Megamenu =
                     const popoverId = `${ base }-p${ index }` ;
                     return (
                         <Fragment key={ popoverId }>
-                            <button popoverTarget={ popoverId }>{ item?.label }</button>
+                            <button popoverTarget={ popoverId } type="button">{ item?.label }</button>
                             <div id={ popoverId } popover="auto" className={ popoverClassName } style={ popoverStyle }>
                                 { renderContent( item ) }
                             </div>

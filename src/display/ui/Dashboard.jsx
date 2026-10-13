@@ -88,6 +88,7 @@ const Dashboard =
             className  = { `btn btn-square btn-ghost ${ bp }:hidden` }
             aria-label = "open sidebar"
             onClick    = { openDrawer }
+            type       = "button"
         >
             <MenuIcon className="size-8" />
         </button>
