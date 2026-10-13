@@ -1,6 +1,7 @@
 import { describe , expect , test } from 'bun:test' ;
 
-import isSignatureEmpty from '../../../src/helpers/signature/isSignatureEmpty' ;
+import frameAt , { signatureDuration } from '../../../src/helpers/signature/frameAt' ;
+import isSignatureEmpty                from '../../../src/helpers/signature/isSignatureEmpty' ;
 import scaleSignature   from '../../../src/helpers/signature/scaleSignature' ;
 import signatureToSvg   from '../../../src/helpers/signature/signatureToSvg' ;
 import strokesToPaths   from '../../../src/helpers/signature/strokesToPaths' ;
@@ -28,13 +29,55 @@ describe( 'isSignatureEmpty' , () =>
         expect( isSignatureEmpty( { height : 1 , strokes : [ [] ] , width : 1 } ) ).toBe( true ) ;
         expect( isSignatureEmpty( signature ) ).toBe( false ) ;
     } ) ;
+
+    test( 'with minPoints, a tap or a brush is empty too' , () =>
+    {
+        expect( isSignatureEmpty( signature , { minPoints : 7 } ) ).toBe( false ) ;
+        expect( isSignatureEmpty( signature , { minPoints : 8 } ) ).toBe( true ) ;
+        expect( isSignatureEmpty( { height : 1 , strokes : [ [ [ 1 , 1 , 0.5 ] ] ] , width : 1 } , { minPoints : 12 } ) ).toBe( true ) ;
+    } ) ;
+} ) ;
+
+describe( 'frameAt' , () =>
+{
+    const timed =
+    {
+        height  : 100 ,
+        strokes :
+        [
+            [ [ 10 , 10 , 0.5 , 0 ] , [ 20 , 10 , 0.5 , 100 ] , [ 30 , 10 , 0.5 , 200 ] ] ,
+            [ [ 10 , 50 , 0.5 , 600 ] , [ 30 , 50 , 0.5 , 700 ] ] ,
+        ] ,
+        width   : 100 ,
+    } ;
+
+    test( 'cuts the strokes at a moment, and leaves out those not yet begun' , () =>
+    {
+        expect( frameAt( timed , 0 ).strokes ).toEqual( [ [ [ 10 , 10 , 0.5 , 0 ] ] ] ) ;
+        expect( frameAt( timed , 150 ).strokes[ 0 ] ).toHaveLength( 2 ) ;
+        expect( frameAt( timed , 150 ).strokes ).toHaveLength( 1 ) ;
+        expect( frameAt( timed , 650 ).strokes ).toHaveLength( 2 ) ;
+        expect( frameAt( timed , 1000 ) ).toEqual( timed ) ;
+    } ) ;
+
+    test( 'a point with no time is shown at once, and a signature with none lasts 0' , () =>
+    {
+        expect( frameAt( signature , 0 ) ).toEqual( signature ) ;
+        expect( signatureDuration( signature ) ).toBe( 0 ) ;
+        expect( signatureDuration( timed ) ).toBe( 700 ) ;
+        expect( signatureDuration( null ) ).toBe( 0 ) ;
+    } ) ;
 } ) ;
 
 describe( 'scaleSignature' , () =>
 {
     test( 'scales the points and the height, keeps the pressure, and returns the same object for the same width' , () =>
     {
-        const scaled = scaleSignature( signature , 150 ) ;
+        const scaled = scaleSignature( { ...signature , strokes : [ [ [ 20 , 60 , 0.5 , 40 ] ] ] } , 150 ) ;
+
+        expect( scaled.strokes[ 0 ][ 0 ] ).toEqual( [ 10 , 30 , 0.5 , 40 ] ) ;
+
+        Object.assign( scaled , scaleSignature( signature , 150 ) ) ;
 
         expect( scaled.width ).toBe( 150 ) ;
         expect( scaled.height ).toBe( 60 ) ;

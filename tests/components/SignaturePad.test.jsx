@@ -22,17 +22,35 @@ describe( 'SignaturePad' , () =>
         expect( markup ).toContain( 'type="button"' ) ;
     } ) ;
 
-    test( 'read-only, no buttons and no baseline ; the hidden input is sent only under a name' , () =>
+    test( 'read-only, no buttons and no baseline ; the form field is there only under a name or required' , () =>
     {
         const readOnly = renderToStaticMarkup( <SignaturePad readOnly value={ signature } /> ) ;
 
         expect( readOnly ).not.toContain( '<button' ) ;
-        expect( readOnly ).not.toContain( 'type="hidden"' ) ;
+        expect( readOnly ).not.toContain( '<input' ) ;
 
         const named = renderToStaticMarkup( <SignaturePad name="signature" value={ signature } /> ) ;
 
         expect( named ).toContain( 'name="signature"' ) ;
-        expect( named ).toContain( 'type="hidden"' ) ;
+        expect( named ).toContain( 'class="sr-only"' ) ;
+    } ) ;
+
+    test( 'required : a text input the browser validates, sr-only, out of the tab order' , () =>
+    {
+        const markup = renderToStaticMarkup( <SignaturePad required /> ) ;
+
+        expect( markup ).toContain( 'type="text"' ) ;
+        expect( markup ).toContain( 'required=""' ) ;
+        expect( markup ).toContain( 'tabindex="-1"' ) ;
+        expect( markup ).toContain( 'class="sr-only"' ) ;
+        expect( renderToStaticMarkup( <SignaturePad readOnly required value={ signature } /> ) ).not.toContain( 'required=""' ) ;
+    } ) ;
+
+    test( 'expandable : a button to sign full screen, and none when read-only' , () =>
+    {
+        expect( renderToStaticMarkup( <SignaturePad expandable /> ) ).toContain( 'absolute end-1 top-1' ) ;
+        expect( renderToStaticMarkup( <SignaturePad expandable /> ) ).toContain( '<dialog' ) ;
+        expect( renderToStaticMarkup( <SignaturePad expandable readOnly value={ signature } /> ) ).not.toContain( 'absolute end-1 top-1' ) ;
     } ) ;
 
     test( 'an error names itself for the pad' , () =>

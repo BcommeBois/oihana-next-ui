@@ -337,6 +337,22 @@ SVG, the PNG and the PDF. With `name`, a hidden input sends it with a form — a
 default, `format="svg"` or `"json"` otherwise. One cannot sign with a keyboard, and the pad does
 not pretend one can : it is an image named by its label, and Undo and Clear are real buttons.
 
+**On a phone, the device is handed to the one who signs** : `expandable` adds a button that
+opens the pad over the whole window, with Undo, Clear and Confirm, and what is signed there
+comes back as the value — a signature of 900 × 400 fitted into the field's pad as any other.
+Turning the device makes the pad wider, and the pad says so ; the browser's own full screen,
+which could lock the orientation, is the application's to take. **A tap is not a
+signature** : below `minPoints` (12) over all its strokes, what was drawn is wiped and the pad
+says « too short ». `required` holds the form through a text field the browser validates,
+kept out of sight and of the tab order, and the pad says « a signature is required » in its
+own words rather than the browser's bubble on a field no one sees. **Every point carries its
+time** — `[ x , y , pressure , t ]`, milliseconds since the first point —, so a read-only pad
+can `replay` a signature at its real speed (still where motion is reduced), `onEnd` gives its
+`duration`, and the speed and pressure are there if a proof ever asks whether a hand drew it.
+A signature stored before times were kept is still valid : `t` is optional everywhere.
+**Across a reload**, the value keeps as it is : write it to `helpers/storage` on `onEnd`,
+read it back as `defaultValue`, remove it once sent — the demo does.
+
 **A drawn signature is a picture, not a qualified electronic signature.** What gives it the
 value of a proof is the application's : who signed (the account, the device), when (the
 server's clock), and on what — the digest of the document as it was,

@@ -470,10 +470,12 @@ const ReceivingDemo = ( { path = 'demo.scenarios.logistics.receiving' } = {} ) =
                             />
 
                             <SignaturePad
+                                expandable
                                 helper   = { t.review?.signHelp }
                                 label    = { t.review?.sign }
                                 onChange = { setSignature }
                                 readOnly = { step === 'done' }
+                                required
                                 value    = { signature }
                             />
 

@@ -10,7 +10,7 @@
  * @typedef {Object} Signature
  * @property {number} width - The width of the pad, in CSS pixels, when it was signed.
  * @property {number} height - Its height.
- * @property {Array<Array<[number,number,number]>>} strokes - The strokes, each a list of `[ x , y , pressure ]`.
+ * @property {Array<Array<[number,number,number,number?]>>} strokes - The strokes, each a list of `[ x , y , pressure , t ]`, `t` the milliseconds since the first point — optional.
  *
  * @param {Signature} signature
  * @param {number} width - The width wanted.
@@ -27,7 +27,7 @@ const scaleSignature = ( signature , width ) =>
 
     return {
         height  : signature.height * ratio ,
-        strokes : signature.strokes.map( stroke => stroke.map( ( [ x , y , pressure ] ) => [ x * ratio , y * ratio , pressure ] ) ) ,
+        strokes : signature.strokes.map( stroke => stroke.map( ( [ x , y , pressure , t ] ) => ( t === undefined ? [ x * ratio , y * ratio , pressure ] : [ x * ratio , y * ratio , pressure , t ] ) ) ) ,
         width ,
     } ;
 } ;

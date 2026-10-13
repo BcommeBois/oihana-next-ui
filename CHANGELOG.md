@@ -31,6 +31,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   `toSvg()`, `toPng( { scale , background } )`, `toDataURL()`. One cannot sign with a keyboard,
   and the pad does not pretend one can : it is an image named by its label. New
   `components.signature` bundle (fr / en).
+- **Signing on a phone** : `expandable` adds a button that opens the pad over the whole window
+  — Undo, Clear, Confirm — and what is signed there comes back as the value, fitted into the
+  field's pad ; on a narrow screen held upright the pad says that turning the device makes it
+  wider. **A tap is not a signature** : below `minPoints` (12) over all the strokes, what was
+  drawn is wiped and the pad says « too short ». **`required`** holds the form through a text
+  field the browser validates, out of sight and of the tab order, and the pad says « a
+  signature is required » in its own words (`validatorHint` to change them). **Every point
+  carries its time**, `[ x , y , pressure , t ]`, milliseconds since the first point : a
+  read-only pad can **`replay`** a signature at its real speed (the `ref` has `replay()` too ;
+  still where motion is reduced), `onEnd( signature , { duration , points } )` says how long
+  it took, and a signature stored without times stays valid. `helpers/signature/frameAt` and
+  `signatureDuration` are the pure part, tested ; `isSignatureEmpty` takes `minPoints`.
 - **New `helpers/signature`** — pure, tested : `strokesToPaths` (the SVG paths of the strokes,
   the same for the screen, the SVG, the PNG and the PDF), `signatureToSvg`, `signatureToPng`
   (browser), `scaleSignature`, `isSignatureEmpty`.
@@ -41,8 +53,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - **New `PdfSignature`** (`components/documents/pdf`) : the strokes as vectors in a generated
   document, sharp at any zoom and on any printer, where a PNG shows its pixels.
 - The inputs page gains **Signature** under « specialized » : the pad, its PNG and SVG beside
-  it, the value, a read-only one, a form. The **Logistics › Receiving scenario** now asks the
-  receiver's signature before the receipt is confirmed, binds it to the digest of the lines,
+  it, the value, a read-only one that replays, a form that requires it and opens it full
+  screen, and one kept across a reload. The **Logistics › Receiving scenario** now asks the
+  receiver's signature — required, full screen at hand — before the receipt is confirmed, binds it to the digest of the lines,
   the time and the strokes, and offers the **receipt as a PDF** — the pallet's barcode, the
   lines, the signature as vectors, the digest printed under it (`src/demo/documents/pdf/ReceiptDocument`,
   a recipe to copy). The wiki guide gains **A signature in a document**.
