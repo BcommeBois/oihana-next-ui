@@ -163,17 +163,20 @@ const Dock =
 
             if ( actions )
             {
+                // daisyUI lays every direct child of `.dock` out as a column — an icon over a label.
+                // The wrapper takes that rule, and the button inside keeps its row.
                 return (
-                    <Button
-                        className = { cn( 'flex-1' , itemClassName , itemCls ) }
-                        icon      = { icon }
-                        key       = { id ?? `item-${ index }` }
-                        onClick   = { onClick }
-                        size      = "lg"
-                        { ...rest }
-                    >
-                        { label }
-                    </Button>
+                    <div className="flex flex-1" key={ id ?? `item-${ index }` }>
+                        <Button
+                            className = { cn( 'w-full' , itemClassName , itemCls ) }
+                            icon      = { icon }
+                            onClick   = { onClick }
+                            size      = "lg"
+                            { ...rest }
+                        >
+                            { label }
+                        </Button>
+                    </div>
                 ) ;
             }
 
