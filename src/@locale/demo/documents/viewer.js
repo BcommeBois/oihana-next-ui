@@ -72,7 +72,7 @@ const viewer =
         api :
         {
             title  : 'Un PDF derrière une API' ,
-            text   : 'La route /api/documents/sample du lab n’envoie le document qu’avec l’en-tête Authorization. La visionneuse reçoit { url , headers } : pdf.js envoie l’en-tête lui-même et garde ses requêtes par plages. Sans l’en-tête, la route répond 401 et la visionneuse le dit.' ,
+            text   : 'La route /api/documents/sample du lab n’envoie le document qu’avec l’en-tête Authorization. La visionneuse reçoit { url , headers } : pdf.js envoie l’en-tête lui-même et garde ses requêtes par plages. Sans l’en-tête, la route répond 401 et la visionneuse le dit — et, en développement, react-pdf répète l’erreur dans la console.' ,
             header : 'Envoyer l’en-tête' ,
         } ,
 
@@ -152,7 +152,7 @@ const viewer =
         api :
         {
             title  : 'A PDF behind an API' ,
-            text   : 'The lab’s route /api/documents/sample sends the document only with the Authorization header. The viewer is given { url , headers }: pdf.js sends the header itself and keeps its range requests. Without the header the route answers 401, and the viewer says so.' ,
+            text   : 'The lab’s route /api/documents/sample sends the document only with the Authorization header. The viewer is given { url , headers }: pdf.js sends the header itself and keeps its range requests. Without the header the route answers 401, and the viewer says so — and, in development, react-pdf repeats the error in the console.' ,
             header : 'Send the header' ,
         } ,
 
