@@ -43,8 +43,8 @@ import cn               from '../../themes/helpers/cn' ;
  * @param {number} [props.count=5] - Number of buttons
  * @param {import('../../themes/components/button').ButtonShape} [props.shape='square'] - Button shape ('circle' or 'square')
  * @param {string} [props.size='sm'] - Button size: 'xs', 'sm', 'md', 'lg', 'xl'
- * @param {string} [props.color] - Inactive button color. Without one, the inactive buttons are `ghost`.
- * @param {string} [props.activeColor='primary'] - Active button color
+ * @param {import('../../themes/components/button').ButtonColorValue} [props.color] - Inactive button color. Without one, the inactive buttons are `ghost`.
+ * @param {import('../../themes/components/button').ButtonColorValue} [props.activeColor='primary'] - Active button color
  * @param {import('../../themes/components/button').ButtonStyle} [props.style] - Inactive button style: 'ghost', 'outline', 'soft', etc. Defaults to `'ghost'` when no `color` is given, none otherwise.
  * @param {import('../../themes/components/button').ButtonStyle} [props.activeStyle] - Active button style
  * @param {boolean} [props.readOnly=false] - Read-only mode

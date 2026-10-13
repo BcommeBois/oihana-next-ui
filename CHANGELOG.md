@@ -73,6 +73,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - **The rating demo speaks French and English** — every heading, label, review and survey of the
   page, its title and description included (it read a placeholder `app.test` bundle) ; the menu
   calls it « Notes » in French, where it said « Classement » (a ranking, not a rating).
+- In the `IconRating` demos « Hearts » and « Custom Colors », the buttons were given text colours
+  (`secondary-content`, `primary-content`) where a button colour is expected — no class, grey
+  buttons. The hearts are now transparent (`activeStyle="ghost"`), the stars transparent when
+  inactive. `NumberRating`'s `color` / `activeColor` are typed `ButtonColorValue`, and
+  `IconRating` says which pair colours the button and which the icon.
 
 **👻 `ghost` where it was meant**
 

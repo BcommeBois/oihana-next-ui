@@ -640,8 +640,7 @@ const RatingDemo = ( { path = 'demo.rating' } = {} ) =>
                                 name            = "icon-hearts"
                                 activeIcon      = { MdFavorite }
                                 icon            = { MdFavoriteBorder }
-                                color           = "secondary-content"
-                                activeColor     = "primary-content"
+                                activeStyle     = "ghost"
                                 iconColor       = "secondary"
                                 activeIconColor = "primary"
                                 defaultValue    = { 4 }
@@ -675,7 +674,6 @@ const RatingDemo = ( { path = 'demo.rating' } = {} ) =>
                             activeIcon      = { MdStar }
                             activeColor     = "error"
                             activeIconColor = "error-content"
-                            color           = "primary-content"
                             iconColor       = "primary"
                             defaultValue    ={3}
                         />

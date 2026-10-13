@@ -37,7 +37,7 @@ import NumberRating from '../../components/rating/NumberRating' ;
  * @param {React.ElementType} [props.activeIcon] - Active icon component
  * @param {string} [props.iconClassName] - Additional classes for inactive icon
  * @param {string} [props.activeIconClassName] - Additional classes for active icon
- * @param {import('../../themes/colors/textColor').TextColor} [props.iconColor] - Inactive icon color (overrides button color)
+ * @param {import('../../themes/colors/textColor').TextColor} [props.iconColor] - Inactive icon color (overrides button color). A text colour, `*-content` included — where `color` / `activeColor` are the BUTTON's, one of the eight button colours.
  * @param {import('../../themes/colors/textColor').TextColor} [props.activeIconColor] - Active icon color (overrides button color)
  * @param {Object} [props.numberRatingProps] - Every other prop goes to {@link module:components/NumberRating} — `ariaLabel`, `itemLabel`, `path` included : a heart is named « 3 out of 5 » too.
  */
