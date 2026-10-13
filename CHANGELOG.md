@@ -50,6 +50,21 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   clickable as a whole, items of a daisyUI `menu`. **`a11y/useButtonType` now reports nothing in
   `src/`**, so its next warning is a real case.
 
+**⭐ Ratings that say « 3 out of 5 », in the reader's language**
+
+- **`Rating`, `NumberRating` and `IconRating` no longer say « 1 star » in English.** Each item is
+  read **« 3 out of 5 »** — right whatever it shows, stars, hearts, numbers or icons — from a new
+  **`components.rating`** bundle (« 3 sur 5 » in French), a half value written in the language on
+  screen (« 2,5 »). `Rating`'s hidden clear radio says « Clear the rating » / « Effacer la note ».
+- **`ariaLabel`** names what is rated : the group becomes a `radiogroup` (`Rating`) or a `group`
+  (`NumberRating`) carrying that name. **`itemLabel( value , count )`** replaces an item's words
+  (« Poor », « Fair »…), **`clearLabel`** the clear radio's, **`path`** the bundle.
+- **A read-only `Rating` is no longer silent.** It named each star with an `aria-label` on a
+  `<div>` with no role, which screen readers ignore ; it is now one `role="img"` read at once —
+  « Rated 4 out of 5 », or « Quality: 4 out of 5 » with `ariaLabel` — its stars hidden from them.
+- The words come from a new hook, **`hooks/useRatingLabels`**. The rating demo gains an
+  « Accessible names » section ; 6 component tests (288 in all).
+
 **👻 `ghost` where it was meant**
 
 - **The `ButtonColorValue` type exists at last** in `themes/components/button` : eleven JSDoc

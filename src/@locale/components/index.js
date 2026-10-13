@@ -15,6 +15,7 @@ import pagination from './pagination'
 import picker     from './picker'
 import pwa        from './pwa'
 import radio      from './radio'
+import rating     from './rating'
 import retry      from './retry'
 import scheduler  from './scheduler'
 import sortable   from './sortable'
@@ -40,6 +41,7 @@ const components =
     picker ,
     pwa ,
     radio ,
+    rating ,
     retry ,
     scheduler ,
     sortable ,

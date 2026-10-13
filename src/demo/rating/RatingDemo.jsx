@@ -21,6 +21,12 @@ import {
 }
 from 'react-icons/md' ;
 
+/**
+ * The words of the custom-named example, one per level.
+ * @type {string[]}
+ */
+const SERVICE_LEVELS = [ 'Poor' , 'Fair' , 'Good' , 'Very good' , 'Excellent' ] ;
+
 const RatingDemo = () =>
 {
     // Rating states
@@ -688,6 +694,53 @@ const RatingDemo = () =>
                     color="warning"
                     size={ { xs: 'sm', md: 'md', lg: 'lg', xl: 'xl' } }
                 />
+            </div>
+
+            <Divider />
+
+            {/* Accessible names */}
+            <div className="flex flex-col gap-4">
+                <h3 className="text-xl font-semibold">Accessible names</h3>
+                <p className="text-sm text-base-content/70">
+                    Each item is read « 3 out of 5 » in the language on screen — whatever it shows,
+                    stars, hearts or numbers. <code>ariaLabel</code> says what is rated ; read-only,
+                    the whole value is read at once ; <code>itemLabel</code> replaces the words.
+                    Check them in the accessibility inspector.
+                </p>
+
+                <div className="flex flex-col gap-3">
+                    <div className="flex items-center gap-4">
+                        <span className="text-sm w-40">ariaLabel « Quality »</span>
+                        <Rating ariaLabel="Quality" defaultValue={ 3 } name="rating-named" />
+                    </div>
+
+                    <div className="flex items-center gap-4">
+                        <span className="text-sm w-40">Read-only, half</span>
+                        <Rating ariaLabel="Average rating" half name="rating-named-readonly" readOnly value={ 3.5 } />
+                    </div>
+
+                    <div className="flex items-center gap-4">
+                        <span className="text-sm w-40">Hearts</span>
+                        <IconRating
+                            activeColor  = "error"
+                            activeIcon   = { MdFavorite }
+                            ariaLabel    = "How much you liked it"
+                            defaultValue = { 4 }
+                            icon         = { MdFavoriteBorder }
+                            name         = "icon-named"
+                        />
+                    </div>
+
+                    <div className="flex items-center gap-4">
+                        <span className="text-sm w-40">itemLabel</span>
+                        <NumberRating
+                            ariaLabel    = "Service"
+                            defaultValue = { 2 }
+                            itemLabel    = { value => SERVICE_LEVELS[ value - 1 ] }
+                            name         = "number-item-label"
+                        />
+                    </div>
+                </div>
             </div>
 
         </Container>

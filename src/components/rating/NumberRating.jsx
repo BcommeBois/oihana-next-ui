@@ -1,5 +1,6 @@
 'use client' ;
 
+import useRatingLabels  from '../../hooks/useRatingLabels' ;
 import useRatingValue   from '../../hooks/useRatingValue' ;
 import getButtonClasses from '../../themes/components/button' ;
 import getGapX          from '../../themes/spacing/gapX' ;
@@ -32,6 +33,9 @@ import cn               from '../../themes/helpers/cn' ;
 
 /**
  * @param {Object} props
+ * @param {string} [props.ariaLabel] - What is rated (« Quality »). Names the group of buttons.
+ * @param {Function} [props.itemLabel] - `( value , count ) => string`, the name of one button. Defaults to « 3 out of 5 » from the i18n `item` key read at `path`.
+ * @param {string} [props.path='components.rating'] - i18n path the labels are read from.
  * @param {string} [props.name] - Name for buttons (optional)
  * @param {number} [props.value] - Controlled value
  * @param {number} [props.defaultValue] - Default value for uncontrolled mode
@@ -53,6 +57,9 @@ import cn               from '../../themes/helpers/cn' ;
  */
 const NumberRating =
 ({
+    ariaLabel,
+    itemLabel,
+    path,
     name,
     value: controlledValue,
     defaultValue,
@@ -80,6 +87,8 @@ const NumberRating =
         readOnly ,
         disabled ,
     }) ;
+
+    const labels = useRatingLabels({ ariaLabel , count , itemLabel , path }) ;
 
     const handleClick = index =>
     {
@@ -133,7 +142,7 @@ const NumberRating =
                 className    = { btnClasses }
                 onClick      = { () => handleClick( i ) }
                 disabled     = { disabled }
-                aria-label   = { `${i} ${i === 1 ? 'star' : 'stars'}` }
+                aria-label   = { labels.item( i ) }
                 aria-pressed = { isActive }
             >
                 { content }
@@ -142,7 +151,8 @@ const NumberRating =
     }
 
     return (
-        <div className={ containerClasses }>
+        // biome-ignore lint/a11y/useSemanticElements: `<fieldset>` groups form controls and brings its own box model ; these are toggle buttons, and `role="group"` on a div is what WAI-ARIA defines for them — as in `SegmentedControl`.
+        <div aria-label={ ariaLabel } className={ containerClasses } role="group">
             { buttons }
         </div>
     ) ;

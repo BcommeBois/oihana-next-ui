@@ -1,6 +1,7 @@
 'use client' ;
 
-import useRatingValue from '../../hooks/useRatingValue' ;
+import useRatingLabels from '../../hooks/useRatingLabels' ;
+import useRatingValue  from '../../hooks/useRatingValue' ;
 
 import getRatingClasses, { RATING_HIDDEN } from '../../themes/components/rating' ;
 
@@ -36,6 +37,10 @@ import cn             from '../../themes/helpers/cn' ;
 
 /**
  * @param {Object} props
+ * @param {string} [props.ariaLabel] - What is rated (« Quality »). Names the group, and the value when `readOnly`.
+ * @param {string} [props.clearLabel] - Name of the hidden clear radio. Defaults to the i18n `clear` key read at `path`.
+ * @param {Function} [props.itemLabel] - `( value , count ) => string`, the name of one item. Defaults to « 3 out of 5 » from the i18n `item` key, the value written in the language on screen.
+ * @param {string} [props.path='components.rating'] - i18n path the labels are read from.
  * @param {string} props.name - Name for radio buttons (required, must be unique per rating)
  * @param {number} [props.value] - Controlled value (0-count for full stars, 0-count*2 for half stars)
  * @param {number} [props.defaultValue] - Default value for uncontrolled mode
@@ -45,7 +50,7 @@ import cn             from '../../themes/helpers/cn' ;
  * @param {import('../../themes/components/mask').MaskShape} [props.shape='star-2'] - Mask shape
  * @param {import('../../themes/colors/backgroundColor').BackgroundColorValue} [props.color] - Background color
  * @param {boolean} [props.half=false] - Enable half-star ratings
- * @param {boolean} [props.readOnly=false] - Read-only mode (uses divs instead of inputs)
+ * @param {boolean} [props.readOnly=false] - Read-only mode : one image that says the value (« Rated 4 out of 5 »), the items hidden from screen readers.
  * @param {boolean} [props.allowClear=true] - Allow clearing the rating (adds hidden radio)
  * @param {string | number | import('../../themes/sizing/sizes').ResponsiveSize} [props.gap] - Gap between items (number or responsive object)
  * @param {string} [props.className] - Additional classes for container
@@ -53,6 +58,10 @@ import cn             from '../../themes/helpers/cn' ;
  */
 const Rating =
 ({
+    ariaLabel,
+    clearLabel,
+    itemLabel,
+    path,
     name,
     value: controlledValue,
     defaultValue,
@@ -76,6 +85,8 @@ const Rating =
         readOnly ,
         disabled ,
     }) ;
+
+    const labels = useRatingLabels({ ariaLabel , clearLabel , count , itemLabel , path }) ;
 
     const ratingClasses = getRatingClasses({
         size,
@@ -106,7 +117,7 @@ const Rating =
                 checked    = { currentValue === 0 }
                 onChange   = { () => handleChange( 0 ) }
                 disabled   = { disabled }
-                aria-label = "Clear rating"
+                aria-label = { labels.clear }
             />
         ) ;
     }
@@ -125,18 +136,13 @@ const Rating =
             className : half && isHalf2 && gap ? getGapX( gap ) : undefined,
         }) ;
 
-        const ariaLabel = half
-            ? `${itemValue} star${itemValue !== 1 ? 's' : ''}`
-            : `${i} star${i !== 1 ? 's' : ''}` ;
-
         if ( readOnly )
         {
             items.push(
                 <div
                     key={ i }
                     className    ={ cn( maskClasses, isChecked && 'opacity-100', !isChecked && 'opacity-30' ) }
-                    aria-label   = { ariaLabel }
-                    aria-current = { isChecked ? 'true' : undefined }
+                    aria-hidden  = "true"
                 />
             ) ;
         }
@@ -152,17 +158,16 @@ const Rating =
                     checked    = { isChecked }
                     onChange   = { () => handleChange( itemValue ) }
                     disabled   = { disabled }
-                    aria-label = { ariaLabel }
+                    aria-label = { labels.item( itemValue ) }
                 />
             ) ;
         }
     }
 
-    return (
-        <div className={ ratingClasses }>
-            { items }
-        </div>
-    ) ;
+    // Read-only, the value is one picture read at once, not item by item.
+    return readOnly
+        ? <div aria-label={ labels.value( currentValue ) } className={ ratingClasses } role="img">{ items }</div>
+        : <div aria-label={ ariaLabel } className={ ratingClasses } role="radiogroup">{ items }</div> ;
 } ;
 
 Rating.displayName = 'Rating' ;
