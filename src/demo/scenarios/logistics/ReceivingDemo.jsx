@@ -1,6 +1,6 @@
 'use client' ;
 
-import { useEffect , useMemo , useState } from 'react' ;
+import { useEffect , useMemo , useRef , useState } from 'react' ;
 
 import format from 'vegas-js-core/src/strings/fastformat' ;
 
@@ -20,6 +20,7 @@ import Toggle        from '@/components/checkboxes/Toggle' ;
 import Link          from '@/components/links/Link' ;
 import BottomSheet   from '@/components/modals/BottomSheet' ;
 import Dock          from '@/components/menus/Dock' ;
+import ScanList      from '@/components/lists/ScanList' ;
 
 import PdfDownloadButton from '@/components/documents/PdfDownloadButton' ;
 
@@ -108,6 +109,7 @@ const USED =
     { href : '/modules/documentsCreate'         , name : 'PdfDownloadButton' } ,
     { href : '/components/steps'                , name : 'Steps' } ,
     { href : '/components/dock'                 , name : 'Dock' } ,
+    { href : '/modules/scanner'                 , name : 'ScanList' } ,
     { href : '/modules/scanner'                 , name : 'useHotkeys' } ,
 ] ;
 
@@ -149,6 +151,9 @@ const ReceivingDemo = ( { path = 'demo.scenarios.logistics.receiving' } = {} ) =
     const [ record  , setRecord  ] = useState( null ) ;
 
     const [ signature , setSignature ] = useState( null ) ;
+
+    // The parcels read, under the field : one line per label, counted when a label is read twice.
+    const parcels = useRef( null ) ;
     const [ Receipt   , setReceipt   ] = useState( null ) ;
 
     // The receipt's template imports the PDF writer : fetched once the receipt can exist.
@@ -187,10 +192,12 @@ const ReceivingDemo = ( { path = 'demo.scenarios.logistics.receiving' } = {} ) =
         setPhotos( [] ) ;
         setRecord( null ) ;
         setSignature( null ) ;
+        parcels.current?.clear() ;
     } ;
 
-    const onReading = ( { elements } ) =>
+    const onReading = reading =>
     {
+        const { elements } = reading ;
         const data = Object.fromEntries( ( elements ?? [] ).map( ( { ai , data : value } ) => [ ai , value ] ) ) ;
 
         if ( step === 'pallet' )
@@ -252,6 +259,8 @@ const ReceivingDemo = ( { path = 'demo.scenarios.logistics.receiving' } = {} ) =
             lots     : [ ...item.lots , { expiry , lot : data[ '10' ] ?? null , quantity } ] ,
             received : item.received + quantity ,
         } ) ) ;
+
+        parcels.current?.add( { ...reading , code : reading.value ?? reading.code ?? reading.raw ?? data[ '01' ] } ) ;
 
         if ( expiry && expiry < isoDay( addDays( today , CLOSE_DAYS ) ) )
         {
@@ -402,6 +411,21 @@ const ReceivingDemo = ( { path = 'demo.scenarios.logistics.receiving' } = {} ) =
                             onReject    = { ( _ , text ) => say( 'error' , text ) }
                             onScan      = { onReading }
                             placeholder = { t[ step ]?.placeholder }
+                        />
+                    ) }
+
+                    { step !== 'pallet' && step !== 'done' && (
+                        <ScanList
+                            className = { step !== 'lines' ? 'hidden' : undefined }
+                            empty     = { t.lines?.noParcel }
+                            ref       = { parcels }
+                            resolve   = { ( _ , reading ) =>
+                            {
+                                const gtin = ( reading?.elements ?? [] ).find( element => element.ai === '01' )?.data ;
+                                const lot  = ( reading?.elements ?? [] ).find( element => element.ai === '10' )?.data ;
+                                const item = LINES.find( line => line.gtin === gtin ) ;
+                                return item ? { label : name( item.key ) , subtitle : lot ? format( t.lines?.lotOf ?? '{0}' , lot ) : undefined } : null ;
+                            } }
                         />
                     ) }
 

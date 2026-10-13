@@ -58,6 +58,8 @@ const receiving =
             unknown     : 'Cet article n’est pas dans la commande.' ,
             notGs1      : 'Ce code n’est pas une étiquette GS1 de colis.' ,
             again       : 'La palette est déjà ouverte.' ,
+            noParcel    : 'Les colis lus apparaîtront ici.' ,
+            lotOf       : 'Lot {0}' ,
             finish      : 'Terminer le contrôle' ,
             status      :
             {
@@ -186,6 +188,8 @@ const receiving =
             unknown     : 'This product is not in the order.' ,
             notGs1      : 'This code is no GS1 parcel label.' ,
             again       : 'The pallet is already open.' ,
+            noParcel    : 'The parcels read will show here.' ,
+            lotOf       : 'Lot {0}' ,
             finish      : 'Finish the check' ,
             status      :
             {

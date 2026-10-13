@@ -226,4 +226,13 @@ component, and the library has them :
   letter typed into a field stays a letter ; function keys and Escape go through whatever has
   the focus.
 
-The Logistics › Receiving scenario uses all four ; the Scanner page shows them alone.
+- **The gestures of a list.** `SwipeableListItem` : a row swiped to act on — to the right to
+  confirm, to the left to remove, which stops on a button so a slip deletes nothing — the
+  same actions kept in the row's buttons, since the gesture is a convenience, never the only
+  way. `PullToRefresh` : pulled down from the top, the list loads again, with Chrome's own
+  page reload turned off inside the box. `ScanList` and `ScanListField` : what was scanned,
+  newest first, a code read again counting one more on its line ; `resolve` gives a code its
+  name, the list knows no article.
+
+The Logistics › Receiving scenario uses the field pieces ; the Scanner page shows them alone,
+with the scan list ; the Lists page shows the swipe and the pull.

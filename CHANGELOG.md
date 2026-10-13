@@ -36,6 +36,32 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   `matchesHotkey`, `isEditableTarget` are the pure part, tested with `checkConnection`.
 - `SignaturePad` : the « sign full screen » and « undo » buttons, icons alone, now carry their
   name as a tooltip — a title is read by a reader, not seen by a mouse.
+- **New `SwipeableListItem`** (`components/lists`) : a row swiped to act on — `leading` to the
+  right, `trailing` to the left, each `{ icon , label , color , onAction , confirm }`. The
+  content slides over a coloured ground where the action shows ; let go past `threshold` (40 %
+  of the width) it fires — at once, or, with `confirm` (on by default for `trailing`, where
+  the destructive action goes), the row stays open on a button so a slip deletes nothing. The
+  axis is decided after a few pixels, a finger going down scrolls (`touch-action : pan-y`) ;
+  one row open at a time, Escape or a tap elsewhere closes it ; no spring where motion is
+  reduced. 🔑 The gesture is a convenience, never the only way : the same actions go in the
+  row's buttons. `helpers/gestures/swipeDecision` is the pure part, tested.
+- **New `PullToRefresh`** (`components/lists`) : pulled down from the top of a box that
+  scrolls (or the window), an indicator comes out — an arrow that turns at `threshold`, a
+  spinner once let go — and `onRefresh` runs ; the content follows the finger with resistance
+  (`helpers/gestures/pullDistance`). 🔑 Chrome on Android reloads the page on the same gesture :
+  `overscroll-behavior-y : contain` turns it off inside the box. A finger's gesture, beside a
+  refresh button, not instead. New `components.pullToRefresh` bundle.
+- **New `ScanList` and `ScanListField`** (`components/lists`) : what was scanned — the codes
+  read, newest first, a code read again counting one more on its line (lit for a moment)
+  rather than adding one ; `resolve( code , reading )` gives a code its name, the list knows no
+  article ; one less or the line out by a swipe to the left and by the buttons ; `max`,
+  `allowDuplicates`, `name` for a form, `add` / `clear` / `remove` on the `ref`. `ScanListField`
+  is `InputScan clearOnScan` and the list together, `onScan( reading , status )` for the page's
+  sound. `helpers/scan/addScan`, `decrementScan`, `removeScan` are the pure part, tested. New
+  `components.scanList` bundle.
+- The Lists page gains **Gestures** — tasks swiped done or removed, a feed pulled to load
+  again with infinite scrolling at its end — and the Scanner page **The scan list** ; the
+  Receiving scenario lists the parcels it read under its field.
 - The Scanner page opens with **« In the field »** — the network, the screen, the keys — and
   the Logistics › Receiving scenario gets its thumb bar (`Dock` actions) and keys (F1, F2, V) ;
   the Dock page shows the actions variant. The application guide gains **In the field**.

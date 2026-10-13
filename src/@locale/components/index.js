@@ -6,6 +6,8 @@ import buttons    from './buttons'
 import dates      from './dates'
 import connection from './connection'
 import document   from './document'
+import pullToRefresh from './pullToRefresh'
+import scanList   from './scanList'
 import signature  from './signature'
 import dropdowns  from './dropdowns'
 import fab        from './fab'
@@ -35,6 +37,8 @@ const components =
     dates ,
     connection ,
     document ,
+    pullToRefresh ,
+    scanList ,
     signature ,
     dropdowns,
     fab ,
