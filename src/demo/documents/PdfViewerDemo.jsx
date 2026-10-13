@@ -23,6 +23,7 @@ import useModal from '@/components/modals/hooks/useModal' ;
 import { loadEngine } from '@/components/documents/engine' ;
 
 import useI18n from '@/contexts/locale/useI18n' ;
+import useToast from '@/contexts/toasts/useToast' ;
 
 const SAMPLE = '/documents/sample.pdf' ;
 const LONG   = '/documents/long.pdf' ;
@@ -47,6 +48,8 @@ const TOOLBARS = [ 'top' , 'bottom' , 'both' , 'none' ] ;
 const PdfViewerDemo = ( { path = 'demo.documents.viewer' } = {} ) =>
 {
     const t = useI18n( path ) ?? {} ;
+
+    const { toast } = useToast() ;
 
     const engineLabels = t.engine  ?? {} ;
     const viewer       = t.viewer  ?? {} ;
@@ -84,6 +87,13 @@ const PdfViewerDemo = ( { path = 'demo.documents.viewer' } = {} ) =>
 
     const [ withHeader , setWithHeader ] = useState( true ) ;
     const guarded = useMemo( () => ( withHeader ? { url : API , headers : { Authorization : 'Bearer lab' } } : { url : API } ) , [ withHeader ] ) ;
+
+    // The viewer shows its failed state and reports the error ; what to tell the user is the page's call.
+    const onApiError = useCallback( error =>
+    {
+        toast( format( ( error?.status ? api.refused : api.failed ) ?? '{0}' , error?.status ?? error?.message ) , 'error' ) ;
+    }
+    , [ api.failed , api.refused , toast ] ) ;
 
     const [ drawn , setDrawn ] = useState( 0 ) ;
     const [ total , setTotal ] = useState( 0 ) ;
@@ -235,7 +245,7 @@ const PdfViewerDemo = ( { path = 'demo.documents.viewer' } = {} ) =>
 
                 <Toggle checked={ withHeader } inline label={ api.header } onChange={ event => setWithHeader( event.target.checked ) } size="sm" />
 
-                <PdfViewer className="h-[50vh] rounded-box border border-base-300" fileName="sample-api.pdf" source={ guarded } />
+                <PdfViewer className="h-[50vh] rounded-box border border-base-300" fileName="sample-api.pdf" onError={ onApiError } source={ guarded } />
             </section>
 
             <Divider />

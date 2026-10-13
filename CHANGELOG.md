@@ -8,6 +8,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Fixed
+
+- **An `Alert` no longer hyphenates its words.** It carried `hyphens-auto` since the first
+  commit, and in the 20 rem of a toast the browser cut « document » into « docu- / ment ».
+  `text-pretty` already balances the lines ; a word now moves whole to the next one.
+- The « behind an API » demo of the viewer toasts the error it is given through `onError`
+  (« The server refused the document (401) ») — the viewer shows its failed state and reports
+  the error, what to tell the user is the page's call. The demo says that `react-pdf` repeats
+  a load error in the console in development.
+
 ## [0.43.0] — 2026-10-13
 
 A release that **writes a PDF**, where 0.42.0 read one. A document is a React component —

@@ -107,7 +107,7 @@ const Alert =
     const alertClasses = getAlertClassNames({
         beforeClassName : cn
         (
-            'w-full flex! justify-between! gap-4! text-pretty text-start hyphens-auto' ,
+            'w-full flex! justify-between! gap-4! text-pretty text-start' ,
             start ? 'items-start!' : 'items-center!' ,
 
             // DaisyUI lays an alert out as a grid, this one forces flex to push the
