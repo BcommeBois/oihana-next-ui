@@ -8,6 +8,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.41.0] — 2026-10-13
+
+A release about **what a button does, and what it says**. A `Button` no longer sends the form it
+sits in unless it is told to, and `ghost` is a style everywhere the library meant it. Icon-only
+buttons are named — by their tooltip when nothing else names them —, the speed-dial `Fab` can be
+named at all, and ratings say « 3 out of 5 » in the reader's language, read-only ones included,
+and send their value with a form. Payment card fields can check a number and an expiry date.
+The demo app now builds its buttons and tab bars from the library's own components.
+
+**Two defaults change**, both listed under Upgrading : a `Button` inside a `<form>` no longer
+submits it, and a few components meant to be `ghost` now are. Everything else is new, or a fix.
+
 ### Upgrading
 
 - 🚨 **`Button` is now `type="button"` by default — it no longer sends the form it sits in.** A
@@ -29,7 +41,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   A `color="ghost"` written in your own code has never done anything : write **`style="ghost"`**.
   On a wrapper (`RemoveButton`, `RefreshButton`…) it also erased the wrapper's default colour.
 
-**🔘 Buttons that stay out of the form's business**
+### Buttons and forms
 
 - **`Button` takes `type`**, `'button'` by default, set only when the element is a real
   `<button>` : with `as` (`label`, `div`, a link, a component) none is added, and a given `type` is
@@ -38,26 +50,28 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   `Megamenu` (two : inside a form, the browser ignores `popovertarget` on a `submit` button),
   `Dashboard`, `CodeBlock`, `MockupCodeBlock`, `LangDropDown` —, and so do the demo app's error
   pages. The JSDoc now shows the `type="submit"` case.
-- **The first component test** : `tests/components/Button.test.jsx` renders `Button` to static
-  HTML — `button` by default, `submit` when asked, nothing on a `label` or a link. 279 tests.
-- The Buttons page gains an « In a form » section : a counter, lines to add and remove, and a
-  send count that only the `type="submit"` button moves.
-- **The demos use the library's own buttons.** About 120 hand-written `<button className="btn …">`
-  became `Button` — `color`, `size`, `style`, `shape`, `active` / `activeColor` instead of class
-  strings, `type="submit"` written where a form is sent —, and the sort of the shallow-parameter
-  demo a `SegmentedControl`. What stays a plain `<button type="button">` does so on purpose :
-  the triggers of the `Tooltip` demo (a tooltip wraps any element), rows and cards that are
-  clickable as a whole, items of a daisyUI `menu`. **`a11y/useButtonType` now reports nothing in
-  `src/`**, so its next warning is a real case.
-- **The filter bars of the Inputs and Textareas pages are a `Tabs`** (`style="box"`,
-  `activation="manual"`) instead of hand-written buttons carrying `tabs-boxed` — a daisyUI 4 class
-  that no longer exists. They gain what the hand-written bar lacked : `aria-selected` on the chosen
-  tab, one tab stop and the arrow keys, and a name for each icon-only tab on a phone (the label is
-  `sr-only` there, where it was `hidden`). On the Inputs page, the separator now stands before the
-  category tabs only — every field tab carried one, its category's name being read as « is a
-  category ».
+- **The `ButtonColorValue` type exists at last** in `themes/components/button` : eleven JSDoc
+  blocks referred to it and nothing defined it. It lists the eight colours and says that
+  `ghost`, `outline`, `soft`, `dash` and `link` are a `ButtonStyle`.
+- **`Pagination` and `UrlPagination` take `style`**, applied to every button but the current
+  page, which keeps `activeColor`, solid — a `ghost` current page would be nearly transparent.
+- `LinkButton` : `style` defaults to `ghost` only when the link has no colour (or, active, no
+  `activeColor`). `NumberRating` : the same rule for its inactive numbers.
 
-**⭐ Ratings that say « 3 out of 5 », in the reader's language**
+### Accessible names
+
+- **A tooltip now names the button that has nothing else to be named by.** A `Button` or a
+  `LinkButton` with no content, no `title` and no i18n name takes its `tooltip` as its
+  `aria-label` : the bubble is drawn by CSS from `data-tip`, which no screen reader reads, so an
+  icon-only button with `tooltip="Search"` was named on screen and silent to a reader. A button
+  with text keeps its text as its name ; a `title` still wins.
+- **`Fab` can be named.** Its trigger — an icon or a letter, rendered as a `div` — had no way to
+  carry a name : it takes **`title`**, and reads « Open actions » / « Ouvrir les actions » from a
+  new **`components.fab`** bundle by default (`path` to change it). **`FabAction` and `FabSlot`
+  take `title`** ; without one, an action is named by its `tooltip`, then by its `label` when that
+  is a string — a side label is a sibling of its button, never its name.
+
+### Ratings
 
 - **`Rating`, `NumberRating` and `IconRating` no longer say « 1 star » in English.** Each item is
   read **« 3 out of 5 »** — right whatever it shows, stars, hearts, numbers or icons — from a new
@@ -70,13 +84,52 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   `<div>` with no role, which screen readers ignore ; it is now one `role="img"` read at once —
   « Rated 4 out of 5 », or « Quality: 4 out of 5 » with `ariaLabel` — its stars hidden from them.
 - The words come from a new hook, **`hooks/useRatingLabels`**. The rating demo gains an
-  « Accessible names » section ; 6 component tests (288 in all).
+  « Accessible names » section.
 - **A `NumberRating` (and an `IconRating`) in a `<form>` now sends its value.** Its `name` sat on
   each `<button type="button">`, which a form never sends : the rating never reached the server.
   With a `name`, the value now goes through a hidden input — the chosen value, `0` when cleared,
   the contract `Rating`'s radios already had. **A read-only `Rating` sends its value too**, where
   it drew `<div>`s and sent nothing ; a disabled rating sends nothing, as a disabled field. The
-  rating demo gains an « In a form » section ; 4 more tests (292).
+  rating demo gains an « In a form » section.
+
+### Payment cards
+
+- **New `helpers/validators`** for payment cards, pure and tested : **`isLuhn( value )`** — the checksum every card carries, catching a mistyped digit or two swapped neighbours (modulo 10 like `gs1CheckDigit`, but not the same weights) ; **`getCardBrand( value )`** — the brand from the first digits, `visa`, `mastercard` (51–55 and the 2-series, 2221–2720, which the field did not recognise until now), `amex`, `discover` or `unknown`, with its grouping, its valid lengths and the length of its security code ; **`isCardNumber( value )`** — a length the brand allows, and the checksum ; **`isCardExpiry( 'MM/YY' , { now } )`** — complete, a real month, not past, the month in progress still counting. Tested on the public test numbers.
+- **`InputCardNumber`, `InputCardExpiry` and `InputCardCVV` : a `validate` option**, off by default. 🔑 **Never while typing** : the error shows once the entry is complete or the field is left, and stays until it is fixed ; an empty field says nothing, « required » being the form's business ; the host's own `error` still wins. **`onValidChange( valid )`** tells the host when the validity changes — not on every keystroke — for a button that waits for a valid card. The messages come from the new `components.input.card` bundle, or `invalidLabel`. The rule lives in a new hook, **`hooks/useFieldValidity`**, for any field that should speak up only once there is something to judge.
+- **`InputCardCVV` takes `brand`**, as `onCardTypeChange` gives it : four digits for an Amex, three otherwise. An explicit `length` still wins. `InputCardNumber` now reads its brand and grouping from `getCardBrand`.
+- The card demo gains a « With validation » section — a test card to fill in, and a « Pay » button waiting for the three fields ; the checkout scenario drops its own copies of the checks for the helpers.
+
+### Tests
+
+- **Components are tested too**, rendered to static HTML with `react-dom/server` under
+  `tests/components/` : `Button` (its `type`, its name from a tooltip) and the three ratings
+  (their names, the French decimal, the read-only image, the value sent with a form). Bun
+  compiles the JSX with the classic runtime, so a component test imports `tests/support/react`
+  first. **292 tests** in all.
+
+### The demo app
+
+- **The demos use the library's own buttons.** About 120 hand-written `<button className="btn …">`
+  became `Button` — `color`, `size`, `style`, `shape`, `active` / `activeColor` instead of class
+  strings, `type="submit"` written where a form is sent —, and the sort of the shallow-parameter
+  demo a `SegmentedControl`. What stays a plain `<button type="button">` does so on purpose :
+  the triggers of the `Tooltip` demo (a tooltip wraps any element), rows and cards that are
+  clickable as a whole, items of a daisyUI `menu`. **`a11y/useButtonType` now reports nothing in
+  `src/`**, so its next warning is a real case.
+- The Buttons page gains an « In a form » section : a counter, lines to add and remove, and a
+  send count that only the `type="submit"` button moves.
+- **The filter bars of the Inputs and Textareas pages are a `Tabs`** (`style="box"`,
+  `activation="manual"`) instead of hand-written buttons carrying `tabs-boxed` — a daisyUI 4 class
+  that no longer exists. They gain what the hand-written bar lacked : `aria-selected` on the chosen
+  tab, one tab stop and the arrow keys, and a name for each icon-only tab on a phone (the label is
+  `sr-only` there, where it was `hidden`). On the Inputs page, the separator now stands before the
+  category tabs only — every field tab carried one, its category's name being read as « is a
+  category ».
+- The demos name every icon-only button — the actions of the list rows, the page headers, the
+  picture corners, the swap buttons, the colour swatches, the speed-dial actions —, in the
+  language of their page. **And 41 demo buttons written `color="ghost"` now say `style="ghost"`** :
+  `ghost` is a style, not a colour, so they were drawn as plain grey buttons instead of
+  transparent ones.
 - **The rating demo speaks French and English** — every heading, label, review and survey of the
   page, its title and description included (it read a placeholder `app.test` bundle) ; the menu
   calls it « Notes » in French, where it said « Classement » (a ranking, not a rating).
@@ -87,42 +140,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   style, so `NumberRating`'s `activeStyle` now says it is mostly without effect. Its `color` /
   `activeColor` are typed `ButtonColorValue`, and `IconRating` says which pair colours the button
   and which the icon.
-
-**👻 `ghost` where it was meant**
-
-- **The `ButtonColorValue` type exists at last** in `themes/components/button` : eleven JSDoc
-  blocks referred to it and nothing defined it. It lists the eight colours and says that
-  `ghost`, `outline`, `soft`, `dash` and `link` are a `ButtonStyle`.
-- **`Pagination` and `UrlPagination` take `style`**, applied to every button but the current
-  page, which keeps `activeColor`, solid — a `ghost` current page would be nearly transparent.
-  The pagination demo shows the default and `style="ghost"` side by side.
-- `LinkButton` : `style` defaults to `ghost` only when the link has no colour (or, active, no
-  `activeColor`). `NumberRating` : the same rule for its inactive numbers.
-
-**🔊 Icon buttons that say what they do**
-
-- **A tooltip now names the button that has nothing else to be named by.** A `Button` or a
-  `LinkButton` with no content, no `title` and no i18n name takes its `tooltip` as its
-  `aria-label` : the bubble is drawn by CSS from `data-tip`, which no screen reader reads, so an
-  icon-only button with `tooltip="Search"` was named on screen and silent to a reader. A button
-  with text keeps its text as its name ; a `title` still wins.
-- **`Fab` can be named.** Its trigger — an icon or a letter, rendered as a `div` — had no way to
-  carry a name : it takes **`title`**, and reads « Open actions » / « Ouvrir les actions » from a
-  new **`components.fab`** bundle by default (`path` to change it). **`FabAction` and `FabSlot`
-  take `title`** ; without one, an action is named by its `tooltip`, then by its `label` when that
-  is a string — a side label is a sibling of its button, never its name.
-- The demos name every icon-only button — the actions of the list rows, the page headers, the
-  picture corners, the swap buttons, the colour swatches, the speed-dial actions —, in the
-  language of their page. **And 41 demo buttons written `color="ghost"` now say `style="ghost"`** :
-  `ghost` is a style, not a colour, so they were drawn as plain grey buttons instead of
-  transparent ones. 282 tests.
-
-**💳 Card fields that say when a card cannot be right**
-
-- **New `helpers/validators`** for payment cards, pure and tested : **`isLuhn( value )`** — the checksum every card carries, catching a mistyped digit or two swapped neighbours (modulo 10 like `gs1CheckDigit`, but not the same weights) ; **`getCardBrand( value )`** — the brand from the first digits, `visa`, `mastercard` (51–55 and the 2-series, 2221–2720, which the field did not recognise until now), `amex`, `discover` or `unknown`, with its grouping, its valid lengths and the length of its security code ; **`isCardNumber( value )`** — a length the brand allows, and the checksum ; **`isCardExpiry( 'MM/YY' , { now } )`** — complete, a real month, not past, the month in progress still counting. **11 more tests** (275 in all), on the public test numbers.
-- **`InputCardNumber`, `InputCardExpiry` and `InputCardCVV` : a `validate` option**, off by default. 🔑 **Never while typing** : the error shows once the entry is complete or the field is left, and stays until it is fixed ; an empty field says nothing, « required » being the form's business ; the host's own `error` still wins. **`onValidChange( valid )`** tells the host when the validity changes — not on every keystroke — for a button that waits for a valid card. The messages come from the new `components.input.card` bundle, or `invalidLabel`. The rule lives in a new hook, **`hooks/useFieldValidity`**, for any field that should speak up only once there is something to judge.
-- **`InputCardCVV` takes `brand`**, as `onCardTypeChange` gives it : four digits for an Amex, three otherwise. An explicit `length` still wins. `InputCardNumber` now reads its brand and grouping from `getCardBrand`.
-- The card demo gains a « With validation » section — a test card to fill in, and a « Pay » button waiting for the three fields ; the checkout scenario drops its own copies of the checks for the helpers.
 
 ## [0.40.0] — 2026-10-12
 
