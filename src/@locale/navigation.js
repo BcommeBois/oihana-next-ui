@@ -116,6 +116,8 @@ const navigation =
                 barcodes    : 'QR et codes-barres' ,
                 scanner     : 'Scanner' ,
                 scanField   : 'Champ de scan' ,
+            documents    : 'Documents' ,
+                documentsView : 'Visionneuse PDF' ,
             tests        : 'Tests' ,
 
     } ,
@@ -235,6 +237,8 @@ const navigation =
                 barcodes    : 'QR & barcodes' ,
                 scanner     : 'Scanner' ,
                 scanField   : 'Scan field' ,
+            documents    : 'Documents' ,
+                documentsView : 'PDF viewer' ,
             tests        : 'Tests' ,
 
     }

@@ -30,12 +30,15 @@ self.addEventListener( 'activate' , ( event ) =>
 // Served under its version (oihana-copy-zxing-wasm), so a cached copy never goes stale : cache first.
 const ZXING_PATH = '/zxing/' ;
 
+// Likewise the PDF engine (oihana-copy-pdfjs-assets) : worker, WebAssembly and fonts under their version.
+const PDFJS_PATH = '/pdfjs/' ;
+
 self.addEventListener( 'fetch' , ( event ) =>
 {
     const url = new URL( event.request.url ) ;
 
-    // The barcode reader's WebAssembly : kept after its first fetch, so a camera scan works offline.
-    if ( event.request.method === 'GET' && url.origin === self.location.origin && url.pathname.startsWith( ZXING_PATH ) )
+    // The barcode reader's WebAssembly and the PDF engine's files : kept after their first fetch, so a scan or a PDF works offline.
+    if ( event.request.method === 'GET' && url.origin === self.location.origin && ( url.pathname.startsWith( ZXING_PATH ) || url.pathname.startsWith( PDFJS_PATH ) ) )
     {
         event.respondWith
         (

@@ -76,13 +76,14 @@ the host application :
 | `oihana-generate-splash` | the iOS splash screens under `public/assets/splash` (`--bg`, `--landscape`, `--force`) ; requires `sharp` in the host |
 | `oihana-copy-maplibre-worker` | the map engine's worker under `public/maplibre/` — only needed with `maplibre-gl` 6, which loads its worker from a file ; the library stays on 5, which needs none — see the [maps guide](wiki/components/maps/README.md) |
 | `oihana-copy-zxing-wasm` | the barcode reader's WebAssembly under `public/zxing/<version>/`, so the camera scanner reads without a CDN and offline ; exits `0` when the optional `zxing-wasm` is absent — see the [barcodes guide](wiki/components/barcodes/README.md) |
+| `oihana-copy-pdfjs-assets` | the PDF engine's worker, WebAssembly decoders and fonts under `public/pdfjs/<version>/`, so a document opens without a CDN and offline ; exits `0` when the optional `react-pdf` is absent |
 
 ```json
 {
   "scripts": {
     "dev": "oihana-inject-version && next dev",
-    "predev": "oihana-cache-size && oihana-copy-zxing-wasm",
-    "prebuild": "oihana-copy-zxing-wasm",
+    "predev": "oihana-cache-size && oihana-copy-zxing-wasm && oihana-copy-pdfjs-assets",
+    "prebuild": "oihana-copy-zxing-wasm && oihana-copy-pdfjs-assets",
     "generate-splash": "oihana-generate-splash --bg \"#ffffff\""
   },
   "pwa": { "offline": true, "cachePrefix": "my-app" }

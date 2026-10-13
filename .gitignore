@@ -68,3 +68,6 @@ pnpm-lock.yaml
 
 # Barcode reader WebAssembly, served from public/ by oihana-copy-zxing-wasm
 /public/zxing/
+
+# PDF engine worker, WebAssembly and fonts, served from public/ by oihana-copy-pdfjs-assets
+/public/pdfjs/

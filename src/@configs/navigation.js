@@ -11,6 +11,7 @@ import {
     MdDynamicForm        as FormIcon ,
     MdFeedback           as FeedbackIcon ,
     MdExtension          as ModulesIcon ,
+    MdPictureAsPdf       as DocumentsIcon ,
     MdAutoStories        as ScenariosIcon ,
     MdInventory          as PickingIcon ,
     MdLocalShipping      as LogisticsIcon ,
@@ -260,6 +261,15 @@ const navigation =
                     { id : 'barcodes'  , type : LINK  , Icon : BarcodeIcon   , path  : '/modules/barcodes'  } ,
                     { id : 'scanner'   , type : LINK  , Icon : ScannerIcon   , path  : '/modules/scanner'   } ,
                     { id : 'scanField' , type : LINK  , Icon : ScanFieldIcon , path  : '/modules/scanField' } ,
+                ]
+            } ,
+            {
+                id   : 'documents'   ,
+                type : COLLAPSE      ,
+                Icon : DocumentsIcon ,
+                items :
+                [
+                    { id : 'documentsView' , type : LINK , Icon : DocumentsIcon , path : '/modules/documents' } ,
                 ]
             } ,
             {

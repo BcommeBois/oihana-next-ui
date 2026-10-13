@@ -34,6 +34,7 @@
     "src",
     "scripts/cache-size.js",
     "scripts/copy-maplibre-worker.js",
+    "scripts/copy-pdfjs-assets.js",
     "scripts/copy-zxing-wasm.js",
     "scripts/generate-splash.js",
     "scripts/inject-version.js",
@@ -47,6 +48,7 @@
   "bin": {
     "oihana-cache-size": "./scripts/cache-size.js",
     "oihana-copy-maplibre-worker": "./scripts/copy-maplibre-worker.js",
+    "oihana-copy-pdfjs-assets": "./scripts/copy-pdfjs-assets.js",
     "oihana-copy-zxing-wasm": "./scripts/copy-zxing-wasm.js",
     "oihana-generate-splash": "./scripts/generate-splash.js",
     "oihana-inject-version": "./scripts/inject-version.js"
@@ -84,6 +86,7 @@
     "next": "^16.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-pdf": "^11.0.0",
     "supercluster": "^9.0.0",
     "tailwindcss": "^4.0.0",
     "terra-draw": "^1.32.0",
@@ -131,6 +134,9 @@
       "optional": true
     },
     "maplibre-gl": {
+      "optional": true
+    },
+    "react-pdf": {
       "optional": true
     },
     "supercluster": {
@@ -201,6 +207,7 @@
     "raw-loader": "^4.0.2",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
+    "react-pdf": "^11.0.0",
     "sharp": "^0.35.5",
     "supercluster": "^9.1.0",
     "tailwind-scrollbar": "^4.0.2",
@@ -228,7 +235,7 @@
   "scripts": {
     "dev": "bun inject-version && next dev -p 3666",
     "build": "next build",
-    "prebuild": "bun run ./scripts/copy-maplibre-worker.js && bun run ./scripts/copy-zxing-wasm.js",
+    "prebuild": "bun run ./scripts/copy-maplibre-worker.js && bun run ./scripts/copy-zxing-wasm.js && bun run ./scripts/copy-pdfjs-assets.js",
     "start": "next start",
     "lint": "biome check",
     "test": "bun test",
@@ -236,7 +243,7 @@
     "clean": "rm -rf .next",
     "clean:cache": "rm -rf .next/dev/cache .next/cache",
     "cache:size": "bun run ./scripts/cache-size.js --all",
-    "predev": "bun run ./scripts/cache-size.js && bun run ./scripts/copy-maplibre-worker.js && bun run ./scripts/copy-zxing-wasm.js",
+    "predev": "bun run ./scripts/cache-size.js && bun run ./scripts/copy-maplibre-worker.js && bun run ./scripts/copy-zxing-wasm.js && bun run ./scripts/copy-pdfjs-assets.js",
     "inject-version": "bun run ./scripts/inject-version.js",
     "generate-exports": "bun run ./scripts/generate-exports.js",
     "check-deps": "bun run ./scripts/check-deps.js",
