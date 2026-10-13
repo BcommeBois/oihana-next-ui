@@ -146,6 +146,11 @@ const inputs =
                 label       : 'Scan' ,
                 description : 'Un code par la caméra ou au clavier ; Entrée ne soumet pas le formulaire.' ,
             } ,
+            'signature' :
+            {
+                label       : 'Signature' ,
+                description : 'Une signature au doigt ou au stylet ; la valeur est le tracé, exporté en SVG, PNG ou dans un PDF.' ,
+            } ,
         } ,
     } ,
 
@@ -282,6 +287,11 @@ const inputs =
             {
                 label       : 'Scan' ,
                 description : 'A code from the camera or the keyboard ; Enter does not submit the form.' ,
+            } ,
+            'signature' :
+            {
+                label       : 'Signature' ,
+                description : 'A signature with a finger or a stylus ; the value is the strokes, exported as SVG, PNG or into a PDF.' ,
             } ,
         } ,
     } ,

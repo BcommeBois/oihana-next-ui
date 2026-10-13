@@ -5,6 +5,7 @@ import barcode    from './barcode'
 import buttons    from './buttons'
 import dates      from './dates'
 import document   from './document'
+import signature  from './signature'
 import dropdowns  from './dropdowns'
 import fab        from './fab'
 import filter     from './filter'
@@ -32,6 +33,7 @@ const components =
     buttons ,
     dates ,
     document ,
+    signature ,
     dropdowns,
     fab ,
     filter ,

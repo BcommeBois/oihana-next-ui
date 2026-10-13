@@ -1,6 +1,6 @@
 'use client' ;
 
-import { useEffect , useState } from 'react' ;
+import { useEffect , useMemo , useState } from 'react' ;
 
 import format from 'vegas-js-core/src/strings/fastformat' ;
 
@@ -13,11 +13,14 @@ import Button        from '@/components/Button' ;
 import InputScan     from '@/components/inputs/InputScan' ;
 import NumericKeypad from '@/components/inputs/NumericKeypad' ;
 import PhotoCapture  from '@/components/media/PhotoCapture' ;
+import SignaturePad  from '@/components/inputs/SignaturePad' ;
 import RadioFilter   from '@/components/radios/RadioFilter' ;
 import Steps         from '@/components/steps/Steps' ;
 import Toggle        from '@/components/checkboxes/Toggle' ;
 import Link          from '@/components/links/Link' ;
 import BottomSheet   from '@/components/modals/BottomSheet' ;
+
+import PdfDownloadButton from '@/components/documents/PdfDownloadButton' ;
 
 import useFeedbackSignal from '@/hooks/useFeedbackSignal' ;
 import useNumberFormat   from '@/hooks/useNumberFormat' ;
@@ -25,6 +28,7 @@ import useNumberFormat   from '@/hooks/useNumberFormat' ;
 import { completeGS1Number } from '@/helpers/barcodes/gs1CheckDigit' ;
 import parseGS1Date          from '@/helpers/barcodes/parseGS1Date' ;
 import readTypedCode         from '@/helpers/barcodes/readTypedCode' ;
+import sha256                from '@/helpers/crypto/sha256' ;
 
 import useI18n from '@/contexts/locale/useI18n' ;
 
@@ -98,6 +102,8 @@ const USED =
     { href : '/components/modals'               , name : 'BottomSheet' } ,
     { href : '/components/radios'               , name : 'RadioFilter' } ,
     { href : '/components/photo'                , name : 'PhotoCapture' } ,
+    { href : '/components/inputs?filter=signature' , name : 'SignaturePad' } ,
+    { href : '/modules/documentsCreate'         , name : 'PdfDownloadButton' } ,
     { href : '/components/steps'                , name : 'Steps' } ,
 ] ;
 
@@ -138,6 +144,19 @@ const ReceivingDemo = ( { path = 'demo.scenarios.logistics.receiving' } = {} ) =
     const [ editing , setEditing ] = useState( null ) ;
     const [ record  , setRecord  ] = useState( null ) ;
 
+    const [ signature , setSignature ] = useState( null ) ;
+    const [ Receipt   , setReceipt   ] = useState( null ) ;
+
+    // The receipt's template imports the PDF writer : fetched once the receipt can exist.
+    useEffect( () =>
+    {
+        if ( step === 'done' && !Receipt )
+        {
+            import( '@/demo/documents/pdf/ReceiptDocument' ).then( module => setReceipt( () => module.default ) , () => {} ) ;
+        }
+    }
+    , [ Receipt , step ] ) ;
+
     const { signal } = useFeedbackSignal( { sound , vibration : sound } ) ;
 
     const labels = today ? makeLabels( today ) : [] ;
@@ -163,6 +182,7 @@ const ReceivingDemo = ( { path = 'demo.scenarios.logistics.receiving' } = {} ) =
         setLines( emptyLines() ) ;
         setPhotos( [] ) ;
         setRecord( null ) ;
+        setSignature( null ) ;
     } ;
 
     const onReading = ( { elements } ) =>
@@ -253,29 +273,37 @@ const ReceivingDemo = ( { path = 'demo.scenarios.logistics.receiving' } = {} ) =
 
     const gaps = lines.filter( line => line.received !== line.expected ) ;
 
-    const complete = gaps.every( line => line.reason !== null ) && photos.length > 0 ;
+    const complete = gaps.every( line => line.reason !== null ) && photos.length > 0 && signature !== null ;
 
-    const onConfirm = () =>
+    const onConfirm = async () =>
     {
         const note = photos[ 0 ]?.file ;
+        const at   = new Date().toISOString() ;
+
+        const lineRecords = lines.map( ( { expected , gtin , lots , reason , received } ) => (
+        {
+            expected ,
+            gap    : received - expected ,
+            gtin ,
+            lots ,
+            reason : received === expected ? null : reason ,
+            received ,
+        } ) ) ;
+
+        // The digest binds the signature to what was signed : the lines and the strokes, as they were.
+        const digest = await sha256( JSON.stringify( { at , lines : lineRecords , order : ORDER , pallet : SSCC , signature } ) ) ;
 
         say( 'success' , t.review?.done ) ;
         setStep( 'done' ) ;
         setRecord(
         {
-            at           : new Date().toISOString() ,
+            at ,
+            digest ,
             deliveryNote : note ? { name : note.name , size : note.size , type : note.type } : null ,
-            lines        : lines.map( ( { expected , gtin , lots , reason , received } ) => (
-            {
-                expected ,
-                gap    : received - expected ,
-                gtin ,
-                lots ,
-                reason : received === expected ? null : reason ,
-                received ,
-            } ) ) ,
+            lines        : lineRecords ,
             order        : ORDER ,
             pallet       : SSCC ,
+            signature    : { points : signature.strokes.reduce( ( sum , stroke ) => sum + stroke.length , 0 ) , strokes : signature.strokes.length } ,
             supplier     : t.delivery?.supplierName ,
         } ) ;
     } ;
@@ -296,6 +324,26 @@ const ReceivingDemo = ( { path = 'demo.scenarios.logistics.receiving' } = {} ) =
     } ;
 
     const scanning = step === 'pallet' || step === 'lines' ;
+
+    const receipt = useMemo( () =>
+        Receipt && record
+            ? (
+                <Receipt
+                    labels  = { t.receipt ?? {} }
+                    locale  = { locale }
+                    receipt = { {
+                        at        : record.at ,
+                        digest    : record.digest ,
+                        lines     : record.lines.map( line => ( { ...line , name : t.products?.[ LINES.find( item => item.gtin === line.gtin )?.key ] , reason : line.reason ? t.review?.reasons?.[ line.reason ] : null } ) ) ,
+                        order     : ORDER ,
+                        pallet    : SSCC ,
+                        signature ,
+                        supplier  : t.delivery?.supplierName ,
+                    } }
+                />
+            )
+            : null
+    , [ Receipt , locale , record , signature , t.delivery , t.products , t.receipt , t.review ] ) ;
 
     const editedLine = lines.find( line => line.gtin === editing ) ;
 
@@ -421,9 +469,22 @@ const ReceivingDemo = ( { path = 'demo.scenarios.logistics.receiving' } = {} ) =
                                 value    = { photos }
                             />
 
-                            <div>
+                            <SignaturePad
+                                helper   = { t.review?.signHelp }
+                                label    = { t.review?.sign }
+                                onChange = { setSignature }
+                                readOnly = { step === 'done' }
+                                value    = { signature }
+                            />
+
+                            <div className="flex flex-wrap gap-2">
                                 { step === 'done'
-                                    ? <Button color="primary" onClick={ reset } size="lg">{ t.review?.next }</Button>
+                                    ? (
+                                        <>
+                                            <PdfDownloadButton color="primary" document={ receipt } fileName={ `${ t.receipt?.fileName ?? 'receipt' }-${ ORDER }.pdf` } size="lg">{ t.review?.receipt }</PdfDownloadButton>
+                                            <Button onClick={ reset } size="lg" style="outline">{ t.review?.next }</Button>
+                                        </>
+                                    )
                                     : <Button color="primary" disabled={ !complete } onClick={ onConfirm } size="lg">{ t.review?.validate }</Button> }
                             </div>
 

@@ -36,6 +36,7 @@ import InputUrlEmailDemo   from '@/demo/inputs/InputUrlEmailDemo' ;
 import InputValidatorDemo  from '@/demo/inputs/InputValidatorDemo' ;
 import InputScanDemo       from '@/demo/inputs/InputScanDemo' ;
 import NumericKeypadDemo   from '@/demo/inputs/NumericKeypadDemo' ;
+import SignaturePadDemo    from '@/demo/inputs/SignaturePadDemo' ;
 
 import {
     MdAttachMoney ,
@@ -45,6 +46,7 @@ import {
     MdCreditCard ,
     MdDateRange ,
     MdDialpad ,
+    MdDraw ,
     MdEmail ,
     MdLabel ,
     MdLock ,
@@ -139,6 +141,7 @@ const ROWS =
     { key : 'hex-color'         , icon : MdColorLens     , category : 'specialized' , component : <InputHexColorDemo /> } ,
     { key : 'url-email'         , icon : MdEmail         , category : 'specialized' , component : <InputUrlEmailDemo /> } ,
     { key : 'scan'              , icon : MdQrCodeScanner , category : 'specialized' , component : <InputScanDemo /> } ,
+    { key : 'signature'         , icon : MdDraw          , category : 'specialized' , component : <SignaturePadDemo /> } ,
 ] ;
 
 /**

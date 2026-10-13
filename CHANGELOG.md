@@ -8,6 +8,45 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Upgrading
+
+- `perfect-freehand` is a new dependency of the library (MIT, 1 KB gzip, pure) : the pen stroke
+  of the signature pad. Nothing to do.
+
+### A signature with a finger or a stylus
+
+- **New `SignaturePad`** (`components/inputs`) : a signature drawn with a finger, a stylus or a
+  mouse — a proof of delivery, an intervention report, a receipt. 🔑 **Its value is the strokes,
+  not an image** : `{ width , height , strokes }`, each stroke a list of `[ x , y , pressure ]` in
+  the pad's own pixels, a few kilobytes an application stores as they are, shows again at any
+  size (`readOnly`, scaled to its box) and converts when it needs to. The pen stroke is
+  `perfect-freehand`'s, thick where the hand slowed, thin where it sped up, from the pressure of
+  a stylus or the speed of a finger ; the canvas is drawn at the device's pixel ratio, the
+  pointer captured on press, the pad takes no scroll gesture. `value` / `defaultValue` /
+  `onChange`, `onEnd` at the end of each stroke, `color` (the text colour by default, readable in
+  dark and light), `thickness`, `label` / `helper` / `error`, a baseline « Sign here » gone at the
+  first stroke, Undo and Clear as real buttons (`showUndo`, `showClear`), `disabled`,
+  `readOnly`, and **`name`** : a hidden input sends it with a form, a PNG data url by default,
+  `format="svg"` or `"json"` otherwise. The `ref` gives `clear()`, `undo()`, `isEmpty()`,
+  `toSvg()`, `toPng( { scale , background } )`, `toDataURL()`. One cannot sign with a keyboard,
+  and the pad does not pretend one can : it is an image named by its label. New
+  `components.signature` bundle (fr / en).
+- **New `helpers/signature`** — pure, tested : `strokesToPaths` (the SVG paths of the strokes,
+  the same for the screen, the SVG, the PNG and the PDF), `signatureToSvg`, `signatureToPng`
+  (browser), `scaleSignature`, `isSignatureEmpty`.
+- **New `helpers/crypto/sha256( string | Blob | bytes )`** on `crypto.subtle`, no dependency :
+  the digest a signature is bound to — the document as it was when it was signed, stored beside
+  the strokes and the time. A drawn signature is a picture, not a qualified electronic
+  signature ; the wiki says what the application adds to make it a proof.
+- **New `PdfSignature`** (`components/documents/pdf`) : the strokes as vectors in a generated
+  document, sharp at any zoom and on any printer, where a PNG shows its pixels.
+- The inputs page gains **Signature** under « specialized » : the pad, its PNG and SVG beside
+  it, the value, a read-only one, a form. The **Logistics › Receiving scenario** now asks the
+  receiver's signature before the receipt is confirmed, binds it to the digest of the lines,
+  the time and the strokes, and offers the **receipt as a PDF** — the pallet's barcode, the
+  lines, the signature as vectors, the digest printed under it (`src/demo/documents/pdf/ReceiptDocument`,
+  a recipe to copy). The wiki guide gains **A signature in a document**.
+
 ## [0.43.1] — 2026-10-13
 
 Two small things seen while trying 0.43.0 : an `Alert` cut words in half in a toast, and the

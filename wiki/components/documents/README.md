@@ -18,6 +18,7 @@ that never opens a document installs nothing, one that only reads installs one.
 | `PdfPreview`, `PdfDownloadButton` | a document of `@react-pdf/renderer` shown in the viewer as it changes, or generated on click and saved |
 | `PdfQRCode`, `PdfBarcode` | the codes inside a generated document, drawn by the library's own encoders |
 | `PdfMarkdown`, `MarkdownDocument` | Markdown drawn in a page of yours, or a whole document from a Markdown text |
+| `PdfSignature` | the strokes of a `SignaturePad`, as vectors in a document |
 | `components/documents/engine` | the one module that names `react-pdf` ; `preloadPdf()`, `loadPdf()` |
 | `components/documents/engine/renderer` | the one module that names `@react-pdf/renderer` ; `renderToBlob()`, `preloadRenderer()` |
 | `hooks/usePdfDocument` | the generation behind `PdfPreview` : a blob and its url, again after each change |
@@ -312,6 +313,39 @@ given, as it does for Helvetica. `MarkdownDocument` adds the pages (`size`, `mar
 document's `title` and `author`, and « page n / N » at the foot (`pageLabel`, `footer`).
 
 Both import the engine at their top : a page imports them lazily, like any template.
+
+### A signature in a document
+
+```jsx
+import SignaturePad from 'oihana-next-ui/components/inputs/SignaturePad' ;
+import PdfSignature from 'oihana-next-ui/components/documents/pdf/PdfSignature' ;
+
+<SignaturePad label="Signature du client" onEnd={ setSignature } />      // on the page
+
+<PdfSignature signature={ receipt.signature } width={ mm( 60 ) } />      // in the template
+```
+
+`SignaturePad` (`components/inputs`) takes a signature with a finger, a stylus or a mouse. Its
+value is **the strokes, not an image** — `{ width , height , strokes }`, each stroke a list of
+`[ x , y , pressure ]` in the pad's own pixels — a few kilobytes an application stores as they
+are, shows again at any size (`readOnly`), and turns into what it needs when it needs it :
+`helpers/signature/signatureToSvg`, `signatureToPng( { scale , background } )`, or
+`PdfSignature`, which draws the same paths into an `<Svg>` of the document — sharp at any zoom
+and on any printer, where a PNG shows its pixels. The pen stroke is `perfect-freehand`'s, thick
+where the hand slowed, thin where it sped up, and the same `strokesToPaths` draws the pad, the
+SVG, the PNG and the PDF. With `name`, a hidden input sends it with a form — a PNG data url by
+default, `format="svg"` or `"json"` otherwise. One cannot sign with a keyboard, and the pad does
+not pretend one can : it is an image named by its label, and Undo and Clear are real buttons.
+
+**A drawn signature is a picture, not a qualified electronic signature.** What gives it the
+value of a proof is the application's : who signed (the account, the device), when (the
+server's clock), and on what — the digest of the document as it was,
+`helpers/crypto/sha256( blob | string )`, stored beside the strokes and the time, so a later
+change shows. The Logistics › Receiving scenario does exactly that : the receiver signs, the
+digest of the lines, the time and the strokes is computed, and the receipt is generated with
+the signature as vectors and the digest printed under it. For a qualified signature, a
+provider (eIDAS) — out of scope. Stamping a signature onto a PDF *received* is the editing
+engine's, on the roadmap.
 
 ### On the server
 

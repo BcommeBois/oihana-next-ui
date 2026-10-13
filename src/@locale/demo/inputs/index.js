@@ -15,6 +15,7 @@ import password   from './password' ;
 import percentage from './percentage' ;
 import pin        from './pin' ;
 import scan       from './scan' ;
+import signature  from './signature' ;
 import search     from './search' ;
 import sizes      from './sizes' ;
 import tags       from './tags' ;
@@ -46,6 +47,7 @@ const inputs =
     percentage ,
     pin ,
     scan ,
+    signature ,
     search ,
     sizes ,
     tags ,

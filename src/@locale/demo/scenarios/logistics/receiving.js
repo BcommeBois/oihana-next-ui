@@ -80,6 +80,9 @@ const receiving =
             note       : 'Aucun écart : il reste le bon de livraison.' ,
             photo      : 'Bon de livraison signé' ,
             photoHelp  : 'Obligatoire : la photo du bon signé par le chauffeur.' ,
+            sign       : 'Signature du réceptionnaire' ,
+            signHelp   : 'Obligatoire. Le tracé est gardé avec l’empreinte de ce qui a été signé : les lignes et l’heure.' ,
+            receipt    : 'Télécharger le bon de réception' ,
             validate   : 'Valider la réception' ,
             done       : 'Réception validée.' ,
             next       : 'Nouvelle réception' ,
@@ -98,6 +101,22 @@ const receiving =
             panel   : 'Panneaux, 6 pièces' ,
             expired : 'Chêne, date dépassée' ,
             other   : 'Article hors commande' ,
+        } ,
+
+        receipt :
+        {
+            fileName   : 'bon-de-reception' ,
+            title      : 'Bon de réception' ,
+            order      : 'Commande' ,
+            pallet     : 'Palette' ,
+            date       : 'Réceptionnée le' ,
+            product    : 'Article' ,
+            expected   : 'Attendu' ,
+            received   : 'Reçu' ,
+            reason     : 'Motif' ,
+            signedBy   : 'Signature du réceptionnaire' ,
+            digest     : 'Empreinte' ,
+            digestNote : 'SHA-256 des lignes, de l’heure et du tracé au moment de la signature.' ,
         } ,
 
         used :
@@ -187,6 +206,9 @@ const receiving =
             note       : 'No discrepancy : the delivery note is left.' ,
             photo      : 'Signed delivery note' ,
             photoHelp  : 'Required : the photo of the note signed by the driver.' ,
+            sign       : 'Receiver’s signature' ,
+            signHelp   : 'Required. The strokes are kept with the digest of what was signed: the lines and the time.' ,
+            receipt    : 'Download the receipt' ,
             validate   : 'Confirm the receipt' ,
             done       : 'Receipt confirmed.' ,
             next       : 'New receipt' ,
@@ -205,6 +227,22 @@ const receiving =
             panel   : 'Panels, 6 pieces' ,
             expired : 'Oak, date passed' ,
             other   : 'Product not ordered' ,
+        } ,
+
+        receipt :
+        {
+            fileName   : 'receipt' ,
+            title      : 'Goods receipt' ,
+            order      : 'Order' ,
+            pallet     : 'Pallet' ,
+            date       : 'Received on' ,
+            product    : 'Product' ,
+            expected   : 'Expected' ,
+            received   : 'Received' ,
+            reason     : 'Reason' ,
+            signedBy   : 'Receiver’s signature' ,
+            digest     : 'Digest' ,
+            digestNote : 'SHA-256 of the lines, the time and the strokes at the moment of signing.' ,
         } ,
 
         used :
