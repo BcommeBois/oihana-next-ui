@@ -36,7 +36,7 @@
  * @param {Object} props
  * @param {React.ReactNode} [props.children] - Rendered inside the viewer, over the pages (a toolbar of the host's own).
  * @param {string} [props.className] - Classes on the panel.
- * @param {React.ReactNode} [props.footerNode] - Pinned under the viewer : the application's actions.
+ * @param {React.ReactNode} [props.footerNode] - Pinned under the viewer : the application's actions. It brings its own padding, as every `footerNode` does — `ModalFooter`, or a `div` with `px-4 py-3`.
  * @param {string} [props.fullScreenBreakpoint='sm'] - Below this breakpoint the panel covers the whole screen.
  * @param {'start'|'end'} [props.placement='end'] - The edge the panel is anchored to.
  * @param {React.Ref} [props.ref] - The dialog — `modalRef` from `useModal`.

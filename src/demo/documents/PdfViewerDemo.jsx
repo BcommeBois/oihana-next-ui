@@ -159,7 +159,7 @@ const PdfViewerDemo = ( { path = 'demo.documents.viewer' } = {} ) =>
 
                 <PdfPanel
                     footerNode = {
-                        <div className="flex justify-end gap-2">
+                        <div className="flex justify-end gap-2 px-4 py-3">
                             <Button onClick={ closePanel } style="ghost">{ panel.close }</Button>
                             <Button color="primary" onClick={ () => panelViewer.current?.download() }>{ panel.download }</Button>
                         </div>
