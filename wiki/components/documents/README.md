@@ -1,9 +1,11 @@
 # Documents
 
 A PDF in the page : every page in a scrolling column, a toolbar, zoom, print, download and full
-screen — on a phone as on a desktop, which an `<iframe>` cannot do. The engine is pdf.js,
-reached through `react-pdf`, both **optional** : an application that never opens a document
-installs nothing.
+screen — on a phone as on a desktop, which an `<iframe>` cannot do. And a PDF **made from
+data** : an invoice, a sheet of labels, written as a React component, previewed as it is
+typed, downloaded, sent to an API, or rendered by the server. Two engines, pdf.js through
+`react-pdf` to read and `@react-pdf/renderer` to write, both **optional** : an application
+that never opens a document installs nothing, one that only reads installs one.
 
 | | |
 |---|---|
@@ -13,8 +15,12 @@ installs nothing.
 | `PdfThumbnails`, `PdfSearch` | the column of miniatures and the search field, drawn by the viewer when opened |
 | `PdfPasswordModal` | the dialog a protected document opens |
 | `DocumentFrame` | the four states a viewer needs : loading, failed, empty, engine missing |
+| `PdfPreview`, `PdfDownloadButton` | a document of `@react-pdf/renderer` shown in the viewer as it changes, or generated on click and saved |
+| `PdfQRCode`, `PdfBarcode` | the codes inside a generated document, drawn by the library's own encoders |
 | `components/documents/engine` | the one module that names `react-pdf` ; `preloadPdf()`, `loadPdf()` |
-| `helpers/pdf` | `toPdfSource`, `nextZoom`, `mostVisiblePage`, `findInText`, `renderPagesToImages`, `printImages` — pure, tested |
+| `components/documents/engine/renderer` | the one module that names `@react-pdf/renderer` ; `renderToBlob()`, `preloadRenderer()` |
+| `hooks/usePdfDocument` | the generation behind `PdfPreview` : a blob and its url, again after each change |
+| `helpers/pdf` | `toPdfSource`, `nextZoom`, `mostVisiblePage`, `findInText`, `renderPagesToImages`, `printImages`, `units`, `registerFonts`, `uploadPdf` — pure, tested |
 
 ## Setting up
 
@@ -165,6 +171,139 @@ source is a url — the browser's reader needs no engine. `preloadPdf()` from th
 warms the engine up on a page that lists documents, so the first one opens without waiting,
 and says `false` where there is no engine.
 
+## Creating a document
+
+```bash
+bun add @react-pdf/renderer
+```
+
+Nothing to serve : the writer carries its own fonts and reaches for no file. It weighs
+**1.4 MB minified** — three times the reader —, so the library loads it **only when a
+document is generated**, never when a page opens ; a page that shows an invoice's preview
+pays for it once, a page that offers a download pays for it on the click.
+
+### A template
+
+A document is a React component made of the engine's primitives — `Document`, `Page`,
+`View` (flexbox, through yoga), `Text` (which flows and paginates), `Image`, `Link`, the
+`Svg` family — styled with an object close to CSS but **not CSS** : no `<table>`, no grid,
+no selectors. An invoice is rows of `View`s ; the ones here —
+[`InvoiceDocument`](../../../src/demo/documents/pdf/InvoiceDocument.jsx),
+[`LabelSheetDocument`](../../../src/demo/documents/pdf/LabelSheetDocument.jsx),
+[`NoteDocument`](../../../src/demo/documents/pdf/NoteDocument.jsx) — are **recipes to copy**,
+not components of the library : every business has its own invoice.
+
+Three things a template of yours keeps from them :
+
+- **It is pure.** Words come in as props, amounts and dates are formatted with `Intl` from a
+  `locale` prop — `formatNumber( value , locale , { style : 'currency' , currency } )` is the
+  library's and runs anywhere — so a route handler with no React context renders it as the
+  page does.
+- **It imports `@react-pdf/renderer` at its top**, which is why a page imports *it* lazily :
+  `import( './InvoiceDocument' )` in an effect, the component kept in state, the element built
+  only once it is there. The engine and the template arrive together, after the page.
+- **Its footer is `fixed`**, so every page carries the codes and « page n / N » through
+  `<Text render={ ( { pageNumber , totalPages } ) => … } />` ; its totals are `wrap={ false }`,
+  so they never split across a page.
+
+Hyphenation is **off** : the engine hyphenates English, with Knuth's patterns, whatever the
+language, and a French invoice came out with words broken where no reader expects a hyphen.
+`loadRenderer( { hyphenate : true } )` keeps the engine's own — on the first call, which
+decides. A route handler sets `Font.registerHyphenationCallback( word => [ word ] )` itself.
+
+### Preview, download, upload
+
+```jsx
+import PdfPreview        from 'oihana-next-ui/components/documents/PdfPreview' ;
+import PdfDownloadButton from 'oihana-next-ui/components/documents/PdfDownloadButton' ;
+
+const element = useMemo( () => <Invoice invoice={ invoice } labels={ labels } locale={ locale } /> , [ invoice , labels , locale ] ) ;
+
+<PdfPreview className="h-[70vh]" document={ element } fileName="facture-2026-0042.pdf" onGenerated={ ( { blob } ) => { last.current = blob ; } } />
+<PdfDownloadButton color="primary" document={ element } fileName="facture-2026-0042.pdf" />
+```
+
+`PdfPreview` generates the document 300 ms after its last change (`delay`) and hands the blob
+to **`PdfViewer`** — never to the engine's own `PDFViewer`, an `<iframe>`, one page on an
+iPhone. While the first one is generated the frame says so ; while a later one is, the previous
+stays on screen with a thin bar above it. Every prop of the viewer passes : `toolbarProps`,
+`fit`, `fileName` for its download button. **`document` is compared by identity** : an element
+written inline is a new one on every render, and would generate forever — `useMemo` it on its
+data, or let the React Compiler do it. `usePdfDocument( element , { delay } )` is the hook
+underneath, for a preview of your own shape : `{ blob , url , loading , error , regenerate }`.
+
+`PdfDownloadButton` generates **on the click** and saves under `fileName`, a spinner meanwhile.
+`renderToBlob( element )` from the engine module is the same, outside React.
+
+To store it, `uploadPdf( url , blob , { fileName , fields , headers } )` sends a multipart form
+— the file in `file`, the other fields beside it — and throws on a server that says no, with
+`status` and `response` on the error. The blob is the one `onGenerated` gave, or
+`renderToBlob`'s.
+
+### Codes in a document
+
+```jsx
+import PdfQRCode  from 'oihana-next-ui/components/documents/pdf/PdfQRCode' ;
+import PdfBarcode from 'oihana-next-ui/components/documents/pdf/PdfBarcode' ;
+import { mm }     from 'oihana-next-ui/helpers/pdf/units' ;
+
+<PdfQRCode size={ mm( 18 ) } value={ paymentUrl } />
+<PdfBarcode value={ invoice.number } width={ mm( 50 ) } />
+<PdfBarcode format="ean_13" value="9501101530003" />
+```
+
+They are primitives of the engine, drawn with the library's own encoders — `encodeQRCode`,
+`layoutBarcode`, the same grid and the same path as `QRCode` and `Barcode` on screen — into an
+`<Svg>`. **Import them from a template only** : like a template, they import
+`@react-pdf/renderer` at their top. A barcode's module is 0.33 mm by default, the narrowest a
+laser printer draws cleanly ; `width` sets it from the room the code has instead.
+
+### Fonts
+
+The engine's standard faces — Helvetica, Times, Courier — carry the Latin accents and the
+euro sign, and need no file : a document set in them is ready. A face of your own is
+registered once with `registerFonts( Font , { family , fonts : [ { src , fontWeight } ] } )` —
+TTF, OTF or WOFF, **not WOFF2** —, which remembers what it registered : a component or a route
+that calls it on every pass registers nothing twice. `Font` is the engine's, from
+`loadRenderer()` in the browser or imported in a route.
+
+### Millimetres
+
+A PDF is in points, 72 to the inch ; a label is in millimetres. `helpers/pdf/units` gives
+`mm()`, `cm()`, `inch()`, `toMm()`, the usual `PAGE_SIZES` and `pageSize( 'A4' )` for a
+`<Page size>` — or `pageSize( { width : 99.1 , height : 38.1 } )` for one label. The sheet of
+labels in the demo places each label absolutely from the grid of its stationery reference
+(page, label, margins, gaps), so a long name never shifts the next one : what a `print:`
+stylesheet used to approximate, now a file the printer takes as it is.
+
+### On the server
+
+The same template renders in a route handler, with no browser in the loop — an API that
+stores the invoice itself, or mails it :
+
+```js
+// app/api/documents/invoice/route.js
+import { Font , renderToBuffer } from '@react-pdf/renderer' ;
+import Invoice from '@/documents/Invoice' ;
+
+Font.registerHyphenationCallback( word => [ word ] ) ;
+
+export async function POST( request )
+{
+    const { invoice , labels , locale } = await request.json() ;
+    const buffer = await renderToBuffer( <Invoice invoice={ invoice } labels={ labels } locale={ locale } /> ) ;
+    return new Response( buffer , { headers : { 'Content-Type' : 'application/pdf' } } ) ;
+}
+```
+
+Add **`serverExternalPackages : [ '@react-pdf/renderer' ]`** to `next.config` : the writer is
+Node code that reads its fonts and streams from `node_modules`, not something to bundle. From
+there, `fetch( API , { body : formData } )` to the application's own back end is the same
+multipart `uploadPdf` sends from the browser. The demo's
+[`/api/documents/invoice`](../../../src/app/api/documents/invoice/route.js) is this route, and
+the E-commerce › Invoice scenario sends the same data to it and opens what comes back in a
+`PdfPanel`.
+
 ## 🚨 Why not an `<iframe>`
 
 On a desktop, `<iframe src="file.pdf">` shows the browser's reader. **On an iPhone it shows the
@@ -174,10 +313,12 @@ desktop-only fallback ; the viewer is the same everywhere.
 
 ## Offline
 
-The engine's files are kept by the service worker after their first fetch. **The documents
+The reader's files are kept by the service worker after their first fetch ; the writer needs
+none, and is a chunk of the application like any other. **The documents
 themselves are not** : whether a PDF opened once is kept for a yard with no network is the
 application's decision, not the library's.
 
 ## What is not here
 
-Creating a PDF from data, and editing one, are separate engines, on the roadmap.
+Editing a PDF received — merging, numbering, stamping a signature, filling a form — is a
+third engine, on the roadmap.

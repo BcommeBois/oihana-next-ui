@@ -12,6 +12,9 @@ const nextConfig =
         position      : 'bottom-left' ,  // ou 'bottom-left', 'top-right', 'top-left'
     },
     reactCompiler : true ,
+
+    // The PDF writer is Node code on the server : its fonts and streams are read from node_modules, not bundled.
+    serverExternalPackages : [ '@react-pdf/renderer' ] ,
     images        :
     {
         // unoptimized    : isArmDev, // 👈 Next no longer handles remote URLs

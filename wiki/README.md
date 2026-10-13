@@ -36,7 +36,8 @@ file can say : the shape of a group, and the recipes.
   a scrolling column, only the near ones drawn : zoom, search, thumbnails, rotation, printing
   from the page, download, full screen, a password asked, the viewer in a side panel — on a
   phone as on a desktop, which an `<iframe>` cannot do ; the engine served by the application,
-  offline included.
+  offline included. And a PDF made from data — an invoice, a sheet of labels — as a React
+  component : previewed as it is typed, downloaded, uploaded, or rendered by the server.
 - [`components/media`](components/media/README.md) — files and photos coming in : the native file
   field, the drop zone that checks before it takes, the photo taken on the spot, and the
   shrinking that strips the metadata — position included — without leaving a photo on its side.

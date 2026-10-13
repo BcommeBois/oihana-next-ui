@@ -12,6 +12,7 @@ import {
     MdFeedback           as FeedbackIcon ,
     MdExtension          as ModulesIcon ,
     MdPictureAsPdf       as DocumentsIcon ,
+    MdNoteAdd            as DocumentsCreateIcon ,
     MdAutoStories        as ScenariosIcon ,
     MdInventory          as PickingIcon ,
     MdLocalShipping      as LogisticsIcon ,
@@ -28,6 +29,7 @@ import {
     MdRoute              as CrmMapIcon ,
     MdStorefront         as EcommerceIcon ,
     MdShoppingCartCheckout as CheckoutIcon ,
+    MdReceiptLong        as InvoiceIcon ,
     MdWidgets            as ComponentsIcon ,
     MdTexture            as PatternsIcon ,
     MdTextSnippet        as TypographyIcon ,
@@ -269,7 +271,8 @@ const navigation =
                 Icon : DocumentsIcon ,
                 items :
                 [
-                    { id : 'documentsView' , type : LINK , Icon : DocumentsIcon , path : '/modules/documents' } ,
+                    { id : 'documentsView'   , type : LINK , Icon : DocumentsIcon       , path : '/modules/documents'       } ,
+                    { id : 'documentsCreate' , type : LINK , Icon : DocumentsCreateIcon , path : '/modules/documentsCreate' } ,
                 ]
             } ,
             {
@@ -360,6 +363,7 @@ const navigation =
                 items :
                 [
                     { id : 'checkout' , type : LINK  , Icon : CheckoutIcon , path  : '/scenarios/ecommerce/checkout' } ,
+                    { id : 'invoice'  , type : LINK  , Icon : InvoiceIcon  , path  : '/scenarios/ecommerce/invoice'  } ,
                 ]
             } ,
             {

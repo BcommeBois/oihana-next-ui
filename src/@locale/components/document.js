@@ -2,7 +2,7 @@
  * Default labels of the document components (`components/documents`).
  *
  * The words of a viewer's toolbar, of its states — loading, failed, empty,
- * engine missing — and of the password it may have to ask for. `page` and
+ * engine missing, generating — and of the password it may have to ask for. `page` and
  * `of` frame the page field : « Page 2 of 12 ».
  */
 const document =
@@ -19,6 +19,8 @@ const document =
         fitPage        : 'Page entière' ,
         fitWidth       : 'Ajuster à la largeur' ,
         fullscreen     : 'Plein écran' ,
+        generateFailed : 'Le document n’a pas pu être généré.' ,
+        generating     : 'Génération du document…' ,
         last           : 'Dernière page' ,
         loading        : 'Ouverture du document…' ,
         missing        : 'Le moteur de documents n’est pas installé.' ,
@@ -68,6 +70,8 @@ const document =
         fitPage        : 'Whole page' ,
         fitWidth       : 'Fit to width' ,
         fullscreen     : 'Full screen' ,
+        generateFailed : 'The document could not be generated.' ,
+        generating     : 'Generating the document…' ,
         last           : 'Last page' ,
         loading        : 'Opening the document…' ,
         missing        : 'The document engine is not installed.' ,

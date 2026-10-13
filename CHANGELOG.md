@@ -8,6 +8,58 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Upgrading
+
+- **`@react-pdf/renderer` is a new optional peer** (`^4.9.0`), needed only to create a PDF from
+  data. Nothing to serve : the writer carries its own fonts. An application that renders a
+  document in a route handler adds **`serverExternalPackages : [ '@react-pdf/renderer' ]`** to
+  its `next.config`.
+
+### Documents : creating a PDF
+
+- **New `components/documents/engine/renderer`**, the one place that names
+  `@react-pdf/renderer` : `loadRenderer()` imports it on demand — 1.4 MB minified, three times
+  the reader, so never before a document is generated —, `renderToBlob( element )` generates
+  one outside React, `preloadRenderer()` warms it up. 🔑 **Hyphenation is off by default** :
+  the engine hyphenates English, with Knuth's patterns, whatever the language, and a French
+  invoice came out with words broken where no reader expects a hyphen ;
+  `loadRenderer( { hyphenate : true } )` keeps the engine's own.
+- **New `hooks/usePdfDocument( element , { delay , enabled } )`** : the document generated
+  again each time its element changes, 300 ms after the last change, a slow generation never
+  landing after a faster one ; `{ blob , url , loading , error , regenerate }`, the url
+  released when the next one replaces it.
+- **New `PdfPreview`** : a document of `@react-pdf/renderer` shown in **the library's own
+  viewer** as it changes — the engine's `PDFViewer` is an `<iframe>`, one page on an iPhone.
+  The frame says « generating » for the first one ; the previous stays on screen with a thin
+  bar above it while the next is drawn ; a failed generation shows the failed state with a
+  retry. Every prop of `PdfViewer` passes, `onGenerated( { blob , url } )` gives the blob to
+  send.
+- **New `PdfDownloadButton`** : generates **on the click** — nothing of the engine is loaded
+  before — and saves under `fileName`, a spinner meanwhile.
+- **New `PdfQRCode` and `PdfBarcode`** (`components/documents/pdf`) : the codes inside a
+  generated document, drawn into an `<Svg>` by the library's own encoders — the same grid and
+  the same path as `QRCode` and `Barcode` on screen, no dependency added. A barcode's module
+  is 0.33 mm by default, the narrowest a laser printer draws cleanly ; `width` sets it from the
+  room the code has. They import the engine at their top : import them from a template only.
+- **New `helpers/pdf/units`** : `mm()`, `cm()`, `inch()`, `toMm()`, `PAGE_SIZES` and
+  `pageSize( 'A4' | [ w , h ] | { width , height } , { landscape } )` for a `<Page size>` — the
+  sheet of labels no name covers. **`helpers/pdf/registerFonts( Font , families )`** registers a
+  face once, whatever the number of calls, on either side ; TTF, OTF, WOFF, not WOFF2.
+  **`helpers/pdf/uploadPdf( url , blob , { fileName , fields , headers } )`** sends the
+  document as a multipart form, and throws a server that says no with `status` and
+  `response`. 11 tests.
+- `components.document` gains `generating` and `generateFailed`.
+- The demo app gains **« Creating a PDF »** under Modules › Documents — a note generated as it
+  is typed, with a QR code, and an A4 sheet of 2 × 7 labels on the grid of a stationery
+  reference, each with a barcode — and the **E-commerce › Invoice scenario** : the invoice of
+  the checkout's order, written as a React component, previewed as the form is filled,
+  downloaded, uploaded to a route that answers what it got, and rendered again **by the
+  server** in `/api/documents/invoice` — the same component, with `renderToBuffer` — then
+  opened in a `PdfPanel`. The templates
+  (`src/demo/documents/pdf`) are recipes to copy : the library provides the primitives, not
+  the model. The wiki guide gains a **Creating a document** section : the template, preview
+  and download, the codes, fonts, millimetres, the server route.
+
 ## [0.42.0] — 2026-10-13
 
 A release that **opens a PDF in the page** — on a phone as on a desktop, which an `<iframe>`

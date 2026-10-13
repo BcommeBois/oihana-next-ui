@@ -68,6 +68,7 @@
     "./themes/*": "./src/themes/*"
   },
   "peerDependencies": {
+    "@react-pdf/renderer": "^4.9.0",
     "@nivo/arcs": "^0.99.0",
     "@nivo/bar": "^0.99.0",
     "@nivo/calendar": "^0.99.0",
@@ -94,6 +95,9 @@
     "zxing-wasm": "^3.1.0"
   },
   "peerDependenciesMeta": {
+    "@react-pdf/renderer": {
+      "optional": true
+    },
     "@nivo/arcs": {
       "optional": true
     },
@@ -194,6 +198,7 @@
     "@nivo/radar": "^0.99.0",
     "@nivo/radial-bar": "^0.99.0",
     "@nivo/waffle": "^0.99.0",
+    "@react-pdf/renderer": "^4.9.0",
     "@tailwindcss/postcss": "^4.3.3",
     "@tailwindcss/typography": "^0.5.20",
     "@types/node": "^26.6.4",

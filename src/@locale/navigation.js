@@ -17,6 +17,7 @@ const navigation =
                 project     : 'Suivi de projet' ,
             ecommerce   : 'E-commerce' ,
                 checkout    : 'Tunnel de commande' ,
+                invoice     : 'Facture' ,
             logistics   : 'Logistique' ,
                 picking     : 'Préparation de commande' ,
                 receiving   : 'Réception d’une livraison' ,
@@ -117,7 +118,8 @@ const navigation =
                 scanner     : 'Scanner' ,
                 scanField   : 'Champ de scan' ,
             documents    : 'Documents' ,
-                documentsView : 'Visionneuse PDF' ,
+                documentsView   : 'Visionneuse PDF' ,
+                documentsCreate : 'Créer un PDF' ,
             tests        : 'Tests' ,
 
     } ,
@@ -138,6 +140,7 @@ const navigation =
                 project     : 'Project tracking' ,
             ecommerce   : 'E-commerce' ,
                 checkout    : 'Checkout' ,
+                invoice     : 'Invoice' ,
             logistics   : 'Logistics' ,
                 picking     : 'Order picking' ,
                 receiving   : 'Receiving a delivery' ,
@@ -238,7 +241,8 @@ const navigation =
                 scanner     : 'Scanner' ,
                 scanField   : 'Scan field' ,
             documents    : 'Documents' ,
-                documentsView : 'PDF viewer' ,
+                documentsView   : 'PDF viewer' ,
+                documentsCreate : 'Creating a PDF' ,
             tests        : 'Tests' ,
 
     }

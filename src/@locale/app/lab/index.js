@@ -4,6 +4,7 @@ import badges         from './badges'
 import barcodes       from './barcodes'
 import buttons        from './buttons'
 import documents      from './documents'
+import documentsCreate from './documentsCreate'
 import dropzone       from './dropzone'
 import fileInput      from './fileInput'
 import i18n           from './i18n'
@@ -40,6 +41,7 @@ const lab =
     barcodes       ,
     buttons        ,
     documents      ,
+    documentsCreate ,
     dropzone       ,
     fileInput      ,
     i18n           ,
