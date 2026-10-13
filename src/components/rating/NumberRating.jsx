@@ -39,9 +39,9 @@ import cn               from '../../themes/helpers/cn' ;
  * @param {number} [props.count=5] - Number of buttons
  * @param {import('../../themes/components/button').ButtonShape} [props.shape='square'] - Button shape ('circle' or 'square')
  * @param {string} [props.size='sm'] - Button size: 'xs', 'sm', 'md', 'lg', 'xl'
- * @param {string} [props.color='ghost'] - Inactive button color
+ * @param {string} [props.color] - Inactive button color. Without one, the inactive buttons are `ghost`.
  * @param {string} [props.activeColor='primary'] - Active button color
- * @param {import('../../themes/components/button').ButtonStyle} [props.style] - Button style: 'ghost', 'outline', 'soft', etc.
+ * @param {import('../../themes/components/button').ButtonStyle} [props.style] - Inactive button style: 'ghost', 'outline', 'soft', etc. Defaults to `'ghost'` when no `color` is given, none otherwise.
  * @param {import('../../themes/components/button').ButtonStyle} [props.activeStyle] - Active button style
  * @param {boolean} [props.readOnly=false] - Read-only mode
  * @param {boolean} [props.allowClear=true] - Allow clearing by clicking active button
@@ -60,7 +60,7 @@ const NumberRating =
     count = 5,
     shape = 'circle',
     size = 'sm',
-    color = 'ghost',
+    color,
     activeColor = 'primary',
     style,
     activeStyle,
@@ -112,7 +112,7 @@ const NumberRating =
             shape,
             size,
             color: isActive ? activeColor : color,
-            style: isActive ? activeStyle : style,
+            style: isActive ? activeStyle : ( style ?? ( color ? undefined : 'ghost' ) ),
             active: isActive,
             disabled,
             className: cn(

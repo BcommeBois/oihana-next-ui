@@ -43,6 +43,13 @@ export const SOFT    = 'soft' ;
  * @typedef {'dash' | 'ghost' | 'link' | 'outline' | 'soft'} ButtonStyle
  */
 
+/**
+ * The colours a button takes. `ghost`, `outline`, `soft`, `dash` and `link` are
+ * not among them : they are a {@link ButtonStyle}, and a `color="ghost"` emits
+ * no class at all.
+ * @typedef {'accent' | 'error' | 'info' | 'neutral' | 'primary' | 'secondary' | 'success' | 'warning'} ButtonColorValue
+ */
+
 export const styles = [ DASH , GHOST , LINK , OUTLINE , SOFT ] ;
 
 /** Styles with a transparent/light background where text should use the color itself. */

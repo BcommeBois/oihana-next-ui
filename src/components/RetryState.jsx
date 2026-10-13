@@ -90,9 +90,9 @@ const RetryState =
             actions = { showRetry && (
                 <RefreshButton
                     busy    = { busy }
-                    color   = "ghost"
                     onClick = { retry }
                     size    = "sm"
+                    style   = "ghost"
                 />
             ) }
             announce

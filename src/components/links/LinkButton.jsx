@@ -43,7 +43,7 @@ import getButtonClassNames from '../../themes/components/button'
  * @param {boolean} [props.animation=true] - Enable click animation.
  * @param {React.ReactNode} [props.children] - Link content (overrides i18n label).
  * @param {string} [props.className] - Additional class name.
- * @param {import('../../themes/components/button').ButtonColorValue} [props.color='ghost'] - Button color.
+ * @param {import('../../themes/components/button').ButtonColorValue} [props.color] - Button color. Without one, the link is `ghost`.
  * @param {boolean} [props.disabled] - Disabled state.
  * @param {boolean} [props.exact=true] - Light the link on its page only, or — `false` — on the page and everything below it (a section link). A click is blocked only on the very page, so a section link stays usable from below.
  * @param {boolean} [props.glass] - Glass effect.
@@ -57,7 +57,7 @@ import getButtonClassNames from '../../themes/components/button'
  * @param {boolean} [props.showIcon=true] - Show/hide icon.
  * @param {boolean} [props.showTooltip=true] - Show/hide tooltip.
  * @param {import('../../themes/components/button').ButtonSize} [props.size='sm'] - Button size.
- * @param {import('../../themes/components/button').ButtonStyle} [props.style] - Button style variant.
+ * @param {import('../../themes/components/button').ButtonStyle} [props.style] - Button style variant. Defaults to `'ghost'` when no colour is given, none otherwise : a coloured link is solid.
  * @param {number} [props.tabIndex] - Tab index.
  * @param {string} [props.title] - Accessible title (overrides i18n).
  * @param {string} [props.tooltip] - Tooltip text (overrides i18n). On a link with no content and no `title`, it is also the accessible name.
@@ -74,7 +74,7 @@ const LinkButton =
     animation ,
     children ,
     className ,
-    color = 'ghost' ,
+    color ,
     disabled ,
     exact = true ,
     glass ,
@@ -105,6 +105,7 @@ const LinkButton =
     const { ariaCurrent , handleClick } = useActiveLink( href , { exact } ) ;
 
     const resolvedColor   = active ? activeColor : color ;
+    const resolvedStyle   = style ?? ( resolvedColor ? undefined : 'ghost' ) ;
     const resolvedLabel   = children ?? i18n?.label ;
     const resolvedTooltip = tooltip  ?? i18n?.tooltip ;
     const resolvedTitle   = title    ?? i18n?.title ?? ( resolvedLabel == null ? resolvedTooltip : undefined ) ;
@@ -133,7 +134,7 @@ const LinkButton =
                         glass ,
                         shape ,
                         size ,
-                        style ,
+                        style     : resolvedStyle ,
                         textColor : resolvedColor ,
                         wide ,
                     })

@@ -81,7 +81,7 @@ export const PAGINATION_I18N_PATH = 'components.pagination' ;
  * @param {string}   [props.activeColor='info']        - Colour of the current page's button.
  * @param {boolean}  [props.alwaysSetLimit=false]      - Write `limit` in the URL on every page change. Otherwise an existing one is merely carried over, never added.
  * @param {string}   [props.className]                 - Additional class names for the row.
- * @param {string}   [props.color='ghost']             - Colour of the other buttons.
+ * @param {string}   [props.color]                     - Colour of the other buttons. None by default : a plain daisyUI `btn`.
  * @param {'sm'|'md'|'lg'|'xl'|'2xl'|false} [props.compactBelow='md'] - Breakpoint below which the controls fold into « prev / page / next ».
  * @param {boolean}  [props.disabled]                  - Disables the controls.
  * @param {'input'|'modal'} [props.jumpMode='input']   - The page-jump control of the compact layout.
@@ -96,6 +96,7 @@ export const PAGINATION_I18N_PATH = 'components.pagination' ;
  * @param {boolean}  [props.scrollToTop=true]          - Send the page back to the top on a page change. `false` for a list that is a section of a longer page.
  * @param {boolean}  [props.showLabel=true]            - Shows the « Page n / m » counter.
  * @param {boolean}  [props.showLoading=true]          - Shows a spinner while the new page is on its way.
+ * @param {string}   [props.style]                     - Style of the other buttons, `'ghost'` for pages without borders.
  * @param {number}   props.total                       - Total number of items.
  *
  * @returns {React.ReactElement|null}
@@ -105,7 +106,7 @@ const UrlPagination =
     activeColor     = 'info' ,
     alwaysSetLimit  = false ,
     className ,
-    color           = 'ghost' ,
+    color ,
     compactBelow    = 'md' ,
     disabled ,
     jumpMode        = 'input' ,
@@ -120,6 +121,7 @@ const UrlPagination =
     scrollToTop     = true ,
     showLabel       = true ,
     showLoading     = true ,
+    style ,
     total ,
 }) =>
 {
@@ -197,6 +199,7 @@ const UrlPagination =
                 offset       = { offset }
                 pageOffset   = { pageOffset }
                 path         = { path }
+                style        = { style }
                 total        = { total }
                 onChange     = { handleChange }
             />

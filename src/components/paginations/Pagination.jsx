@@ -88,9 +88,10 @@ from "react-icons/md" ;
  *
  * @prop {string} [activeColor='primary'] - Active page button color
  * @prop {string} [className] - Container classes
- * @prop {string} [color='ghost'] - Button color
+ * @prop {import('../../themes/components/button').ButtonColorValue} [color] - Colour of the other buttons. None by default : a plain daisyUI `btn`.
  * @prop {boolean} [disabled=false] - Disable all buttons
  * @prop {string} [size='sm'] - Button size
+ * @prop {import('../../themes/components/button').ButtonStyle} [style] - Style of the other buttons — `'ghost'` for pages that float without borders. The current page keeps `activeColor`, solid.
  *
  * @prop {boolean} [compact=false] - Force the compact layout (prev / page control / next)
  * @prop {'sm'|'md'|'lg'|'xl'|'2xl'|false} [compactBelow=false] - Auto-switch to compact below this breakpoint (false disables the responsive switch)
@@ -135,9 +136,10 @@ const Pagination =
 
     activeColor = 'primary' ,
     className ,
-    color = 'ghost' ,
+    color ,
     disabled = false ,
     size = 'sm' ,
+    style ,
 
     compact = false ,
     compactBelow = false ,
@@ -306,6 +308,7 @@ const Pagination =
                 join
                 onClick     = { handlePageClick( pageOffset , page ) }
                 size        = { size }
+                style       = { isCurrentPage ? undefined : style }
             >
                 { page }
             </Button>
@@ -323,6 +326,7 @@ const Pagination =
             join
             onClick    = { handlePageClick( firstOffset , 1 ) }
             size       = { size }
+            style      = { style }
             tooltip    = { firstLabel }
         />
     ) ;
@@ -336,6 +340,7 @@ const Pagination =
             join
             onClick    = { handlePageClick( prevOffset , currentPage - 1 ) }
             size       = { size }
+            style      = { style }
             tooltip    = { prevLabel }
         />
     ) ;
@@ -349,6 +354,7 @@ const Pagination =
             join
             onClick    = { handlePageClick( nextOffset , currentPage + 1 ) }
             size       = { size }
+            style      = { style }
             tooltip    = { nextLabel }
         />
     ) ;
@@ -362,6 +368,7 @@ const Pagination =
             join
             onClick    = { handlePageClick( lastOffset , pageCount ) }
             size       = { size }
+            style      = { style }
             tooltip    = { lastLabel }
         />
     ) ;
@@ -380,6 +387,7 @@ const Pagination =
             join
             onClick     = { handlePageClick( firstOffset , 1 ) }
             size        = { size }
+            style       = { style }
         >
             1
         </Button>
@@ -402,6 +410,7 @@ const Pagination =
             join
             onClick     = { handlePageClick( lastOffset , pageCount ) }
             size        = { size }
+            style       = { style }
         >
             { pageCount }
         </Button>
@@ -500,6 +509,7 @@ const Pagination =
                 icon       = { PrevIcon }
                 onClick    = { handlePageClick( prevOffset , currentPage - 1 ) }
                 size       = { size }
+                style      = { style }
                 tooltip    = { prevLabel }
             />
         ) ;
@@ -512,6 +522,7 @@ const Pagination =
                 icon       = { NextIcon }
                 onClick    = { handlePageClick( nextOffset , currentPage + 1 ) }
                 size       = { size }
+                style      = { style }
                 tooltip    = { nextLabel }
             />
         ) ;

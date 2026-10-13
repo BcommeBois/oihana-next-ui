@@ -180,12 +180,12 @@ const ItemsLayout =
         {
             return (
                 <RemoveButton
-                    color       = "ghost"
                     disabled    = { disabled }
                     motion      = { null }
                     shape       = "square"
                     showTooltip = { showTooltip }
                     size        = "sm"
+                    style       = "ghost"
                     onClick     = { () => onRemove?.( item ) }
                 />
             ) ;

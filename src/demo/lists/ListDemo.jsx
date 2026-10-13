@@ -271,7 +271,6 @@ const ListDemo = () =>
                             total={paginatedItems.length}
                             onChange={handlePageChange}
                             size="sm"
-                            color="ghost"
                             activeColor="primary"
                         />
                     </div>

@@ -380,7 +380,16 @@ const PaginationDemo = () =>
                         offset      = { colorOffset }
                         total       = { colorTotal }
                         onChange    = { ( offset ) => setColorOffset( offset ) }
-                        color       = "ghost"
+                        activeColor = "info"
+                        label       = "Default + Info Active"
+                    />
+
+                    <Pagination
+                        limit       = { colorLimit }
+                        offset      = { colorOffset }
+                        total       = { colorTotal }
+                        onChange    = { ( offset ) => setColorOffset( offset ) }
+                        style       = "ghost"
                         activeColor = "info"
                         label       = "Ghost + Info Active"
                     />

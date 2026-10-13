@@ -284,7 +284,6 @@ const RatingDemo = () =>
                             <span className="text-sm w-32">Ghost/Primary</span>
                             <NumberRating
                                 name="number-color-1"
-                                color="ghost"
                                 activeColor="primary"
                                 defaultValue={3}
                             />

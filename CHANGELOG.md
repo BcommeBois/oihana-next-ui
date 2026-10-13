@@ -16,6 +16,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   `Pagination` page, the `Scheduler` toolbar, a `PopoverButton`… A form that relied on it,
   knowingly or not, **stops sending without a word** : give the button that should send it
   **`type="submit"`** — `SaveButton`, `AddButton` and the other wrappers take it too.
+- **`ghost` is a style, never a colour — and a few defaults said otherwise.** `color="ghost"`
+  emits no class at all (the colours are `primary`, `secondary`, `accent`, `neutral`, `info`,
+  `success`, `warning`, `error`), so these were plain grey buttons. What changes by default :
+  - **`LinkButton`** and **`NumberRating`** (its inactive numbers) are now **`ghost` when no
+    colour is given** ; with a colour they stay solid, as before.
+  - **`RetryState`**'s retry button and **`ItemsLayout`**'s remove cross are `ghost` — and get
+    back the colour of their button (`secondary`, `primary`), which `color="ghost"` was erasing.
+  - **`Pagination`** and **`UrlPagination`** keep their look — plain buttons, as in daisyUI's
+    own pagination — and take a new **`style`** for the pages that are not the current one.
+
+  A `color="ghost"` written in your own code has never done anything : write **`style="ghost"`**.
+  On a wrapper (`RemoveButton`, `RefreshButton`…) it also erased the wrapper's default colour.
 
 **🔘 Buttons that stay out of the form's business**
 
@@ -37,6 +49,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   the triggers of the `Tooltip` demo (a tooltip wraps any element), rows and cards that are
   clickable as a whole, items of a daisyUI `menu`. **`a11y/useButtonType` now reports nothing in
   `src/`**, so its next warning is a real case.
+
+**👻 `ghost` where it was meant**
+
+- **The `ButtonColorValue` type exists at last** in `themes/components/button` : eleven JSDoc
+  blocks referred to it and nothing defined it. It lists the eight colours and says that
+  `ghost`, `outline`, `soft`, `dash` and `link` are a `ButtonStyle`.
+- **`Pagination` and `UrlPagination` take `style`**, applied to every button but the current
+  page, which keeps `activeColor`, solid — a `ghost` current page would be nearly transparent.
+  The pagination demo shows the default and `style="ghost"` side by side.
+- `LinkButton` : `style` defaults to `ghost` only when the link has no colour (or, active, no
+  `activeColor`). `NumberRating` : the same rule for its inactive numbers.
 
 **🔊 Icon buttons that say what they do**
 
