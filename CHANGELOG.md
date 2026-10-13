@@ -8,6 +8,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.46.0] — 2026-10-13
+
+A release **for the field** — a screen held in a hand on a dock, in a van, on a shop floor.
+The screen stays on, the network is known for what it really is, a thumb bar sits above the
+keyboard, the keys of a hand-held act ; a row is swiped to confirm or remove, a list is pulled
+to load again, what was scanned piles up under the field with its counts ; a parcel's history
+reads on a timeline, and a warehouse — its aisles, its docks, its receiving area — is a plan
+of cells pinched to zoom, walked with the arrows and read aloud cell by cell.
+
+**Nothing changes for an existing application** : every piece is new, and `Dock` keeps its
+navigation by default. Nothing under Upgrading.
+
 ### In the field
 
 - **New `hooks/useWakeLock`** and **`WakeLockToggle`** (`components/buttons`) : the screen
