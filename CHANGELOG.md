@@ -8,6 +8,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.44.0] — 2026-10-13
+
+A release that **takes a signature** — with a finger, a stylus or a mouse — and keeps it as
+what it is : the strokes, timed, a few kilobytes that show again at any size, replay at their
+own speed, and become a PNG, an SVG or vectors in a generated PDF when needed. The pad is
+made for the field : it opens over the whole window to hand the phone to the one who signs,
+turns by a quarter for a wide signature on a device held upright, rejects a tap, and holds a
+form until something is signed. A drawn signature is a picture ; the `sha256` helper and the
+signed receipt of the Receiving scenario show what an application adds to make it a proof.
+
+**Nothing changes for an application that signs nothing** ; `perfect-freehand` comes with the
+library.
+
 ### Upgrading
 
 - `perfect-freehand` is a new dependency of the library (MIT, 1 KB gzip, pure) : the pen stroke
