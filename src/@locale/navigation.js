@@ -82,7 +82,7 @@ const navigation =
                 pickers        : 'Sélecteurs' ,
                 radios         : 'Radio' ,
                 ranges         : 'Range' ,
-                rating         : 'Classement' ,
+                rating         : 'Notes' ,
                 selects        : 'Select' ,
                 textareas      : 'Zone de texte' ,
                 times          : 'Heure' ,

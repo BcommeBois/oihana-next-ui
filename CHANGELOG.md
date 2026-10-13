@@ -64,6 +64,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   « Rated 4 out of 5 », or « Quality: 4 out of 5 » with `ariaLabel` — its stars hidden from them.
 - The words come from a new hook, **`hooks/useRatingLabels`**. The rating demo gains an
   « Accessible names » section ; 6 component tests (288 in all).
+- **A `NumberRating` (and an `IconRating`) in a `<form>` now sends its value.** Its `name` sat on
+  each `<button type="button">`, which a form never sends : the rating never reached the server.
+  With a `name`, the value now goes through a hidden input — the chosen value, `0` when cleared,
+  the contract `Rating`'s radios already had. **A read-only `Rating` sends its value too**, where
+  it drew `<div>`s and sent nothing ; a disabled rating sends nothing, as a disabled field. The
+  rating demo gains an « In a form » section ; 4 more tests (292).
+- **The rating demo speaks French and English** — every heading, label, review and survey of the
+  page, its title and description included (it read a placeholder `app.test` bundle) ; the menu
+  calls it « Notes » in French, where it said « Classement » (a ranking, not a rating).
 
 **👻 `ghost` where it was meant**
 

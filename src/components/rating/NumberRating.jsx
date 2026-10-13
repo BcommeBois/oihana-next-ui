@@ -36,7 +36,7 @@ import cn               from '../../themes/helpers/cn' ;
  * @param {string} [props.ariaLabel] - What is rated (« Quality »). Names the group of buttons.
  * @param {Function} [props.itemLabel] - `( value , count ) => string`, the name of one button. Defaults to « 3 out of 5 » from the i18n `item` key read at `path`.
  * @param {string} [props.path='components.rating'] - i18n path the labels are read from.
- * @param {string} [props.name] - Name for buttons (optional)
+ * @param {string} [props.name] - Sends the rating with a `<form>`, under this name : the chosen value, `0` when cleared — through a hidden input, as `Rating` does with its radios. Read-only, it is sent too ; disabled, it is not.
  * @param {number} [props.value] - Controlled value
  * @param {number} [props.defaultValue] - Default value for uncontrolled mode
  * @param {Function} [props.onChange] - Change handler (value) => void
@@ -138,7 +138,6 @@ const NumberRating =
             <button
                 key          = { i }
                 type         = "button"
-                name         = { name }
                 className    = { btnClasses }
                 onClick      = { () => handleClick( i ) }
                 disabled     = { disabled }
@@ -154,6 +153,7 @@ const NumberRating =
         // biome-ignore lint/a11y/useSemanticElements: `<fieldset>` groups form controls and brings its own box model ; these are toggle buttons, and `role="group"` on a div is what WAI-ARIA defines for them — as in `SegmentedControl`.
         <div aria-label={ ariaLabel } className={ containerClasses } role="group">
             { buttons }
+            { name && <input disabled={ disabled } name={ name } type="hidden" value={ currentValue } /> }
         </div>
     ) ;
 } ;

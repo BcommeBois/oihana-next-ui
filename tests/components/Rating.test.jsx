@@ -62,3 +62,36 @@ describe( 'Rating labels' , () =>
         expect( labels( markup ) ).toEqual( [ 'Quality: 4 out of 5' ] ) ;
     } ) ;
 } ) ;
+
+describe( 'Ratings in a form' , () =>
+{
+    /** The hidden input of the markup, if any. */
+    const hidden = markup => markup.match( /<input[^>]*type="hidden"[^>]*>/ )?.[ 0 ] ?? null ;
+
+    test( 'with a name, NumberRating sends its value through a hidden input — no name on its buttons' , () =>
+    {
+        const markup = renderToStaticMarkup( <NumberRating defaultValue={ 3 } name="quality" /> ) ;
+        expect( hidden( markup ) ).toContain( 'name="quality"' ) ;
+        expect( hidden( markup ) ).toContain( 'value="3"' ) ;
+        expect( markup ).not.toMatch( /<button[^>]*name=/ ) ;
+    } ) ;
+
+    test( 'cleared, it sends 0 ; without a name, nothing' , () =>
+    {
+        expect( hidden( renderToStaticMarkup( <NumberRating name="quality" /> ) ) ).toContain( 'value="0"' ) ;
+        expect( hidden( renderToStaticMarkup( <NumberRating defaultValue={ 3 } /> ) ) ).toBeNull() ;
+    } ) ;
+
+    test( 'disabled, nothing is sent ; read-only, the value still is' , () =>
+    {
+        expect( hidden( renderToStaticMarkup( <NumberRating disabled name="quality" value={ 2 } /> ) ) ).toContain( 'disabled' ) ;
+        expect( hidden( renderToStaticMarkup( <NumberRating name="quality" readOnly value={ 2 } /> ) ) ).not.toContain( 'disabled' ) ;
+    } ) ;
+
+    test( 'a read-only Rating sends its value too, where its radios are gone' , () =>
+    {
+        const markup = renderToStaticMarkup( <Rating name="quality" readOnly value={ 4 } /> ) ;
+        expect( hidden( markup ) ).toContain( 'name="quality"' ) ;
+        expect( hidden( markup ) ).toContain( 'value="4"' ) ;
+    } ) ;
+} ) ;

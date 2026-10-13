@@ -22,6 +22,7 @@ import schedulerMonth from './schedulerMonth'
 import schedulerSlots from './schedulerSlots'
 import schedulerTimeline from './schedulerTimeline'
 import photo          from './photo'
+import rating         from './rating'
 import scanField      from './scanField'
 import scanner        from './scanner'
 import schedulerWeek  from './schedulerWeek'
@@ -56,6 +57,7 @@ const lab =
     schedulerSlots ,
     schedulerTimeline ,
     photo          ,
+    rating         ,
     scanField      ,
     scanner        ,
     schedulerWeek ,

@@ -9,6 +9,7 @@ import metrics   from './metrics' ;
 import modals    from './modals' ;
 import passwords from './passwords' ;
 import radios    from './radios' ;
+import rating    from './rating' ;
 import scenarios from './scenarios' ;
 import scheduler from './scheduler' ;
 import signals   from './signals' ;
@@ -28,6 +29,7 @@ const demo =
     modals ,
     passwords ,
     radios ,
+    rating ,
     scenarios ,
     scheduler ,
     signals ,

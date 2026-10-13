@@ -41,7 +41,7 @@ import cn             from '../../themes/helpers/cn' ;
  * @param {string} [props.clearLabel] - Name of the hidden clear radio. Defaults to the i18n `clear` key read at `path`.
  * @param {Function} [props.itemLabel] - `( value , count ) => string`, the name of one item. Defaults to « 3 out of 5 » from the i18n `item` key, the value written in the language on screen.
  * @param {string} [props.path='components.rating'] - i18n path the labels are read from.
- * @param {string} props.name - Name for radio buttons (required, must be unique per rating)
+ * @param {string} props.name - Name for radio buttons (required, must be unique per rating) — also what the value is sent under with a `<form>` : the chosen value, `0` when cleared.
  * @param {number} [props.value] - Controlled value (0-count for full stars, 0-count*2 for half stars)
  * @param {number} [props.defaultValue] - Default value for uncontrolled mode
  * @param {Function} [props.onChange] - Change handler (value) => void
@@ -50,7 +50,7 @@ import cn             from '../../themes/helpers/cn' ;
  * @param {import('../../themes/components/mask').MaskShape} [props.shape='star-2'] - Mask shape
  * @param {import('../../themes/colors/backgroundColor').BackgroundColorValue} [props.color] - Background color
  * @param {boolean} [props.half=false] - Enable half-star ratings
- * @param {boolean} [props.readOnly=false] - Read-only mode : one image that says the value (« Rated 4 out of 5 »), the items hidden from screen readers.
+ * @param {boolean} [props.readOnly=false] - Read-only mode : one image that says the value (« Rated 4 out of 5 »), the items hidden from screen readers. The value is still sent with a `<form>` under `name`, as a read-only field is.
  * @param {boolean} [props.allowClear=true] - Allow clearing the rating (adds hidden radio)
  * @param {string | number | import('../../themes/sizing/sizes').ResponsiveSize} [props.gap] - Gap between items (number or responsive object)
  * @param {string} [props.className] - Additional classes for container
@@ -166,7 +166,12 @@ const Rating =
 
     // Read-only, the value is one picture read at once, not item by item.
     return readOnly
-        ? <div aria-label={ labels.value( currentValue ) } className={ ratingClasses } role="img">{ items }</div>
+        ? (
+            <div aria-label={ labels.value( currentValue ) } className={ ratingClasses } role="img">
+                { items }
+                { name && <input disabled={ disabled } name={ name } type="hidden" value={ currentValue } /> }
+            </div>
+        )
         : <div aria-label={ ariaLabel } className={ ratingClasses } role="radiogroup">{ items }</div> ;
 } ;
 

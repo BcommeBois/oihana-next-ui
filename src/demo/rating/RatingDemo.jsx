@@ -2,6 +2,8 @@
 
 import { useState } from 'react' ;
 
+import useI18n from '@/contexts/locale/useI18n' ;
+
 import Avatar       from '@/components/avatars/Avatar' ;
 import Badge        from '@/components/Badge' ;
 import Button       from '@/components/Button' ;
@@ -22,13 +24,29 @@ import {
 from 'react-icons/md' ;
 
 /**
- * The words of the custom-named example, one per level.
+ * The avatar colours of the reviews, in turn.
  * @type {string[]}
  */
-const SERVICE_LEVELS = [ 'Poor' , 'Fair' , 'Good' , 'Very good' , 'Excellent' ] ;
+const REVIEW_AVATARS = [ 'bg-success text-success-content' , 'bg-secondary text-secondary-content' ] ;
 
-const RatingDemo = () =>
+/**
+ * Rating demo : `Rating`, `NumberRating`, `IconRating`, their names and their
+ * place in a form.
+ *
+ * @param {Object} props
+ * @param {string} [props.path='demo.rating'] - Dot notation path to the demo locale.
+ */
+const RatingDemo = ( { path = 'demo.rating' } = {} ) =>
 {
+    const t = useI18n( path ) ?? {} ;
+
+    const states   = t.states ?? {} ;
+    const number   = t.number ?? {} ;
+    const useCases = t.useCases ?? {} ;
+    const icons    = t.icons ?? {} ;
+    const names    = t.names ?? {} ;
+    const form     = t.form ?? {} ;
+
     // Rating states
     const [ controlledRating, setControlledRating ] = useState( 3 ) ;
     const [ halfRating, setHalfRating ] = useState( 3.5 ) ;
@@ -38,6 +56,15 @@ const RatingDemo = () =>
     const [ numberRating, setNumberRating ] = useState( 3 ) ;
     const [ circleRating, setCircleRating ] = useState( 4 ) ;
 
+    // What the form below sent last
+    const [ sent, setSent ] = useState( null ) ;
+
+    const onSubmit = event =>
+    {
+        event.preventDefault() ;
+        setSent( Object.fromEntries( new FormData( event.currentTarget ) ) ) ;
+    } ;
+
     return (
         <Container className="flex flex-col gap-6 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-7xl">
 
@@ -45,12 +72,12 @@ const RatingDemo = () =>
 
             <div className="flex flex-col gap-6">
                 <h2 className="text-2xl font-bold border-b-2 border-primary pb-2">
-                    ⭐ Rating (Stars & Masks)
+                    { t.rating?.title }
                 </h2>
 
                 {/* Simple Rating */}
                 <div className="flex flex-col gap-4">
-                    <h3 className="text-xl font-semibold">Simple Rating</h3>
+                    <h3 className="text-xl font-semibold">{ t.rating?.simple }</h3>
                     <Rating name="rating-simple" defaultValue={3} />
                 </div>
 
@@ -58,11 +85,11 @@ const RatingDemo = () =>
 
                 {/* With Gap Helper */}
                 <div className="flex flex-col gap-4">
-                    <h3 className="text-xl font-semibold">With Gap</h3>
+                    <h3 className="text-xl font-semibold">{ t.rating?.gap }</h3>
 
                     <div className="flex flex-col gap-3">
                         <div className="flex items-center gap-4">
-                            <span className="text-sm w-32">No gap</span>
+                            <span className="text-sm w-32">{ t.rating?.noGap }</span>
                             <Rating name="rating-gap-0" defaultValue={3} />
                         </div>
 
@@ -77,7 +104,7 @@ const RatingDemo = () =>
                         </div>
 
                         <div className="flex items-center gap-4">
-                            <span className="text-sm w-32">Responsive</span>
+                            <span className="text-sm w-32">{ t.rating?.responsive }</span>
                             <Rating
                                 name="rating-gap-responsive"
                                 defaultValue={3}
@@ -91,7 +118,7 @@ const RatingDemo = () =>
 
                 {/* All Sizes */}
                 <div className="flex flex-col gap-4">
-                    <h3 className="text-xl font-semibold">All Sizes</h3>
+                    <h3 className="text-xl font-semibold">{ t.rating?.sizes }</h3>
 
                     <div className="flex flex-col items-center gap-4">
                         <Rating name="rating-xs" size="xs" defaultValue={3} />
@@ -106,7 +133,7 @@ const RatingDemo = () =>
 
                 {/* Different Colors */}
                 <div className="flex flex-col gap-4">
-                    <h3 className="text-xl font-semibold">Different Colors</h3>
+                    <h3 className="text-xl font-semibold">{ t.rating?.colors }</h3>
 
                     <div className="flex flex-col gap-3">
                         <Rating name="rating-primary" color="primary" defaultValue={4} />
@@ -122,26 +149,26 @@ const RatingDemo = () =>
 
                 {/* Different Shapes */}
                 <div className="flex flex-col gap-4">
-                    <h3 className="text-xl font-semibold">Different Shapes</h3>
+                    <h3 className="text-xl font-semibold">{ t.rating?.shapes }</h3>
 
                     <div className="flex flex-col gap-3">
                         <div className="flex items-center gap-4">
-                            <span className="text-sm w-24">Star</span>
+                            <span className="text-sm w-24">star</span>
                             <Rating name="rating-star" shape="star" color="warning" defaultValue={3} />
                         </div>
 
                         <div className="flex items-center gap-4">
-                            <span className="text-sm w-24">Star-2</span>
+                            <span className="text-sm w-24">star-2</span>
                             <Rating name="rating-star-2" shape="star-2" color="warning" defaultValue={3} />
                         </div>
 
                         <div className="flex items-center gap-4">
-                            <span className="text-sm w-24">Heart</span>
+                            <span className="text-sm w-24">heart</span>
                             <Rating name="rating-heart" shape="heart" color="error" defaultValue={4} />
                         </div>
 
                         <div className="flex items-center gap-4">
-                            <span className="text-sm w-24">Circle</span>
+                            <span className="text-sm w-24">circle</span>
                             <Rating name="rating-circle" shape="circle" color="primary" defaultValue={3} gap={1} />
                         </div>
                     </div>
@@ -151,7 +178,7 @@ const RatingDemo = () =>
 
                 {/* Half Stars */}
                 <div className="flex flex-col gap-4">
-                    <h3 className="text-xl font-semibold">Half Stars</h3>
+                    <h3 className="text-xl font-semibold">{ t.rating?.half }</h3>
 
                     <Rating
                         name     = "rating-half"
@@ -163,7 +190,7 @@ const RatingDemo = () =>
                     />
 
                     <div className="flex flex-row gap-2">
-                        <span>Current: <Badge>{halfRating}</Badge></span>
+                        <span>{ t.value } <Badge>{halfRating}</Badge></span>
                     </div>
                 </div>
 
@@ -171,7 +198,7 @@ const RatingDemo = () =>
 
                 {/* Controlled Rating */}
                 <div className="flex flex-col gap-4">
-                    <h3 className="text-xl font-semibold">Controlled Rating</h3>
+                    <h3 className="text-xl font-semibold">{ t.rating?.controlled }</h3>
 
                     <Rating
                         name="rating-controlled"
@@ -189,12 +216,12 @@ const RatingDemo = () =>
                             + 1
                         </Button>
                         <Button color="error" size="sm" onClick={() => setControlledRating(0)}>
-                            Clear
+                            { t.clear }
                         </Button>
                     </div>
 
                     <div className="flex flex-row gap-2">
-                        <span>Value: <Badge>{controlledRating}</Badge></span>
+                        <span>{ t.value } <Badge>{controlledRating}</Badge></span>
                     </div>
                 </div>
 
@@ -202,21 +229,21 @@ const RatingDemo = () =>
 
                 {/* Read-Only & Disabled */}
                 <div className="flex flex-col gap-4">
-                    <h3 className="text-xl font-semibold">Read-Only & Disabled</h3>
+                    <h3 className="text-xl font-semibold">{ states.title }</h3>
 
                     <div className="flex flex-col gap-3">
                         <div className="flex items-center gap-4">
-                            <span className="text-sm w-32">Read-only</span>
+                            <span className="text-sm w-32">{ states.readOnly }</span>
                             <Rating name="rating-readonly" value={4} readOnly color="warning" />
                         </div>
 
                         <div className="flex items-center gap-4">
-                            <span className="text-sm w-32">Disabled</span>
+                            <span className="text-sm w-32">{ states.disabled }</span>
                             <Rating name="rating-disabled" defaultValue={3} disabled />
                         </div>
 
                         <div className="flex items-center gap-4">
-                            <span className="text-sm w-32">No clear</span>
+                            <span className="text-sm w-32">{ states.noClear }</span>
                             <Rating name="rating-no-clear" allowClear={false} defaultValue={3} />
                         </div>
                     </div>
@@ -227,12 +254,12 @@ const RatingDemo = () =>
 
             <div className="flex flex-col gap-6 mt-8">
                 <h2 className="text-2xl font-bold border-b-2 border-secondary pb-2">
-                    🔢 Number Rating (Buttons)
+                    { number.title }
                 </h2>
 
                 {/* Simple Number Rating */}
                 <div className="flex flex-col gap-4">
-                    <h3 className="text-xl font-semibold">Simple Number Rating</h3>
+                    <h3 className="text-xl font-semibold">{ number.simple }</h3>
                     <NumberRating name="number-simple" defaultValue={3} />
                 </div>
 
@@ -240,16 +267,16 @@ const RatingDemo = () =>
 
                 {/* Square vs Circle */}
                 <div className="flex flex-col gap-4">
-                    <h3 className="text-xl font-semibold">Square vs Circle</h3>
+                    <h3 className="text-xl font-semibold">{ number.shapes }</h3>
 
                     <div className="flex flex-col gap-3">
                         <div className="flex items-center gap-4">
-                            <span className="text-sm w-32">Square</span>
+                            <span className="text-sm w-32">square</span>
                             <NumberRating name="number-square" shape="square" defaultValue={3} />
                         </div>
 
                         <div className="flex items-center gap-4">
-                            <span className="text-sm w-32">Circle</span>
+                            <span className="text-sm w-32">circle</span>
                             <NumberRating
                                 name="number-circle"
                                 shape="circle"
@@ -260,7 +287,7 @@ const RatingDemo = () =>
                     </div>
 
                     <div className="flex flex-row gap-2">
-                        <span>Circle value: <Badge>{circleRating}</Badge></span>
+                        <span>{ number.circleValue } <Badge>{circleRating}</Badge></span>
                     </div>
                 </div>
 
@@ -268,7 +295,7 @@ const RatingDemo = () =>
 
                 {/* All Sizes */}
                 <div className="flex flex-col gap-4">
-                    <h3 className="text-xl font-semibold">All Sizes</h3>
+                    <h3 className="text-xl font-semibold">{ t.rating?.sizes }</h3>
 
                     <div className="flex flex-col items-center gap-4">
                         <NumberRating name="number-xs" size="xs" defaultValue={3} />
@@ -283,7 +310,7 @@ const RatingDemo = () =>
 
                 {/* Different Colors */}
                 <div className="flex flex-col gap-4">
-                    <h3 className="text-xl font-semibold">Color Combinations</h3>
+                    <h3 className="text-xl font-semibold">{ number.colors }</h3>
 
                     <div className="flex flex-col gap-3">
                         <div className="flex items-center gap-4">
@@ -322,7 +349,7 @@ const RatingDemo = () =>
 
                 {/* Custom Count */}
                 <div className="flex flex-col gap-4">
-                    <h3 className="text-xl font-semibold">Custom Count</h3>
+                    <h3 className="text-xl font-semibold">{ number.count }</h3>
 
                     <div className="flex flex-col gap-3">
                         <div className="flex items-center gap-4">
@@ -346,11 +373,11 @@ const RatingDemo = () =>
 
                 {/* With Gap */}
                 <div className="flex flex-col gap-4">
-                    <h3 className="text-xl font-semibold">With Gap</h3>
+                    <h3 className="text-xl font-semibold">{ t.rating?.gap }</h3>
 
                     <div className="flex flex-col gap-3">
                         <div className="flex items-center gap-4">
-                            <span className="text-sm w-32">No gap</span>
+                            <span className="text-sm w-32">{ t.rating?.noGap }</span>
                             <NumberRating name="number-gap-0" defaultValue={3} />
                         </div>
 
@@ -370,11 +397,11 @@ const RatingDemo = () =>
 
                 {/* Custom Content */}
                 <div className="flex flex-col gap-4">
-                    <h3 className="text-xl font-semibold">Custom Content</h3>
+                    <h3 className="text-xl font-semibold">{ number.content }</h3>
 
                     <div className="flex flex-col gap-3">
                         <div className="flex items-center gap-4">
-                            <span className="text-sm w-32">Emoji</span>
+                            <span className="text-sm w-32">{ number.emoji }</span>
                             <NumberRating
                                 name="number-emoji"
                                 count={5}
@@ -384,7 +411,7 @@ const RatingDemo = () =>
                         </div>
 
                         <div className="flex items-center gap-4">
-                            <span className="text-sm w-32">Letters</span>
+                            <span className="text-sm w-32">{ number.letters }</span>
                             <NumberRating
                                 name="number-letters"
                                 count={5}
@@ -394,7 +421,7 @@ const RatingDemo = () =>
                         </div>
 
                         <div className="flex items-center gap-4">
-                            <span className="text-sm w-32">Stars in buttons</span>
+                            <span className="text-sm w-32">{ number.stars }</span>
                             <NumberRating
                                 name="number-stars"
                                 shape="circle"
@@ -411,7 +438,7 @@ const RatingDemo = () =>
 
                 {/* Controlled */}
                 <div className="flex flex-col gap-4">
-                    <h3 className="text-xl font-semibold">Controlled Number Rating</h3>
+                    <h3 className="text-xl font-semibold">{ number.controlled }</h3>
 
                     <NumberRating
                         name="number-controlled"
@@ -430,12 +457,12 @@ const RatingDemo = () =>
                             + 1
                         </Button>
                         <Button color="error" size="sm" onClick={() => setNumberRating(0)}>
-                            Clear
+                            { t.clear }
                         </Button>
                     </div>
 
                     <div className="flex flex-row gap-2">
-                        <span>Value: <Badge>{numberRating}</Badge></span>
+                        <span>{ t.value } <Badge>{numberRating}</Badge></span>
                     </div>
                 </div>
 
@@ -443,21 +470,21 @@ const RatingDemo = () =>
 
                 {/* Read-Only & Disabled */}
                 <div className="flex flex-col gap-4">
-                    <h3 className="text-xl font-semibold">Read-Only & Disabled</h3>
+                    <h3 className="text-xl font-semibold">{ states.title }</h3>
 
                     <div className="flex flex-col gap-3">
                         <div className="flex items-center gap-4">
-                            <span className="text-sm w-32">Read-only</span>
+                            <span className="text-sm w-32">{ states.readOnly }</span>
                             <NumberRating name="number-readonly" value={4} readOnly />
                         </div>
 
                         <div className="flex items-center gap-4">
-                            <span className="text-sm w-32">Disabled</span>
+                            <span className="text-sm w-32">{ states.disabled }</span>
                             <NumberRating name="number-disabled" defaultValue={3} disabled />
                         </div>
 
                         <div className="flex items-center gap-4">
-                            <span className="text-sm w-32">No clear</span>
+                            <span className="text-sm w-32">{ states.noClear }</span>
                             <NumberRating name="number-no-clear" allowClear={false} defaultValue={3} />
                         </div>
                     </div>
@@ -468,7 +495,7 @@ const RatingDemo = () =>
 
             <div className="flex flex-col gap-6 mt-8">
                 <h2 className="text-2xl font-bold border-b-2 border-accent pb-2">
-                    💼 Practical Use Cases
+                    { useCases.title }
                 </h2>
 
                 {/* Product card */}
@@ -477,11 +504,11 @@ const RatingDemo = () =>
                         <span className="text-6xl">📱</span>
                     </figure>
                     <div className="card-body">
-                        <h2 className="card-title">Smartphone X</h2>
-                        <p>Latest flagship with amazing features</p>
+                        <h2 className="card-title">{ useCases.product?.name }</h2>
+                        <p>{ useCases.product?.description }</p>
 
                         <div className="flex items-center gap-2 mt-2">
-                            <span className="text-sm font-semibold">Rate:</span>
+                            <span className="text-sm font-semibold">{ useCases.product?.rate }</span>
                             <Rating
                                 name="product-rating"
                                 size="sm"
@@ -495,52 +522,41 @@ const RatingDemo = () =>
                         </div>
 
                         <div className="card-actions justify-end mt-4">
-                            <Button color="primary">Buy Now</Button>
+                            <Button color="primary">{ useCases.product?.buy }</Button>
                         </div>
                     </div>
                 </div>
 
                 {/* Review list */}
                 <div>
-                    <h4 className="text-lg font-medium mb-3">Customer Reviews</h4>
+                    <h4 className="text-lg font-medium mb-3">{ useCases.reviews?.title }</h4>
 
                     <div className="flex flex-col gap-3">
-                        <div className="flex items-start gap-3">
-                            <Avatar placeholder className="bg-success text-success-content rounded-full size-8">
-                                <span className="text-xs">JD</span>
-                            </Avatar>
-                            <div className="flex-1">
-                                <div className="flex items-center gap-2">
-                                    <span className="font-semibold">John Doe</span>
-                                    <Rating name="review-1" value={5} readOnly size="xs" color="warning" />
+                        { ( useCases.reviews?.items ?? [] ).map( ( review , index ) => (
+                            <div className="flex items-start gap-3" key={ review.name }>
+                                <Avatar placeholder className={ `${ REVIEW_AVATARS[ index % REVIEW_AVATARS.length ] } rounded-full size-8` }>
+                                    <span className="text-xs">{ review.initials }</span>
+                                </Avatar>
+                                <div className="flex-1">
+                                    <div className="flex items-center gap-2">
+                                        <span className="font-semibold">{ review.name }</span>
+                                        <Rating name={ `review-${ index + 1 }` } value={ review.value } readOnly size="xs" color="warning" />
+                                    </div>
+                                    <p className="text-sm mt-1">{ review.text }</p>
                                 </div>
-                                <p className="text-sm mt-1">Excellent product! Highly recommended.</p>
                             </div>
-                        </div>
-
-                        <div className="flex items-start gap-3">
-                            <Avatar placeholder className="bg-secondary text-secondary-content rounded-full size-8">
-                                <span className="text-xs">AS</span>
-                            </Avatar>
-                            <div className="flex-1">
-                                <div className="flex items-center gap-2">
-                                    <span className="font-semibold">Alice Smith</span>
-                                    <Rating name="review-2" value={4} readOnly size="xs" color="warning" />
-                                </div>
-                                <p className="text-sm mt-1">Good value for money.</p>
-                            </div>
-                        </div>
+                        ) ) }
                     </div>
                 </div>
 
                 {/* Satisfaction survey */}
                 <div className="card bg-base-100 shadow-xl max-w-md">
                     <div className="card-body">
-                        <h3 className="card-title">Satisfaction Survey</h3>
+                        <h3 className="card-title">{ useCases.survey?.title }</h3>
 
                         <div className="flex flex-col gap-4 mt-2">
                             <div>
-                                <p className="text-sm font-semibold mb-2">Rate our service (1-10):</p>
+                                <p className="text-sm font-semibold mb-2">{ useCases.survey?.service }</p>
                                 <NumberRating
                                     name="survey-service"
                                     count={10}
@@ -550,7 +566,7 @@ const RatingDemo = () =>
                             </div>
 
                             <div>
-                                <p className="text-sm font-semibold mb-2">Overall experience:</p>
+                                <p className="text-sm font-semibold mb-2">{ useCases.survey?.overall }</p>
                                 <NumberRating
                                     name="survey-overall"
                                     count={5}
@@ -568,16 +584,16 @@ const RatingDemo = () =>
             {/* Icon Rating */}
             <div className="flex flex-col gap-6 mt-8">
                 <h2 className="text-2xl font-bold border-b-2 border-success pb-2">
-                    ⭐ Icon Rating (Custom Icons)
+                    { icons.title }
                 </h2>
 
                 {/* Simple Icon Rating */}
                 <div className="flex flex-col gap-4">
-                    <h3 className="text-xl font-semibold">Star Icons</h3>
+                    <h3 className="text-xl font-semibold">{ icons.stars }</h3>
 
                     <div className="flex flex-col gap-3">
                         <div className="flex items-center gap-4">
-                            <span className="text-sm w-32">Default</span>
+                            <span className="text-sm w-32">{ icons.default }</span>
                             <IconRating
                                 name="icon-stars-1"
                                 icon={MdStarBorder}
@@ -587,7 +603,7 @@ const RatingDemo = () =>
                         </div>
 
                         <div className="flex items-center gap-4">
-                            <span className="text-sm w-32">With gap</span>
+                            <span className="text-sm w-32">{ icons.gap }</span>
                             <IconRating
                                 name="icon-stars-2"
                                 icon={MdStarBorder}
@@ -598,7 +614,7 @@ const RatingDemo = () =>
                         </div>
 
                         <div className="flex items-center gap-4">
-                            <span className="text-sm w-32">Circle shape</span>
+                            <span className="text-sm w-32">{ icons.circle }</span>
                             <IconRating
                                 name="icon-stars-3"
                                 icon={MdStarBorder}
@@ -615,11 +631,11 @@ const RatingDemo = () =>
 
                 {/* Different Icons */}
                 <div className="flex flex-col gap-4">
-                    <h3 className="text-xl font-semibold">Different Icons</h3>
+                    <h3 className="text-xl font-semibold">{ icons.others }</h3>
 
                     <div className="flex flex-col gap-3">
                         <div className="flex items-center gap-4">
-                            <span className="text-sm w-32">Hearts</span>
+                            <span className="text-sm w-32">{ icons.hearts }</span>
                             <IconRating
                                 name            = "icon-hearts"
                                 activeIcon      = { MdFavorite }
@@ -633,12 +649,11 @@ const RatingDemo = () =>
                         </div>
 
                         <div className="flex items-center gap-4">
-                            <span className="text-sm w-32">Thumbs</span>
+                            <span className="text-sm w-32">{ icons.thumbs }</span>
                             <IconRating
                                 name         = "icon-thumbs"
                                 activeColor  = "success"
                                 activeIcon   = { MdThumbUp }
-                                color        = "ghost"
                                 icon         = { MdThumbUpOffAlt }
                                 count        = { 5 }
                                 defaultValue = { 3 }
@@ -651,7 +666,7 @@ const RatingDemo = () =>
 
                 {/* With Colors */}
                 <div className="flex flex-col gap-4">
-                    <h3 className="text-xl font-semibold">Custom Colors</h3>
+                    <h3 className="text-xl font-semibold">{ icons.colors }</h3>
 
                     <div className="flex flex-col gap-3">
                         <IconRating
@@ -670,7 +685,6 @@ const RatingDemo = () =>
                             activeColor     = "success"
                             activeIconColor = "success-content"
                             activeIcon      = { MdStar }
-                            color           = "ghost"
                             icon            = { MdStarBorder }
                             iconColor       = "success"
                             defaultValue    = { 4 }
@@ -683,10 +697,9 @@ const RatingDemo = () =>
 
             {/* Responsive size (daisyUI 5.6) */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">Responsive size</h3>
+                <h3 className="text-xl font-semibold">{ t.responsive?.title }</h3>
                 <p className="text-sm text-base-content/70">
-                    <code>size</code> accepts a breakpoint→size object. Resize the window:
-                    this rating grows <code>sm → md → lg → xl</code> across breakpoints.
+                    { t.responsive?.before }<code>sm → md → lg → xl</code>{ t.responsive?.after }
                 </p>
                 <Rating
                     name="rating-responsive"
@@ -700,31 +713,28 @@ const RatingDemo = () =>
 
             {/* Accessible names */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-semibold">Accessible names</h3>
+                <h3 className="text-xl font-semibold">{ names.title }</h3>
                 <p className="text-sm text-base-content/70">
-                    Each item is read « 3 out of 5 » in the language on screen — whatever it shows,
-                    stars, hearts or numbers. <code>ariaLabel</code> says what is rated ; read-only,
-                    the whole value is read at once ; <code>itemLabel</code> replaces the words.
-                    Check them in the accessibility inspector.
+                    { names.text }
                 </p>
 
                 <div className="flex flex-col gap-3">
                     <div className="flex items-center gap-4">
-                        <span className="text-sm w-40">ariaLabel « Quality »</span>
-                        <Rating ariaLabel="Quality" defaultValue={ 3 } name="rating-named" />
+                        <span className="text-sm w-40">{ names.named }</span>
+                        <Rating ariaLabel={ names.quality } defaultValue={ 3 } name="rating-named" />
                     </div>
 
                     <div className="flex items-center gap-4">
-                        <span className="text-sm w-40">Read-only, half</span>
-                        <Rating ariaLabel="Average rating" half name="rating-named-readonly" readOnly value={ 3.5 } />
+                        <span className="text-sm w-40">{ names.readOnly }</span>
+                        <Rating ariaLabel={ names.average } half name="rating-named-readonly" readOnly value={ 3.5 } />
                     </div>
 
                     <div className="flex items-center gap-4">
-                        <span className="text-sm w-40">Hearts</span>
+                        <span className="text-sm w-40">{ names.hearts }</span>
                         <IconRating
                             activeColor  = "error"
                             activeIcon   = { MdFavorite }
-                            ariaLabel    = "How much you liked it"
+                            ariaLabel    = { names.liked }
                             defaultValue = { 4 }
                             icon         = { MdFavoriteBorder }
                             name         = "icon-named"
@@ -732,15 +742,68 @@ const RatingDemo = () =>
                     </div>
 
                     <div className="flex items-center gap-4">
-                        <span className="text-sm w-40">itemLabel</span>
+                        <span className="text-sm w-40">{ names.itemLabel }</span>
                         <NumberRating
-                            ariaLabel    = "Service"
+                            ariaLabel    = { names.service }
                             defaultValue = { 2 }
-                            itemLabel    = { value => SERVICE_LEVELS[ value - 1 ] }
+                            itemLabel    = { value => names.levels?.[ value - 1 ] }
                             name         = "number-item-label"
                         />
                     </div>
                 </div>
+            </div>
+
+            <Divider />
+
+            {/* In a form */}
+            <div className="flex flex-col gap-4">
+                <h3 className="text-xl font-semibold">{ form.title }</h3>
+                <p className="text-sm text-base-content/70">
+                    { form.text }
+                </p>
+
+                <form className="flex flex-col gap-3" onSubmit={ onSubmit }>
+                    <div className="flex items-center gap-4">
+                        <span className="text-sm w-40">Rating</span>
+                        <Rating ariaLabel={ names.quality } defaultValue={ 4 } name="quality" />
+                    </div>
+
+                    <div className="flex items-center gap-4">
+                        <span className="text-sm w-40">NumberRating</span>
+                        <NumberRating ariaLabel={ names.service } defaultValue={ 3 } name="service" />
+                    </div>
+
+                    <div className="flex items-center gap-4">
+                        <span className="text-sm w-40">IconRating</span>
+                        <IconRating
+                            activeColor  = "error"
+                            activeIcon   = { MdFavorite }
+                            ariaLabel    = { names.liked }
+                            icon         = { MdFavoriteBorder }
+                            name         = "liked"
+                        />
+                    </div>
+
+                    <div className="flex items-center gap-4">
+                        <span className="text-sm w-40">{ form.readOnly }</span>
+                        <Rating ariaLabel={ names.average } half name="average" readOnly value={ 4.5 } />
+                    </div>
+
+                    <div className="flex items-center gap-4">
+                        <span className="text-sm w-40">{ form.disabled }</span>
+                        <NumberRating defaultValue={ 2 } disabled name="locked" />
+                    </div>
+
+                    <div>
+                        <Button color="primary" type="submit">{ form.send }</Button>
+                    </div>
+                </form>
+
+                { sent && (
+                    <pre className="rounded-box bg-base-100 p-3 text-xs">
+                        { form.sent } { JSON.stringify( sent ) }
+                    </pre>
+                ) }
             </div>
 
         </Container>
