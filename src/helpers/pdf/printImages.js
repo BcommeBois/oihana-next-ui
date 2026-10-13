@@ -30,22 +30,29 @@ const printImages = ( images , { title } = {} ) => new Promise( resolve =>
     container.setAttribute( 'aria-hidden' , 'true' ) ;
     container.style.display = 'none' ;
 
+    // 🔑 Each image sits in a sheet-sized box that clips it. An image sized `width : 100% ;
+    // height : auto` came out a fraction of a point taller than the sheet, and that overflow
+    // made a blank page after every page — then the forced break made another.
     for ( const image of images )
     {
-        const img = document.createElement( 'img' ) ;
+        const sheet = document.createElement( 'div' ) ;
+        const img   = document.createElement( 'img' ) ;
         img.src = image.url ;
         img.alt = '' ;
-        container.appendChild( img ) ;
+        sheet.appendChild( img ) ;
+        container.appendChild( sheet ) ;
     }
 
     const style = document.createElement( 'style' ) ;
     style.textContent = `
         @media print {
             @page { size : ${ first.width }pt ${ first.height }pt ; margin : 0 ; }
+            html , body { margin : 0 !important ; padding : 0 !important ; height : auto !important ; overflow : visible !important ; }
             body > :not([data-oihana-print]) { display : none !important ; }
             [data-oihana-print] { display : block !important ; }
-            [data-oihana-print] img { display : block ; width : 100% ; height : auto ; break-after : page ; page-break-after : always ; }
-            [data-oihana-print] img:last-child { break-after : auto ; page-break-after : auto ; }
+            [data-oihana-print] > div { width : ${ first.width }pt ; height : ${ first.height }pt ; overflow : hidden ; break-after : page ; page-break-after : always ; break-inside : avoid ; }
+            [data-oihana-print] > div:last-child { break-after : auto ; page-break-after : auto ; }
+            [data-oihana-print] img { display : block ; width : 100% ; height : 100% ; object-fit : contain ; }
         }
     ` ;
 

@@ -49,6 +49,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   document as a multipart form, and throws a server that says no with `status` and
   `response`. 11 tests.
 - `components.document` gains `generating` and `generateFailed`.
+- **Printing from the page no longer puts a blank sheet after every page.** Each image was
+  sized to the sheet's width with its height left to follow, and came out a fraction of a point
+  taller than the sheet : the overflow made a blank page, and the forced break another. Every
+  image now sits in a box of the sheet's exact size that clips it (`helpers/pdf/printImages`).
 - The demo app gains **« Creating a PDF »** under Modules › Documents — a note generated as it
   is typed, with a QR code, and an A4 sheet of 2 × 7 labels on the grid of a stationery
   reference, each with a barcode — and the **E-commerce › Invoice scenario** : the invoice of
