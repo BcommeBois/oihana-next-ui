@@ -12,6 +12,7 @@ import Button           from '@/components/Button' ;
 import Divider          from '@/components/Divider' ;
 import SegmentedControl from '@/components/SegmentedControl' ;
 import Toggle           from '@/components/checkboxes/Toggle' ;
+import FilterSettingsButton from '@/components/filters/FilterSettingsButton' ;
 import FileDropzone     from '@/components/media/FileDropzone' ;
 
 import PdfPanel  from '@/components/documents/PdfPanel' ;
@@ -31,6 +32,9 @@ const API    = '/api/documents/sample' ;
 const MB = 1024 * 1024 ;
 
 const FITS     = [ 'width' , 'page' , 'none' ] ;
+
+/** The toolbar's switches, in the bar's order. */
+const TOOLS = [ 'tooltips' , 'showZoom' , 'showFit' , 'showThumbnails' , 'showSearch' , 'showRotate' , 'showPrint' , 'showOpenInTab' , 'showDownload' , 'showFullscreen' ] ;
 const TOOLBARS = [ 'top' , 'bottom' , 'both' , 'none' ] ;
 
 /**
@@ -64,6 +68,7 @@ const PdfViewerDemo = ( { path = 'demo.documents.viewer' } = {} ) =>
     const [ fit     , setFit     ] = useState( 'width' ) ;
     const [ toolbar , setToolbar ] = useState( 'top' ) ;
     const [ text    , setText    ] = useState( true ) ;
+    const [ tools   , setTools   ] = useState( () => Object.fromEntries( TOOLS.map( key => [ key , true ] ) ) ) ;
     const [ page    , setPage    ] = useState( 1 ) ;
     const [ pages   , setPages   ] = useState( 0 ) ;
     const [ zoom    , setZoom    ] = useState( 1 ) ;
@@ -128,6 +133,16 @@ const PdfViewerDemo = ( { path = 'demo.documents.viewer' } = {} ) =>
                     <Toggle checked={ text } inline label={ viewer.textLayer } onChange={ event => setText( event.target.checked ) } size="sm" />
                 </div>
 
+                <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-sm">{ viewer.tools?.label }</span>
+                    <FilterSettingsButton
+                        hidden  = { TOOLS.filter( key => !tools[ key ] ) }
+                        onApply = { hiddenIds => setTools( Object.fromEntries( TOOLS.map( key => [ key , !hiddenIds.includes( key ) ] ) ) ) }
+                        options = { TOOLS.map( id => ( { id , label : viewer.tools?.names?.[ id ] ?? id } ) ) }
+                        path    = "demo.documents.toolbarSettings"
+                    />
+                </div>
+
                 <PdfViewer
                     className       = "h-[70vh] rounded-box border border-base-300"
                     fit             = { fit }
@@ -137,6 +152,7 @@ const PdfViewerDemo = ( { path = 'demo.documents.viewer' } = {} ) =>
                     renderTextLayer = { text }
                     source          = { SAMPLE }
                     toolbar         = { toolbar === 'none' ? false : toolbar }
+                    toolbarProps    = { tools }
                 />
 
                 <div className="flex flex-wrap gap-2 text-sm text-base-content/70">

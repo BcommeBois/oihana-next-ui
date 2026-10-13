@@ -20,6 +20,7 @@
  *
  * @param {Object} props
  * @param {React.ElementType} props.Page - `react-pdf`'s `Page`, from the engine.
+ * @param {Function} [props.customTextRenderer] - `react-pdf`'s : the HTML of each text item, for highlighting.
  * @param {number} props.height - The placeholder's height, in CSS pixels.
  * @param {string} [props.margin='120%'] - How far from the viewport a page is already drawn, as a `rootMargin` height.
  * @param {Function} [props.onVisibleChange] - `( pageNumber , visible ) => void` when the page is mounted or unmounted.
@@ -28,6 +29,7 @@
  * @param {React.RefObject<?HTMLElement>} [props.root] - The scroll frame the page is observed against. The window when absent.
  * @param {boolean} [props.renderAnnotationLayer=true] - Links and form fields.
  * @param {boolean} [props.renderTextLayer=true] - Selectable text.
+ * @param {number} [props.rotate=0] - Degrees, a multiple of 90.
  * @param {number} props.width - The page's width, in CSS pixels.
  */
 
@@ -36,6 +38,7 @@ import { useEffect , useRef , useState } from 'react' ;
 const PdfPage =
 ({
     Page ,
+    customTextRenderer ,
     height ,
     margin = '120%' ,
     onVisibleChange ,
@@ -44,6 +47,7 @@ const PdfPage =
     renderAnnotationLayer = true ,
     renderTextLayer = true ,
     root ,
+    rotate = 0 ,
     width ,
 }) =>
 {
@@ -103,10 +107,14 @@ const PdfPage =
         >
             { visible && (
                 <Page
+                    customTextRenderer    = { customTextRenderer }
                     loading               = { null }
                     pageNumber            = { pageNumber }
                     renderAnnotationLayer = { renderAnnotationLayer }
                     renderTextLayer       = { renderTextLayer }
+                    rotate                = { rotate }
+                    // As the document : a page that suspends freezes the tree around it while it loads.
+                    suspense              = { false }
                     width                 = { width }
                 />
             ) }

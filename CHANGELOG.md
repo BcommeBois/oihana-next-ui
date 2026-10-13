@@ -58,6 +58,27 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   changes. `PdfViewer` leaves the key to the application when it holds it. The demo app turns
   it on.
 
+**📄 Documents : the viewer, complete**
+
+- **Thumbnails** (`PdfThumbnails`) : a column of miniatures beside the pages, closed by default,
+  each drawn only while in its column's sight, the current page marked and kept in view.
+- **Search** (`PdfSearch`) : the toolbar's magnifier, or Ctrl+F with the viewer focused. Words
+  are found without caring for case or accents, a partial word accepted (`helpers/pdf/findInText`,
+  tested), counted, highlighted in the text layer — the current match told apart — and walked with
+  Enter / Shift+Enter.
+- **Rotation** by quarter turns, of the whole document ; the placeholders and the fit follow.
+- **Print from inside the page**, on a phone as on a desktop : every page drawn at `printDpi`
+  (150) into **one reused canvas**, kept as a JPEG, and handed to the browser's dialog by a
+  stylesheet that lives only for the printing (`helpers/pdf/renderPagesToImages`,
+  `helpers/pdf/printImages`) ; a progress bar meanwhile, and past `printLimit` pages (200) a
+  notice and `onPrintRefused` instead. **Open in a tab** is now its own button.
+- **Keyboard**, with the viewer focused : Page Up / Page Down, Home / End, `+` / `−`, `r`, Ctrl+F.
+- **The toolbar's buttons carry tooltips** (`tooltips`, on by default), opening below a top bar
+  and above a bottom one ; `showThumbnails`, `showSearch`, `showRotate`, `showOpenInTab` join the
+  `show*` switches, and `PdfViewer` takes **`toolbarProps`** to hand them to the bar it draws.
+- The viewer demo chooses the toolbar's items through a `FilterSettingsButton` — the chooser of
+  the filter bars, with its own words here — and the search demo runs on the forty-page document.
+
 **📄 Documents : the viewer**
 
 - **New `components/documents/PdfViewer`** : a PDF in the page — every page in a scrolling

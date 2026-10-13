@@ -32,9 +32,19 @@
  * dialog sits in the browser's top layer, above everything in `body`, and
  * its box carries a transform that would pin a `fixed` element to the box.
  *
- * **Print** opens the document in a tab, where the browser's own reader
- * prints it ; **download** saves it under `fileName`, the file's own name, or
- * the title the document carries.
+ * **Print** prints from inside the page, on a phone as on a desktop : every
+ * page drawn at `printDpi` into one reused canvas, kept as a JPEG, and handed
+ * to the browser's dialog ; a document past `printLimit` pages is refused
+ * with a notice, since forty megabytes of images is not what a phone wants.
+ * **Open in a tab** hands the document to the browser's own reader ;
+ * **download** saves it under `fileName`, the file's own name, or the title
+ * the document carries.
+ *
+ * **Search** finds words without caring for case or accents, counts them,
+ * highlights them in the text layer and walks them with Enter / Shift+Enter.
+ * **Thumbnails** open beside the pages on a desktop ; **rotate** turns the
+ * whole document by quarter turns. With the focus on the viewer : Page Up /
+ * Page Down, Home / End, `+` / `−`, `r`, Ctrl+F.
  *
  * **A protected document** asks its password in a dialog, and asks again when
  * the one given is wrong.
@@ -59,11 +69,16 @@ import { use , useCallback , useEffect , useImperativeHandle , useMemo , useRef 
 import { createPortal } from 'react-dom' ;
 import { useMeasure } from 'react-use' ;
 
+import { MdClose } from 'react-icons/md' ;
+
+import Button     from '../Button' ;
 import LinkButton from '../links/LinkButton' ;
 
 import DocumentFrame    from './DocumentFrame' ;
 import PdfPage          from './PdfPage' ;
 import PdfPasswordModal from './PdfPasswordModal' ;
+import PdfSearch        from './PdfSearch' ;
+import PdfThumbnails    from './PdfThumbnails' ;
 import PdfToolbar       from './PdfToolbar' ;
 import PdfViewerContext from './context' ;
 
@@ -75,8 +90,13 @@ import useI18n           from '../../contexts/locale/useI18n' ;
 
 import useValue from '../../hooks/useValue' ;
 
+import format from 'vegas-js-core/src/strings/fastformat' ;
+
 import forceDownload           from '../../helpers/net/forceDownload' ;
+import findInText              from '../../helpers/pdf/findInText' ;
 import mostVisiblePage         from '../../helpers/pdf/mostVisiblePage' ;
+import printImages             from '../../helpers/pdf/printImages' ;
+import renderPagesToImages     from '../../helpers/pdf/renderPagesToImages' ;
 import nextZoom , { ZOOM_STEPS } from '../../helpers/pdf/zoomSteps' ;
 import { toDocumentFile }      from '../../helpers/pdf/toPdfSource' ;
 
@@ -121,12 +141,16 @@ const pdfName = name =>
  * @param {Function} [props.onPageChange] - `( page ) => void` as the reader moves, 1-based.
  * @param {Function} [props.onRenderedChange] - `( count ) => void` when the number of pages currently drawn changes.
  * @param {Function} [props.onZoomChange] - `( zoom ) => void`.
+ * @param {Function} [props.onPrintRefused] - `( { pages , limit } ) => void` when a print is refused for being past `printLimit`.
  * @param {string} [props.path='components.document'] - i18n path the labels are read from.
- * @param {React.Ref} [props.ref] - An imperative handle : `goTo`, `zoomIn`, `zoomOut`, `setFit`, `download`, `print`, `toggleFullscreen`, and `pdf`, the open pdf.js document.
+ * @param {number} [props.printDpi=150] - The resolution the pages are printed at. 300 is print quality, four times the work.
+ * @param {number} [props.printLimit=200] - Past this many pages, printing from the page is refused ; « open in a tab » remains.
+ * @param {React.Ref} [props.ref] - An imperative handle : `goTo`, `zoomIn`, `zoomOut`, `setFit`, `rotate`, `download`, `print`, `openInTab`, `toggleFullscreen`, `toggleThumbnails`, `openSearch`, and `pdf`, the open pdf.js document.
  * @param {boolean} [props.renderAnnotationLayer=true] - Links and form fields.
  * @param {boolean} [props.renderTextLayer=true] - Selectable text.
  * @param {import('../../helpers/pdf/toPdfSource').PdfSource} [props.source] - The document : a url, `{ url , headers }`, a `File`, a `Blob`, a buffer. `null` shows the empty state.
  * @param {'top'|'bottom'|'both'|false} [props.toolbar='top'] - Where the viewer draws its own `PdfToolbar` — above, below, both, or not at all.
+ * @param {Object} [props.toolbarProps] - Props of the toolbar the viewer draws : `tooltips`, `showZoom`, `showFit`, `showThumbnails`, `showSearch`, `showRotate`, `showOpenInTab`, `showPrint`, `showDownload`, `showFullscreen`.
  * @param {number} [props.zoom] - The zoom (controlled).
  */
 const PdfViewer =
@@ -142,14 +166,18 @@ const PdfViewer =
     onError ,
     onLoad ,
     onPageChange ,
+    onPrintRefused ,
     onRenderedChange ,
     onZoomChange ,
     path = 'components.document' ,
+    printDpi = 150 ,
+    printLimit = 200 ,
     ref ,
     renderAnnotationLayer = true ,
     renderTextLayer = true ,
     source = null ,
     toolbar = 'top' ,
+    toolbarProps ,
     zoom : zoomProp ,
 }) =>
 {
@@ -180,6 +208,15 @@ const PdfViewer =
     const [ ask     , setAsk     ] = useState( null ) ; // { callback , wrong } while a password is asked
 
     const pages = sizes.length ;
+
+    // --------- Rotation : quarter turns of the whole document
+
+    const [ rotation , setRotation ] = useState( 0 ) ;
+
+    const rotate = useCallback( () => setRotation( value => ( value + 90 ) % 360 ) , [] ) ;
+
+    // The sizes as shown : width and height trade places sideways.
+    const oriented = useMemo( () => rotation % 180 === 0 ? sizes : sizes.map( size => ( { height : size.width , width : size.height } ) ) , [ rotation , sizes ] ) ;
 
     // The page numbers, the one identity a page has.
     const numbers = useMemo( () => Array.from( { length : pages } , ( _ , index ) => index + 1 ) , [ pages ] ) ;
@@ -268,7 +305,7 @@ const PdfViewer =
     // The width every page is drawn at. `fit` reads the first page : a document mixes sizes rarely, and a column needs one width.
     const pageWidth = useMemo( () =>
     {
-        const first = sizes[ 0 ] ;
+        const first = oriented[ 0 ] ;
 
         if ( !first )
         {
@@ -291,7 +328,7 @@ const PdfViewer =
 
         return Math.max( 0 , Math.floor( base * zoom ) ) ;
     }
-    , [ fit , frameHeight , frameWidth , sizes , zoom ] ) ;
+    , [ fit , frameHeight , frameWidth , oriented , zoom ] ) ;
 
     // --------- Where the reader is
 
@@ -377,7 +414,144 @@ const PdfViewer =
     }
     , [ file , attempt , onRenderedChange ] ) ;
 
-    // --------- The document as a file : download, print
+    // --------- Thumbnails
+
+    const [ thumbnailsOpen , setThumbnailsOpen ] = useState( false ) ;
+
+    const toggleThumbnails = useCallback( () => setThumbnailsOpen( value => !value ) , [] ) ;
+
+    // --------- Search : the words of every page, read once ; the matches, per text item
+
+    const [ searchOpen , setSearchOpen ] = useState( false ) ;
+    const [ query      , setQuery      ] = useState( '' ) ;
+    const [ matches    , setMatches    ] = useState( [] ) ;   // { page , item , offset , length }
+    const [ matchIndex , setMatchIndex ] = useState( 0 ) ;
+
+    const texts = useRef( new Map() ) ;   // page number → the strings of its text items
+
+    // biome-ignore lint/correctness/useExhaustiveDependencies: a new document empties the words read from the previous one
+    useEffect( () => { texts.current = new Map() ; } , [ pdf ] ) ;
+
+    const openSearch  = useCallback( () => setSearchOpen( true ) , [] ) ;
+    const closeSearch = useCallback( () =>
+    {
+        setSearchOpen( false ) ;
+        setQuery( '' ) ;
+    }
+    , [] ) ;
+
+    useEffect( () =>
+    {
+        if ( !pdf || !query.trim() )
+        {
+            setMatches( [] ) ;
+            setMatchIndex( 0 ) ;
+            return undefined ;
+        }
+
+        let alive = true ;
+
+        // A short wait : the reader is still typing.
+        const timer = setTimeout( async () =>
+        {
+            const found = [] ;
+
+            for ( let number = 1 ; number <= pdf.numPages && alive ; number++ )
+            {
+                let items = texts.current.get( number ) ;
+
+                if ( !items )
+                {
+                    const page    = await pdf.getPage( number ) ;
+                    const content = await page.getTextContent() ;
+
+                    items = content.items.map( item => item.str ?? '' ) ;
+                    texts.current.set( number , items ) ;
+                }
+
+                items.forEach( ( str , item ) =>
+                {
+                    for ( const offset of findInText( str , query ) )
+                    {
+                        found.push( { item , length : query.trim().length , offset , page : number } ) ;
+                    }
+                } ) ;
+            }
+
+            if ( alive )
+            {
+                setMatches( found ) ;
+                setMatchIndex( 0 ) ;
+            }
+        }
+        , 250 ) ;
+
+        return () =>
+        {
+            alive = false ;
+            clearTimeout( timer ) ;
+        } ;
+    }
+    , [ pdf , query ] ) ;
+
+    // The current match brings its page into view.
+    // biome-ignore lint/correctness/useExhaustiveDependencies: only a change of match moves the reader, never a scroll of theirs
+    useEffect( () =>
+    {
+        const match = matches[ matchIndex ] ;
+
+        if ( match && match.page !== page )
+        {
+            goTo( match.page ) ;
+        }
+    }
+    , [ goTo , matchIndex , matches ] ) ;
+
+    const nextMatch     = useCallback( () => setMatchIndex( index => ( matches.length ? ( index + 1 ) % matches.length : 0 ) ) , [ matches.length ] ) ;
+    const previousMatch = useCallback( () => setMatchIndex( index => ( matches.length ? ( index - 1 + matches.length ) % matches.length : 0 ) ) , [ matches.length ] ) ;
+
+    // Wraps each match of a text item in <mark>, the current one told apart.
+    const textRenderer = useMemo( () =>
+    {
+        if ( !query.trim() || matches.length === 0 )
+        {
+            return undefined ;
+        }
+
+        const current = matches[ matchIndex ] ;
+
+        const escapeHtml = text => text.replace( /&/g , '&amp;' ).replace( /</g , '&lt;' ).replace( />/g , '&gt;' ) ;
+
+        return ( { itemIndex , pageNumber , str } ) =>
+        {
+            const own = matches.filter( match => match.page === pageNumber && match.item === itemIndex ) ;
+
+            if ( own.length === 0 )
+            {
+                return escapeHtml( str ) ;
+            }
+
+            let html   = '' ;
+            let cursor = 0 ;
+
+            for ( const match of own )
+            {
+                const isCurrent = current && match.page === current.page && match.item === current.item && match.offset === current.offset ;
+
+                html += escapeHtml( str.slice( cursor , match.offset ) ) ;
+                // The text layer's glyphs are transparent over the canvas : a <mark> must keep them so, or its own black text
+                // covers the page. And the colour is the page's, not the theme's : a PDF page is white in every theme, so a
+                // light fixed yellow reads on it where a theme's « warning » may be a dark amber.
+                html += `<mark class="${ isCurrent ? 'bg-amber-300/70' : 'bg-yellow-200/70' } rounded-xs text-transparent">${ escapeHtml( str.slice( match.offset , match.offset + match.length ) ) }</mark>` ;
+                cursor = match.offset + match.length ;
+            }
+
+            return html + escapeHtml( str.slice( cursor ) ) ;
+        } ;
+    }
+    , [ matchIndex , matches , query ] ) ;
+
+    // --------- The document as a file : download, print, open in a tab
 
     const name = fileName ?? ( typeof source === 'object' && source !== null && 'name' in source ? source.name : null ) ?? title ;
 
@@ -405,7 +579,7 @@ const PdfViewer =
     }
     , [ name , toBlob ] ) ;
 
-    const print = useCallback( async () =>
+    const openInTab = useCallback( async () =>
     {
         const blob = await toBlob() ;
 
@@ -420,6 +594,39 @@ const PdfViewer =
         }
     }
     , [ toBlob ] ) ;
+
+    const [ printing , setPrinting ] = useState( null ) ;   // { done , total } while the pages are drawn
+    const [ notice   , setNotice   ] = useState( null ) ;
+
+    const print = useCallback( async () =>
+    {
+        if ( !pdf || printing )
+        {
+            return ;
+        }
+
+        if ( pdf.numPages > printLimit )
+        {
+            setNotice( format( labels.printTooLong ?? 'This document has {0} pages: printing from the page is limited to {1}.' , pdf.numPages , printLimit ) ) ;
+            onPrintRefused?.( { limit : printLimit , pages : pdf.numPages } ) ;
+            return ;
+        }
+
+        setPrinting( { done : 0 , total : pdf.numPages } ) ;
+
+        try
+        {
+            const images = await renderPagesToImages( pdf , { dpi : printDpi , onProgress : ( done , total ) => setPrinting( { done , total } ) , rotation } ) ;
+            setPrinting( null ) ;
+            await printImages( images , { title : pdfName( name ) } ) ;
+        }
+        catch ( failure )
+        {
+            setPrinting( null ) ;
+            onError?.( failure ) ;
+        }
+    }
+    , [ labels , name , onError , onPrintRefused , pdf , printDpi , printLimit , printing , rotation ] ) ;
 
     // --------- Full screen : the viewer covers the application's window. Never the browser's
     // full screen, which is the application's to ask for, and which an iPhone has not.
@@ -494,40 +701,103 @@ const PdfViewer =
     }
     , [ appHoldsEscape , fullscreen ] ) ;
 
+    // --------- Keyboard, with the focus on the viewer
+
+    const onKeyDown = useCallback( event =>
+    {
+        const target = event.target ;
+
+        if ( target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement || target.isContentEditable )
+        {
+            return ;
+        }
+
+        const meta = event.ctrlKey || event.metaKey ;
+
+        if ( meta && event.key.toLowerCase() === 'f' )
+        {
+            event.preventDefault() ;
+            openSearch() ;
+            return ;
+        }
+
+        if ( meta || event.altKey )
+        {
+            return ;
+        }
+
+        switch ( event.key )
+        {
+            case 'PageDown' : event.preventDefault() ; goTo( page + 1 ) ; break ;
+            case 'PageUp'   : event.preventDefault() ; goTo( page - 1 ) ; break ;
+            case 'Home'     : event.preventDefault() ; goTo( 1 ) ; break ;
+            case 'End'      : event.preventDefault() ; goTo( pages ) ; break ;
+            case '+' :
+            case '='        : event.preventDefault() ; zoomIn() ; break ;
+            case '-'        : event.preventDefault() ; zoomOut() ; break ;
+            case 'r' :
+            case 'R'        : event.preventDefault() ; rotate() ; break ;
+            default : break ;
+        }
+    }
+    , [ goTo , openSearch , page , pages , rotate , zoomIn , zoomOut ] ) ;
+
     // --------- The handle, and what the toolbar reads
 
     useImperativeHandle( ref , () => (
     {
         download ,
         goTo ,
+        openInTab ,
+        openSearch ,
         pdf ,
         print ,
+        rotate ,
         setFit ,
         toggleFullscreen ,
+        toggleThumbnails ,
         zoomIn ,
         zoomOut ,
     } )
-    , [ download , goTo , pdf , print , toggleFullscreen , zoomIn , zoomOut ] ) ;
+    , [ download , goTo , openInTab , openSearch , pdf , print , rotate , toggleFullscreen , toggleThumbnails , zoomIn , zoomOut ] ) ;
 
     const state = useMemo( () => (
     {
         canZoomIn ,
         canZoomOut ,
+        closeSearch ,
         download ,
+        engine ,
         fit ,
         fullscreen ,
         goTo ,
         labels ,
+        matchIndex ,
+        matches ,
+        nextMatch ,
+        openInTab ,
+        openSearch ,
         page ,
         pages ,
+        pdf ,
+        previousMatch ,
         print ,
+        printing ,
+        query ,
+        rotate ,
+        rotation ,
+        searchOpen ,
         setFit ,
+        setQuery ,
+        sizes ,
+        thumbnailsOpen ,
         toggleFullscreen ,
+        toggleThumbnails ,
         zoom ,
         zoomIn ,
         zoomOut ,
     } )
-    , [ canZoomIn , canZoomOut , download , fit , fullscreen , goTo , labels , page , pages , print , toggleFullscreen , zoom , zoomIn , zoomOut ] ) ;
+    , [ canZoomIn , canZoomOut , closeSearch , download , engine , fit , fullscreen , goTo , labels , matchIndex , matches , nextMatch , openInTab , openSearch , page , pages , pdf , previousMatch , print , printing , query , rotate , rotation , searchOpen , sizes , thumbnailsOpen , toggleFullscreen , toggleThumbnails , zoom , zoomIn , zoomOut ] ) ;
 
     // --------- Render
 
@@ -535,26 +805,52 @@ const PdfViewer =
 
     const opening = !!file && !missing && !error && pages === 0 ;
 
-    const openInTab = typeof file === 'string'
+    const openInTabLink = typeof file === 'string'
         ? <LinkButton color="primary" href={ file } size="sm" style="outline" target="_blank">{ labels.open ?? 'Open in a tab' }</LinkButton>
         : null ;
 
     const node = (
         <PdfViewerContext value={ state }>
-            <div
+            <section
                 className = { cn(
-                    'relative flex min-h-0 flex-col overflow-hidden bg-base-200' ,
+                    // No `overflow-hidden` here : the frame inside is what scrolls, and a clipped root would cut the toolbar's tooltips.
+                    'relative flex min-h-0 flex-col bg-base-200' ,
                     className ,
                     // Last, so the host's height, radius and border give way while the viewer covers the window.
                     fullscreen && 'fixed inset-0 z-[60] h-auto max-h-none w-auto max-w-none rounded-none border-0 bg-base-200' ,
                 ) }
-                ref = { root }
+                aria-label = { name ? pdfName( name ) : ( labels.region ?? 'Document' ) }
+                onKeyDown  = { onKeyDown }
+                ref        = { root }
+                // biome-ignore lint/a11y/noNoninteractiveTabindex: the viewer answers to the keyboard — pages, zoom, search — so it has to take the focus
+                tabIndex  = { 0 }
             >
-                { ( toolbar === 'top' || toolbar === 'both' ) && <PdfToolbar className="border-b" /> }
+                { ( toolbar === 'top' || toolbar === 'both' ) && <PdfToolbar className="border-b" tooltipPosition="bottom" { ...toolbarProps } /> }
+
+                { searchOpen && <PdfSearch /> }
+
+                { printing && (
+                    <div className="flex items-center gap-3 border-b border-base-300 bg-base-100 px-3 py-1 text-sm text-base-content/70" role="status">
+                        <progress className="progress progress-primary w-40" max={ printing.total } value={ printing.done } />
+                        <span className="tabular-nums">{ format( labels.printing ?? 'Preparing to print: page {0} of {1}' , printing.done , printing.total ) }</span>
+                    </div>
+                ) }
+
+                { notice && (
+                    <div className="flex items-center gap-3 border-b border-warning/40 bg-warning/15 px-3 py-1 text-sm" role="alert">
+                        <span className="flex-1">{ notice }</span>
+                        <Button icon={ MdClose } onClick={ () => setNotice( null ) } shape="square" size="xs" style="ghost" title={ labels.close ?? 'Close' } />
+                    </div>
+                ) }
+
+                {/* `min-w-0` on the row and the frame : a flex item keeps its content's width otherwise, and the
+                    content is the page, sized from the frame — the frame would never narrow, and the page overflow. */}
+                <div className="flex min-h-0 min-w-0 flex-1">
+                    { thumbnailsOpen && <PdfThumbnails className="hidden w-40 sm:flex" /> }
 
                 <DocumentFrame
-                    actions      = { openInTab }
-                    className    = "flex-1"
+                    actions      = { openInTabLink }
+                    className    = "min-w-0 flex-1"
                     empty        = { !file }
                     error        = { error }
                     loading      = { opening && !ask }
@@ -588,7 +884,8 @@ const PdfViewer =
                                 { pageWidth > 0 && numbers.map( number => (
                                     <PdfPage
                                         Page                  = { engine.Page }
-                                        height                = { Math.round( pageWidth * sizes[ number - 1 ].height / sizes[ number - 1 ].width ) }
+                                        customTextRenderer    = { textRenderer }
+                                        height                = { Math.round( pageWidth * oriented[ number - 1 ].height / oriented[ number - 1 ].width ) }
                                         key                   = { number }
                                         margin                = { margin }
                                         onVisibleChange       = { onVisibleChange }
@@ -597,6 +894,7 @@ const PdfViewer =
                                         root                  = { container }
                                         renderAnnotationLayer = { renderAnnotationLayer }
                                         renderTextLayer       = { renderTextLayer }
+                                        rotate                = { rotation }
                                         width                 = { pageWidth }
                                     />
                                 ) ) }
@@ -606,8 +904,9 @@ const PdfViewer =
 
                     { children }
                 </DocumentFrame>
+                </div>
 
-                { ( toolbar === 'bottom' || toolbar === 'both' ) && <PdfToolbar className="border-t" /> }
+                { ( toolbar === 'bottom' || toolbar === 'both' ) && <PdfToolbar className="border-t" tooltipPosition="top" { ...toolbarProps } /> }
 
                 { ask && (
                     <PdfPasswordModal
@@ -618,7 +917,7 @@ const PdfViewer =
                         wrong    = { ask.wrong }
                     />
                 ) }
-            </div>
+            </section>
         </PdfViewerContext>
     ) ;
 

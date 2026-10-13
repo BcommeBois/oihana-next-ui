@@ -16,7 +16,7 @@ const viewer =
         viewer :
         {
             title   : 'La visionneuse' ,
-            text    : 'Toutes les pages dans une colonne qui défile, la page courante suivie au défilement, le zoom par paliers. Seules les pages proches de l’écran sont dessinées : les autres gardent un espace blanc de leur taille. Imprimer ouvre le document dans un onglet, où le navigateur l’imprime ; plein écran couvre la fenêtre de l’application avec la visionneuse, sans toucher au plein écran du navigateur.' ,
+            text    : 'Toutes les pages dans une colonne qui défile, la page courante suivie au défilement, le zoom par paliers. Seules les pages proches de l’écran sont dessinées : les autres gardent un espace blanc de leur taille. Les vignettes, la recherche (sans souci de casse ni d’accents, Entrée pour l’occurrence suivante), la rotation ; imprimer depuis la page, à 150 dpi, ou ouvrir le document dans un onglet ; plein écran couvre la fenêtre de l’application avec la visionneuse. Au clavier, la visionneuse ayant le focus : Page précédente / suivante, Début / Fin, + / −, r, Ctrl+F.' ,
             fit     : 'Ajustement' ,
             fits    : { width : 'largeur' , page : 'page' , none : 'réelle' } ,
             toolbar : 'Barre d’outils' ,
@@ -25,6 +25,23 @@ const viewer =
             textHelp : 'Couche texte : pdf.js dessine la page en image, puis pose par-dessus une couche de texte invisible, au même endroit que dans l’image — c’est elle qui rend le texte sélectionnable, copiable et lisible par un lecteur d’écran. Essayez de sélectionner le texte de la page avec et sans. Sans, le rendu est un peu plus léger : un PDF scanné n’en a pas besoin.' ,
             page    : 'Page {0} sur {1}' ,
             zoom    : 'Zoom {0} %' ,
+            tools :
+            {
+                label : 'Éléments de la barre' ,
+                names :
+                {
+                    tooltips       : 'Infobulles' ,
+                    showZoom       : 'Zoom' ,
+                    showFit        : 'Ajustement' ,
+                    showThumbnails : 'Vignettes' ,
+                    showSearch     : 'Recherche' ,
+                    showRotate     : 'Rotation' ,
+                    showPrint      : 'Imprimer' ,
+                    showOpenInTab  : 'Ouvrir dans un onglet' ,
+                    showDownload   : 'Télécharger' ,
+                    showFullscreen : 'Plein écran' ,
+                } ,
+            } ,
         } ,
 
         dropped :
@@ -39,7 +56,7 @@ const viewer =
         long :
         {
             title    : 'Quarante pages' ,
-            text     : 'Faites défiler : les pages se dessinent à l’approche et se libèrent en s’éloignant. Le compteur dit combien sont dessinées à cet instant.' ,
+            text     : 'Faites défiler : les pages se dessinent à l’approche et se libèrent en s’éloignant. Le compteur dit combien sont dessinées à cet instant. Essayez les vignettes et la recherche (« line 12 », par exemple).' ,
             rendered : '{0} page(s) dessinée(s) sur {1}' ,
         } ,
 
@@ -79,7 +96,7 @@ const viewer =
         viewer :
         {
             title   : 'The viewer' ,
-            text    : 'Every page in a scrolling column, the current page followed as you scroll, zoom by steps. Only the pages near the screen are drawn: the others keep a white placeholder of their size. Print opens the document in a tab, where the browser prints it; full screen covers the application’s window with the viewer, without touching the browser’s own full screen.' ,
+            text    : 'Every page in a scrolling column, the current page followed as you scroll, zoom by steps. Only the pages near the screen are drawn: the others keep a white placeholder of their size. Thumbnails, search (case and accents ignored, Enter for the next match), rotation; print from the page, at 150 dpi, or open the document in a tab; full screen covers the application’s window with the viewer. With the keyboard, the viewer focused: Page Up / Down, Home / End, + / −, r, Ctrl+F.' ,
             fit     : 'Fit' ,
             fits    : { width : 'width' , page : 'page' , none : 'actual' } ,
             toolbar : 'Toolbar' ,
@@ -88,6 +105,23 @@ const viewer =
             textHelp : 'Text layer: pdf.js draws the page as an image, then lays an invisible text layer over it, each word where it is in the image — what makes the text selectable, copyable and readable by a screen reader. Try selecting the page’s text with and without it. Without it, drawing is a little lighter: a scanned PDF has no use for it.' ,
             page    : 'Page {0} of {1}' ,
             zoom    : 'Zoom {0}%' ,
+            tools :
+            {
+                label : 'Toolbar items' ,
+                names :
+                {
+                    tooltips       : 'Tooltips' ,
+                    showZoom       : 'Zoom' ,
+                    showFit        : 'Fit' ,
+                    showThumbnails : 'Thumbnails' ,
+                    showSearch     : 'Search' ,
+                    showRotate     : 'Rotate' ,
+                    showPrint      : 'Print' ,
+                    showOpenInTab  : 'Open in a tab' ,
+                    showDownload   : 'Download' ,
+                    showFullscreen : 'Full screen' ,
+                } ,
+            } ,
         } ,
 
         dropped :
@@ -102,7 +136,7 @@ const viewer =
         long :
         {
             title    : 'Forty pages' ,
-            text     : 'Scroll: pages are drawn as they come near and freed as they go. The counter says how many are drawn right now.' ,
+            text     : 'Scroll: pages are drawn as they come near and freed as they go. The counter says how many are drawn right now. Try the thumbnails and the search (« line 12 », say).' ,
             rendered : '{0} page(s) drawn out of {1}' ,
         } ,
 

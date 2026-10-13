@@ -81,9 +81,18 @@ before it is fully downloaded, where a `fetch` by hand would wait for the last b
 - **The current page** follows the scroll — the page showing the most of itself, not the
   first one touching the frame — and `onPageChange( page )` says it. `initialPage` opens
   elsewhere than page 1 ; links inside the document scroll to their page.
-- **Print** opens the document in a tab, where the browser's own reader prints it.
+- **Print** prints from inside the page, on a phone as on a desktop : every page is drawn at
+  `printDpi` (150 by default) into one reused canvas, kept as a JPEG, and handed to the
+  browser's print dialog ; past `printLimit` pages (200) the viewer refuses with a notice and
+  `onPrintRefused`. **Open in a tab** hands the document to the browser's own reader.
   **Download** saves it under `fileName`, then the file's own name, then the title the
   document carries, always ending in `.pdf`.
+- **Search** (the toolbar's magnifier, or Ctrl+F with the viewer focused) finds words without
+  caring for case or accents, a partial word accepted, counts them, highlights them in the text
+  layer, and walks them with Enter / Shift+Enter. It needs the text layer.
+- **Thumbnails** open in a column beside the pages on a desktop (closed by default) ;
+  **rotate** turns the whole document by quarter turns. With the viewer focused : Page Up /
+  Page Down, Home / End, `+` / `−`, `r`.
 - **Full screen** covers the application's window with the viewer — never the browser's own
   full screen, which is the application's to take or not. The same on every device, an iPhone
   included ; `Escape` leaves. When the application is already in the browser's full screen, `Escape`
@@ -96,7 +105,10 @@ before it is fully downloaded, where a `fetch` by hand would wait for the last b
 
 ### The toolbar
 
-`toolbar="top"` (default) or `"bottom"` draws `PdfToolbar` ; `false` draws none. Inside the
+`toolbar="top"` (default), `"bottom"` or `"both"` draws `PdfToolbar` ; `false` draws none.
+`toolbarProps` chooses what it shows — `showZoom`, `showFit`, `showThumbnails`, `showSearch`,
+`showRotate`, `showOpenInTab`, `showPrint`, `showDownload`, `showFullscreen` — and `tooltips`
+(on by default, opening below a top bar and above a bottom one). Inside the
 viewer, a toolbar of your own reads the viewer through `usePdfViewer()` — page and pages,
 zoom, fit, full screen, and the gestures `goTo`, `zoomIn`, `zoomOut`, `setFit`, `download`,
 `print`, `toggleFullscreen` :
@@ -163,6 +175,4 @@ application's decision, not the library's.
 
 ## What is not here
 
-Thumbnails, search in the text, rotation, and printing from inside the viewer (every page
-re-drawn at 150 dpi) are not built yet. Creating a PDF from data, and editing one, are separate
-engines, on the roadmap.
+Creating a PDF from data, and editing one, are separate engines, on the roadmap.
