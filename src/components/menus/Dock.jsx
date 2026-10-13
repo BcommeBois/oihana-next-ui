@@ -149,7 +149,8 @@ const Dock =
     const classes = getDockClasses(
     {
         className : cn(
-            actions && 'flex-row items-stretch gap-2 px-3 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] border-t border-base-300 bg-base-100 h-auto' ,
+            // Embedded, daisyUI's dock is as wide as its content : the bar takes the whole width, so the buttons share it.
+            actions && 'w-full flex-row items-stretch gap-2 px-3 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] border-t border-base-300 bg-base-100 h-auto' ,
             className ,
         ) ,
         position ,
@@ -163,12 +164,13 @@ const Dock =
 
             if ( actions )
             {
-                // daisyUI lays every direct child of `.dock` out as a column — an icon over a label.
-                // The wrapper takes that rule, and the button inside keeps its row.
+                // daisyUI lays every direct child of `.dock` out as a column — an icon over a label —
+                // and caps it at 8rem. The wrapper takes those rules, lifts the cap, and the button
+                // inside keeps its row and the whole share.
                 return (
-                    <div className="flex flex-1" key={ id ?? `item-${ index }` }>
+                    <div className="flex min-w-0 max-w-none flex-1" key={ id ?? `item-${ index }` }>
                         <Button
-                            className = { cn( 'w-full' , itemClassName , itemCls ) }
+                            className = { cn( 'w-full min-w-0' , itemClassName , itemCls ) }
                             icon      = { icon }
                             onClick   = { onClick }
                             size      = "lg"

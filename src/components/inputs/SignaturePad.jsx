@@ -728,13 +728,13 @@ const SignaturePad =
                 value       = { value }
             >
                 { expandable && !inactive && (
-                    <Button className="absolute end-1 top-1" icon={ MdOpenInFull } onClick={ expand } shape="square" size="xs" style="ghost" title={ labels.expand } />
+                    <Button className="absolute end-1 top-1" icon={ MdOpenInFull } onClick={ expand } shape="square" size="xs" style="ghost" title={ labels.expand } tooltip={ labels.expand } tooltipAlign="end" tooltipPosition="bottom" />
                 ) }
             </Surface>
 
             { !inactive && ( showUndo || showClear ) && (
                 <div className="flex justify-end gap-1">
-                    { showUndo  && <Button disabled={ empty } icon={ MdUndo }  onClick={ undo }  size="xs" style="ghost" title={ labels.undo } /> }
+                    { showUndo  && <Button disabled={ empty } icon={ MdUndo }  onClick={ undo }  size="xs" style="ghost" title={ labels.undo } tooltip={ labels.undo } /> }
                     { showClear && <Button disabled={ empty } icon={ MdClear } onClick={ clear } size="xs" style="ghost">{ labels.clear }</Button> }
                 </div>
             ) }

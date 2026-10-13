@@ -34,6 +34,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   text or a number, with a handler. 🔑 A bare letter typed into a field stays a letter ;
   function keys and Escape go through whatever has the focus. `helpers/keyboard/parseHotkey`,
   `matchesHotkey`, `isEditableTarget` are the pure part, tested with `checkConnection`.
+- `SignaturePad` : the « sign full screen » and « undo » buttons, icons alone, now carry their
+  name as a tooltip — a title is read by a reader, not seen by a mouse.
 - The Scanner page opens with **« In the field »** — the network, the screen, the keys — and
   the Logistics › Receiving scenario gets its thumb bar (`Dock` actions) and keys (F1, F2, V) ;
   the Dock page shows the actions variant. The application guide gains **In the field**.
