@@ -179,8 +179,10 @@
     "rehype-raw": "^7.0.0",
     "remark-breaks": "^4.0.0",
     "remark-gfm": "^4.0.1",
+    "remark-parse": "^11.0.0",
     "sanitize-html": "^2.18.0",
     "tailwind-merge": "^3.7.0",
+    "unified": "^11.0.5",
     "validator": "^13.15.35",
     "vegas-js-core": "^1.0.47"
   },

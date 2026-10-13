@@ -17,10 +17,12 @@ that never opens a document installs nothing, one that only reads installs one.
 | `DocumentFrame` | the four states a viewer needs : loading, failed, empty, engine missing |
 | `PdfPreview`, `PdfDownloadButton` | a document of `@react-pdf/renderer` shown in the viewer as it changes, or generated on click and saved |
 | `PdfQRCode`, `PdfBarcode` | the codes inside a generated document, drawn by the library's own encoders |
+| `PdfMarkdown`, `MarkdownDocument` | Markdown drawn in a page of yours, or a whole document from a Markdown text |
 | `components/documents/engine` | the one module that names `react-pdf` ; `preloadPdf()`, `loadPdf()` |
 | `components/documents/engine/renderer` | the one module that names `@react-pdf/renderer` ; `renderToBlob()`, `preloadRenderer()` |
 | `hooks/usePdfDocument` | the generation behind `PdfPreview` : a blob and its url, again after each change |
 | `helpers/pdf` | `toPdfSource`, `nextZoom`, `mostVisiblePage`, `findInText`, `renderPagesToImages`, `printImages`, `units`, `registerFonts`, `uploadPdf` — pure, tested |
+| `helpers/markdown` | `parseMarkdown` (GFM, the screen's grammar), `tableColumns` — pure, tested |
 
 ## Setting up
 
@@ -275,6 +277,41 @@ A PDF is in points, 72 to the inch ; a label is in millimetres. `helpers/pdf/uni
 labels in the demo places each label absolutely from the grid of its stationery reference
 (page, label, margins, gaps), so a long name never shifts the next one : what a `print:`
 stylesheet used to approximate, now a file the printer takes as it is.
+
+### From Markdown
+
+```jsx
+import MarkdownDocument from 'oihana-next-ui/components/documents/pdf/MarkdownDocument' ;
+import PdfMarkdown      from 'oihana-next-ui/components/documents/pdf/PdfMarkdown' ;
+
+<MarkdownDocument source={ report } title="Visit report" />            // a whole document, pages numbered
+
+<Page size="A4" style={ { padding : mm( 20 ) } }>                        // or inside a template of yours
+    <Header />
+    <PdfMarkdown source={ terms } theme={ { fontSize : 9 } } />
+</Page>
+```
+
+The text of a Markdown field — a description, terms, a report — becomes a PDF with no
+template to write. `parseMarkdown` reads it with **the screen's grammar** (GitHub Flavored
+Markdown : tables, strikethrough, task lists, bare links ; `breaks` for a line break at every
+newline, as `remark-breaks` does in `Markdown`), and `renderMarkdown` turns the tree into the
+engine's `Text`, `View`, `Link` and `Image` : headings, bold, italic, strikethrough, inline
+and block code (Courier, no highlighting), bulleted, numbered and nested lists, task lists
+with a drawn box, quotes, links, rules, **JPEG and PNG images** — the formats the engine
+reads ; any other leaves its alternative text in italics rather than fail the document.
+**Tables are emulated** in rows of `View`s, since the engine has none : the header in bold on
+a grey ground, the alignment of the pipes kept, and the columns weighed by their longest cell
+(`tableColumns`), so a quantity stays narrow and a description takes the room. **Raw HTML and
+footnotes are left out** : the screen renders them through `rehype-raw`, a PDF has no DOM.
+
+`theme` goes over the defaults of `markdownTheme` one group at a time — `fontSize`,
+`headings` (six sizes), `link.color`, `code`, `quote`, `table`… — and a family registered
+with `registerFonts` goes in `fontFamily` ; the engine picks bold and italic from the files
+given, as it does for Helvetica. `MarkdownDocument` adds the pages (`size`, `margin`), the
+document's `title` and `author`, and « page n / N » at the foot (`pageLabel`, `footer`).
+
+Both import the engine at their top : a page imports them lazily, like any template.
 
 ### On the server
 

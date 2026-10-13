@@ -14,6 +14,26 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   data. Nothing to serve : the writer carries its own fonts. An application that renders a
   document in a route handler adds **`serverExternalPackages : [ '@react-pdf/renderer' ]`** to
   its `next.config`.
+- `unified` and `remark-parse` are now dependencies of the library — the versions
+  `react-markdown` already pinned, so nothing new is downloaded.
+
+### Documents : a PDF from Markdown
+
+- **New `PdfMarkdown` and `MarkdownDocument`** (`components/documents/pdf`) : the text of a
+  Markdown field — a description, terms, a report — drawn in a page of your template, or made a
+  whole document with pages numbered, **with no template to write**. The text is read with the
+  screen's grammar (`helpers/markdown/parseMarkdown` : GitHub Flavored Markdown, `breaks` as
+  `remark-breaks`) and turned into the engine's primitives (`renderMarkdown`, which names no
+  engine and is tested on its own) : headings, bold, italic, strikethrough, inline and block
+  code, bulleted, numbered and nested lists, task lists with a drawn box, quotes, links, rules,
+  JPEG and PNG images — any other format leaves its alternative text rather than fail the
+  document. **Tables are emulated** in rows of `View`s, the header bold, the alignment kept, the
+  columns weighed by their longest cell (`helpers/markdown/tableColumns`) so a quantity stays
+  narrow. Raw HTML and footnotes are left out : a PDF has no DOM. `theme` goes over
+  `markdownTheme`'s defaults one group at a time. 12 tests.
+- The « Creating a PDF » page gains **« From Markdown »** : the library's own
+  `TextAreaMarkdown` on one side, the document on the other, a report that goes through every
+  construction.
 
 ### Documents : creating a PDF
 

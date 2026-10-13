@@ -11,6 +11,7 @@ import Divider          from '@/components/Divider' ;
 import SegmentedControl from '@/components/SegmentedControl' ;
 import Input            from '@/components/inputs/Input' ;
 import TextArea         from '@/components/inputs/TextArea' ;
+import TextAreaMarkdown from '@/components/inputs/TextAreaMarkdown' ;
 
 import PdfDownloadButton from '@/components/documents/PdfDownloadButton' ;
 import PdfPreview        from '@/components/documents/PdfPreview' ;
@@ -50,6 +51,7 @@ const PdfCreateDemo = ( { path = 'demo.documents.create' } = {} ) =>
     const engineLabels = t.engine ?? {} ;
     const live         = t.live   ?? {} ;
     const sheet        = t.sheet  ?? {} ;
+    const markdown     = t.markdown ?? {} ;
 
     const { locale } = useNumberFormat() ;
 
@@ -64,11 +66,12 @@ const PdfCreateDemo = ( { path = 'demo.documents.create' } = {} ) =>
             import( '@/components/documents/engine/renderer' ).then( module => module.loadRenderer() ) ,
             import( '@/demo/documents/pdf/NoteDocument' ) ,
             import( '@/demo/documents/pdf/LabelSheetDocument' ) ,
+            import( '@/components/documents/pdf/MarkdownDocument' ) ,
         ] )
-        .then( ( [ renderer , note , labels ] ) =>
+        .then( ( [ renderer , note , labels , md ] ) =>
         {
             setVersion( renderer.version ) ;
-            setTemplates( { Note : note.default , Sheet : labels.default } ) ;
+            setTemplates( { Markdown : md.default , Note : note.default , Sheet : labels.default } ) ;
         }
         , () => setMissing( true ) ) ;
     }
@@ -77,6 +80,7 @@ const PdfCreateDemo = ( { path = 'demo.documents.create' } = {} ) =>
     const [ heading , setHeading ] = useState( null ) ;
     const [ body    , setBody    ] = useState( null ) ;
     const [ count   , setCount   ] = useState( 14 ) ;
+    const [ source  , setSource  ] = useState( null ) ;
 
     const headingValue = heading ?? live.defaults?.heading ?? '' ;
     const bodyValue    = body    ?? live.defaults?.body    ?? '' ;
@@ -92,6 +96,12 @@ const PdfCreateDemo = ( { path = 'demo.documents.create' } = {} ) =>
             return { name : sheet.products?.[ product.key ] ?? product.key , price : product.price , sku : product.sku } ;
         } )
     , [ count , sheet.products ] ) ;
+
+    const sourceValue = source ?? markdown.sample ?? '' ;
+
+    const fromMarkdown = useMemo( () =>
+        templates ? <templates.Markdown pageLabel={ markdown.page } source={ sourceValue } title={ markdown.title } /> : null
+    , [ markdown.page , markdown.title , sourceValue , templates ] ) ;
 
     const labels = useMemo( () =>
         templates ? <templates.Sheet items={ items } locale={ locale } title={ sheet.title } /> : null
@@ -158,6 +168,30 @@ const PdfCreateDemo = ( { path = 'demo.documents.create' } = {} ) =>
                     fit          = "page"
                     toolbarProps = { { showRotate : false , showSearch : false } }
                 />
+            </section>
+
+            <Divider />
+
+            {/* From Markdown */}
+            <section className="flex flex-col gap-3">
+                <h3 className="text-xl font-semibold">{ markdown.title }</h3>
+                <p className="text-sm text-base-content/70">{ markdown.text }</p>
+
+                <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+                    <div className="flex flex-col gap-3">
+                        <TextAreaMarkdown label={ markdown.field } onChange={ setSource } previewPosition="tab" rows={ 22 } value={ sourceValue } />
+                        <div>
+                            <PdfDownloadButton color="primary" document={ fromMarkdown } fileName={ markdown.fileName } />
+                        </div>
+                    </div>
+                    <PdfPreview
+                        className    = "h-[70vh] rounded-box border border-base-300"
+                        document     = { fromMarkdown }
+                        fileName     = { markdown.fileName }
+                        toolbarProps = { { showRotate : false , showThumbnails : false } }
+                    />
+                </div>
+                <p className="text-xs text-base-content/60">{ markdown.help }</p>
             </section>
 
         </Container>

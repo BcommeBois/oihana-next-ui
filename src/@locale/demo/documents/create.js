@@ -47,6 +47,51 @@ const create =
                 shelf    : 'Étagère murale' ,
             } ,
         } ,
+
+        markdown :
+        {
+            title    : 'Depuis du Markdown' ,
+            text     : 'Le texte d’un champ Markdown — une description, des conditions générales, un compte rendu — devient un PDF sans écrire de gabarit : titres, gras, italique, listes imbriquées, cases à cocher, citations, code, liens, images PNG ou JPEG, tables. Le parseur est celui de l’écran (GFM) ; les colonnes d’une table prennent la place de leur contenu. MarkdownDocument fait les pages et leur numéro ; PdfMarkdown pose le même bloc dans un gabarit à vous.' ,
+            field    : 'Markdown' ,
+            help     : 'L’HTML brut et les notes de bas de page ne sont pas rendus : un PDF n’a pas de DOM. Une image SVG laisse son texte alternatif.' ,
+            fileName : 'compte-rendu.pdf' ,
+            page     : 'Page {0} / {1}' ,
+            sample   : `# Compte rendu de chantier
+
+Visite du **12 octobre** sur le site de la rue des Lilas, en présence du maître d’ouvrage et du conducteur de travaux. L’avancement est *conforme au planning*, à une réserve près.
+
+## Avancement
+
+| Lot | Avancement | Reste à faire |
+|:---|---:|:---|
+| Gros œuvre | 100 % | — |
+| Menuiseries extérieures | 80 % | Porte d’entrée, livraison le 20 |
+| Électricité | 45 % | Tableau, prises de l’étage |
+| Peinture | 0 % | Après le ~~15~~ 22 octobre |
+
+## Points relevés
+
+1. La dalle de la cour est **terminée** et conforme au devis.
+2. La signalétique de l’entrée reste à poser :
+   - le panneau principal est livré,
+   - les lettres découpées arrivent la semaine prochaine.
+3. Un câble passe en diagonale dans le couloir : à reprendre avant la peinture.
+
+## Décisions
+
+- [x] Valider le coloris des menuiseries (RAL 7016)
+- [x] Commander la porte d’entrée
+- [ ] Planifier la réception des peintures
+
+> La réserve sur le câble du couloir est à lever sous huit jours ; le peintre ne commencera pas avant.
+
+Référence du chantier : \`CH-2026-0042\`. Les photos sont dans le dossier partagé : [espace du chantier](https://oihana-next-ui.vercel.app/modules/documentsCreate).
+
+---
+
+![Logo](/assets/icons/logo.png)
+` ,
+        } ,
     } ,
     en :
     {
@@ -91,6 +136,51 @@ const create =
                 mirror   : 'Round mirror' ,
                 shelf    : 'Wall shelf' ,
             } ,
+        } ,
+
+        markdown :
+        {
+            title    : 'From Markdown' ,
+            text     : 'The text of a Markdown field — a description, terms, a report — becomes a PDF with no template to write: headings, bold, italic, nested lists, task lists, quotes, code, links, PNG or JPEG images, tables. The parser is the screen’s (GFM); a table’s columns take the room of their content. MarkdownDocument makes the pages and their numbers; PdfMarkdown puts the same block in a template of yours.' ,
+            field    : 'Markdown' ,
+            help     : 'Raw HTML and footnotes are not rendered: a PDF has no DOM. An SVG image leaves its alt text.' ,
+            fileName : 'site-report.pdf' ,
+            page     : 'Page {0} / {1}' ,
+            sample   : `# Site report
+
+Visit of **12 October** to the Lilas street site, with the client and the site manager. Progress is *on schedule*, with one reservation.
+
+## Progress
+
+| Work package | Progress | Remaining |
+|:---|---:|:---|
+| Structure | 100% | — |
+| External joinery | 80% | Front door, delivered on the 20th |
+| Electrics | 45% | Panel, upstairs sockets |
+| Painting | 0% | After ~~15~~ 22 October |
+
+## Findings
+
+1. The courtyard slab is **complete** and matches the quote.
+2. The entrance signage remains:
+   - the main panel is delivered,
+   - the cut letters arrive next week.
+3. A cable runs across the corridor: to be rerouted before painting.
+
+## Decisions
+
+- [x] Approve the joinery colour (RAL 7016)
+- [x] Order the front door
+- [ ] Schedule the painting handover
+
+> The corridor cable reservation is to be lifted within eight days; the painter will not start before.
+
+Site reference: \`CH-2026-0042\`. Photos are in the shared folder: [site workspace](https://oihana-next-ui.vercel.app/modules/documentsCreate).
+
+---
+
+![Logo](/assets/icons/logo.png)
+` ,
         } ,
     } ,
 } ;
