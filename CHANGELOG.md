@@ -74,7 +74,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   the viewer's `ref`. **Print** opens the document in a tab, where the browser's reader prints
   it. **Download** saves it under `fileName`, the file's name, or the document's title. **Full
   screen** covers the application's window with the viewer — never the browser's own full
-  screen, which stays the application's ; the same on an iPhone ; `Escape` leaves.
+  screen, which stays the application's ; the same on an iPhone ; `Escape` leaves. Inside a
+  `<dialog>` — a `PdfPanel`, a modal — the viewer is portaled to the dialog itself meanwhile :
+  a dialog sits in the browser's top layer, and its box pins a `fixed` element to the box.
 - **A protected document asks its password** in a dialog (`PdfPasswordModal`), and asks again
   when the one given is wrong. 🔑 `react-pdf`'s `<Document>` suspends by default : the whole page
   froze while a document loaded, and a protected one deadlocked, its dialog never shown — the

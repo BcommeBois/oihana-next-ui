@@ -27,7 +27,10 @@
  * leaves. When the application is already in the browser's full screen,
  * Escape closes the viewer and leaves that full screen alone, through the
  * Keyboard Lock API where it exists (Chrome, Edge) ; elsewhere one Escape
- * closes both.
+ * closes both. 🚨 **Inside a `<dialog>`** — a `PdfPanel`, a modal — the
+ * viewer is portaled to the dialog itself while it covers the window : a
+ * dialog sits in the browser's top layer, above everything in `body`, and
+ * its box carries a transform that would pin a `fixed` element to the box.
  *
  * **Print** opens the document in a tab, where the browser's own reader
  * prints it ; **download** saves it under `fileName`, the file's own name, or
@@ -53,6 +56,7 @@
  */
 
 import { use , useCallback , useEffect , useImperativeHandle , useMemo , useRef , useState } from 'react' ;
+import { createPortal } from 'react-dom' ;
 import { useMeasure } from 'react-use' ;
 
 import LinkButton from '../links/LinkButton' ;
@@ -424,7 +428,15 @@ const PdfViewer =
 
     const [ fullscreen , setFullscreen ] = useState( false ) ;
 
-    const toggleFullscreen = useCallback( () => setFullscreen( value => !value ) , [] ) ;
+    // The <dialog> the viewer sits in, if any : where it goes while it covers the window.
+    const [ dialog , setDialog ] = useState( null ) ;
+
+    const toggleFullscreen = useCallback( () =>
+    {
+        setDialog( root.current?.closest( 'dialog' ) ?? null ) ;
+        setFullscreen( value => !value ) ;
+    }
+    , [] ) ;
 
     // The application may already hold the Escape key (`FullscreenProvider`'s `lockEscape`) :
     // then the viewer neither locks it again nor, worse, unlocks it on its way out.
@@ -527,7 +539,7 @@ const PdfViewer =
         ? <LinkButton color="primary" href={ file } size="sm" style="outline" target="_blank">{ labels.open ?? 'Open in a tab' }</LinkButton>
         : null ;
 
-    return (
+    const node = (
         <PdfViewerContext value={ state }>
             <div
                 className = { cn(
@@ -609,6 +621,8 @@ const PdfViewer =
             </div>
         </PdfViewerContext>
     ) ;
+
+    return fullscreen && dialog ? createPortal( node , dialog ) : node ;
 } ;
 
 PdfViewer.displayName = 'PdfViewer' ;
