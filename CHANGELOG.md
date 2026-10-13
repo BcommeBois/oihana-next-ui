@@ -8,6 +8,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.45.0] — 2026-10-13
+
+A release that **touches a PDF received** — where 0.42.0 read one, 0.43.0 wrote one and 0.44.0
+signed one. Merge several, keep some pages, turn them, number them, put a logo or the strokes
+of a signature on a page as vectors, write a word across them, fill a form and flatten it :
+functions, not components, each taking what the viewer takes and returning a new document the
+viewer shows and its toolbar downloads. The engine is the maintained fork of `pdf-lib`, loaded on
+the first edit and never before, and the same functions run in a route handler. Along the way,
+the viewer learnt to show a page the way its file turns it.
+
+**Nothing changes for an application that edits no document** : the engine is an optional
+peer, listed under Upgrading.
+
 ### Upgrading
 
 - **`@cantoo/pdf-lib` is a new optional peer** (`^2.11.0`), needed only to edit a PDF —
