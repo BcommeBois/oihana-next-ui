@@ -8,6 +8,21 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.42.0] — 2026-10-13
+
+A release that **opens a PDF in the page** — on a phone as on a desktop, which an `<iframe>`
+cannot do. The engine, pdf.js through `react-pdf`, is an optional peer the application serves
+itself, offline included. The viewer draws only the pages near the screen, follows the reader,
+zooms, finds words, shows thumbnails, rotates, prints from inside the page, downloads, and
+covers the application's window ; a protected document asks its password ; `PdfPanel` opens one
+from a list, the shape of an invoice behind an API. Around it, two things an application does
+once : a full screen that **keeps the Escape key** for the page where the browser allows it, and
+a service worker that **registers in production only**, clearing a development origin of what a
+production build left there.
+
+**An application that opens no document installs nothing and changes nothing** ; the service
+worker's new default, and the two lines a document needs, are under Upgrading.
+
 ### Upgrading
 
 - **`react-pdf` is a new optional peer** (`^11.0.0`), needed only to open a PDF in the page. It
@@ -27,7 +42,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   `aria-label` on a plain `div`, which screen readers ignore — the sentence is now an `sr-only`
   span, the arrow line hidden from them.
 
-**📄 Documents : the PDF engine**
+### The PDF engine
 
 - **New `components/documents/engine`**, the one place that names `react-pdf` : `loadEngine()`
   imports it on demand — never on the server, where `pdfjs-dist` reaches for a Node canvas — and
@@ -46,40 +61,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   says where its files come from, and draws the first page of a hand-written two-page sample
   (`public/documents/sample.pdf`, which embeds no font : the proof that the served fonts work).
 
-**⌨️ Full screen that keeps the Escape key**
-
-- **`FullscreenProvider` takes `lockEscape`** (`ApplicationProviders` : `fullscreenLockEscape`),
-  off by default. In its full screen a browser takes Escape for itself and leaves full screen
-  before the page sees the key — a dialog, a drawer or a viewer that Escape should close never
-  gets it. With the Keyboard Lock API (Chrome, Edge) the key is handed to the page instead ; full
-  screen is then left through the button, or by **holding Escape for about two seconds**, a way
-  out the browser keeps and announces itself. `useFullscreen()` adds **`escapeLocked`**, true
-  while the lock holds — false where the API does not exist (Firefox, Safari), where nothing
-  changes. `PdfViewer` leaves the key to the application when it holds it. The demo app turns
-  it on.
-
-**📄 Documents : the viewer, complete**
-
-- **Thumbnails** (`PdfThumbnails`) : a column of miniatures beside the pages, closed by default,
-  each drawn only while in its column's sight, the current page marked and kept in view.
-- **Search** (`PdfSearch`) : the toolbar's magnifier, or Ctrl+F with the viewer focused. Words
-  are found without caring for case or accents, a partial word accepted (`helpers/pdf/findInText`,
-  tested), counted, highlighted in the text layer — the current match told apart — and walked with
-  Enter / Shift+Enter.
-- **Rotation** by quarter turns, of the whole document ; the placeholders and the fit follow.
-- **Print from inside the page**, on a phone as on a desktop : every page drawn at `printDpi`
-  (150) into **one reused canvas**, kept as a JPEG, and handed to the browser's dialog by a
-  stylesheet that lives only for the printing (`helpers/pdf/renderPagesToImages`,
-  `helpers/pdf/printImages`) ; a progress bar meanwhile, and past `printLimit` pages (200) a
-  notice and `onPrintRefused` instead. **Open in a tab** is now its own button.
-- **Keyboard**, with the viewer focused : Page Up / Page Down, Home / End, `+` / `−`, `r`, Ctrl+F.
-- **The toolbar's buttons carry tooltips** (`tooltips`, on by default), opening below a top bar
-  and above a bottom one ; `showThumbnails`, `showSearch`, `showRotate`, `showOpenInTab` join the
-  `show*` switches, and `PdfViewer` takes **`toolbarProps`** to hand them to the bar it draws.
-- The viewer demo chooses the toolbar's items through a `FilterSettingsButton` — the chooser of
-  the filter bars, with its own words here — and the search demo runs on the forty-page document.
-
-**📄 Documents : the viewer**
+### The PDF viewer
 
 - **New `components/documents/PdfViewer`** : a PDF in the page — every page in a scrolling
   column, the current page followed as the reader scrolls, zoom by steps (½ … 3×) with three
@@ -124,6 +106,39 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   and why an `<iframe>` is not one on a phone.
 - On a phone, the demo app's drawer now takes the whole screen but a strip of overlay to close it
   (`w-[calc(100%-2.5rem)] max-w-md`) : three levels of entries did not fit in two thirds of it.
+
+### The viewer, complete : thumbnails, search, rotation, printing
+
+- **Thumbnails** (`PdfThumbnails`) : a column of miniatures beside the pages, closed by default,
+  each drawn only while in its column's sight, the current page marked and kept in view.
+- **Search** (`PdfSearch`) : the toolbar's magnifier, or Ctrl+F with the viewer focused. Words
+  are found without caring for case or accents, a partial word accepted (`helpers/pdf/findInText`,
+  tested), counted, highlighted in the text layer — the current match told apart — and walked with
+  Enter / Shift+Enter.
+- **Rotation** by quarter turns, of the whole document ; the placeholders and the fit follow.
+- **Print from inside the page**, on a phone as on a desktop : every page drawn at `printDpi`
+  (150) into **one reused canvas**, kept as a JPEG, and handed to the browser's dialog by a
+  stylesheet that lives only for the printing (`helpers/pdf/renderPagesToImages`,
+  `helpers/pdf/printImages`) ; a progress bar meanwhile, and past `printLimit` pages (200) a
+  notice and `onPrintRefused` instead. **Open in a tab** is now its own button.
+- **Keyboard**, with the viewer focused : Page Up / Page Down, Home / End, `+` / `−`, `r`, Ctrl+F.
+- **The toolbar's buttons carry tooltips** (`tooltips`, on by default), opening below a top bar
+  and above a bottom one ; `showThumbnails`, `showSearch`, `showRotate`, `showOpenInTab` join the
+  `show*` switches, and `PdfViewer` takes **`toolbarProps`** to hand them to the bar it draws.
+- The viewer demo chooses the toolbar's items through a `FilterSettingsButton` — the chooser of
+  the filter bars, with its own words here — and the search demo runs on the forty-page document.
+
+### Full screen that keeps the Escape key
+
+- **`FullscreenProvider` takes `lockEscape`** (`ApplicationProviders` : `fullscreenLockEscape`),
+  off by default. In its full screen a browser takes Escape for itself and leaves full screen
+  before the page sees the key — a dialog, a drawer or a viewer that Escape should close never
+  gets it. With the Keyboard Lock API (Chrome, Edge) the key is handed to the page instead ; full
+  screen is then left through the button, or by **holding Escape for about two seconds**, a way
+  out the browser keeps and announces itself. `useFullscreen()` adds **`escapeLocked`**, true
+  while the lock holds — false where the API does not exist (Firefox, Safari), where nothing
+  changes. `PdfViewer` leaves the key to the application when it holds it. The demo app turns
+  it on.
 
 ## [0.41.0] — 2026-10-13
 

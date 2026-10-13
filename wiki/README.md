@@ -33,8 +33,10 @@ file can say : the shape of a group, and the recipes.
   what to install and why version 5, markers and clusters, popups, routes and zones, searching
   an address, the user's position, and coordinates named everywhere.
 - [`components/documents`](components/documents/README.md) — a PDF in the page, every page in
-  a scrolling column, zoom, print, download, full screen — on a phone as on a desktop ; the
-  engine served by the application, offline included.
+  a scrolling column, only the near ones drawn : zoom, search, thumbnails, rotation, printing
+  from the page, download, full screen, a password asked, the viewer in a side panel — on a
+  phone as on a desktop, which an `<iframe>` cannot do ; the engine served by the application,
+  offline included.
 - [`components/media`](components/media/README.md) — files and photos coming in : the native file
   field, the drop zone that checks before it takes, the photo taken on the spot, and the
   shrinking that strips the metadata — position included — without leaving a photo on its side.

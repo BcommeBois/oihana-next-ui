@@ -10,9 +10,11 @@ installs nothing.
 | `PdfViewer` | the viewer : a document, its pages, its toolbar |
 | `PdfToolbar` | the controls, drawn by the viewer or by you inside it |
 | `PdfPanel` | the viewer in a side panel — full screen on a phone |
+| `PdfThumbnails`, `PdfSearch` | the column of miniatures and the search field, drawn by the viewer when opened |
+| `PdfPasswordModal` | the dialog a protected document opens |
 | `DocumentFrame` | the four states a viewer needs : loading, failed, empty, engine missing |
 | `components/documents/engine` | the one module that names `react-pdf` ; `preloadPdf()`, `loadPdf()` |
-| `helpers/pdf` | `toPdfSource`, `nextZoom`, `mostVisiblePage` — pure, tested |
+| `helpers/pdf` | `toPdfSource`, `nextZoom`, `mostVisiblePage`, `findInText`, `renderPagesToImages`, `printImages` — pure, tested |
 
 ## Setting up
 
@@ -97,7 +99,10 @@ before it is fully downloaded, where a `fetch` by hand would wait for the last b
   full screen, which is the application's to take or not. The same on every device, an iPhone
   included ; `Escape` leaves. When the application is already in the browser's full screen, `Escape`
   closes the viewer and leaves that full screen alone (Keyboard Lock API : Chrome, Edge) ;
-  elsewhere one `Escape` closes both.
+  elsewhere one `Escape` closes both. An application that keeps the key for every dialog turns
+  on `fullscreenLockEscape` once, at its root — see
+  [setting up an application](../../display/application/README.md) — and the viewer leaves the
+  lock to it.
 - **A protected document** asks its password in a dialog, and asks again when the one given
   is wrong ; giving up shows the failed state.
 - `onLoad( { pages , title , pdf } )`, `onError( error )`, `onRenderedChange( count )` — the
