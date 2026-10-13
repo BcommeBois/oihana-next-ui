@@ -2,11 +2,11 @@
 
 import { useState } from 'react' ;
 
-import cn     from '../../themes/helpers/cn' ;
 import styles from '../../components/inputs/styles/InputActions.module.css' ;
 
 import Container from '../../display/Container' ;
 
+import Button from '../../components/Button' ;
 import Select from '../../components/selects/Select' ;
 
 const SelectDemo = () =>
@@ -210,12 +210,13 @@ const SelectDemo = () =>
                 <Select
                     label="Filter"
                     actions={
-                        <button
-                            className = { cn( 'btn btn-square' , styles.btnInput ) }
+                        <Button
+                            className = { styles.btnInput }
                             onClick   = { () => alert('Clear filter') }
+                            shape     = "square"
                         >
                             ✕
-                        </button>
+                        </Button>
                     }
                 >
                     <option disabled value="">Select filter</option>
@@ -320,7 +321,7 @@ const SelectDemo = () =>
                         </div>
 
                         <div className="card-actions justify-end mt-4">
-                            <button className="btn btn-primary">Save Profile</button>
+                            <Button color="primary">Save Profile</Button>
                         </div>
                     </div>
                 </div>
@@ -338,7 +339,7 @@ const SelectDemo = () =>
                         <option>Desc</option>
                     </Select>
 
-                    <button className="btn btn-primary btn-sm">Apply</button>
+                    <Button color="primary" size="sm">Apply</Button>
                 </div>
             </div>
 

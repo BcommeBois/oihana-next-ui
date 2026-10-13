@@ -1,6 +1,7 @@
 'use client' ;
 
 import Avatar from '@/components/avatars/Avatar' ;
+import Button from '@/components/Button' ;
 import Checkbox from '@/components/checkboxes/Checkbox' ;
 import Table from '@/components/layouts/Table' ;
 
@@ -463,7 +464,7 @@ const TableDemo = () =>
                                         </td>
                                         <td>{ row.color }</td>
                                         <th>
-                                            <button className="btn btn-ghost btn-xs">details</button>
+                                            <Button size="xs" style="ghost">details</Button>
                                         </th>
                                     </tr>
                                 ))}

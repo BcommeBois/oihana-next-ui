@@ -191,23 +191,26 @@ const SortableTreeDemo = ( { path = 'demo.trees.sortableTree' } = {} ) =>
                     : <MdInsertDriveFile className="opacity-50" size={ 16 } /> }
                 <span className="text-sm grow">{ node.label }</span>
                 { node.type === 'folder' && (
-                    <button
-                        type="button"
-                        aria-label={ `Add a file to ${ node.label }` }
-                        className="btn btn-ghost btn-xs btn-square"
+                    <Button
                         onClick={ () => addChild( node.id ) }
+                        shape="square"
+                        size="xs"
+                        style="ghost"
+                        title={ `Add a file to ${ node.label }` }
                     >
                         <MdAdd size={ 14 } />
-                    </button>
+                    </Button>
                 )}
-                <button
-                    type="button"
-                    aria-label={ `Remove ${ node.label }` }
-                    className="btn btn-ghost btn-xs btn-square text-error"
+                <Button
+                    className="text-error"
                     onClick={ () => removeItem( node.id ) }
+                    shape="square"
+                    size="xs"
+                    style="ghost"
+                    title={ `Remove ${ node.label }` }
                 >
                     <MdClose size={ 14 } />
-                </button>
+                </Button>
             </span>
         </SortableTreeItem>
     ) ;

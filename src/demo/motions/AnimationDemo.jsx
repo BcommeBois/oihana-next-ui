@@ -4,6 +4,7 @@ import { useState } from 'react' ;
 
 import Container from '@/display/Container' ;
 import Divider   from '@/components/Divider' ;
+import Button    from '@/components/Button' ;
 
 import FadeIn       from '../../motions/FadeIn' ;
 import Jump         from '../../motions/Jump' ;
@@ -59,12 +60,13 @@ const AnimationDemo = () =>
                         </div>
                     </FadeIn>
 
-                    <button
-                        className = "btn btn-outline btn-sm"
+                    <Button
                         onClick   = { () => setFadeKey( k => k + 1 ) }
+                        size      = "sm"
+                        style     = "outline"
                     >
                         Replay
-                    </button>
+                    </Button>
                 </div>
             </div>
 
@@ -98,12 +100,13 @@ const AnimationDemo = () =>
                         </div>
                     </Jump>
 
-                    <button
-                        className = "btn btn-outline btn-sm"
+                    <Button
                         onClick   = { () => setJumpKey( k => k + 1 ) }
+                        size      = "sm"
+                        style     = "outline"
                     >
                         Replay
-                    </button>
+                    </Button>
                 </div>
             </div>
 
@@ -138,12 +141,13 @@ const AnimationDemo = () =>
                         </div>
                     </SlideRight>
 
-                    <button
-                        className = "btn btn-outline btn-sm"
+                    <Button
                         onClick   = { () => setSlideKey( k => k + 1 ) }
+                        size      = "sm"
+                        style     = "outline"
                     >
                         Replay
-                    </button>
+                    </Button>
                 </div>
             </div>
 
@@ -249,12 +253,14 @@ const AnimationDemo = () =>
                         </StaggerList>
                     </div>
 
-                    <button
-                        className = "btn btn-outline btn-sm self-end"
+                    <Button
+                        className = "self-end"
                         onClick   = { () => setStaggerKey( k => k + 1 ) }
+                        size      = "sm"
+                        style     = "outline"
                     >
                         Replay
-                    </button>
+                    </Button>
                 </div>
             </div>
 
@@ -289,12 +295,14 @@ const AnimationDemo = () =>
                         />
                     </div>
 
-                    <button
-                        className = "btn btn-outline btn-sm self-start"
+                    <Button
+                        className = "self-start"
                         onClick   = { () => setTextKey( k => k + 1 ) }
+                        size      = "sm"
+                        style     = "outline"
                     >
                         Replay
-                    </button>
+                    </Button>
                 </div>
             </div>
 

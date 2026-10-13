@@ -2,6 +2,7 @@
 
 import Container      from '@/display/Container' ;
 import InputPassword  from '@/components/inputs/InputPassword' ;
+import Button         from '@/components/Button' ;
 
 import useI18n from '@/contexts/locale/useI18n' ;
 
@@ -70,9 +71,9 @@ const InputPasswordDemo = ( { path = 'demo.inputs.password' } = {} ) =>
                     title         = { t.secure?.title }
                     validatorHint = { t.secure?.hint }
                 />
-                <button type="submit" className="btn btn-primary btn-sm self-start">
+                <Button className="self-start" color="primary" size="sm" type="submit">
                     { t.secure?.submit }
-                </button>
+                </Button>
             </form>
 
             <InputPassword

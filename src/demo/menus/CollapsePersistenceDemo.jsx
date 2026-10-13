@@ -21,6 +21,8 @@ import {
     MdSubdirectoryArrowRight as ChildIcon ,
 } from 'react-icons/md' ;
 
+import Button from '@/components/Button' ;
+
 import NavigationProvider from '@/contexts/navigation/provider' ;
 import useNavigation      from '@/contexts/navigation/useNavigation' ;
 import { COLLAPSE , LINK } from '@/contexts/navigation/types' ;
@@ -160,13 +162,14 @@ const DemoCard = ( { title , description , defaultMode , storageKey } ) =>
                                 <code className="font-mono">{ storageKey }</code>
                             </div>
                             <StorageInspector storageKey={ storageKey } />
-                            <button
-                                type      = "button"
-                                className = "btn btn-xs btn-outline self-start"
+                            <Button
+                                className = "self-start"
                                 onClick   = { handleClear }
+                                size      = "xs"
+                                style     = "outline"
                             >
                                 Clear &amp; reload
-                            </button>
+                            </Button>
                         </>
                     )
                     : (

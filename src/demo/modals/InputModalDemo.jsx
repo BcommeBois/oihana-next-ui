@@ -9,6 +9,7 @@ import Container from '@/display/Container' ;
 import Divider from '@/components/Divider' ;
 import Input from '@/components/inputs/Input' ;
 import Badge from '@/components/Badge' ;
+import Button from '@/components/Button' ;
 
 import
 {
@@ -144,6 +145,7 @@ const InputModalDemo = ( { path = 'demo.modals.input' } = {} ) =>
                                             onClick   = {() => setTempColor( c )}
                                             className = "w-full aspect-square rounded"
                                             style     = {{ backgroundColor: c }}
+                                            type      = "button"
                                         />
                                     ))}
                                 </div>
@@ -174,14 +176,14 @@ const InputModalDemo = ( { path = 'demo.modals.input' } = {} ) =>
                                     className = "input input-primary w-full"
                                 />
                                 <div className="grid grid-cols-3 gap-2">
-                                    <button
-                                        className = "btn btn-sm"
+                                    <Button
+                                        size      = "sm"
                                         onClick   = {() => setTempDate( new Date().toISOString().split('T')[0] )}
                                     >
                                         Today
-                                    </button>
-                                    <button
-                                        className = "btn btn-sm"
+                                    </Button>
+                                    <Button
+                                        size      = "sm"
                                         onClick   = {() =>
                                         {
                                             const tomorrow = new Date() ;
@@ -190,9 +192,9 @@ const InputModalDemo = ( { path = 'demo.modals.input' } = {} ) =>
                                         }}
                                     >
                                         Tomorrow
-                                    </button>
-                                    <button
-                                        className = "btn btn-sm"
+                                    </Button>
+                                    <Button
+                                        size      = "sm"
                                         onClick   = {() =>
                                         {
                                             const nextWeek = new Date() ;
@@ -201,7 +203,7 @@ const InputModalDemo = ( { path = 'demo.modals.input' } = {} ) =>
                                         }}
                                     >
                                         Next Week
-                                    </button>
+                                    </Button>
                                 </div>
                             </div>
                         </InputModal>
@@ -224,24 +226,24 @@ const InputModalDemo = ( { path = 'demo.modals.input' } = {} ) =>
                                     className = "input input-primary w-full"
                                 />
                                 <div className="grid grid-cols-3 gap-2">
-                                    <button
-                                        className = "btn btn-sm"
+                                    <Button
+                                        size      = "sm"
                                         onClick   = {() => setTempTime( '09:00' )}
                                     >
                                         Morning
-                                    </button>
-                                    <button
-                                        className = "btn btn-sm"
+                                    </Button>
+                                    <Button
+                                        size      = "sm"
                                         onClick   = {() => setTempTime( '12:00' )}
                                     >
                                         Noon
-                                    </button>
-                                    <button
-                                        className = "btn btn-sm"
+                                    </Button>
+                                    <Button
+                                        size      = "sm"
                                         onClick   = {() => setTempTime( '18:00' )}
                                     >
                                         Evening
-                                    </button>
+                                    </Button>
                                 </div>
                             </div>
                         </InputModal>
@@ -268,16 +270,16 @@ const InputModalDemo = ( { path = 'demo.modals.input' } = {} ) =>
                         >
                             <div className="flex flex-col gap-2">
                                 { locations.map(( loc, i ) => (
-                                    <button
+                                    <Button
                                         key       = { i }
                                         onClick   = {() => setTempLocation( loc )}
-                                        className = {`btn btn-ghost justify-start ${
-                                            tempLocation === loc ? 'btn-active' : ''
-                                        }`}
+                                        style     = "ghost"
+                                        active    = { tempLocation === loc }
+                                        className = "justify-start"
                                     >
                                         <MdLocationOn />
                                         { loc }
-                                    </button>
+                                    </Button>
                                 ))}
                             </div>
                         </InputModal>

@@ -12,6 +12,8 @@
 
 import { useState } from 'react' ;
 
+import Button from '@/components/Button' ;
+
 import removeCookie from '@/helpers/storage/removeCookie' ;
 import setCookie    from '@/helpers/storage/setCookie' ;
 
@@ -63,16 +65,17 @@ const CookieDemo = () =>
 
                 <div className="flex flex-wrap gap-2">
                     { SAMPLES.map( sample => (
-                        <button
-                            key       = { sample }
-                            className = { `btn btn-sm ${ sample === typed ? 'btn-primary' : '' }` }
-                            onClick   = { () => write( sample ) }
-                            type      = "button"
+                        <Button
+                            active      = { sample === typed }
+                            activeColor = "primary"
+                            key         = { sample }
+                            onClick     = { () => write( sample ) }
+                            size        = "sm"
                         >
                             { sample }
-                        </button>
+                        </Button>
                     ) ) }
-                    <button className="btn btn-sm btn-ghost" onClick={ erase } type="button">removeCookie</button>
+                    <Button onClick={ erase } size="sm" style="ghost">removeCookie</Button>
                 </div>
 
                 <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">

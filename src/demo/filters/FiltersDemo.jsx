@@ -40,6 +40,7 @@ import { useCallback , useRef , useState } from 'react' ;
 
 import { MdAspectRatio , MdBookmark , MdEvent , MdEuro , MdLabel , MdPalette , MdPeople , MdPublic , MdStraighten } from 'react-icons/md' ;
 
+import Button               from '@/components/Button' ;
 import ChecklistPanel       from '@/components/filters/ChecklistPanel' ;
 import ClearFiltersChip     from '@/components/filters/ClearFiltersChip' ;
 import FilterChip           from '@/components/filters/FilterChip' ;
@@ -52,8 +53,6 @@ import RemoteFilterPicker from '@/components/filters/RemoteFilterPicker' ;
 import { resolveVisibleFilters } from '@/helpers/filters/hiddenFilters' ;
 
 import niceCeil from '@/helpers/numbers/niceCeil' ;
-
-import cn from '@/themes/helpers/cn' ;
 
 /**
  * The fake colours, with how many items carry each.
@@ -265,14 +264,16 @@ const FiltersDemo = () =>
     ] ;
 
     const trigger = ( id , ref , label , active ) => (
-        <button
-            ref       = { ref }
-            type      = "button"
-            className = { cn( 'btn btn-sm' , active ? 'btn-primary' : 'btn-outline' ) }
-            onClick   = { () => toggle( id ) }
+        <Button
+            active      = { active }
+            activeColor = "primary"
+            onClick     = { () => toggle( id ) }
+            ref         = { ref }
+            size        = "sm"
+            style       = { active ? undefined : 'outline' }
         >
             { label }
-        </button>
+        </Button>
     ) ;
 
     return (

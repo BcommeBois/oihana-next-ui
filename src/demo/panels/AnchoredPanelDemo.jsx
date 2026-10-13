@@ -22,9 +22,8 @@
 import { useRef , useState } from 'react' ;
 
 import AnchoredPanel from '@/components/panels/AnchoredPanel' ;
+import Button        from '@/components/Button' ;
 import Popover       from '@/components/Popover' ;
-
-import cn from '@/themes/helpers/cn' ;
 
 /**
  * The fake colours.
@@ -55,14 +54,16 @@ const SORTS = Array.from( { length : 24 } , ( _ , index ) => `Ordre n° ${ index
  */
 const Trigger = ( { anchorRef , active , children , onClick } ) =>
 (
-    <button
-        ref       = { anchorRef }
-        type      = "button"
-        className = { cn( 'btn btn-sm' , active ? 'btn-primary' : 'btn-outline' ) }
-        onClick   = { onClick }
+    <Button
+        active      = { active }
+        activeColor = "primary"
+        onClick     = { onClick }
+        ref         = { anchorRef }
+        size        = "sm"
+        style       = { active ? undefined : 'outline' }
     >
         { children }
-    </button>
+    </Button>
 ) ;
 
 /**
@@ -122,14 +123,14 @@ const FilterBar = () =>
                 title       = "Couleurs"
                 footer      = { ( { size : buttonSize } ) => (
                     <>
-                        <button type="button" className={ cn( 'btn btn-ghost' , buttonSize ) } onClick={ () => setDraft( [] ) }>Effacer</button>
-                        <button
-                            type      = "button"
-                            className = { cn( 'btn btn-primary' , buttonSize ) }
+                        <Button className={ buttonSize } onClick={ () => setDraft( [] ) } style="ghost">Effacer</Button>
+                        <Button
+                            className = { buttonSize }
+                            color     = "primary"
                             onClick   = { () => { setColours( draft ) ; close() ; } }
                         >
                             Appliquer
-                        </button>
+                        </Button>
                     </>
                 ) }
             >
@@ -158,20 +159,22 @@ const FilterBar = () =>
                 title          = "Taille"
                 sheetFooter    = {
                     <div className="px-4 py-3">
-                        <button type="button" className="btn btn-block" onClick={ close }>Fermer</button>
+                        <Button className="btn-block" onClick={ close }>Fermer</Button>
                     </div>
                 }
             >
                 <div className="flex flex-col gap-1 p-2">
                     { [ null , ...SIZES ].map( value => (
-                        <button
+                        <Button
+                            active    = { value === size }
+                            className = "justify-start"
                             key       = { value ?? 'all' }
-                            type      = "button"
-                            className = { cn( 'btn btn-ghost btn-sm justify-start' , value === size && 'btn-active' ) }
                             onClick   = { () => { setSize( value ) ; close() ; } }
+                            size      = "sm"
+                            style     = "ghost"
                         >
                             { value ?? 'Toutes' }
-                        </button>
+                        </Button>
                     ) ) }
                 </div>
             </AnchoredPanel>
@@ -185,14 +188,16 @@ const FilterBar = () =>
             >
                 <div className="flex max-h-80 min-h-0 flex-1 flex-col gap-1 overflow-y-auto p-2">
                     { SORTS.map( value => (
-                        <button
+                        <Button
+                            active    = { value === sort }
+                            className = "justify-start"
                             key       = { value }
-                            type      = "button"
-                            className = { cn( 'btn btn-ghost btn-sm justify-start' , value === sort && 'btn-active' ) }
                             onClick   = { () => { setSort( value ) ; close() ; } }
+                            size      = "sm"
+                            style     = "ghost"
                         >
                             { value }
-                        </button>
+                        </Button>
                     ) ) }
                 </div>
             </AnchoredPanel>

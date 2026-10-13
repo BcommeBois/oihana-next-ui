@@ -88,14 +88,16 @@ const BottomSheetDemo = ( { path = 'demo.modals.bottomSheet' } = {} ) =>
                                 <span className="min-w-0 flex-1 truncate font-semibold">
                                     { t.heading }
                                 </span>
-                                <button
-                                    aria-label = { t.close }
-                                    className  = "btn btn-ghost btn-sm btn-circle shrink-0"
-                                    onClick    = { close }
-                                    type       = "button"
+                                <Button
+                                    className = "shrink-0"
+                                    onClick   = { close }
+                                    shape     = "circle"
+                                    size      = "sm"
+                                    style     = "ghost"
+                                    title     = { t.close }
                                 >
                                     <MdClose className="size-5" />
-                                </button>
+                                </Button>
                             </div>
 
                             { rows.map( row => (

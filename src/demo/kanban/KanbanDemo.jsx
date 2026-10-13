@@ -282,14 +282,15 @@ const KanbanDemo = () =>
                         <KanbanCard>
                             <div className="flex items-center justify-between gap-2">
                                 <span className="text-sm font-semibold">{ card.title }</span>
-                                <button
-                                    type="button"
-                                    aria-label={ `Remove ${ card.title }` }
-                                    className="btn btn-ghost btn-circle btn-xs"
+                                <Button
                                     onClick={ () => removeCard( card.id ) }
+                                    shape="circle"
+                                    size="xs"
+                                    style="ghost"
+                                    title={ `Remove ${ card.title }` }
                                 >
                                     <MdClose size={ 12 } />
-                                </button>
+                                </Button>
                             </div>
                         </KanbanCard>
                     )}

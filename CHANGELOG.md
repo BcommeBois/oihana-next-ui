@@ -30,6 +30,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   HTML — `button` by default, `submit` when asked, nothing on a `label` or a link. 279 tests.
 - The Buttons page gains an « In a form » section : a counter, lines to add and remove, and a
   send count that only the `type="submit"` button moves.
+- **The demos use the library's own buttons.** About 120 hand-written `<button className="btn …">`
+  became `Button` — `color`, `size`, `style`, `shape`, `active` / `activeColor` instead of class
+  strings, `type="submit"` written where a form is sent —, and the sort of the shallow-parameter
+  demo a `SegmentedControl`. What stays a plain `<button type="button">` does so on purpose :
+  the triggers of the `Tooltip` demo (a tooltip wraps any element), rows and cards that are
+  clickable as a whole, items of a daisyUI `menu`. **`a11y/useButtonType` now reports nothing in
+  `src/`**, so its next warning is a real case.
 
 **💳 Card fields that say when a card cannot be right**
 

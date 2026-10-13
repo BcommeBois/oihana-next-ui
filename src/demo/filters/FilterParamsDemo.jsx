@@ -16,10 +16,10 @@ import { useEffect , useState } from 'react' ;
 
 import { useSearchParams } from 'next/navigation' ;
 
+import Button from '@/components/Button' ;
+
 import useFilterParams  from '@/hooks/useFilterParams' ;
 import createStorageKey from '@/helpers/storage/createStorageKey' ;
-
-import cn from '@/themes/helpers/cn' ;
 
 /**
  * The persistence namespace of the lab page.
@@ -72,14 +72,16 @@ const FilterParamsDemo = () =>
     } , [ searchParams ] ) ;
 
     const choice = ( entry , value , current ) => (
-        <button
-            key       = { value }
-            type      = "button"
-            className = { cn( 'btn btn-xs' , value === current ? 'btn-primary' : 'btn-outline' ) }
-            onClick   = { () => pushParam( { ...entry , value : value === current ? null : value } ) }
+        <Button
+            active      = { value === current }
+            activeColor = "primary"
+            key         = { value }
+            onClick     = { () => pushParam( { ...entry , value : value === current ? null : value } ) }
+            size        = "xs"
+            style       = { value === current ? undefined : 'outline' }
         >
             { value }
-        </button>
+        </Button>
     ) ;
 
     const pageThree = () =>
@@ -106,15 +108,14 @@ const FilterParamsDemo = () =>
                 </div>
 
                 <div className="flex flex-wrap gap-2">
-                    <button
-                        type      = "button"
-                        className = "btn btn-sm"
-                        onClick   = { () => pushParams( [ { ...SHAPE , value : 'square' } , { ...PATTERN , value : 'dotted' } ] ) }
+                    <Button
+                        onClick = { () => pushParams( [ { ...SHAPE , value : 'square' } , { ...PATTERN , value : 'dotted' } ] ) }
+                        size    = "sm"
                     >
                         Les deux : square + dotted
-                    </button>
-                    <button type="button" className="btn btn-sm" onClick={ pageThree }>Page 3 (offset=60)</button>
-                    <button type="button" className="btn btn-sm btn-ghost text-error" onClick={ () => clearParams( [ SHAPE , PATTERN ] ) }>Effacer</button>
+                    </Button>
+                    <Button onClick={ pageThree } size="sm">Page 3 (offset=60)</Button>
+                    <Button className="text-error" onClick={ () => clearParams( [ SHAPE , PATTERN ] ) } size="sm" style="ghost">Effacer</Button>
                 </div>
 
                 <code className="rounded-box bg-base-100 p-2 text-xs">

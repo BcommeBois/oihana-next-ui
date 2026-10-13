@@ -16,6 +16,7 @@ import { useEffect , useState } from 'react' ;
 
 import { useSearchParams } from 'next/navigation' ;
 
+import Button            from '@/components/Button' ;
 import UrlSearch         from '@/components/inputs/UrlSearch' ;
 import ToolbarDisclosure from '@/components/panels/ToolbarDisclosure' ;
 
@@ -24,8 +25,6 @@ import useFilterParams from '@/hooks/useFilterParams' ;
 import createStorageKey    from '@/helpers/storage/createStorageKey' ;
 import getFiltersStorageKey from '@/helpers/storage/filtersStorageKey' ;
 import getSearchStorageKey  from '@/helpers/storage/searchStorageKey' ;
-
-import cn from '@/themes/helpers/cn' ;
 
 /**
  * The persistence namespace of this demo.
@@ -109,14 +108,16 @@ const ToolbarDisclosureDemo = () =>
                 >
                     <div className="flex flex-wrap items-center gap-2 rounded-box bg-base-100 p-3">
                         { SHAPES.map( value =>
-                            <button
-                                key       = { value }
-                                type      = "button"
-                                className = { cn( 'btn btn-sm' , shape === value ? 'btn-primary' : 'btn-ghost' ) }
-                                onClick   = { () => pushParam( { ...SHAPE , value : shape === value ? null : value } ) }
+                            <Button
+                                active      = { shape === value }
+                                activeColor = "primary"
+                                key         = { value }
+                                onClick     = { () => pushParam( { ...SHAPE , value : shape === value ? null : value } ) }
+                                size        = "sm"
+                                style       = { shape === value ? undefined : 'ghost' }
                             >
                                 { value }
-                            </button>
+                            </Button>
                         ) }
                     </div>
                 </ToolbarDisclosure>

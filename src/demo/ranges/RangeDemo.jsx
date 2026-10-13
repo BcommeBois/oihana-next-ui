@@ -4,6 +4,7 @@ import { useState } from 'react' ;
 
 import Container from '@/display/Container' ;
 import Badge     from '@/components/Badge' ;
+import Button    from '@/components/Button' ;
 import Divider   from '@/components/Divider' ;
 import Range     from '@/components/ranges/Range' ;
 import DualRange from '@/components/ranges/DualRange' ;
@@ -250,18 +251,18 @@ const RangeDemo = () =>
                 </div>
 
                 <div className="flex gap-2">
-                    <button className="btn btn-sm" onClick={() => setVolume( Math.max( 0, volume - 10 ))}>
+                    <Button size="sm" onClick={() => setVolume( Math.max( 0, volume - 10 ))}>
                         - 10
-                    </button>
-                    <button className="btn btn-sm" onClick={() => setVolume( Math.min( 100, volume + 10 ))}>
+                    </Button>
+                    <Button size="sm" onClick={() => setVolume( Math.min( 100, volume + 10 ))}>
                         + 10
-                    </button>
-                    <button className="btn btn-sm btn-error" onClick={() => setVolume( 0 )}>
+                    </Button>
+                    <Button color="error" size="sm" onClick={() => setVolume( 0 )}>
                         Mute
-                    </button>
-                    <button className="btn btn-sm btn-success" onClick={() => setVolume( 100 )}>
+                    </Button>
+                    <Button color="success" size="sm" onClick={() => setVolume( 100 )}>
                         Max
-                    </button>
+                    </Button>
                 </div>
             </div>
 
@@ -359,7 +360,7 @@ const RangeDemo = () =>
                                 color="warning"
                             />
 
-                            <button className="btn btn-primary">Apply Filters</button>
+                            <Button color="primary">Apply Filters</Button>
                         </div>
                     </div>
                 </div>
@@ -394,7 +395,7 @@ const RangeDemo = () =>
                                 color="success"
                             />
 
-                            <button className="btn btn-primary">Submit Survey</button>
+                            <Button color="primary">Submit Survey</Button>
                         </div>
                     </div>
                 </div>
@@ -449,8 +450,8 @@ const RangeDemo = () =>
                             />
 
                             <div className="flex gap-2">
-                                <button className="btn btn-sm btn-primary flex-1">Apply</button>
-                                <button className="btn btn-sm btn-info">Reset</button>
+                                <Button className="flex-1" color="primary" size="sm">Apply</Button>
+                                <Button color="info" size="sm">Reset</Button>
                             </div>
                         </div>
                     </div>
@@ -586,9 +587,9 @@ const RangeDemo = () =>
                 <div className="flex items-center gap-2">
                     <span>Selected:</span>
                     <Badge color="primary">{ priceRange[ 0 ] } → { priceRange[ 1 ] }</Badge>
-                    <button className="btn btn-sm" onClick={() => setPriceRange([ 250, 500 ])}>
+                    <Button size="sm" onClick={() => setPriceRange([ 250, 500 ])}>
                         Reset to 250–500
-                    </button>
+                    </Button>
                 </div>
 
                 {/* Inline value + custom format */}

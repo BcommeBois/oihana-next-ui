@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from 'react' ;
 
-import cn from '@/themes/helpers/cn' ;
-
+import Button    from '@/components/Button' ;
 import Container from '@/display/Container' ;
 import Divider   from '@/components/Divider' ;
 import Progress  from '@/components/progress/Progress' ;
@@ -202,14 +201,9 @@ const ProgressDemo = () =>
                                 <span>{ upload < 100 ? '30s remaining' : 'Done' }</span>
                             </div>
 
-                            <button
-                                className={ cn(
-                                    'btn',
-                                    upload < 100 ? 'btn-error' : 'btn-success'
-                                )}
-                            >
+                            <Button color={ upload < 100 ? 'error' : 'success' }>
                                 { upload < 100 ? 'Cancel' : 'Open File' }
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 </div>
@@ -335,7 +329,7 @@ const ProgressDemo = () =>
                                 <span className="font-bold">170GB / 200GB</span>
                             </div>
 
-                            <button className="btn btn-primary btn-sm">Upgrade Storage</button>
+                            <Button color="primary" size="sm">Upgrade Storage</Button>
                         </div>
                     </div>
                 </div>

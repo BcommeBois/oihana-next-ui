@@ -107,13 +107,13 @@ const InputCardDemo = ( { path = 'demo.inputs.card' } = {} ) =>
                         <ValueProbe label="cardType"   value={ cardType } />
                     </div>
 
-                    <button
-                        type      = "submit"
-                        className = "btn btn-primary"
-                        disabled  = { !cardNumber || !expiry || !cvv }
+                    <Button
+                        color    = "primary"
+                        disabled = { !cardNumber || !expiry || !cvv }
+                        type     = "submit"
                     >
                         { t.submit }
-                    </button>
+                    </Button>
                 </form>
             </div>
 

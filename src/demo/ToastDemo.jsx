@@ -4,6 +4,8 @@
  * @module demo/ToastDemo
  */
 
+import Button from '@/components/Button' ;
+
 import useToast , { ERROR , INFO , SUCCESS , WARNING } from '@/contexts/toasts/useToast' ;
 
 export default function ToastDemo()
@@ -18,30 +20,30 @@ export default function ToastDemo()
                 <div className="card-body">
                     <h2 className="card-title">Toast basiques</h2>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                        <button
-                            className="btn btn-error"
+                        <Button
+                            color="error"
                             onClick={ () => toast( 'Une erreur est survenue !' , ERROR ) }
                         >
                             Error
-                        </button>
-                        <button
-                            className="btn btn-info"
+                        </Button>
+                        <Button
+                            color="info"
                             onClick={ () => toast( 'Information importante' , INFO ) }
                         >
                             Info
-                        </button>
-                        <button
-                            className="btn btn-success"
+                        </Button>
+                        <Button
+                            color="success"
                             onClick={ () => toast( 'Opération réussie !' , SUCCESS ) }
                         >
                             Success
-                        </button>
-                        <button
-                            className="btn btn-warning"
+                        </Button>
+                        <Button
+                            color="warning"
                             onClick={ () => toast( 'Attention, vérifiez vos données' , WARNING ) }
                         >
                             Warning
-                        </button>
+                        </Button>
                     </div>
                 </div>
             </div>
@@ -51,42 +53,42 @@ export default function ToastDemo()
                 <div className="card-body">
                     <h2 className="card-title">Options personnalisées</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                        <button
-                            className="btn btn-outline"
+                        <Button
+                            style="outline"
                             onClick={ () => toast( 'Toast sans icône' , INFO , { showIcon: false } ) }
                         >
                             Sans icône
-                        </button>
-                        <button
-                            className="btn btn-outline"
+                        </Button>
+                        <Button
+                            style="outline"
                             onClick={ () => toast( 'Toast sans bouton fermer' , SUCCESS , { showCloseButton: false } ) }
                         >
                             Sans bouton fermer
-                        </button>
-                        <button
-                            className="btn btn-outline"
+                        </Button>
+                        <Button
+                            style="outline"
                             onClick={ () => toast( '<strong>HTML:</strong> Message <em>enrichi</em>' , WARNING , { html: true } ) }
                         >
                             Avec HTML
-                        </button>
-                        <button
-                            className="btn btn-outline"
+                        </Button>
+                        <Button
+                            style="outline"
                             onClick={ () => alert( 'message avec auto-capitalize' , SUCCESS ) }
                         >
                             Alert (ucFirst)
-                        </button>
-                        <button
-                            className="btn btn-outline"
+                        </Button>
+                        <Button
+                            style="outline"
                             onClick={ () => toast( 'Toast avec classes custom' , INFO , { className: 'shadow-2xl' } ) }
                         >
                             Classes custom
-                        </button>
-                        <button
-                            className="btn btn-outline"
+                        </Button>
+                        <Button
+                            style="outline"
                             onClick={ () => toast( 'Contenu avec style' , ERROR , { contentClassName: 'text-lg font-bold' } ) }
                         >
                             Contenu stylisé
-                        </button>
+                        </Button>
                     </div>
                 </div>
             </div>
@@ -96,8 +98,8 @@ export default function ToastDemo()
                 <div className="card-body">
                     <h2 className="card-title">Toasts multiples</h2>
                     <div className="flex flex-wrap gap-4">
-                        <button
-                            className="btn btn-primary"
+                        <Button
+                            color="primary"
                             onClick={ () =>
                             {
                                 toast( 'Premier toast' , INFO ) ;
@@ -106,9 +108,9 @@ export default function ToastDemo()
                             } }
                         >
                             3 Toasts successifs
-                        </button>
-                        <button
-                            className="btn btn-primary"
+                        </Button>
+                        <Button
+                            color="primary"
                             onClick={ () =>
                             {
                                 toast( 'Info 1' , INFO ) ;
@@ -117,9 +119,9 @@ export default function ToastDemo()
                             } }
                         >
                             3 Toasts simultanés
-                        </button>
-                        <button
-                            className="btn btn-primary"
+                        </Button>
+                        <Button
+                            color="primary"
                             onClick={ () =>
                             {
                                 toast( 'Erreur' , ERROR ) ;
@@ -129,7 +131,7 @@ export default function ToastDemo()
                             } }
                         >
                             Mix de toasts
-                        </button>
+                        </Button>
                     </div>
                 </div>
             </div>
@@ -139,17 +141,17 @@ export default function ToastDemo()
                 <div className="card-body">
                     <h2 className="card-title">Messages longs</h2>
                     <div className="flex flex-wrap gap-2">
-                        <button
-                            className="btn btn-outline"
+                        <Button
+                            style="outline"
                             onClick={ () => toast(
                                 'Ceci est un message très long qui devrait être affiché correctement dans le toast. Le composant Alert gère automatiquement les longues lignes de texte.' ,
                                 INFO
                             ) }
                         >
                             Message long
-                        </button>
-                        <button
-                            className="btn btn-outline"
+                        </Button>
+                        <Button
+                            style="outline"
                             onClick={ () => toast(
                                 '<p>Message HTML avec <strong>mise en forme</strong>.</p><p>Plusieurs paragraphes sont possibles.</p><ul><li>Point 1</li><li>Point 2</li></ul>' ,
                                 SUCCESS ,
@@ -157,7 +159,7 @@ export default function ToastDemo()
                             ) }
                         >
                             HTML complexe
-                        </button>
+                        </Button>
                     </div>
                 </div>
             </div>

@@ -28,6 +28,7 @@ import { useRouter , useSearchParams } from 'next/navigation' ;
 
 import Button                 from '@/components/Button' ;
 import BusySurface            from '@/components/BusySurface' ;
+import SegmentedControl       from '@/components/SegmentedControl' ;
 import BusyNavigationProvider from '@/contexts/busyNavigation/provider' ;
 import useBusyNavigation      from '@/contexts/busyNavigation/useBusyNavigation' ;
 import Container              from '@/display/Container' ;
@@ -58,18 +59,12 @@ const ShallowSort = () =>
 
     return (
         <div className="flex flex-col gap-3">
-            <div className="join">
-                { [ 'name' , 'date' ].map( key => (
-                    <button
-                        key       = { key }
-                        className = { `btn btn-sm join-item ${ sort === key ? 'btn-primary' : '' }` }
-                        onClick   = { () => setSort( key ) }
-                        type      = "button"
-                    >
-                        { key }
-                    </button>
-                ) ) }
-            </div>
+            <SegmentedControl
+                ariaLabel = "Sort"
+                items     = { [ { key : 'name' , label : 'name' } , { key : 'date' , label : 'date' } ] }
+                onChange  = { setSort }
+                value     = { sort }
+            />
             <ul className="list-disc ps-6 text-sm">
                 { rows.map( row => <li key={ row.name }>{ row.name } — { row.date }</li> ) }
             </ul>

@@ -1,6 +1,7 @@
 'use client' ;
 
 import Container from '@/display/Container' ;
+import Button from '@/components/Button' ;
 import getMaskClasses from '@/themes/components/mask' ;
 
 const MaskDemo = () =>
@@ -236,7 +237,7 @@ const MaskDemo = () =>
                         <h2 className="card-title">John Doe</h2>
                         <p>Software Developer</p>
                         <div className="card-actions">
-                            <button className="btn btn-primary btn-sm">Follow</button>
+                            <Button color="primary" size="sm">Follow</Button>
                         </div>
                     </div>
                 </div>

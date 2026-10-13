@@ -71,14 +71,13 @@ const PortalFullscreenDemo = ( { path = 'demo.modals.portalFullscreen' } = {} ) 
             <Divider>{ t.popoverDivider }</Divider>
 
             <div className="flex flex-wrap items-center gap-3">
-                <button
-                    className = "btn btn-sm"
-                    onClick   = { () => setOpen( value => !value ) }
-                    ref       = { anchor }
-                    type      = "button"
+                <Button
+                    onClick = { () => setOpen( value => !value ) }
+                    ref     = { anchor }
+                    size    = "sm"
                 >
                     { t.popoverTrigger }
-                </button>
+                </Button>
 
                 <Popover
                     anchorRef = { anchor }
@@ -90,9 +89,9 @@ const PortalFullscreenDemo = ( { path = 'demo.modals.portalFullscreen' } = {} ) 
                     <ul className="grid grid-cols-3 gap-2 w-64">
                         { t.months.map( month => (
                             <li key={ month }>
-                                <button className="btn btn-ghost btn-sm w-full" onClick={ () => setOpen( false ) } type="button">
+                                <Button className="w-full" onClick={ () => setOpen( false ) } size="sm" style="ghost">
                                     { month }
-                                </button>
+                                </Button>
                             </li>
                         ) ) }
                     </ul>

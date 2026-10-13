@@ -2,7 +2,8 @@
 
 import { useState } from 'react' ;
 
-import Alert from '@/components/Alert' ;
+import Alert  from '@/components/Alert' ;
+import Button from '@/components/Button' ;
 
 import { ACCENT, ERROR, INFO, NEUTRAL, PRIMARY, SECONDARY, SUCCESS, WARNING } from '@/themes/colors' ;
 import { DASH, OUTLINE, SOFT } from '@/themes/components/alert' ;
@@ -69,9 +70,9 @@ const AlertDemo = () =>
                                 Attention : l'espace de stockage est presque plein.
                             </Alert>
                         )}
-                        <button className="btn btn-ghost btn-xs w-fit" onClick={ resetAlerts } type="button">
+                        <Button className="w-fit" onClick={ resetAlerts } size="xs" style="ghost">
                             Réinitialiser les alertes
-                        </button>
+                        </Button>
                     </div>
                 </div>
             </div>
@@ -144,14 +145,14 @@ const AlertDemo = () =>
                         <Alert
                             direction = "vertical"
                             level     = { INFO }
-                            option    = { <button className="btn btn-info btn-sm" type="button">Voir</button> }
+                            option    = { <Button color="info" size="sm">Voir</Button> }
                         >
                             Verticale : le contenu passe sous l'icône.
                         </Alert>
                         <Alert
                             direction = "horizontal"
                             level     = { SUCCESS }
-                            option    = { <button className="btn btn-success btn-sm" type="button">Voir</button> }
+                            option    = { <Button color="success" size="sm">Voir</Button> }
                         >
                             Horizontale, quelle que soit la largeur.
                         </Alert>
@@ -235,9 +236,9 @@ const AlertDemo = () =>
                         <Alert
                             level  = { ERROR }
                             option = {
-                                <button className="btn btn-error btn-sm" type="button">
+                                <Button color="error" size="sm">
                                     Réessayer
-                                </button>
+                                </Button>
                             }
                         >
                             Action personnalisée au lieu du bouton fermer

@@ -3,6 +3,7 @@
 import { useState } from 'react' ;
 
 import Badge    from '@/components/Badge' ;
+import Button   from '@/components/Button' ;
 import Checkbox from '@/components/checkboxes/Checkbox' ;
 import Divider  from '@/components/Divider' ;
 
@@ -205,14 +206,15 @@ const SortableFlexDemo = () =>
                     renderItem={ skill => (
                         <SortableFlexItem className="flex items-center gap-1 bg-base-100 rounded-full pl-1 pr-2 py-1 shadow-sm select-none">
                             <span className="text-sm">{ skill.label }</span>
-                            <button
-                                type="button"
-                                aria-label={ `Remove ${ skill.label }` }
-                                className="btn btn-ghost btn-circle btn-xs"
+                            <Button
                                 onClick={ () => removeSkill( skill.id ) }
+                                shape="circle"
+                                size="xs"
+                                style="ghost"
+                                title={ `Remove ${ skill.label }` }
                             >
                                 <MdClose size={ 12 } />
-                            </button>
+                            </Button>
                         </SortableFlexItem>
                     )}
                 />

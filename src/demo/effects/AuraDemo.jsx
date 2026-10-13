@@ -3,6 +3,7 @@
 import Container from '@/display/Container' ;
 import Divider   from '@/components/Divider' ;
 import Aura      from '@/components/Aura' ;
+import Button    from '@/components/Button' ;
 
 /**
  * Aura showcase — variants, sizes, custom colours, hover trigger and duration.
@@ -27,7 +28,7 @@ const AuraDemo = () =>
                         </div>
                     </Aura>
                     <Aura>
-                        <button className="btn">button with aura</button>
+                        <Button>button with aura</Button>
                     </Aura>
                 </div>
             </div>
@@ -80,7 +81,7 @@ const AuraDemo = () =>
                         </div>
                     </Aura>
                     <Aura trigger="hover" color="primary">
-                        <button className="btn">Hover me</button>
+                        <Button>Hover me</Button>
                     </Aura>
                 </div>
             </div>
@@ -93,7 +94,7 @@ const AuraDemo = () =>
                 <div className="flex flex-wrap items-center gap-6">
                     { auraSizes.map( ( size ) => (
                         <Aura key={ size } size={ size }>
-                            <button className="btn">{ size.toUpperCase() }</button>
+                            <Button>{ size.toUpperCase() }</Button>
                         </Aura>
                     ) ) }
                 </div>

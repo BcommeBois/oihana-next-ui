@@ -22,8 +22,6 @@ import SegmentedControl   from '@/components/SegmentedControl' ;
 import SidePanel          from '@/components/panels/SidePanel' ;
 import useModal           from '@/components/modals/hooks/useModal' ;
 
-import cn from '@/themes/helpers/cn' ;
-
 import useNumberFormat from '@/hooks/useNumberFormat' ;
 
 import foldText from '@/helpers/strings/foldText' ;
@@ -148,14 +146,16 @@ const CustomersDemo = ( { path = 'demo.scenarios.crm' } = {} ) =>
     } ;
 
     const trigger = ( id , ref , label , active ) => (
-        <button
-            className = { cn( 'btn btn-sm' , active ? 'btn-primary' : 'btn-outline' ) }
-            onClick   = { () => setOpen( current => ( current === id ? null : id ) ) }
-            ref       = { ref }
-            type      = "button"
+        <Button
+            active      = { active }
+            activeColor = "primary"
+            onClick     = { () => setOpen( current => ( current === id ? null : id ) ) }
+            ref         = { ref }
+            size        = "sm"
+            style       = { active ? undefined : 'outline' }
         >
             { label }
-        </button>
+        </Button>
     ) ;
 
     const chips =

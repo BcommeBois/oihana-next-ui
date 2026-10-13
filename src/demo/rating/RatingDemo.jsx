@@ -4,6 +4,7 @@ import { useState } from 'react' ;
 
 import Avatar       from '@/components/avatars/Avatar' ;
 import Badge        from '@/components/Badge' ;
+import Button       from '@/components/Button' ;
 import Container    from '@/display/Container' ;
 import Divider      from '@/components/Divider' ;
 import IconRating   from '@/components/rating/IconRating';
@@ -175,15 +176,15 @@ const RatingDemo = () =>
                     />
 
                     <div className="flex gap-2">
-                        <button className="btn btn-sm" onClick={() => setControlledRating(Math.max(0, controlledRating - 1))}>
+                        <Button size="sm" onClick={() => setControlledRating(Math.max(0, controlledRating - 1))}>
                             - 1
-                        </button>
-                        <button className="btn btn-sm" onClick={() => setControlledRating(Math.min(5, controlledRating + 1))}>
+                        </Button>
+                        <Button size="sm" onClick={() => setControlledRating(Math.min(5, controlledRating + 1))}>
                             + 1
-                        </button>
-                        <button className="btn btn-sm btn-error" onClick={() => setControlledRating(0)}>
+                        </Button>
+                        <Button color="error" size="sm" onClick={() => setControlledRating(0)}>
                             Clear
-                        </button>
+                        </Button>
                     </div>
 
                     <div className="flex flex-row gap-2">
@@ -417,15 +418,15 @@ const RatingDemo = () =>
                     />
 
                     <div className="flex gap-2">
-                        <button className="btn btn-sm" onClick={() => setNumberRating(Math.max(0, numberRating - 1))}>
+                        <Button size="sm" onClick={() => setNumberRating(Math.max(0, numberRating - 1))}>
                             - 1
-                        </button>
-                        <button className="btn btn-sm" onClick={() => setNumberRating(Math.min(5, numberRating + 1))}>
+                        </Button>
+                        <Button size="sm" onClick={() => setNumberRating(Math.min(5, numberRating + 1))}>
                             + 1
-                        </button>
-                        <button className="btn btn-sm btn-error" onClick={() => setNumberRating(0)}>
+                        </Button>
+                        <Button color="error" size="sm" onClick={() => setNumberRating(0)}>
                             Clear
-                        </button>
+                        </Button>
                     </div>
 
                     <div className="flex flex-row gap-2">
@@ -489,7 +490,7 @@ const RatingDemo = () =>
                         </div>
 
                         <div className="card-actions justify-end mt-4">
-                            <button className="btn btn-primary">Buy Now</button>
+                            <Button color="primary">Buy Now</Button>
                         </div>
                     </div>
                 </div>

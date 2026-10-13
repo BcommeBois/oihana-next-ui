@@ -2,6 +2,7 @@
 
 import Container from '@/display/Container' ;
 import Input     from '@/components/inputs/Input' ;
+import Button    from '@/components/Button' ;
 
 import useI18n from '@/contexts/locale/useI18n' ;
 
@@ -61,9 +62,9 @@ const InputValidatorDemo = ( { path = 'demo.inputs.validator' } = {} ) =>
                     required
                     validatorHint = { t.email?.hint }
                 />
-                <button type="submit" className="btn btn-primary btn-sm self-start">
+                <Button className="self-start" color="primary" size="sm" type="submit">
                     { t.email?.submit }
-                </button>
+                </Button>
             </form>
 
             <form onSubmit={ handleSubmit } className="flex flex-col gap-2">
@@ -80,9 +81,9 @@ const InputValidatorDemo = ( { path = 'demo.inputs.validator' } = {} ) =>
                     title         = { t.username?.title }
                     validatorHint = { t.username?.hint }
                 />
-                <button type="submit" className="btn btn-primary btn-sm self-start">
+                <Button className="self-start" color="primary" size="sm" type="submit">
                     { t.username?.submit }
-                </button>
+                </Button>
             </form>
 
             <form onSubmit={ handleSubmit } className="flex flex-col gap-2">
@@ -99,9 +100,9 @@ const InputValidatorDemo = ( { path = 'demo.inputs.validator' } = {} ) =>
                     title         = { t.password?.title }
                     validatorHint = { t.password?.hint }
                 />
-                <button type="submit" className="btn btn-primary btn-sm self-start">
+                <Button className="self-start" color="primary" size="sm" type="submit">
                     { t.password?.submit }
-                </button>
+                </Button>
             </form>
 
             <form onSubmit={ handleSubmit } className="flex flex-col gap-2">
@@ -118,9 +119,9 @@ const InputValidatorDemo = ( { path = 'demo.inputs.validator' } = {} ) =>
                     title         = { t.phone?.title }
                     validatorHint = { t.phone?.hint }
                 />
-                <button type="submit" className="btn btn-primary btn-sm self-start">
+                <Button className="self-start" color="primary" size="sm" type="submit">
                     { t.phone?.submit }
-                </button>
+                </Button>
             </form>
 
             <form onSubmit={ handleSubmit } className="flex flex-col gap-2">
@@ -135,9 +136,9 @@ const InputValidatorDemo = ( { path = 'demo.inputs.validator' } = {} ) =>
                     title         = { t.age?.title }
                     validatorHint = { t.age?.hint }
                 />
-                <button type="submit" className="btn btn-primary btn-sm self-start">
+                <Button className="self-start" color="primary" size="sm" type="submit">
                     { t.age?.submit }
-                </button>
+                </Button>
             </form>
 
             <form onSubmit={ handleSubmit } className="flex flex-col gap-2">
@@ -152,9 +153,9 @@ const InputValidatorDemo = ( { path = 'demo.inputs.validator' } = {} ) =>
                     title         = { t.url?.title }
                     validatorHint = { t.url?.hint }
                 />
-                <button type="submit" className="btn btn-primary btn-sm self-start">
+                <Button className="self-start" color="primary" size="sm" type="submit">
                     { t.url?.submit }
-                </button>
+                </Button>
             </form>
 
             <form onSubmit={ handleSubmit }>
@@ -170,12 +171,14 @@ const InputValidatorDemo = ( { path = 'demo.inputs.validator' } = {} ) =>
                     helper        = { t.newsletter?.helper }
                     actions       =
                     {
-                        <button
-                            className = { cn( 'btn join-item btn-square font-semibold' , styles.btnInput ) }
+                        <Button
+                            className = { cn( 'font-semibold' , styles.btnInput ) }
+                            join
+                            shape     = "square"
                             type      = "submit"
                         >
                             { t.newsletter?.join }
-                        </button>
+                        </Button>
                     }
                 />
             </form>

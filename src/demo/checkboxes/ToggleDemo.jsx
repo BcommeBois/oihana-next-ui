@@ -4,6 +4,7 @@ import { useState } from 'react' ;
 
 import Container from '@/display/Container' ;
 import Badge     from '@/components/Badge' ;
+import Button    from '@/components/Button' ;
 import Divider   from '@/components/Divider' ;
 import Toggle    from '@/components/checkboxes/Toggle' ;
 
@@ -175,15 +176,15 @@ const ToggleDemo = () =>
                 </div>
 
                 <div className="flex gap-2">
-                    <button className="btn btn-sm" onClick={() => setDarkMode( true )}>
+                    <Button size="sm" onClick={() => setDarkMode( true )}>
                         Turn ON
-                    </button>
-                    <button className="btn btn-sm" onClick={() => setDarkMode( false )}>
+                    </Button>
+                    <Button size="sm" onClick={() => setDarkMode( false )}>
                         Turn OFF
-                    </button>
-                    <button className="btn btn-sm btn-primary" onClick={() => setDarkMode( !darkMode )}>
+                    </Button>
+                    <Button color="primary" size="sm" onClick={() => setDarkMode( !darkMode )}>
                         Toggle
-                    </button>
+                    </Button>
                 </div>
             </div>
 

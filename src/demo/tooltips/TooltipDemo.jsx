@@ -26,10 +26,10 @@ const TooltipDemo = () =>
             <div className="flex flex-col gap-4">
                 <h3 className="text-xl font-semibold">Positions</h3>
                 <div className="flex flex-wrap items-center gap-6 p-6">
-                    <Tooltip tip="Top"    position="top"><button className="btn">Top</button></Tooltip>
-                    <Tooltip tip="Bottom" position="bottom"><button className="btn">Bottom</button></Tooltip>
-                    <Tooltip tip="Left"   position="left"><button className="btn">Left</button></Tooltip>
-                    <Tooltip tip="Right"  position="right"><button className="btn">Right</button></Tooltip>
+                    <Tooltip tip="Top"    position="top"><button className="btn" type="button">Top</button></Tooltip>
+                    <Tooltip tip="Bottom" position="bottom"><button className="btn" type="button">Bottom</button></Tooltip>
+                    <Tooltip tip="Left"   position="left"><button className="btn" type="button">Left</button></Tooltip>
+                    <Tooltip tip="Right"  position="right"><button className="btn" type="button">Right</button></Tooltip>
                 </div>
             </div>
 
@@ -45,13 +45,13 @@ const TooltipDemo = () =>
                 <div className="flex flex-col gap-12 pt-16 pb-4">
                     <div className="flex flex-wrap gap-12">
                         <Tooltip tip="Aligned to start" position="top" align="start" color="primary" open>
-                            <button className="btn w-64">top · start</button>
+                            <button className="btn w-64" type="button">top · start</button>
                         </Tooltip>
                         <Tooltip tip="Centered" position="top" align="center" color="primary" open>
-                            <button className="btn w-64">top · center</button>
+                            <button className="btn w-64" type="button">top · center</button>
                         </Tooltip>
                         <Tooltip tip="Aligned to end" position="top" align="end" color="primary" open>
-                            <button className="btn w-64">top · end</button>
+                            <button className="btn w-64" type="button">top · end</button>
                         </Tooltip>
                     </div>
                 </div>
@@ -59,13 +59,13 @@ const TooltipDemo = () =>
                 <div className="flex flex-col gap-12 pb-16 pt-4">
                     <div className="flex flex-wrap gap-12">
                         <Tooltip tip="Aligned to start" position="bottom" align="start" color="secondary" open>
-                            <button className="btn w-64">bottom · start</button>
+                            <button className="btn w-64" type="button">bottom · start</button>
                         </Tooltip>
                         <Tooltip tip="Centered" position="bottom" align="center" color="secondary" open>
-                            <button className="btn w-64">bottom · center</button>
+                            <button className="btn w-64" type="button">bottom · center</button>
                         </Tooltip>
                         <Tooltip tip="Aligned to end" position="bottom" align="end" color="secondary" open>
-                            <button className="btn w-64">bottom · end</button>
+                            <button className="btn w-64" type="button">bottom · end</button>
                         </Tooltip>
                     </div>
                 </div>
@@ -107,10 +107,10 @@ const TooltipDemo = () =>
                 </p>
                 <div className="flex flex-wrap items-center gap-12 p-6">
                     <Tooltip tip="Still talking" position="top">
-                        <button className="btn" disabled>Bare Tooltip</button>
+                        <button className="btn" disabled type="button">Bare Tooltip</button>
                     </Tooltip>
                     <Tooltip tip="Never seen" position="top" show={ false }>
-                        <button className="btn" disabled>{ 'show={ !disabled }' }</button>
+                        <button className="btn" disabled type="button">{ 'show={ !disabled }' }</button>
                     </Tooltip>
                     <Button color="primary" disabled tooltip="Never seen" tooltipPosition="top">
                         Button
@@ -126,7 +126,7 @@ const TooltipDemo = () =>
                 <div className="flex flex-wrap items-center gap-6 p-6">
                     { [ 'primary' , 'secondary' , 'accent' , 'info' , 'success' , 'warning' , 'error' ].map( ( color ) => (
                         <Tooltip key={ color } tip={ color } color={ color } position="top">
-                            <button className="btn">{ color }</button>
+                            <button className="btn" type="button">{ color }</button>
                         </Tooltip>
                     ) ) }
                 </div>
@@ -344,7 +344,7 @@ const TooltipDemo = () =>
                 <h3 className="text-xl font-semibold">Rich content</h3>
                 <div className="flex flex-wrap items-center gap-6 p-6">
                     <Tooltip position="top" color="neutral">
-                        <button className="btn">Hover me</button>
+                        <button className="btn" type="button">Hover me</button>
                         <div className="tooltip-content">
                             <p className="text-sm">Rich <strong>HTML</strong> content</p>
                         </div>

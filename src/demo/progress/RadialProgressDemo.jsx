@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react' ;
 
 import Badge          from '@/components/Badge' ;
+import Button         from '@/components/Button' ;
 import Container      from '@/display/Container' ;
 import Divider        from '@/components/Divider' ;
 import RadialProgress from '@/components/progress/RadialProgress' ;
@@ -188,12 +189,13 @@ const RadialProgressDemo = () =>
 
                     <div className="flex flex-col gap-2">
                         <Badge color="primary">Current: { progress }%</Badge>
-                        <button
-                            className="btn btn-sm btn-primary"
+                        <Button
+                            color="primary"
+                            size="sm"
                             onClick={() => setProgress( 0 )}
                         >
                             Reset
-                        </button>
+                        </Button>
                     </div>
                 </div>
             </div>

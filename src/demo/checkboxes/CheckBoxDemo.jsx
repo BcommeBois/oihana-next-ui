@@ -4,6 +4,7 @@ import { useState } from 'react' ;
 
 import Container from '@/display/Container' ;
 import Badge     from '@/components/Badge' ;
+import Button    from '@/components/Button' ;
 import Checkbox  from '@/components/checkboxes/Checkbox' ;
 import Divider   from '@/components/Divider' ;
 
@@ -160,15 +161,15 @@ const CheckboxDemo = () =>
                 </div>
 
                 <div className="flex gap-2">
-                    <button className="btn btn-sm" onClick={() => setChecked( true )}>
+                    <Button size="sm" onClick={() => setChecked( true )}>
                         Check
-                    </button>
-                    <button className="btn btn-sm" onClick={() => setChecked( false )}>
+                    </Button>
+                    <Button size="sm" onClick={() => setChecked( false )}>
                         Uncheck
-                    </button>
-                    <button className="btn btn-sm btn-primary" onClick={() => setChecked( !checked )}>
+                    </Button>
+                    <Button color="primary" size="sm" onClick={() => setChecked( !checked )}>
                         Toggle
-                    </button>
+                    </Button>
                 </div>
             </div>
 
@@ -247,7 +248,7 @@ const CheckboxDemo = () =>
                             <Checkbox label="Remember me" size="sm" />
 
                             <div className="card-actions">
-                                <button className="btn btn-primary btn-block">Login</button>
+                                <Button className="btn-block" color="primary">Login</Button>
                             </div>
                         </div>
                     </div>
@@ -267,12 +268,12 @@ const CheckboxDemo = () =>
                                 color="primary"
                             />
 
-                            <button
-                                className="btn btn-primary"
+                            <Button
+                                color="primary"
                                 disabled={ !terms }
                             >
                                 Create Account
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 </div>
@@ -301,7 +302,7 @@ const CheckboxDemo = () =>
                                 </div>
                             </div>
 
-                            <button className="btn btn-primary btn-sm">Apply Filters</button>
+                            <Button color="primary" size="sm">Apply Filters</Button>
                         </div>
                     </div>
                 </div>

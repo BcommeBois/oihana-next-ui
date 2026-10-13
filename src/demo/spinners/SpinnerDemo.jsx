@@ -2,6 +2,8 @@
 
 import { useState } from 'react' ;
 
+import Button from '@/components/Button' ;
+
 import Battery         from '@/components/spinners/Battery' ;
 import Bear            from '@/components/spinners/Bear' ;
 import Bike            from '@/components/spinners/Bike' ;
@@ -113,13 +115,15 @@ const SpinnersDemo = () =>
                         </h3>
                         <div className="flex flex-wrap gap-2">
                             { Object.entries( SPINNERS ).map( ([ key , { name } ]) => (
-                                <button
-                                    key       = { key }
-                                    className = { selectedSpinner === key ? 'btn btn-sm btn-primary' : 'btn btn-sm' }
-                                    onClick   = { () => setSelectedSpinner( key ) }
+                                <Button
+                                    active      = { selectedSpinner === key }
+                                    activeColor = "primary"
+                                    key         = { key }
+                                    onClick     = { () => setSelectedSpinner( key ) }
+                                    size        = "sm"
                                 >
                                     { name }
-                                </button>
+                                </Button>
                             ))}
                         </div>
                     </div>
@@ -131,13 +135,16 @@ const SpinnersDemo = () =>
                         </h3>
                         <div className="flex flex-wrap gap-2">
                             { COLORS.map( ({ key , label }) => (
-                                <button
-                                    key       = { key }
-                                    className = { selectedColor === key ? 'btn btn-sm btn-secondary' : 'btn btn-sm btn-ghost' }
-                                    onClick   = { () => setSelectedColor( key ) }
+                                <Button
+                                    active      = { selectedColor === key }
+                                    activeColor = "secondary"
+                                    key         = { key }
+                                    onClick     = { () => setSelectedColor( key ) }
+                                    size        = "sm"
+                                    style       = { selectedColor === key ? undefined : 'ghost' }
                                 >
                                     { label }
-                                </button>
+                                </Button>
                             ))}
                         </div>
                     </div>

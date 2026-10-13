@@ -4,6 +4,7 @@ import { useState } from 'react' ;
 
 import Container   from '@/display/Container' ;
 import Badge       from '@/components/Badge' ;
+import Button      from '@/components/Button' ;
 import Divider     from '@/components/Divider' ;
 import Radio       from '@/components/radios/Radio' ;
 import RadioGroup  from '@/components/radios/RadioGroup' ;
@@ -220,7 +221,7 @@ const RadioDemo = () =>
                         />
 
                         <div className="card-actions justify-end mt-4">
-                            <button className="btn btn-primary">Continue</button>
+                            <Button color="primary">Continue</Button>
                         </div>
                     </div>
                 </div>
@@ -264,7 +265,7 @@ const RadioDemo = () =>
                             </div>
                         </div>
 
-                        <button className="btn btn-primary mt-4">Subscribe</button>
+                        <Button className="mt-4" color="primary">Subscribe</Button>
                     </div>
                 </div>
 
@@ -300,7 +301,7 @@ const RadioDemo = () =>
                             />
                         </div>
 
-                        <button className="btn btn-primary mt-4">Submit Survey</button>
+                        <Button className="mt-4" color="primary">Submit Survey</Button>
                     </div>
                 </div>
             </div>

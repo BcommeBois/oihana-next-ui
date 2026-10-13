@@ -19,6 +19,7 @@ import {
     MdExpandMore  as ChevronIcon ,
 } from 'react-icons/md' ;
 
+import Button   from '@/components/Button' ;
 import Dropdown from '@/components/dropDowns/Dropdown' ;
 
 export default function DropdownDemo()
@@ -61,13 +62,13 @@ export default function DropdownDemo()
                 <div className="card-body gap-3">
                     <h2 className="card-title text-sm">Dropdown — piloté (open + onOpenChange)</h2>
                     <div className="flex flex-wrap items-center gap-3">
-                        <button
-                            className = "btn btn-sm btn-outline"
-                            onClick   = { () => setControlledOpen( value => !value ) }
-                            type      = "button"
+                        <Button
+                            onClick = { () => setControlledOpen( value => !value ) }
+                            size    = "sm"
+                            style   = "outline"
                         >
                             { controlledOpen ? 'Fermer de l’extérieur' : 'Ouvrir de l’extérieur' }
-                        </button>
+                        </Button>
                         <Dropdown
                             items        = { actionItems }
                             label        = "Menu piloté"

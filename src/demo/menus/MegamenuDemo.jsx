@@ -3,6 +3,7 @@
 import Container from '@/display/Container' ;
 import Divider   from '@/components/Divider' ;
 import Megamenu  from '@/components/menus/Megamenu' ;
+import Button    from '@/components/Button' ;
 
 /**
  * Megamenu showcase.
@@ -98,7 +99,7 @@ const MegamenuDemo = () =>
                         <Megamenu responsive width="full" items={ items } />
                     </div>
                     <div className="navbar-end">
-                        <button className="btn">Login</button>
+                        <Button>Login</Button>
                     </div>
                 </div>
             </div>

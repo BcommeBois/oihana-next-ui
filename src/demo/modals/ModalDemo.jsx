@@ -174,9 +174,9 @@ const ModalDemo = ( { path = 'demo.modals.modal' } = {} ) =>
                 <p className="text-sm text-base-content/70">{ t.popover.note }</p>
 
                 <div className="flex gap-2 flex-wrap">
-                    <button type="button" className="btn btn-secondary" popoverTarget={ popoverId }>
+                    <Button color="secondary" popoverTarget={ popoverId }>
                         { t.popover.declarative }
-                    </button>
+                    </Button>
 
                     <Button onClick={ openPopoverHook }>
                         { t.popover.viaHook }

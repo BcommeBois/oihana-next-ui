@@ -17,6 +17,7 @@
 
 import { useState } from 'react' ;
 
+import Button          from '@/components/Button' ;
 import DisplayDropDown from '@/components/dropDowns/DisplayDropDown' ;
 import ItemsLayout     from '@/components/layouts/ItemsLayout' ;
 import LinkCard        from '@/components/links/LinkCard' ;
@@ -100,9 +101,9 @@ const ItemsLayoutDemo = () =>
             />
 
             { items.length < ITEMS.length &&
-                <button className="btn btn-sm btn-outline self-start" type="button" onClick={ () => setItems( ITEMS ) }>
+                <Button className="self-start" onClick={ () => setItems( ITEMS ) } size="sm" style="outline">
                     Tout remettre
-                </button>
+                </Button>
             }
 
             <p className="text-xs text-base-content/40">

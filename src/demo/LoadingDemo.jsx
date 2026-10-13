@@ -1,6 +1,7 @@
 'use client' ;
 
 import Badge    from '@/components/Badge' ;
+import Button   from '@/components/Button' ;
 import Divider  from '@/components/Divider' ;
 import Loading  from '@/components/Loading' ;
 
@@ -156,21 +157,21 @@ const LoadingDemo = () =>
                 <div className="flex flex-col gap-3">
                     <h4 className="font-semibold">1. In Buttons</h4>
                     <div className="flex flex-wrap gap-3">
-                        <button className="btn btn-primary">
+                        <Button color="primary">
                             <Loading animation="spinner" size="sm" color="primary-content" />
                             Loading...
-                        </button>
-                        <button className="btn btn-secondary">
+                        </Button>
+                        <Button color="secondary">
                             <Loading animation="dots" size="sm" color="secondary-content" />
                             Processing
-                        </button>
-                        <button className="btn btn-accent btn-square">
+                        </Button>
+                        <Button color="accent" shape="square">
                             <Loading animation="ring" size="md" color="accent-content" />
-                        </button>
-                        <button className="btn btn-ghost" disabled>
+                        </Button>
+                        <Button style="ghost" disabled>
                             <Loading animation="bars" size="sm" />
                             Disabled
-                        </button>
+                        </Button>
                     </div>
 
                     <div className="mockup-code text-xs">

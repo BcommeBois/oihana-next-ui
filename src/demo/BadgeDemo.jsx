@@ -3,6 +3,7 @@
 import Container from '@/display/Container' ;
 
 import Badge from '@/components/Badge' ;
+import Button from '@/components/Button' ;
 
 /**
  * Four colours no palette holds — what a badge looks like when its colour is a
@@ -225,20 +226,20 @@ const BadgeDemo = () =>
                     <h4 className="text-lg font-medium">Notifications</h4>
                     <div className="flex flex-wrap gap-2">
                         <div className="relative inline-block">
-                            <button className="btn">
+                            <Button>
                                 Messages
                                 <Badge color="error" size="sm" className="absolute -top-2 -right-2">
                                     5
                                 </Badge>
-                            </button>
+                            </Button>
                         </div>
                         <div className="relative inline-block">
-                            <button className="btn">
+                            <Button>
                                 Inbox
                                 <Badge color="primary" size="sm" className="absolute -top-2 -right-2">
                                     12
                                 </Badge>
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 </div>
