@@ -185,7 +185,9 @@ const picture =
             photo :
             {
                 alt   : 'Photo de galerie' ,
+                edit  : 'Modifier' ,
                 likes : '{0} j’aime' ,
+                share : 'Partager' ,
             } ,
 
             positions :
@@ -205,6 +207,7 @@ const picture =
             product :
             {
                 alt   : 'Produit' ,
+                like  : 'Ajouter aux favoris' ,
                 stock : 'En stock' ,
             } ,
 
@@ -220,6 +223,7 @@ const picture =
             {
                 alt  : 'Vidéo' ,
                 live : 'EN DIRECT' ,
+                play : 'Lire la vidéo' ,
             } ,
         } ,
 
@@ -295,6 +299,7 @@ const picture =
             {
                 alt  : 'Vignette vidéo' ,
                 live : 'EN DIRECT' ,
+                play : 'Lire la vidéo' ,
             } ,
         } ,
 
@@ -551,7 +556,9 @@ const picture =
             photo :
             {
                 alt   : 'Gallery photograph' ,
+                edit  : 'Edit' ,
                 likes : '{0} likes' ,
+                share : 'Share' ,
             } ,
 
             positions :
@@ -571,6 +578,7 @@ const picture =
             product :
             {
                 alt   : 'Product' ,
+                like  : 'Add to favourites' ,
                 stock : 'In stock' ,
             } ,
 
@@ -586,6 +594,7 @@ const picture =
             {
                 alt  : 'Video' ,
                 live : 'LIVE' ,
+                play : 'Play the video' ,
             } ,
         } ,
 
@@ -661,6 +670,7 @@ const picture =
             {
                 alt  : 'Video thumbnail' ,
                 live : 'LIVE' ,
+                play : 'Play the video' ,
             } ,
         } ,
 

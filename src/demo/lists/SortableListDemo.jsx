@@ -89,8 +89,8 @@ const SortableListDemo = () =>
                                 title={ song.title }
                                 subtitle={ song.artist }
                                 actions={[
-                                    <Button key="play" size="sm" shape="square" color="ghost" icon={ MdPlayArrow } /> ,
-                                    <Button key="like" size="sm" shape="square" color="ghost" icon={ MdFavorite } /> ,
+                                    <Button key="play" size="sm" shape="square" style="ghost" icon={ MdPlayArrow } title={ `Play ${ song.title }` } /> ,
+                                    <Button key="like" size="sm" shape="square" style="ghost" icon={ MdFavorite } title={ `Like ${ song.title }` } /> ,
                                 ]}
                             />
                         )}

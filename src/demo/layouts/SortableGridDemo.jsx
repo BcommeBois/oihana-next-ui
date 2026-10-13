@@ -173,7 +173,7 @@ const SortableGridDemo = () =>
                                 />
                                 <div className="p-2 flex items-center justify-between">
                                     <span className="text-sm font-semibold">{ photo.title }</span>
-                                    <Button size="xs" shape="square" color="ghost" icon={ MdFavorite } />
+                                    <Button size="xs" shape="square" style="ghost" icon={ MdFavorite } title={ `Like ${ photo.title }` } />
                                 </div>
                             </SortableGridItem>
                         )}

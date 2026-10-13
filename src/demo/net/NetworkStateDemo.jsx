@@ -189,10 +189,10 @@ const NetworkStateDemo = () =>
                             <a className="btn btn-ghost text-xl">Oihana</a>
                         </div>
                         <div className="flex-none gap-2">
-                            <Button size="sm" color="ghost">
+                            <Button size="sm" style="ghost">
                                 Dashboard
                             </Button>
-                            <Button size="sm" color="ghost">
+                            <Button size="sm" style="ghost">
                                 Settings
                             </Button>
                             <NetworkState size={ SM } showType />

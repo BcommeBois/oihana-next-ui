@@ -258,7 +258,7 @@ const PictureDemo = ( { path = 'demo.images.picture' } = {} ) =>
                 </h3>
 
                 <div className="flex gap-2 items-center">
-                    <Button size="sm" color="ghost" icon={ MdRefresh } onClick={ reloadBasic }>
+                    <Button size="sm" style="ghost" icon={ MdRefresh } onClick={ reloadBasic }>
                         { basic.reload }
                     </Button>
 
@@ -744,7 +744,7 @@ const PictureDemo = ( { path = 'demo.images.picture' } = {} ) =>
                             height={ 800 }
                             className="rounded-box overflow-hidden shadow-lg"
                             topLeft={ <Badge color="error" size="lg">-30%</Badge> }
-                            topRight={ <Button size="sm" shape="circle" color="ghost" icon={ MdFavorite } /> }
+                            topRight={ <Button size="sm" shape="circle" style="ghost" icon={ MdFavorite } title={ corners.product?.like } /> }
                             bottomLeft={
                                 <div className="bg-base-100/90 backdrop-blur px-3 py-1 rounded-box">
                                     <div className="text-2xl font-bold text-primary">$349</div>
@@ -772,8 +772,8 @@ const PictureDemo = ( { path = 'demo.images.picture' } = {} ) =>
                             }
                             topRight={
                                 <div className="flex gap-1">
-                                    <Button size="xs" shape="circle" color="ghost" className="bg-black/30 text-white" icon={ MdShare } />
-                                    <Button size="xs" shape="circle" color="ghost" className="bg-black/30 text-white" icon={ MdEdit } />
+                                    <Button size="xs" shape="circle" style="ghost" className="bg-black/30 text-white" icon={ MdShare } title={ corners.photo?.share } />
+                                    <Button size="xs" shape="circle" style="ghost" className="bg-black/30 text-white" icon={ MdEdit } title={ corners.photo?.edit } />
                                 </div>
                             }
                             bottomLeft={
@@ -838,7 +838,7 @@ const PictureDemo = ( { path = 'demo.images.picture' } = {} ) =>
                                 </div>
                             }
                             bottomRight={
-                                <Button size="lg" shape="circle" color="primary" className="opacity-90 hover:opacity-100">
+                                <Button size="lg" shape="circle" color="primary" className="opacity-90 hover:opacity-100" title={ corners.video?.play }>
                                     <MdPlayArrow size={ 32 } />
                                 </Button>
                             }
@@ -908,6 +908,7 @@ const PictureDemo = ( { path = 'demo.images.picture' } = {} ) =>
                                     shape="circle"
                                     color="primary"
                                     className="w-20 h-20 opacity-90 hover:opacity-100 hover:scale-110 transition-all"
+                                    title={ center.video?.play }
                                 >
                                     <MdPlayArrow size={ 48 } />
                                 </Button>
@@ -1040,7 +1041,7 @@ const PictureDemo = ( { path = 'demo.images.picture' } = {} ) =>
                                         </p>
                                         <div className="flex gap-2 justify-center">
                                             <Button color="primary" size="sm">{ center.cta?.more }</Button>
-                                            <Button color="ghost" size="sm" className="text-white">{ center.cta?.shop }</Button>
+                                            <Button style="ghost" size="sm" className="text-white">{ center.cta?.shop }</Button>
                                         </div>
                                     </div>
                                 </div>
@@ -1218,7 +1219,7 @@ const PictureDemo = ( { path = 'demo.images.picture' } = {} ) =>
                 </h3>
 
                 <div className="flex gap-2 items-center">
-                    <Button size="sm" color="ghost" icon={ MdRefresh } onClick={ reloadAnimation }>
+                    <Button size="sm" style="ghost" icon={ MdRefresh } onClick={ reloadAnimation }>
                         { t.reloadAll }
                     </Button>
                 </div>
@@ -1264,7 +1265,7 @@ const PictureDemo = ( { path = 'demo.images.picture' } = {} ) =>
                 </h3>
 
                 <div className="flex gap-2 items-center">
-                    <Button size="sm" color="ghost" icon={ MdRefresh } onClick={ reloadSize }>
+                    <Button size="sm" style="ghost" icon={ MdRefresh } onClick={ reloadSize }>
                         { t.reloadAll }
                     </Button>
                 </div>
@@ -1310,7 +1311,7 @@ const PictureDemo = ( { path = 'demo.images.picture' } = {} ) =>
                 </h3>
 
                 <div className="flex gap-2 items-center">
-                    <Button size="sm" color="ghost" icon={ MdRefresh } onClick={ reloadColor }>
+                    <Button size="sm" style="ghost" icon={ MdRefresh } onClick={ reloadColor }>
                         { t.reloadAll }
                     </Button>
                 </div>

@@ -192,6 +192,7 @@ const ButtonDemo = () =>
                                 on       = { <MdVisibility /> }
                                 onChange = { () => setIsVisible( !isVisible ) }
                                 size     = "lg"
+                                title    = "Visibility"
                             />
                         </div>
                         <div className="flex flex-col items-center gap-2">
@@ -203,6 +204,7 @@ const ButtonDemo = () =>
                                 on       = { <MdLock /> }
                                 onChange = { () => setIsLocked( !isLocked ) }
                                 size     = "lg"
+                                title    = "Lock"
                             />
                         </div>
                         <div className="flex flex-col items-center gap-2">
@@ -211,6 +213,7 @@ const ButtonDemo = () =>
                                 disabled
                                 off      = { <MdClose /> }
                                 on       = { <MdCheck /> }
+                                title    = "Disabled swap"
                             />
                         </div>
                     </div>

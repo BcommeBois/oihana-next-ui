@@ -161,7 +161,7 @@ const PageHeaderDemo = () =>
                             title = "Products"
                             right = {
                                 <Button
-                                    color = "ghost"
+                                    style = "ghost"
                                     icon  = { MdRefresh }
                                     size  = "sm"
                                     onClick = { () => setCount( c => c + 1 ) }
@@ -179,7 +179,7 @@ const PageHeaderDemo = () =>
                             title = "Orders"
                             right = {
                                 <div className="flex items-center gap-2">
-                                    <Button color="ghost"   icon={ MdRefresh } size="sm" shape="square" />
+                                    <Button style="ghost"   icon={ MdRefresh } size="sm" shape="square" title="Refresh" />
                                     <Button color="primary" icon={ MdAdd }     size="sm">New Order</Button>
                                 </div>
                             }
@@ -195,8 +195,8 @@ const PageHeaderDemo = () =>
                             right    = {
                                 <div className="flex items-center gap-2">
                                     <Badge color="success" style="soft">Synced</Badge>
-                                    <Button color="ghost" icon={ MdEdit }    size="sm"  shape="square" />
-                                    <Button color="ghost" icon={ MdSettings } size="sm" shape="square" />
+                                    <Button style="ghost" icon={ MdEdit }    size="sm"  shape="square" title="Edit" />
+                                    <Button style="ghost" icon={ MdSettings } size="sm" shape="square" title="Settings" />
                                 </div>
                             }
                         />
@@ -340,7 +340,7 @@ const PageHeaderDemo = () =>
                         title       = "Settings"
                         description = "Manage your account and preferences."
                         right       = {
-                            <Button color="ghost" icon={ MdSettings } size="sm" />
+                            <Button style="ghost" icon={ MdSettings } size="sm" title="Settings" />
                         }
                     />
                 </div>
@@ -373,7 +373,7 @@ const PageHeaderDemo = () =>
                         description = "Consultez la liste des produits disponibles."
                         right       = {
                             <div className="flex items-center gap-2">
-                                <Button color="ghost"   icon={ MdRefresh } size="sm" />
+                                <Button style="ghost"   icon={ MdRefresh } size="sm" title="Actualiser" />
                                 <Button color="primary" icon={ MdAdd }     size="sm">Ajouter</Button>
                             </div>
                         }
@@ -457,7 +457,7 @@ const PageHeaderDemo = () =>
                         description = "Un titre assez long pour disputer la place aux boutons de droite."
                         right       = {
                             <div className="flex items-center gap-2">
-                                <Button color="ghost"   icon={ MdRefresh } size="sm" />
+                                <Button style="ghost"   icon={ MdRefresh } size="sm" title="Actualiser" />
                                 <Button color="primary" icon={ MdAdd }     size="sm">Ajouter</Button>
                             </div>
                         }
@@ -470,7 +470,7 @@ const PageHeaderDemo = () =>
                         description = "Un titre assez long pour disputer la place aux boutons de droite."
                         right       = {
                             <div className="flex items-center gap-2">
-                                <Button color="ghost"   icon={ MdRefresh } size="sm" />
+                                <Button style="ghost"   icon={ MdRefresh } size="sm" title="Actualiser" />
                                 <Button color="primary" icon={ MdAdd }     size="sm">Ajouter</Button>
                             </div>
                         }
@@ -482,7 +482,7 @@ const PageHeaderDemo = () =>
                         description = "Un titre assez long pour disputer la place aux boutons de droite."
                         right       = {
                             <div className="flex items-center gap-2">
-                                <Button color="ghost"   icon={ MdRefresh } size="sm" />
+                                <Button style="ghost"   icon={ MdRefresh } size="sm" title="Actualiser" />
                                 <Button color="primary" icon={ MdAdd }     size="sm">Ajouter</Button>
                             </div>
                         }

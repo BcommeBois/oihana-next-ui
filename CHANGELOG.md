@@ -38,6 +38,24 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   clickable as a whole, items of a daisyUI `menu`. **`a11y/useButtonType` now reports nothing in
   `src/`**, so its next warning is a real case.
 
+**🔊 Icon buttons that say what they do**
+
+- **A tooltip now names the button that has nothing else to be named by.** A `Button` or a
+  `LinkButton` with no content, no `title` and no i18n name takes its `tooltip` as its
+  `aria-label` : the bubble is drawn by CSS from `data-tip`, which no screen reader reads, so an
+  icon-only button with `tooltip="Search"` was named on screen and silent to a reader. A button
+  with text keeps its text as its name ; a `title` still wins.
+- **`Fab` can be named.** Its trigger — an icon or a letter, rendered as a `div` — had no way to
+  carry a name : it takes **`title`**, and reads « Open actions » / « Ouvrir les actions » from a
+  new **`components.fab`** bundle by default (`path` to change it). **`FabAction` and `FabSlot`
+  take `title`** ; without one, an action is named by its `tooltip`, then by its `label` when that
+  is a string — a side label is a sibling of its button, never its name.
+- The demos name every icon-only button — the actions of the list rows, the page headers, the
+  picture corners, the swap buttons, the colour swatches, the speed-dial actions —, in the
+  language of their page. **And 41 demo buttons written `color="ghost"` now say `style="ghost"`** :
+  `ghost` is a style, not a colour, so they were drawn as plain grey buttons instead of
+  transparent ones. 282 tests.
+
 **💳 Card fields that say when a card cannot be right**
 
 - **New `helpers/validators`** for payment cards, pure and tested : **`isLuhn( value )`** — the checksum every card carries, catching a mistyped digit or two swapped neighbours (modulo 10 like `gs1CheckDigit`, but not the same weights) ; **`getCardBrand( value )`** — the brand from the first digits, `visa`, `mastercard` (51–55 and the 2-series, 2221–2720, which the field did not recognise until now), `amex`, `discover` or `unknown`, with its grouping, its valid lengths and the length of its security code ; **`isCardNumber( value )`** — a length the brand allows, and the checksum ; **`isCardExpiry( 'MM/YY' , { now } )`** — complete, a real month, not past, the month in progress still counting. **11 more tests** (275 in all), on the public test numbers.

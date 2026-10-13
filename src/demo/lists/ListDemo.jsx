@@ -151,8 +151,8 @@ const ListDemo = () =>
                                 title={ song.title }
                                 subtitle={ song.artist }
                                 actions={[
-                                    <Button key="play" size="sm" shape="square" color="ghost" icon={ MdPlayArrow } /> ,
-                                    <Button key="like" size="sm" shape="square" color="ghost" icon={ MdFavorite } /> ,
+                                    <Button key="play" size="sm" shape="square" style="ghost" icon={ MdPlayArrow } title={ `Play ${ song.title }` } /> ,
+                                    <Button key="like" size="sm" shape="square" style="ghost" icon={ MdFavorite } title={ `Like ${ song.title }` } /> ,
                                 ]}
                             />
                         ))}
@@ -184,11 +184,11 @@ const ListDemo = () =>
                         { selectedSongs.length } selected
                     </Badge>
 
-                    <Button size="sm" color="ghost" onClick={ selectAll }>
+                    <Button size="sm" style="ghost" onClick={ selectAll }>
                         Select All
                     </Button>
 
-                    <Button size="sm" color="ghost" onClick={ deselectAll }>
+                    <Button size="sm" style="ghost" onClick={ deselectAll }>
                         Deselect All
                     </Button>
                 </div>
@@ -213,7 +213,7 @@ const ListDemo = () =>
                                 title={ song.title }
                                 subtitle={ song.artist }
                                 actions={
-                                    <Button size="sm" shape="square" color="ghost" icon={ MdPlayArrow } />
+                                    <Button size="sm" shape="square" style="ghost" icon={ MdPlayArrow } title={ `Play ${ song.title }` } />
                                 }
                             />
                         ))}
@@ -257,7 +257,7 @@ const ListDemo = () =>
                                 title={item.title}
                                 subtitle={item.artist}
                                 actions={
-                                    <Button size="sm" shape="square" color="ghost" icon={MdPlayArrow} />
+                                    <Button size="sm" shape="square" style="ghost" icon={MdPlayArrow} title={`Play ${item.title}`} />
                                 }
                             />
                         ))}
@@ -325,7 +325,7 @@ const ListDemo = () =>
                                 }
                                 growColumn={ 3 }
                                 actions={
-                                    <Button size="sm" shape="square" color="ghost" icon={ MdPlayArrow } />
+                                    <Button size="sm" shape="square" style="ghost" icon={ MdPlayArrow } title={ `Play ${ track.title }` } />
                                 }
                             />
                         ))}
@@ -372,8 +372,8 @@ const ListDemo = () =>
                                     </p>
                                 }
                                 actions={[
-                                    <Button key="play" size="sm" shape="square" color="ghost" icon={ MdPlayArrow } /> ,
-                                    <Button key="like" size="sm" shape="square" color="ghost" icon={ MdFavorite } /> ,
+                                    <Button key="play" size="sm" shape="square" style="ghost" icon={ MdPlayArrow } title={ `Play ${ song.title }` } /> ,
+                                    <Button key="like" size="sm" shape="square" style="ghost" icon={ MdFavorite } title={ `Like ${ song.title }` } /> ,
                                 ]}
                             />
                         ))}
@@ -490,9 +490,9 @@ const ListDemo = () =>
                                     </div>
                                 }
                                 actions={[
-                                    <Button key="edit"   size="sm" shape='square' color="ghost" icon={ MdEdit }   /> ,
-                                    <Button key="share"  size="sm" shape='square' color="ghost" icon={ MdShare }  /> ,
-                                    <Button key="delete" size="sm" shape='square' color="ghost" icon={ MdDelete } /> ,
+                                    <Button key="edit"   size="sm" shape='square' style="ghost" icon={ MdEdit }   title={ `Edit ${ user.name }` }   /> ,
+                                    <Button key="share"  size="sm" shape='square' style="ghost" icon={ MdShare }  title={ `Share ${ user.name }` }  /> ,
+                                    <Button key="delete" size="sm" shape='square' style="ghost" icon={ MdDelete } title={ `Delete ${ user.name }` } /> ,
                                 ]}
                             />
                         ))}

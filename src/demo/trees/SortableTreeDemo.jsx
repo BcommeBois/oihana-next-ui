@@ -447,10 +447,10 @@ const SortableTreeDemo = ( { path = 'demo.trees.sortableTree' } = {} ) =>
                 <p className="text-sm opacity-70">{ t.fold.note }</p>
 
                 <div className="flex gap-2">
-                    <Button size="sm" color="ghost" icon={ MdUnfoldMore } onClick={ () => setFoldCollapsed( [] ) }>
+                    <Button size="sm" style="ghost" icon={ MdUnfoldMore } onClick={ () => setFoldCollapsed( [] ) }>
                         { t.fold.expandAll }
                     </Button>
-                    <Button size="sm" color="ghost" icon={ MdUnfoldLess } onClick={ () => setFoldCollapsed( foldFolderIds ) }>
+                    <Button size="sm" style="ghost" icon={ MdUnfoldLess } onClick={ () => setFoldCollapsed( foldFolderIds ) }>
                         { t.fold.collapseAll }
                     </Button>
                 </div>
@@ -504,10 +504,10 @@ const SortableTreeDemo = ( { path = 'demo.trees.sortableTree' } = {} ) =>
                 <p className="text-sm opacity-70">{ t.dynamic.note }</p>
 
                 <div className="flex gap-2 flex-wrap">
-                    <Button size="sm" color="ghost" icon={ MdInsertDriveFile } onClick={ () => addChild( null ) }>
+                    <Button size="sm" style="ghost" icon={ MdInsertDriveFile } onClick={ () => addChild( null ) }>
                         { t.dynamic.addFile }
                     </Button>
-                    <Button size="sm" color="ghost" icon={ MdFolder } onClick={ () => addFolder( null ) }>
+                    <Button size="sm" style="ghost" icon={ MdFolder } onClick={ () => addFolder( null ) }>
                         { t.dynamic.addFolder }
                     </Button>
                 </div>

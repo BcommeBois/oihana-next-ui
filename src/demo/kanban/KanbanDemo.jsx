@@ -274,7 +274,7 @@ const KanbanDemo = () =>
                     columns={ crudBoard }
                     onChange={ next => setCrudBoard( next ) }
                     renderFooter={ column => (
-                        <Button size="sm" color="ghost" icon={ MdAdd } onClick={ () => addCard( column.id ) }>
+                        <Button size="sm" style="ghost" icon={ MdAdd } onClick={ () => addCard( column.id ) }>
                             Add a card
                         </Button>
                     )}

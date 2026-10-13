@@ -18,8 +18,8 @@
  * // Custom children (overrides i18n label)
  * <LinkButton href="/products" icon={MdInventory} color="success">Products</LinkButton>
  *
- * // Circle icon link
- * <LinkButton href="/search" icon={MdSearch} shape="circle" size="sm" />
+ * // Circle icon link : named by its `title`, or else its tooltip
+ * <LinkButton href="/search" icon={MdSearch} shape="circle" size="sm" title="Search" />
  *
  * // External link
  * <LinkButton href="https://example.com" target="_blank">Visit</LinkButton>
@@ -60,7 +60,7 @@ import getButtonClassNames from '../../themes/components/button'
  * @param {import('../../themes/components/button').ButtonStyle} [props.style] - Button style variant.
  * @param {number} [props.tabIndex] - Tab index.
  * @param {string} [props.title] - Accessible title (overrides i18n).
- * @param {string} [props.tooltip] - Tooltip text (overrides i18n).
+ * @param {string} [props.tooltip] - Tooltip text (overrides i18n). On a link with no content and no `title`, it is also the accessible name.
  * @param {import('../../themes/components/tooltip').TooltipAlignment} [props.tooltipAlign] - Tooltip alignment ('start' | 'center' | 'end').
  * @param {string} [props.tooltipClassName] - Tooltip class name.
  * @param {import('../../themes/components/tooltip').TooltipColorValue} [props.tooltipColor] - Tooltip color.
@@ -106,8 +106,8 @@ const LinkButton =
 
     const resolvedColor   = active ? activeColor : color ;
     const resolvedLabel   = children ?? i18n?.label ;
-    const resolvedTitle   = title    ?? i18n?.title ;
     const resolvedTooltip = tooltip  ?? i18n?.tooltip ;
+    const resolvedTitle   = title    ?? i18n?.title ?? ( resolvedLabel == null ? resolvedTooltip : undefined ) ;
 
     return (
         <Tooltip

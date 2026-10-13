@@ -141,11 +141,13 @@ const InputModalDemo = ( { path = 'demo.modals.input' } = {} ) =>
                                 <div className="grid grid-cols-6 gap-2">
                                     { presetColors.map( c => (
                                         <button
-                                            key       = { c }
-                                            onClick   = {() => setTempColor( c )}
-                                            className = "w-full aspect-square rounded"
-                                            style     = {{ backgroundColor: c }}
-                                            type      = "button"
+                                            aria-label = { c }
+                                            key        = { c }
+                                            onClick    = {() => setTempColor( c )}
+                                            className  = "w-full aspect-square rounded"
+                                            style      = {{ backgroundColor: c }}
+                                            title      = { c }
+                                            type       = "button"
                                         />
                                     ))}
                                 </div>

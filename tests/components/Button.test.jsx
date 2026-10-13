@@ -34,3 +34,21 @@ describe( 'Button type' , () =>
         expect( openingTag( renderToStaticMarkup( <Button as="a" href="/file.pdf" type="application/pdf">PDF</Button> ) , 'a' ) ).toContain( 'type="application/pdf"' ) ;
     } ) ;
 } ) ;
+
+describe( 'Button accessible name' , () =>
+{
+    test( 'a button with nothing else to be named by takes its tooltip' , () =>
+    {
+        expect( openingTag( renderToStaticMarkup( <Button tooltip="Search" /> ) , 'button' ) ).toContain( 'aria-label="Search"' ) ;
+    } ) ;
+
+    test( 'a button with text keeps its text as its name' , () =>
+    {
+        expect( openingTag( renderToStaticMarkup( <Button tooltip="Save the draft">Save</Button> ) , 'button' ) ).not.toContain( 'aria-label=' ) ;
+    } ) ;
+
+    test( 'a title wins over the tooltip' , () =>
+    {
+        expect( openingTag( renderToStaticMarkup( <Button title="Find" tooltip="Search" /> ) , 'button' ) ).toContain( 'aria-label="Find"' ) ;
+    } ) ;
+} ) ;

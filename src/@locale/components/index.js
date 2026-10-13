@@ -5,6 +5,7 @@ import barcode    from './barcode'
 import buttons    from './buttons'
 import dates      from './dates'
 import dropdowns  from './dropdowns'
+import fab        from './fab'
 import filter     from './filter'
 import input      from './input'
 import map        from './map'
@@ -29,6 +30,7 @@ const components =
     buttons ,
     dates ,
     dropdowns,
+    fab ,
     filter ,
     input ,
     map ,

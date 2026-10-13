@@ -165,7 +165,7 @@ const LoadingDemo = () =>
                             <Loading animation="dots" size="sm" color="secondary-content" />
                             Processing
                         </Button>
-                        <Button color="accent" shape="square">
+                        <Button color="accent" shape="square" title="Loading">
                             <Loading animation="ring" size="md" color="accent-content" />
                         </Button>
                         <Button style="ghost" disabled>

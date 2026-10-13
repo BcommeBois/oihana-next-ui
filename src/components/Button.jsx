@@ -36,7 +36,7 @@
  * <Button icon={MdSave} color="primary" loading={ saving } loadingLabel="Saving…" onClick={ save }>Save</Button>
  *
  * // Circle icon button
- * // Icon only : `title` becomes the aria-label, and without it the button has no name
+ * // Icon only : `title` becomes the aria-label — or, without one, the tooltip
  * <Button icon={MdSearch} shape="circle" size="sm" title="Search" />
  *
  * // As link
@@ -98,7 +98,7 @@ const SPINNER_SIZES =
  * @param {import('../themes/components/button').ButtonStyle} [props.style] - Button style variant.
  * @param {number} [props.tabIndex] - Tab index.
  * @param {string} [props.title] - Accessible title (overrides i18n).
- * @param {string} [props.tooltip] - Tooltip text (overrides i18n).
+ * @param {string} [props.tooltip] - Tooltip text (overrides i18n). On a button with no content and no `title`, it is also the accessible name : a reader hears what a sighted user sees on hover. A button with text keeps its text as its name.
  * @param {import('../themes/components/tooltip').TooltipAlignment} [props.tooltipAlign] - Tooltip alignment ('start' | 'center' | 'end').
  * @param {string} [props.tooltipClassName] - Tooltip class name.
  * @param {import('../themes/components/tooltip').TooltipColorValue} [props.tooltipColor] - Tooltip color.
@@ -150,8 +150,12 @@ const Button =
 {
     const i18n = useI18n( path , {} , false ) ;
 
-    const resolvedTitle   = title   ?? i18n?.title ;
+    const resolvedLabel   = children ?? i18n?.label ;
     const resolvedTooltip = tooltip ?? i18n?.tooltip ;
+
+    // The tooltip names a button that has nothing else to be named by : a
+    // `data-tip` is drawn by CSS, never read out.
+    const resolvedTitle = title ?? i18n?.title ?? ( resolvedLabel == null ? resolvedTooltip : undefined ) ;
     const resolvedColor   = active ? activeColor : color ;
 
     const Component = as || 'button' ;
@@ -225,7 +229,7 @@ const Button =
                                 style     = { iconStyle }
                             />
                 }
-                { loading && loadingLabel !== undefined ? loadingLabel : ( children ?? i18n?.label ) }
+                { loading && loadingLabel !== undefined ? loadingLabel : resolvedLabel }
             </Component>
         </Tooltip>
     ) ;

@@ -300,7 +300,7 @@ const CRUDDemo = ( { path = 'demo.modals.crud' } = {} ) =>
                 footerOptions={
                     <Button
                         size="sm"
-                        color="ghost"
+                        style="ghost"
                         onClick={ editModal.reset }
                         disabled={ !editModal.hasChanges }
                     >

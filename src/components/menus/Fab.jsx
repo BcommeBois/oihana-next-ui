@@ -67,6 +67,9 @@ import { cloneElement } from 'react' ;
 
 import Button from '../Button' ;
 
+import NO_LOCALE from '../../contexts/locale/noLocale' ;
+import useI18n   from '../../contexts/locale/useI18n' ;
+
 import getFabClasses , { FAB_CLOSE , FAB_MAIN_ACTION } from '../../themes/components/fab' ;
 
 /**
@@ -78,6 +81,7 @@ import getFabClasses , { FAB_CLOSE , FAB_MAIN_ACTION } from '../../themes/compon
  * @property {React.ReactNode} [label] - Side label shown next to the button (vertical mode); used as the tooltip in `flower` mode when no `tooltip` is given.
  * @property {Function} [onClick] - Click handler.
  * @property {React.ReactNode} [text] - Inline button content (e.g. a letter).
+ * @property {string} [title] - Accessible name. Defaults to `tooltip`, then to `label` when it is a string — an icon-only action needs one of the three.
  * @property {string} [tooltip] - Tooltip text (mostly for `flower` mode).
  * @property {import('../../themes/components/tooltip').TooltipPosition} [tooltipPosition] - Tooltip placement.
  */
@@ -89,6 +93,7 @@ import getFabClasses , { FAB_CLOSE , FAB_MAIN_ACTION } from '../../themes/compon
  * @property {React.ReactNode} [label] - Side label (vertical mode only).
  * @property {Function} [onClick] - Click handler.
  * @property {React.ReactNode} [text] - Inline button content.
+ * @property {string} [title] - Accessible name. Defaults to `label` when it is a string.
  */
 
 /**
@@ -104,7 +109,9 @@ import getFabClasses , { FAB_CLOSE , FAB_MAIN_ACTION } from '../../themes/compon
  * @param {React.ReactNode} [props.label] - Trigger inline content (e.g. a letter).
  * @param {FabSlot} [props.mainAction] - Optional main-action button shown open (mutually exclusive with `closeButton`).
  * @param {import('../../themes/layout/position').PositionValue} [props.position] - CSS position (default 'fixed'; use 'absolute' / 'relative' to embed).
+ * @param {string} [props.path='components.fab'] - i18n path the trigger's default name (`open`) is read from.
  * @param {import('../../themes/components/button').ButtonSize} [props.size='lg'] - Size applied to the trigger and every action button.
+ * @param {string} [props.title] - Accessible name of the trigger. Defaults to the i18n `open` key read at `path`, then `'Open actions'`.
  * @returns {React.JSX.Element}
  */
 const Fab =
@@ -119,12 +126,19 @@ const Fab =
     icon ,
     label ,
     mainAction ,
+    path = 'components.fab' ,
     position ,
     size = 'lg' ,
+    title ,
 
     ...rest
 }) =>
 {
+    const { open = 'Open actions' } = useI18n( path , NO_LOCALE , false ) ;
+
+    // A side label is a sibling of its button, not its name : only a string can stand in.
+    const nameOf = value => ( typeof value === 'string' ? value : undefined ) ;
+
     const classes = getFabClasses({ className , flower , position } ) ;
 
     // Composable escape hatch — the caller controls the whole structure.
@@ -151,6 +165,7 @@ const Fab =
                 size  = { size }
                 onClick = { slot.onClick }
                 className = { flower ? slotClass : undefined }
+                title = { slot.title ?? nameOf( slot.label ) }
             >
                 { slot.text }
             </Button>
@@ -183,6 +198,7 @@ const Fab =
             label : actionLabel ,
             onClick ,
             text ,
+            title ,
             tooltip ,
             tooltipPosition ,
         } = action ;
@@ -197,6 +213,7 @@ const Fab =
                 shape           = { circle ? 'circle' : undefined }
                 size            = { size }
                 onClick         = { onClick }
+                title           = { title ?? tooltip ?? nameOf( actionLabel ) }
                 tooltip         = { flower ? ( tooltip ?? actionLabel ) : tooltip }
                 tooltipPosition = { tooltipPosition }
             >
@@ -232,6 +249,7 @@ const Fab =
                 icon     = { icon }
                 shape    = "circle"
                 size     = { size }
+                title    = { title ?? open }
             >
                 { label }
             </Button>

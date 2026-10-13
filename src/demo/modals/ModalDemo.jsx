@@ -614,7 +614,7 @@ const ModalDemo = ( { path = 'demo.modals.modal' } = {} ) =>
                     disagree      = { t.customFooter.decline }
                     footerOptions =
                     {
-                        <Button size="sm" color="ghost">
+                        <Button size="sm" style="ghost">
                             { t.customFooter.learn }
                         </Button>
                     }

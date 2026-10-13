@@ -69,9 +69,9 @@ const FabDemo = () =>
                         position = "absolute"
                         actions  =
                         {[
-                            { id : 'cam'     , icon : MdPhotoCamera } ,
-                            { id : 'gallery' , icon : MdPhotoLibrary } ,
-                            { id : 'voice'   , icon : MdMic } ,
+                            { id : 'cam'     , icon : MdPhotoCamera  , title : 'Camera'  } ,
+                            { id : 'gallery' , icon : MdPhotoLibrary , title : 'Gallery' } ,
+                            { id : 'voice'   , icon : MdMic          , title : 'Voice'   } ,
                         ]}
                     />
                 </Frame>
@@ -209,7 +209,7 @@ const FabDemo = () =>
                         icon       = { MdAdd }
                         flower
                         position   = "absolute"
-                        mainAction = {{ icon : MdEdit , color : 'primary' }}
+                        mainAction = {{ icon : MdEdit , color : 'primary' , title : 'Edit' }}
                         actions    =
                         {[
                             { id : 'cam'     , icon : MdPhotoCamera  , label : 'Camera'  , tooltipPosition : 'left' } ,
