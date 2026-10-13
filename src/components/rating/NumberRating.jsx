@@ -46,7 +46,7 @@ import cn               from '../../themes/helpers/cn' ;
  * @param {import('../../themes/components/button').ButtonColorValue} [props.color] - Inactive button color. Without one, the inactive buttons are `ghost`.
  * @param {import('../../themes/components/button').ButtonColorValue} [props.activeColor='primary'] - Active button color
  * @param {import('../../themes/components/button').ButtonStyle} [props.style] - Inactive button style: 'ghost', 'outline', 'soft', etc. Defaults to `'ghost'` when no `color` is given, none otherwise.
- * @param {import('../../themes/components/button').ButtonStyle} [props.activeStyle] - Active button style
+ * @param {import('../../themes/components/button').ButtonStyle} [props.activeStyle] - Active button style. Mostly without effect : daisyUI fills a pressed button (`[aria-pressed=true]`) with its colour whatever its style — `ghost`, `outline` or `soft` alike. Pick content that reads on `activeColor` instead (an `activeIconColor` of `IconRating`, for one).
  * @param {boolean} [props.readOnly=false] - Read-only mode
  * @param {boolean} [props.allowClear=true] - Allow clearing by clicking active button
  * @param {string | number | import('../../themes/sizing/sizes').ResponsiveSize} [props.gap] - Gap between buttons
