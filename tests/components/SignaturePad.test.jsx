@@ -53,6 +53,23 @@ describe( 'SignaturePad' , () =>
         expect( renderToStaticMarkup( <SignaturePad expandable readOnly value={ signature } /> ) ).not.toContain( 'absolute end-1 top-1' ) ;
     } ) ;
 
+    test( 'the guide : a cross at the start of the line, a box, or nothing ; gone once signed' , () =>
+    {
+        expect( renderToStaticMarkup( <SignaturePad /> ) ).toContain( '×' ) ;
+        expect( renderToStaticMarkup( <SignaturePad /> ) ).toContain( 'border-b border-dashed' ) ;
+        expect( renderToStaticMarkup( <SignaturePad guide="box" /> ) ).toContain( 'inset-3' ) ;
+        expect( renderToStaticMarkup( <SignaturePad guide="none" /> ) ).not.toContain( '×' ) ;
+        expect( renderToStaticMarkup( <SignaturePad value={ signature } /> ) ).not.toContain( '×' ) ;
+    } ) ;
+
+    test( 'a turned pad turns its guide, and nothing else in the markup' , () =>
+    {
+        const markup = renderToStaticMarkup( <SignaturePad rotate={ 90 } /> ) ;
+
+        expect( markup ).toContain( 'rotate(90deg)' ) ;
+        expect( markup ).toContain( 'role="img"' ) ;
+    } ) ;
+
     test( 'an error names itself for the pad' , () =>
     {
         const markup = renderToStaticMarkup( <SignaturePad error="Signature requise" id="sig" /> ) ;

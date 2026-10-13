@@ -40,6 +40,18 @@ const signature =
             none   : 'Le formulaire a envoyé une valeur vide.' ,
         } ,
 
+        guide :
+        {
+            title      : 'Le guide, et le pad tourné' ,
+            text       : 'Ce qu’un pad vide montre : une ligne avec le « × » du début, un cadre, ou rien. Le guide disparaît au premier trait.' ,
+            line       : 'guide="line"' ,
+            box        : 'guide="box"' ,
+            none       : 'guide="none"' ,
+            rotateText : 'Un pad haut sur un téléphone tenu droit : rotate={ 90 } l’affiche tourné d’un quart — on tourne l’appareil et on signe en large. La valeur, elle, est droite : la lecture seule à droite la montre telle qu’elle est stockée et exportée.' ,
+            rotated    : 'rotate={ 90 }' ,
+            upright    : 'La même valeur, droite' ,
+        } ,
+
         keep :
         {
             title    : 'D’un rechargement à l’autre' ,
@@ -89,6 +101,18 @@ const signature =
             submit : 'Send' ,
             sent   : 'The form sent « {0} »: {1} characters, starting with {2}' ,
             none   : 'The form sent an empty value.' ,
+        } ,
+
+        guide :
+        {
+            title      : 'The guide, and the turned pad' ,
+            text       : 'What an empty pad shows: a line with the « × » at its start, a box, or nothing. The guide goes at the first stroke.' ,
+            line       : 'guide="line"' ,
+            box        : 'guide="box"' ,
+            none       : 'guide="none"' ,
+            rotateText : 'A tall pad on a phone held upright: rotate={ 90 } shows it turned by a quarter — turn the device and sign wide. The value stays upright: the read-only pad on the right shows it as it is stored and exported.' ,
+            rotated    : 'rotate={ 90 }' ,
+            upright    : 'The same value, upright' ,
         } ,
 
         keep :

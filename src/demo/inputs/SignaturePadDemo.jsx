@@ -54,6 +54,7 @@ const SignaturePadDemo = ( { path = 'demo.inputs.signature' } = {} ) =>
     const [ png      , setPng      ] = useState( null ) ;
     const [ sent     , setSent     ] = useState( null ) ;
     const [ kept     , setKept     ] = useState( null ) ;
+    const [ turned   , setTurned   ] = useState( null ) ;
     const [ restored , setRestored ] = useState( false ) ;
 
     // Across a reload : what was signed is read back from the browser's storage on mount.
@@ -209,6 +210,24 @@ const SignaturePadDemo = ( { path = 'demo.inputs.signature' } = {} ) =>
                         { sent ? format( t.form?.sent ?? '{0} {1} {2}' , 'signature' , sent.length , `${ sent.slice( 0 , 30 ) }…` ) : t.form?.none }
                     </p>
                 ) }
+            </section>
+
+            <Divider />
+
+            {/* Guide and rotation */}
+            <section className="flex flex-col gap-3">
+                <h3 className="text-xl font-semibold">{ t.guide?.title }</h3>
+                <p className="text-sm text-base-content/70">{ t.guide?.text }</p>
+                <div className="grid gap-4 md:grid-cols-3">
+                    <SignaturePad guide="line" label={ t.guide?.line } padClassName="h-28" showClear={ false } showUndo={ false } />
+                    <SignaturePad guide="box" label={ t.guide?.box } padClassName="h-28" showClear={ false } showUndo={ false } />
+                    <SignaturePad guide="none" label={ t.guide?.none } padClassName="h-28" showClear={ false } showUndo={ false } />
+                </div>
+                <p className="text-sm text-base-content/70">{ t.guide?.rotateText }</p>
+                <div className="grid gap-4 md:grid-cols-[14rem_1fr]">
+                    <SignaturePad label={ t.guide?.rotated } onChange={ setTurned } padClassName="h-80" rotate={ 90 } value={ turned } />
+                    <SignaturePad label={ t.guide?.upright } padClassName="h-40" readOnly value={ turned } />
+                </div>
             </section>
 
             <Divider />

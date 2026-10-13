@@ -350,6 +350,9 @@ time** — `[ x , y , pressure , t ]`, milliseconds since the first point —, s
 can `replay` a signature at its real speed (still where motion is reduced), `onEnd` gives its
 `duration`, and the speed and pressure are there if a proof ever asks whether a hand drew it.
 A signature stored before times were kept is still valid : `t` is optional everywhere.
+`guide` says what an empty pad shows — a baseline with a « × » at its start, a dashed box, or
+nothing —, and `rotate` (`90`, `-90`) turns the pad by a quarter on screen while the value
+stays upright : a tall pad on a phone held upright, the device turned, a wide signature.
 **Across a reload**, the value keeps as it is : write it to `helpers/storage` on `onEnd`,
 read it back as `defaultValue`, remove it once sent — the demo does.
 

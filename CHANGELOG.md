@@ -43,6 +43,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   still where motion is reduced), `onEnd( signature , { duration , points } )` says how long
   it took, and a signature stored without times stays valid. `helpers/signature/frameAt` and
   `signatureDuration` are the pure part, tested ; `isSignatureEmpty` takes `minPoints`.
+- **`guide`** says what an empty pad shows — `'line'`, a baseline with a « × » at its start,
+  `'box'`, a dashed frame, or `'none'` — gone at the first stroke. **`rotate`** (`90`, `-90`)
+  shows the pad turned by a quarter : a tall pad on a phone held upright becomes a wide one
+  once the device is turned, and **the value stays upright** — signed, stored and exported as
+  if the pad had been wide ; the guide turns with it.
 - **New `helpers/signature`** — pure, tested : `strokesToPaths` (the SVG paths of the strokes,
   the same for the screen, the SVG, the PNG and the PDF), `signatureToSvg`, `signatureToPng`
   (browser), `scaleSignature`, `isSignatureEmpty`.
@@ -54,7 +59,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   document, sharp at any zoom and on any printer, where a PNG shows its pixels.
 - The inputs page gains **Signature** under « specialized » : the pad, its PNG and SVG beside
   it, the value, a read-only one that replays, a form that requires it and opens it full
-  screen, and one kept across a reload. The **Logistics › Receiving scenario** now asks the
+  screen, the three guides and a turned pad beside the same value upright, and one kept across
+  a reload. The **Logistics › Receiving scenario** now asks the
   receiver's signature — required, full screen at hand — before the receipt is confirmed, binds it to the digest of the lines,
   the time and the strokes, and offers the **receipt as a PDF** — the pallet's barcode, the
   lines, the signature as vectors, the digest printed under it (`src/demo/documents/pdf/ReceiptDocument`,

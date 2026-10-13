@@ -29,6 +29,9 @@
  *
  * The canvas is drawn at the device's pixel ratio and follows the size of
  * its box ; a value signed on another pad is scaled to fit it, and centred.
+ * `rotate` turns the pad by a quarter on screen — a tall pad in a phone held
+ * upright becomes a wide one once the device is turned — while the value is
+ * signed, stored and exported upright, as if the pad had been wide.
  * The pointer is captured on press, so a stroke that leaves the pad goes
  * on, and the pad takes no scroll gesture (`touch-action : none`). One
  * cannot sign with a keyboard, and the pad does not pretend one can : it is
@@ -43,6 +46,7 @@
  * @param {?import('../../helpers/signature/scaleSignature').Signature} [props.defaultValue] - The signature at first (uncontrolled).
  * @param {boolean} [props.disabled=false]
  * @param {string} [props.error] - Error message under the pad. Takes over the pad's own messages.
+ * @param {'line'|'box'|'none'} [props.guide='line'] - What an empty pad shows : a baseline with a « × » at its start, a dashed box, or nothing.
  * @param {boolean} [props.expandable=false] - A button that opens the pad over the whole window.
  * @param {React.ReactNode} [props.expandTitle] - The title of that window. Defaults to the bundle's « Sign full screen ».
  * @param {'png'|'svg'|'json'} [props.format='png'] - What the hidden input sends with a form : a PNG data url, an SVG document, or the strokes.
@@ -60,6 +64,7 @@
  * @param {React.Ref} [props.ref] - A handle : `clear()`, `undo()`, `isEmpty()`, `replay()`, `expand()`, `toSvg( options )`, `toPng( options )`, `toDataURL()`, `canvas`.
  * @param {boolean} [props.replay=false] - Read-only : replays the signature at its own speed when it becomes true, and on mount if it is. Still where motion is reduced, or no point carries a time.
  * @param {boolean} [props.required=false] - The form waits for a signature.
+ * @param {0|90|-90} [props.rotate=0] - Shows the pad turned by a quarter : a tall pad on a phone held upright becomes a wide one for a hand that turns the device, and the value stays upright.
  * @param {boolean} [props.showClear=true] - The « Clear » button.
  * @param {boolean} [props.showUndo=true] - The « Undo » button.
  * @param {number} [props.thickness=3] - The pen's width, in pixels.
@@ -131,6 +136,58 @@ const fitSignature = ( signature , box ) =>
 
 const points = signature => ( signature?.strokes ?? [] ).reduce( ( sum , stroke ) => sum + stroke.length , 0 ) ;
 
+/** The pad's own box : the screen's, turned by `rotate`. */
+const logicalBox = ( size , rotate ) => ( rotate === 0 ? size : { height : size.width , width : size.height } ) ;
+
+/** A screen point of the surface in the pad's own coordinates. */
+const toLogical = ( [ sx , sy , pressure , t ] , size , rotate ) =>
+{
+    if ( rotate === 90 )  return [ sy , size.width - sx , pressure , t ] ;
+    if ( rotate === -90 ) return [ size.height - sy , sx , pressure , t ] ;
+    return [ sx , sy , pressure , t ] ;
+} ;
+
+/** Turns the canvas so the pad's own coordinates draw in place. */
+const turn = ( context , size , rotate ) =>
+{
+    if ( rotate === 90 )
+    {
+        context.translate( size.width , 0 ) ;
+        context.rotate( Math.PI / 2 ) ;
+    }
+    else if ( rotate === -90 )
+    {
+        context.translate( 0 , size.height ) ;
+        context.rotate( -Math.PI / 2 ) ;
+    }
+} ;
+
+/** What an empty pad shows : a baseline with a cross at its start, a dashed box, or nothing. */
+const Guide = ( { guide , placeholder } ) =>
+{
+    if ( guide === 'none' )
+    {
+        return null ;
+    }
+
+    if ( guide === 'box' )
+    {
+        return (
+            <div aria-hidden="true" className="pointer-events-none absolute inset-3 flex items-center justify-center rounded-box border border-dashed border-base-content/30 text-sm text-base-content/40">
+                <span className="absolute bottom-2 left-3 text-base text-base-content/30">×</span>
+                { placeholder }
+            </div>
+        ) ;
+    }
+
+    return (
+        <div aria-hidden="true" className="pointer-events-none absolute inset-x-6 bottom-6 border-b border-dashed border-base-content/30 pb-1 text-center text-sm text-base-content/40">
+            <span className="absolute -left-1 bottom-1 text-base text-base-content/30">×</span>
+            { placeholder }
+        </div>
+    ) ;
+} ;
+
 /**
  * The surface : the canvas, its size, its ink, the strokes drawn and the
  * one under the pointer. The field below and the full-window pad share it.
@@ -145,11 +202,13 @@ const Surface =
     describedBy ,
     disabled ,
     frame ,
+    guide ,
     id ,
     onInk ,
     onStroke ,
     placeholder ,
     readOnly ,
+    rotate = 0 ,
     thickness ,
     value ,
 }) =>
@@ -256,12 +315,15 @@ const Surface =
         context.clearRect( 0 , 0 , size.width , size.height ) ;
         context.fillStyle = ink ;
 
-        const shown = frame === null || frame === undefined ? value : frameAt( value , frame ) ;
+        const shown   = frame === null || frame === undefined ? value : frameAt( value , frame ) ;
+        const logical = logicalBox( size , rotate ) ;
+
+        turn( context , size , rotate ) ;
 
         // The value is drawn in its own units under a transform, so the pen scales with it.
         if ( shown?.width && shown?.height )
         {
-            const { dx , dy , scale } = fit( shown , size ) ;
+            const { dx , dy , scale } = fit( shown , logical ) ;
 
             context.save() ;
             context.translate( dx , dy ) ;
@@ -277,13 +339,13 @@ const Surface =
 
         if ( live.current )
         {
-            for ( const d of strokesToPaths( { height : size.height , strokes : [ live.current ] , width : size.width } , { size : thickness } ) )
+            for ( const d of strokesToPaths( { ...logical , strokes : [ live.current ] } , { size : thickness } ) )
             {
                 context.fill( new Path2D( d ) ) ;
             }
         }
     }
-    , [ frame , ink , size , thickness , value ] ) ;
+    , [ frame , ink , rotate , size , thickness , value ] ) ;
 
     useEffect( draw , [ draw ] ) ;
 
@@ -299,7 +361,7 @@ const Surface =
 
         pointer.current   = event.pointerId ;
         startedAt.current = event.timeStamp ;
-        live.current      = [ point( event , event.currentTarget.getBoundingClientRect() , startedAt.current ) ] ;
+        live.current      = [ toLogical( point( event , event.currentTarget.getBoundingClientRect() , startedAt.current ) , size , rotate ) ] ;
     } ;
 
     const onPointerMove = event =>
@@ -314,7 +376,7 @@ const Surface =
 
         for ( const sample of events )
         {
-            live.current.push( point( sample , rect , startedAt.current ) ) ;
+            live.current.push( toLogical( point( sample , rect , startedAt.current ) , size , rotate ) ) ;
         }
 
         draw() ;
@@ -335,10 +397,11 @@ const Surface =
         if ( stroke?.length > 0 )
         {
             // A value signed on another pad is brought to this one, as it is shown, before the stroke joins it.
-            const base   = value && !empty ? fitSignature( value , size ) : { height : size.height , strokes : [] , width : size.width } ;
-            const offset = base.strokes.length > 0 ? signatureDuration( base ) + PAUSE : 0 ;
+            const logical = logicalBox( size , rotate ) ;
+            const base    = value && !empty ? fitSignature( value , logical ) : { ...logical , strokes : [] } ;
+            const offset  = base.strokes.length > 0 ? signatureDuration( base ) + PAUSE : 0 ;
 
-            onStroke( { height : size.height , strokes : [ ...base.strokes , stroke.map( ( [ x , y , pressure , t ] ) => [ x , y , pressure , t + offset ] ) ] , width : size.width } ) ;
+            onStroke( { ...logical , strokes : [ ...base.strokes , stroke.map( ( [ x , y , pressure , t ] ) => [ x , y , pressure , t + offset ] ) ] } ) ;
         }
         else
         {
@@ -369,9 +432,17 @@ const Surface =
             <canvas className="block h-full w-full" ref={ canvas } style={ { color } } />
 
             { empty && !readOnly && (
-                <div aria-hidden="true" className="pointer-events-none absolute inset-x-6 bottom-6 border-b border-dashed border-base-content/30 pb-1 text-center text-sm text-base-content/40">
-                    { placeholder }
-                </div>
+                rotate === 0
+                    ? <Guide guide={ guide } placeholder={ placeholder } />
+                    : (
+                        <div
+                            aria-hidden = "true"
+                            className   = "pointer-events-none absolute left-1/2 top-1/2"
+                            style       = { { height : size.width , transform : `translate(-50%, -50%) rotate(${ rotate }deg)` , width : size.height } }
+                        >
+                            <Guide guide={ guide } placeholder={ placeholder } />
+                        </div>
+                    )
             ) }
 
             { children }
@@ -416,6 +487,7 @@ const SignaturePad =
     expandable = false ,
     expandTitle ,
     format = 'png' ,
+    guide = 'line' ,
     helper ,
     id ,
     label ,
@@ -430,6 +502,7 @@ const SignaturePad =
     ref ,
     replay = false ,
     required = false ,
+    rotate = 0 ,
     showClear = true ,
     showUndo = true ,
     thickness = 3 ,
@@ -644,11 +717,13 @@ const SignaturePad =
                 describedBy = { describedBy }
                 disabled    = { disabled }
                 frame       = { frame }
+                guide       = { guide }
                 id          = { fieldId }
                 onInk       = { setInk }
                 onStroke    = { onStroke }
                 placeholder = { placeholder ?? labels.signHere }
                 readOnly    = { readOnly }
+                rotate      = { rotate }
                 thickness   = { thickness }
                 value       = { value }
             >
@@ -700,13 +775,15 @@ const SignaturePad =
                     ref   = { modalRef }
                     title = { expandTitle ?? labels.expand }
                 >
-                    <RotateHint text={ labels.rotate } />
+                    { rotate === 0 && <RotateHint text={ labels.rotate } /> }
                     <Surface
                         ariaLabel   = { nameOfPad }
                         className   = "min-h-0 flex-1"
                         color       = { color }
+                        guide       = { guide }
                         onStroke    = { setDraft }
                         placeholder = { placeholder ?? labels.signHere }
+                        rotate      = { rotate }
                         thickness   = { thickness }
                         value       = { draft }
                     />
