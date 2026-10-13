@@ -83,6 +83,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   leaves that full screen alone, through the Keyboard Lock API where it exists (Chrome, Edge) ;
   elsewhere one `Escape` closes both — the browser keeps the `keydown` of Escape for itself in
   its full screen, only the `keyup` reaches the page.
+- **`PdfPanel`** : the viewer in a `SidePanel` — anchored to the end of the screen on a desktop,
+  the whole screen on a phone — the shape of an invoice opened from its row. It opens with
+  `useModal`, takes every prop of `PdfViewer`, titles itself after the document, and pins the
+  application's actions under the viewer through `footerNode` ; `viewerRef` reaches the viewer's
+  handle. The demo app adds a route, `/api/documents/sample`, that sends the document only with
+  an `Authorization` header : what `source={ { url , headers } }` is for.
 - **`DocumentFrame`** : the loading, failed (with retry), empty and engine-missing states — the
   `ChartFrame` of the documents. Without `react-pdf`, the viewer says so and offers « Open in a
   tab », which needs no engine.

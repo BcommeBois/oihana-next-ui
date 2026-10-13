@@ -9,6 +9,7 @@ installs nothing.
 |---|---|
 | `PdfViewer` | the viewer : a document, its pages, its toolbar |
 | `PdfToolbar` | the controls, drawn by the viewer or by you inside it |
+| `PdfPanel` | the viewer in a side panel — full screen on a phone |
 | `DocumentFrame` | the four states a viewer needs : loading, failed, empty, engine missing |
 | `components/documents/engine` | the one module that names `react-pdf` ; `preloadPdf()`, `loadPdf()` |
 | `helpers/pdf` | `toPdfSource`, `nextZoom`, `mostVisiblePage` — pure, tested |
@@ -113,6 +114,32 @@ open pdf.js document) for a button that lives outside it.
 
 The words — the toolbar's names, the states, the password dialog — come from the
 `components.document` bundle (fr / en) ; `path` points at another.
+
+### In a panel
+
+`PdfPanel` is the shape of a document opened from a list : a `SidePanel` anchored to the end
+of the screen on a desktop, the whole screen on a phone (`fullScreenBreakpoint="sm"`), with the
+viewer inside. It opens and closes as every modal does, with `useModal`, takes every prop of
+`PdfViewer`, titles itself after the document, and pins the application's actions under the
+viewer through `footerNode` :
+
+```jsx
+import PdfPanel from 'oihana-next-ui/components/documents/PdfPanel' ;
+import useModal from 'oihana-next-ui/components/modals/hooks/useModal' ;
+
+const { modalRef , open , close } = useModal() ;
+const viewer = useRef( null ) ;
+
+<Button onClick={ open }>Open the invoice</Button>
+
+<PdfPanel
+    fileName   = "facture-2026-0042.pdf"
+    footerNode = { <Button onClick={ () => viewer.current?.download() }>Download</Button> }
+    ref        = { modalRef }
+    source     = { { url , headers : { Authorization : `Bearer ${ token }` } } }
+    viewerRef  = { viewer }
+/>
+```
 
 ### Without the engine
 

@@ -43,6 +43,22 @@ const viewer =
             rendered : '{0} page(s) dessinée(s) sur {1}' ,
         } ,
 
+        panel :
+        {
+            title    : 'Dans un panneau' ,
+            text     : 'PdfPanel : la visionneuse dans un panneau latéral sur ordinateur, plein écran sous sm. Il s’ouvre comme toute modale, prend les props de la visionneuse, et un footerNode épingle les actions de l’application sous le document.' ,
+            open     : 'Ouvrir dans un panneau' ,
+            download : 'Télécharger' ,
+            close    : 'Fermer' ,
+        } ,
+
+        api :
+        {
+            title  : 'Un PDF derrière une API' ,
+            text   : 'La route /api/documents/sample du lab n’envoie le document qu’avec l’en-tête Authorization. La visionneuse reçoit { url , headers } : pdf.js envoie l’en-tête lui-même et garde ses requêtes par plages. Sans l’en-tête, la route répond 401 et la visionneuse le dit.' ,
+            header : 'Envoyer l’en-tête' ,
+        } ,
+
         secret :
         {
             title : 'Un PDF protégé' ,
@@ -88,6 +104,22 @@ const viewer =
             title    : 'Forty pages' ,
             text     : 'Scroll: pages are drawn as they come near and freed as they go. The counter says how many are drawn right now.' ,
             rendered : '{0} page(s) drawn out of {1}' ,
+        } ,
+
+        panel :
+        {
+            title    : 'In a panel' ,
+            text     : 'PdfPanel: the viewer in a side panel on a desktop, full screen below sm. It opens like any modal, takes the viewer’s props, and a footerNode pins the application’s actions under the document.' ,
+            open     : 'Open in a panel' ,
+            download : 'Download' ,
+            close    : 'Close' ,
+        } ,
+
+        api :
+        {
+            title  : 'A PDF behind an API' ,
+            text   : 'The lab’s route /api/documents/sample sends the document only with the Authorization header. The viewer is given { url , headers }: pdf.js sends the header itself and keeps its range requests. Without the header the route answers 401, and the viewer says so.' ,
+            header : 'Send the header' ,
         } ,
 
         secret :

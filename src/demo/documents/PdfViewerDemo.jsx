@@ -1,6 +1,6 @@
 'use client' ;
 
-import { useCallback , useEffect , useState } from 'react' ;
+import { useCallback , useEffect , useMemo , useRef , useState } from 'react' ;
 
 import format from 'vegas-js-core/src/strings/fastformat' ;
 
@@ -14,7 +14,10 @@ import SegmentedControl from '@/components/SegmentedControl' ;
 import Toggle           from '@/components/checkboxes/Toggle' ;
 import FileDropzone     from '@/components/media/FileDropzone' ;
 
+import PdfPanel  from '@/components/documents/PdfPanel' ;
 import PdfViewer from '@/components/documents/PdfViewer' ;
+
+import useModal from '@/components/modals/hooks/useModal' ;
 
 import { loadEngine } from '@/components/documents/engine' ;
 
@@ -23,6 +26,7 @@ import useI18n from '@/contexts/locale/useI18n' ;
 const SAMPLE = '/documents/sample.pdf' ;
 const LONG   = '/documents/long.pdf' ;
 const SECRET = '/documents/secret.pdf' ;
+const API    = '/api/documents/sample' ;
 
 const MB = 1024 * 1024 ;
 
@@ -45,6 +49,8 @@ const PdfViewerDemo = ( { path = 'demo.documents.viewer' } = {} ) =>
     const dropped      = t.dropped ?? {} ;
     const long         = t.long    ?? {} ;
     const secret       = t.secret  ?? {} ;
+    const panel        = t.panel   ?? {} ;
+    const api          = t.api     ?? {} ;
 
     const [ version , setVersion ] = useState( null ) ;
     const [ missing , setMissing ] = useState( false ) ;
@@ -67,6 +73,12 @@ const PdfViewerDemo = ( { path = 'demo.documents.viewer' } = {} ) =>
     const onDrop = useCallback( files => setFile( files[ 0 ]?.file ?? files[ 0 ] ?? null ) , [] ) ;
 
     const [ locked , setLocked ] = useState( false ) ;
+
+    const { modalRef , open : openPanel , close : closePanel } = useModal() ;
+    const panelViewer = useRef( null ) ;
+
+    const [ withHeader , setWithHeader ] = useState( true ) ;
+    const guarded = useMemo( () => ( withHeader ? { url : API , headers : { Authorization : 'Bearer lab' } } : { url : API } ) , [ withHeader ] ) ;
 
     const [ drawn , setDrawn ] = useState( 0 ) ;
     const [ total , setTotal ] = useState( 0 ) ;
@@ -136,6 +148,30 @@ const PdfViewerDemo = ( { path = 'demo.documents.viewer' } = {} ) =>
 
             <Divider />
 
+            {/* In a panel */}
+            <section className="flex flex-col gap-3">
+                <h3 className="text-xl font-semibold">{ panel.title }</h3>
+                <p className="text-sm text-base-content/70">{ panel.text }</p>
+
+                <div>
+                    <Button color="primary" onClick={ openPanel }>{ panel.open }</Button>
+                </div>
+
+                <PdfPanel
+                    footerNode = {
+                        <div className="flex justify-end gap-2">
+                            <Button onClick={ closePanel } style="ghost">{ panel.close }</Button>
+                            <Button color="primary" onClick={ () => panelViewer.current?.download() }>{ panel.download }</Button>
+                        </div>
+                    }
+                    ref       = { modalRef }
+                    source    = { SAMPLE }
+                    viewerRef = { panelViewer }
+                />
+            </section>
+
+            <Divider />
+
             {/* A dropped file */}
             <section className="flex flex-col gap-3">
                 <h3 className="text-xl font-semibold">{ dropped.title }</h3>
@@ -172,6 +208,18 @@ const PdfViewerDemo = ( { path = 'demo.documents.viewer' } = {} ) =>
                     onRenderedChange = { setDrawn }
                     source           = { LONG }
                 />
+            </section>
+
+            <Divider />
+
+            {/* Behind an API */}
+            <section className="flex flex-col gap-3">
+                <h3 className="text-xl font-semibold">{ api.title }</h3>
+                <p className="text-sm text-base-content/70">{ api.text }</p>
+
+                <Toggle checked={ withHeader } inline label={ api.header } onChange={ event => setWithHeader( event.target.checked ) } size="sm" />
+
+                <PdfViewer className="h-[50vh] rounded-box border border-base-300" fileName="sample-api.pdf" source={ guarded } />
             </section>
 
             <Divider />
