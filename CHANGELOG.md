@@ -8,6 +8,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.43.1] — 2026-10-13
+
+Two small things seen while trying 0.43.0 : an `Alert` cut words in half in a toast, and the
+viewer demo behind an API now toasts the error it is handed.
+
 ### Fixed
 
 - **An `Alert` no longer hyphenates its words.** It carried `hyphens-auto` since the first
