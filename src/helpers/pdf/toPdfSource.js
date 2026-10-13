@@ -26,6 +26,40 @@
  * await toPdfSource( file ) ;                                      // { data }
  * ```
  */
+/**
+ * The same, without waiting : what `react-pdf`'s `<Document file>` takes. A
+ * `Blob`, a `File` or a buffer goes through as it is — the component reads it
+ * itself — and only `{ url , headers }` is translated.
+ *
+ * @param {PdfSource} source - The document.
+ * @returns {string|Blob|ArrayBuffer|Uint8Array|{ url : string , httpHeaders ?: Object , withCredentials ?: boolean }|null} `null` for no document.
+ */
+export const toDocumentFile = source =>
+{
+    if ( source == null )
+    {
+        return null ;
+    }
+
+    if ( source instanceof URL )
+    {
+        return String( source ) ;
+    }
+
+    if ( typeof source === 'object' && !( source instanceof ArrayBuffer ) && !ArrayBuffer.isView( source ) && !( typeof Blob !== 'undefined' && source instanceof Blob ) )
+    {
+        const { credentials , headers , url } = source ;
+
+        return {
+            url ,
+            ...headers && { httpHeaders : headers } ,
+            ...credentials === 'include' && { withCredentials : true } ,
+        } ;
+    }
+
+    return source ;
+} ;
+
 const toPdfSource = async source =>
 {
     if ( typeof source === 'string' || source instanceof URL )

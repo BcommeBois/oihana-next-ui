@@ -35,6 +35,42 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - The demo app gains a **« Documents » group** under Modules, with a page that loads the engine,
   says where its files come from, and draws the first page of a hand-written two-page sample
   (`public/documents/sample.pdf`, which embeds no font : the proof that the served fonts work).
+
+**📄 Documents : the viewer**
+
+- **New `components/documents/PdfViewer`** : a PDF in the page — every page in a scrolling
+  column, the current page followed as the reader scrolls, zoom by steps (½ … 3×) with three
+  fits (`width`, `page`, `none`), links inside the document, selectable text. 🔑 **Only the pages
+  near the screen are drawn** : the others keep a white placeholder of their true size, so the
+  scrollbar is right from the first paint and two hundred pages on a phone cost what three do
+  (`margin` says how far ahead). `source` takes a url, a `File` or `Blob`, a buffer, or
+  **`{ url , headers , credentials }`** for a document behind an API — pdf.js sends the headers
+  itself and keeps its range requests. It fills the box it is given : set the height on it.
+- **`PdfToolbar`** — first / previous / a page field / next / last, zoom out / in, fit to width
+  / whole page, print, download, full screen — drawn by the viewer (`toolbar="top"` or
+  `"bottom"`) or by the host inside it, reading **`usePdfViewer()`** ; the same gestures sit on
+  the viewer's `ref`. **Print** opens the document in a tab, where the browser's reader prints
+  it. **Download** saves it under `fileName`, the file's name, or the document's title. **Full
+  screen** covers the application's window with the viewer — never the browser's own full
+  screen, which stays the application's ; the same on an iPhone ; `Escape` leaves.
+- **A protected document asks its password** in a dialog (`PdfPasswordModal`), and asks again
+  when the one given is wrong. 🔑 `react-pdf`'s `<Document>` suspends by default : the whole page
+  froze while a document loaded, and a protected one deadlocked, its dialog never shown — the
+  viewer renders it with `suspense` off, its own frame saying « loading ».
+- When the application is already in the browser's full screen, `Escape` closes the viewer and
+  leaves that full screen alone, through the Keyboard Lock API where it exists (Chrome, Edge) ;
+  elsewhere one `Escape` closes both — the browser keeps the `keydown` of Escape for itself in
+  its full screen, only the `keyup` reaches the page.
+- **`DocumentFrame`** : the loading, failed (with retry), empty and engine-missing states — the
+  `ChartFrame` of the documents. Without `react-pdf`, the viewer says so and offers « Open in a
+  tab », which needs no engine.
+- **New `helpers/pdf`** : `nextZoom` / `ZOOM_STEPS`, `mostVisiblePage` (the page showing the
+  most of itself, not the first one touching the frame), `toDocumentFile` — pure, tested.
+- The demo page shows the viewer with its settings (`toolbar` : top, bottom, both, none), a
+  dropped PDF that can be removed or replaced, a forty-page document with a « pages drawn »
+  counter, and a password-protected one (« oihana ») behind a button. A wiki guide,
+  [`components/documents`](wiki/components/documents/README.md), covers the setup, the viewer,
+  and why an `<iframe>` is not one on a phone.
 - On a phone, the demo app's drawer now takes the whole screen but a strip of overlay to close it
   (`w-[calc(100%-2.5rem)] max-w-md`) : three levels of entries did not fit in two thirds of it.
 

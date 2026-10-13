@@ -1,6 +1,6 @@
 import { describe , expect , test } from 'bun:test' ;
 
-import toPdfSource from '../../../src/helpers/pdf/toPdfSource' ;
+import toPdfSource , { toDocumentFile } from '../../../src/helpers/pdf/toPdfSource' ;
 
 const BYTES = new Uint8Array( [ 0x25 , 0x50 , 0x44 , 0x46 ] ) ; // « %PDF »
 
@@ -33,5 +33,23 @@ describe( 'toPdfSource' , () =>
         await expect( toPdfSource( null ) ).rejects.toBeInstanceOf( TypeError ) ;
         await expect( toPdfSource( 42 ) ).rejects.toBeInstanceOf( TypeError ) ;
         await expect( toPdfSource( { data : BYTES } ) ).rejects.toBeInstanceOf( TypeError ) ;
+    } ) ;
+} ) ;
+
+describe( 'toDocumentFile' , () =>
+{
+    test( 'bytes and blobs go through untouched, a URL becomes a string, nothing stays nothing' , () =>
+    {
+        const blob = new Blob( [ BYTES ] ) ;
+        expect( toDocumentFile( BYTES ) ).toBe( BYTES ) ;
+        expect( toDocumentFile( blob ) ).toBe( blob ) ;
+        expect( toDocumentFile( '/a.pdf' ) ).toBe( '/a.pdf' ) ;
+        expect( toDocumentFile( new URL( 'https://example.com/a.pdf' ) ) ).toBe( 'https://example.com/a.pdf' ) ;
+        expect( toDocumentFile( null ) ).toBeNull() ;
+    } ) ;
+
+    test( 'a url with headers is translated for the component' , () =>
+    {
+        expect( toDocumentFile( { url : '/api/doc' , headers : { A : 'b' } , credentials : 'include' } ) ).toEqual( { url : '/api/doc' , httpHeaders : { A : 'b' } , withCredentials : true } ) ;
     } ) ;
 } ) ;

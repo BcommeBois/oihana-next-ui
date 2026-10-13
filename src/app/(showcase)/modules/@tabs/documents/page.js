@@ -6,7 +6,7 @@ import useI18n   from '@/contexts/locale/useI18n' ;
 import Container from '@/display/Container' ;
 import Page      from '@/display/Page' ;
 
-import PdfEngineDemo from '@/demo/documents/PdfEngineDemo' ;
+import PdfViewerDemo from '@/demo/documents/PdfViewerDemo' ;
 
 /**
  * Documents showcase page : the PDF engine, then its viewer.
@@ -32,7 +32,7 @@ const DocumentsShowcase = ( { path = 'app.lab.documents' } = {} ) =>
                 </p>
             </Container>
 
-            <PdfEngineDemo />
+            <PdfViewerDemo />
 
         </Page>
     ) ;

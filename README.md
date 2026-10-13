@@ -57,6 +57,7 @@ then the groups :
 [`components/barcodes`](wiki/components/barcodes/README.md),
 [`components/charts`](wiki/components/charts/README.md),
 [`components/maps`](wiki/components/maps/README.md),
+[`components/documents`](wiki/components/documents/README.md),
 [`components/media`](wiki/components/media/README.md),
 [`components/metrics`](wiki/components/metrics/README.md),
 [`components/scheduler`](wiki/components/scheduler/README.md),
