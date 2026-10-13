@@ -4,6 +4,7 @@ import badges     from './badges'
 import barcode    from './barcode'
 import buttons    from './buttons'
 import dates      from './dates'
+import cellGrid   from './cellGrid'
 import connection from './connection'
 import document   from './document'
 import pullToRefresh from './pullToRefresh'
@@ -36,6 +37,7 @@ const components =
     barcode ,
     buttons ,
     dates ,
+    cellGrid ,
     connection ,
     document ,
     pullToRefresh ,

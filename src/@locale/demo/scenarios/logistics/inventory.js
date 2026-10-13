@@ -3,6 +3,12 @@ const inventory =
     fr :
     {
         intro : 'Compter ce qu’il y a vraiment sur un emplacement, le comparer au stock théorique, recompter ce qui ne colle pas, puis justifier les écarts. Le stock théorique peut rester masqué pendant le comptage : on compte ce qu’on voit, sans chercher le bon chiffre.' ,
+        plan :
+        {
+            title  : 'L’allée H2' ,
+            text   : 'Où l’on en est dans l’allée : les emplacements comptés, celui en cours (entouré), les écarts à justifier. Pincez pour zoomer sur un téléphone.' ,
+            states : { counted : 'Compté' , current : 'En cours' , gap : 'Écart' , todo : 'À compter' } ,
+        } ,
         sound : 'Bip et vibration' ,
         blind : 'Comptage à l’aveugle : stock théorique masqué pendant le comptage' ,
 
@@ -116,6 +122,12 @@ const inventory =
     en :
     {
         intro : 'Count what really is on a location, compare it with the book stock, count again what does not match, then account for the discrepancies. The book stock can stay hidden while counting : one counts what one sees, not the number one expects.' ,
+        plan :
+        {
+            title  : 'Aisle H2' ,
+            text   : 'Where the count stands in the aisle: the bins counted, the current one (ringed), the gaps to account for. Pinch to zoom on a phone.' ,
+            states : { counted : 'Counted' , current : 'Current' , gap : 'Gap' , todo : 'To count' } ,
+        } ,
         sound : 'Beep and vibration' ,
         blind : 'Blind count : book stock hidden while counting' ,
 

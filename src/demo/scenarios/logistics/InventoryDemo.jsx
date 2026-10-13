@@ -17,6 +17,7 @@ import Steps         from '@/components/steps/Steps' ;
 import Toggle        from '@/components/checkboxes/Toggle' ;
 import Link          from '@/components/links/Link' ;
 import BottomSheet   from '@/components/modals/BottomSheet' ;
+import CellGrid      from '@/components/grids/CellGrid' ;
 
 import useFeedbackSignal from '@/hooks/useFeedbackSignal' ;
 
@@ -25,6 +26,15 @@ import { completeGS1Number } from '@/helpers/barcodes/gs1CheckDigit' ;
 import useI18n from '@/contexts/locale/useI18n' ;
 
 const LOCATION = 'H2-04-B' ;
+
+/** The aisle H2 : four levels × twelve positions, what is counted, what is next, what has a gap. */
+const AISLE = Array.from( { length : 4 } , ( _ , row ) =>
+    Array.from( { length : 12 } , ( __ , col ) =>
+    {
+        const code  = `H2-${ String( col + 1 ).padStart( 2 , '0' ) }-${ 'ABCD'[ row ] }` ;
+        const state = code === LOCATION ? 'current' : col < 3 ? ( ( row + col ) % 5 === 0 ? 'gap' : 'counted' ) : 'todo' ;
+        return { col , id : code , label : code.slice( 3 ) , row , state } ;
+    } ) ).flat() ;
 
 const ean = digits => completeGS1Number( 'ean_13' , digits , 13 ) ;
 
@@ -61,6 +71,7 @@ const USED =
     { href : '/modules/scanField'               , name : 'InputScan' } ,
     { href : '/modules/barcodes'                , name : 'Barcode' } ,
     { href : '/components/signals'              , name : 'useFeedbackSignal' } ,
+    { href : '/components/cellGrid'             , name : 'CellGrid' } ,
     { href : '/components/inputs?filter=keypad' , name : 'NumericKeypad' } ,
     { href : '/components/modals'               , name : 'BottomSheet' } ,
     { href : '/components/toggles'              , name : 'Toggle' } ,
@@ -258,6 +269,28 @@ const InventoryDemo = ( { path = 'demo.scenarios.logistics.inventory' } = {} ) =
         <Container className="flex flex-col gap-6 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-7xl">
 
             <p className="text-sm text-base-content/70">{ t.intro }</p>
+
+            <section className="flex flex-col gap-2">
+                <h4 className="font-semibold">{ t.plan?.title }</h4>
+                <p className="text-xs text-base-content/60">{ t.plan?.text }</p>
+                <CellGrid
+                    ariaLabel  = { t.plan?.title }
+                    cells      = { AISLE }
+                    className  = "h-56"
+                    colLabels  = { Array.from( { length : 12 } , ( _ , index ) => String( index + 1 ).padStart( 2 , '0' ) ) }
+                    cols       = { 12 }
+                    rowLabels  = { [ 'A' , 'B' , 'C' , 'D' ] }
+                    rows       = { 4 }
+                    selectable = "none"
+                    states     = { {
+                        counted : { color : 'success' , label : t.plan?.states?.counted } ,
+                        current : { color : 'primary' , label : t.plan?.states?.current } ,
+                        gap     : { color : 'warning' , label : t.plan?.states?.gap } ,
+                        todo    : { color : 'neutral' , label : t.plan?.states?.todo } ,
+                    } }
+                    value      = { [ LOCATION ] }
+                />
+            </section>
 
             <div className="flex flex-col gap-2">
                 <Toggle checked={ sound } color="primary" inline label={ t.sound } onChange={ event => setSound( event.target.checked ) } />

@@ -74,6 +74,24 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   title that is a link or a button. The Timeline page shows a parcel driven step by step, a
   project across, the responsive form and a signed receipt's journal ; the Receiving scenario
   ends on that journal.
+- **New `CellGrid`** (`components/grids`) : a plan made of cells — the bins of an aisle, the
+  bays of a car park, the seats of a hall. The library knows nothing of what a cell is :
+  `cells` carry a `state`, `states` say what each is called and which daisyUI colour it wears
+  (a light ground and a border, the text staying the theme's), a position with no cell is a
+  corridor, a cell may `span` several ; a legend is drawn from the states, `renderCell` draws
+  a content of your own. 🔑 **A plan of 8 × 40 does not fit a phone** : the plan lives in a
+  viewport, pinched to zoom and dragged to move — a tap stays a tap, the pointer is taken only
+  once it has travelled —, Ctrl + wheel at a desk, `+` / `−` / « Fit » buttons, `fit` opening
+  at the zoom that shows the whole width. **Keyboard and reader** : an ARIA `grid` of `row`s
+  and `gridcell`s, one cell focused at a time, the arrows walking the plane and skipping the
+  gaps, Home / End along the row, Enter or Space selecting ; every cell named « A-07, Full, 12 »
+  — its coordinate, its state, its badge. `selectable` single (default), multiple or none,
+  `value` / `onChange`, `onCellClick`, `cellSize` (44 px, what a finger wants), `gap`,
+  `rowLabels` / `colLabels`, `zoom` / `onZoomChange`. `helpers/grids/cellRect`, `nextCell`,
+  `pinchScale` (with `zoomAround`, `clampOffset`) are the pure part, tested ; new
+  `components.cellGrid` bundle. The CellGrid page shows an aisle with four states and a
+  corridor, a hall with a stage and seats to choose, a car park with plates ; the Inventory
+  scenario opens on the plan of its aisle.
 - The Scanner page opens with **« In the field »** — the network, the screen, the keys — and
   the Logistics › Receiving scenario gets its thumb bar (`Dock` actions) and keys (F1, F2, V) ;
   the Dock page shows the actions variant. The application guide gains **In the field**.
