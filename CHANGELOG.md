@@ -8,6 +8,20 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.43.0] — 2026-10-13
+
+A release that **writes a PDF**, where 0.42.0 read one. A document is a React component —
+flexbox views, text that flows and paginates, images, SVG — generated in the browser for a live
+preview in the library's own viewer, downloaded on a click, sent to an API as a form, or
+rendered by the server in a route handler : the same component on both sides. The codes the
+library draws on screen go into a document as they are ; a sheet of labels is laid out to the
+millimetre ; and the text of a Markdown field becomes a document with no template to write.
+Printing from the page no longer puts a blank sheet after every page.
+
+**An application that creates no document installs nothing and changes nothing** : the new
+engine is an optional peer, listed under Upgrading with the one line a route handler needs.
+
+
 ### Upgrading
 
 - **`@react-pdf/renderer` is a new optional peer** (`^4.9.0`), needed only to create a PDF from
@@ -16,24 +30,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   its `next.config`.
 - `unified` and `remark-parse` are now dependencies of the library — the versions
   `react-markdown` already pinned, so nothing new is downloaded.
-
-### Documents : a PDF from Markdown
-
-- **New `PdfMarkdown` and `MarkdownDocument`** (`components/documents/pdf`) : the text of a
-  Markdown field — a description, terms, a report — drawn in a page of your template, or made a
-  whole document with pages numbered, **with no template to write**. The text is read with the
-  screen's grammar (`helpers/markdown/parseMarkdown` : GitHub Flavored Markdown, `breaks` as
-  `remark-breaks`) and turned into the engine's primitives (`renderMarkdown`, which names no
-  engine and is tested on its own) : headings, bold, italic, strikethrough, inline and block
-  code, bulleted, numbered and nested lists, task lists with a drawn box, quotes, links, rules,
-  JPEG and PNG images — any other format leaves its alternative text rather than fail the
-  document. **Tables are emulated** in rows of `View`s, the header bold, the alignment kept, the
-  columns weighed by their longest cell (`helpers/markdown/tableColumns`) so a quantity stays
-  narrow. Raw HTML and footnotes are left out : a PDF has no DOM. `theme` goes over
-  `markdownTheme`'s defaults one group at a time. 12 tests.
-- The « Creating a PDF » page gains **« From Markdown »** : the library's own
-  `TextAreaMarkdown` on one side, the document on the other, a report that goes through every
-  construction.
 
 ### Documents : creating a PDF
 
@@ -83,6 +79,24 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   (`src/demo/documents/pdf`) are recipes to copy : the library provides the primitives, not
   the model. The wiki guide gains a **Creating a document** section : the template, preview
   and download, the codes, fonts, millimetres, the server route.
+
+### Documents : a PDF from Markdown
+
+- **New `PdfMarkdown` and `MarkdownDocument`** (`components/documents/pdf`) : the text of a
+  Markdown field — a description, terms, a report — drawn in a page of your template, or made a
+  whole document with pages numbered, **with no template to write**. The text is read with the
+  screen's grammar (`helpers/markdown/parseMarkdown` : GitHub Flavored Markdown, `breaks` as
+  `remark-breaks`) and turned into the engine's primitives (`renderMarkdown`, which names no
+  engine and is tested on its own) : headings, bold, italic, strikethrough, inline and block
+  code, bulleted, numbered and nested lists, task lists with a drawn box, quotes, links, rules,
+  JPEG and PNG images — any other format leaves its alternative text rather than fail the
+  document. **Tables are emulated** in rows of `View`s, the header bold, the alignment kept, the
+  columns weighed by their longest cell (`helpers/markdown/tableColumns`) so a quantity stays
+  narrow. Raw HTML and footnotes are left out : a PDF has no DOM. `theme` goes over
+  `markdownTheme`'s defaults one group at a time. 12 tests.
+- The « Creating a PDF » page gains **« From Markdown »** : the library's own
+  `TextAreaMarkdown` on one side, the document on the other, a report that goes through every
+  construction.
 
 ## [0.42.0] — 2026-10-13
 
