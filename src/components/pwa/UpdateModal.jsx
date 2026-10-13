@@ -29,7 +29,7 @@
  * @param {Object} props
  * @param {string} [props.currentVersion] - The version of the running bundle, shown as the one being left.
  * @param {string} [props.path='components.pwa.update'] - Dot notation path to the copy.
- * @param {Object} [props.serviceWorker] - Forwarded to `useServiceWorkerUpdate` : `path`, `versionUrl`, `checkInterval`, `checkOnFocus`.
+ * @param {Object} [props.serviceWorker] - Forwarded to `useServiceWorkerUpdate` : `enabled` (production only by default), `path`, `versionUrl`, `checkInterval`, `checkOnFocus`.
  *
  * @example
  * ```jsx
@@ -130,10 +130,9 @@ const UpdateModal =
                     { t.description ?? '' }
                 </p>
 
-                <div
-                    aria-label = { format( t.versions ?? 'From version {0} to version {1}' , from , to ) }
-                    className  = "flex items-center justify-center gap-3 rounded-box bg-base-200 px-4 py-3 font-mono text-sm"
-                >
+                <div className="flex items-center justify-center gap-3 rounded-box bg-base-200 px-4 py-3 font-mono text-sm">
+                    {/* The sentence for a reader ; the arrow line is for the eye. A name on a plain div is ignored. */}
+                    <span className="sr-only">{ format( t.versions ?? 'From version {0} to version {1}' , from , to ) }</span>
                     <span aria-hidden="true" className="opacity-60">{ from }</span>
                     <span aria-hidden="true">→</span>
                     <span aria-hidden="true" className="font-semibold text-primary">{ to }</span>

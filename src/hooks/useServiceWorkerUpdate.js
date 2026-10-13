@@ -35,6 +35,7 @@ const DEFAULT_CHECK_INTERVAL = 30 * 60 * 1_000 ;
  * Renders no UI — the consuming app owns the modal / banner and its i18n.
  *
  * @param {Object}  [options]
+ * @param {boolean} [options.enabled=process.env.NODE_ENV === 'production'] - Register and watch at all. Off — a development server, by default — the hook registers nothing, reports no update, and removes any worker still registered for the origin, as `display/ServiceWorker` does.
  * @param {string}  [options.path='/sw.js']              - Service Worker file path.
  * @param {string}  [options.versionUrl='/version.json'] - Manifest read (no-store) to display the next version.
  * @param {string}  [options.currentVersion]             - The running bundle's version, echoed back for display.
@@ -59,8 +60,11 @@ const DEFAULT_CHECK_INTERVAL = 30 * 60 * 1_000 ;
  */
 import { useCallback , useEffect , useRef , useState } from 'react' ;
 
+import unregisterServiceWorkers from '../helpers/pwa/unregisterServiceWorkers' ;
+
 const useServiceWorkerUpdate = (
 {
+    enabled        = process.env.NODE_ENV === 'production' ,
     path           = DEFAULT_SW_PATH ,
     versionUrl     = DEFAULT_VERSION_URL ,
     currentVersion ,
@@ -78,6 +82,13 @@ const useServiceWorkerUpdate = (
     {
         if ( typeof navigator === 'undefined' || !( 'serviceWorker' in navigator ) )
         {
+            return ;
+        }
+
+        // A development server : no worker, and none left over from a production build on the same origin.
+        if ( !enabled )
+        {
+            unregisterServiceWorkers() ;
             return ;
         }
 
@@ -175,7 +186,7 @@ const useServiceWorkerUpdate = (
             if ( checkOnFocus ) { document.removeEventListener( 'visibilitychange' , onVisibility ) ; }
         } ;
     }
-    , [ path , versionUrl , checkInterval , checkOnFocus ] ) ;
+    , [ enabled , path , versionUrl , checkInterval , checkOnFocus ] ) ;
 
     const applyUpdate = useCallback( () =>
     {

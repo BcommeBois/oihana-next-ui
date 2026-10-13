@@ -187,7 +187,11 @@ export default Layout ;
 - `oihana-inject-version` writes `src/version.js`, `public/version.json` and `public/sw.js` from
   your `package.json` — its `version`, and its `pwa` block (`offline`, `cachePrefix`). Run it
   before `dev` and `build`.
-- `<ServiceWorker />` (`display/ServiceWorker`), anywhere under the providers, registers it.
+- `<ServiceWorker />` (`display/ServiceWorker`), anywhere under the providers, registers it —
+  **in production only**, by default : on a development server it registers nothing and removes
+  any worker still controlling the origin (`localhost` is shared by every project), so the hot
+  reload never fights a cached page. `enabled` tries a worker on a development server anyway ;
+  `useServiceWorkerUpdate` and `UpdateModal` take the same option.
 - With `pwa.offline`, pages are cached for offline use ; the barcode reader's WebAssembly too,
   when it is served — see the [barcodes guide](../../components/barcodes/README.md).
 
