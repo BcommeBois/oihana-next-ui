@@ -21,6 +21,7 @@ import Link          from '@/components/links/Link' ;
 import BottomSheet   from '@/components/modals/BottomSheet' ;
 import Dock          from '@/components/menus/Dock' ;
 import ScanList      from '@/components/lists/ScanList' ;
+import Timeline      from '@/components/timeline/Timeline' ;
 
 import PdfDownloadButton from '@/components/documents/PdfDownloadButton' ;
 
@@ -110,6 +111,7 @@ const USED =
     { href : '/components/steps'                , name : 'Steps' } ,
     { href : '/components/dock'                 , name : 'Dock' } ,
     { href : '/modules/scanner'                 , name : 'ScanList' } ,
+    { href : '/components/timeline'             , name : 'Timeline' } ,
     { href : '/modules/scanner'                 , name : 'useHotkeys' } ,
 ] ;
 
@@ -542,6 +544,23 @@ const ReceivingDemo = ( { path = 'demo.scenarios.logistics.receiving' } = {} ) =
                                         variant   = "actions"
                                     />
                                 ) }
+
+                            { record && (
+                                <Timeline
+                                    ariaLabel = { t.journal?.title }
+                                    box       = { false }
+                                    color     = "success"
+                                    compact
+                                    items     = { [
+                                        { description : SSCC , id : 'opened' , status : 'done' , title : t.journal?.opened } ,
+                                        { description : format( t.journal?.checkedOf ?? '{0}' , record.lines.length , record.lines.reduce( ( sum , line ) => sum + line.received , 0 ) ) , id : 'checked' , status : 'done' , title : t.journal?.checked } ,
+                                        { description : record.deliveryNote?.name , id : 'photo' , status : 'done' , title : t.journal?.photo } ,
+                                        { description : <span className="font-mono text-xs break-all">{ record.digest }</span> , id : 'signed' , status : 'done' , time : record.at , title : t.journal?.signed } ,
+                                        { id : 'sent' , status : 'current' , title : t.journal?.sent } ,
+                                    ] }
+                                    timePattern = "LT"
+                                />
+                            ) }
 
                             { record && (
                                 <div className="flex flex-col gap-1">

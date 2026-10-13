@@ -9,6 +9,7 @@ import document   from './document'
 import pullToRefresh from './pullToRefresh'
 import scanList   from './scanList'
 import signature  from './signature'
+import timeline   from './timeline'
 import dropdowns  from './dropdowns'
 import fab        from './fab'
 import filter     from './filter'
@@ -40,6 +41,7 @@ const components =
     pullToRefresh ,
     scanList ,
     signature ,
+    timeline ,
     dropdowns,
     fab ,
     filter ,

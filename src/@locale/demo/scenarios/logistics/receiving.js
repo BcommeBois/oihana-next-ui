@@ -107,6 +107,17 @@ const receiving =
             other   : 'Article hors commande' ,
         } ,
 
+        journal :
+        {
+            title     : 'Journal de la réception' ,
+            opened    : 'Réception ouverte' ,
+            checked   : 'Lignes contrôlées' ,
+            checkedOf : '{0} lignes, {1} pièces' ,
+            photo     : 'Bon de livraison photographié' ,
+            signed    : 'Signé par le réceptionnaire' ,
+            sent      : 'À envoyer au serveur' ,
+        } ,
+
         receipt :
         {
             fileName   : 'bon-de-reception' ,
@@ -235,6 +246,17 @@ const receiving =
             panel   : 'Panels, 6 pieces' ,
             expired : 'Oak, date passed' ,
             other   : 'Product not ordered' ,
+        } ,
+
+        journal :
+        {
+            title     : 'Receipt journal' ,
+            opened    : 'Receipt opened' ,
+            checked   : 'Lines checked' ,
+            checkedOf : '{0} lines, {1} pieces' ,
+            photo     : 'Delivery note photographed' ,
+            signed    : 'Signed by the receiver' ,
+            sent      : 'To send to the server' ,
         } ,
 
         receipt :

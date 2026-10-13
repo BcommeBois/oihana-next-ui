@@ -99,6 +99,7 @@ import { TbCards                    as CardIcon       } from "react-icons/tb";
 import { TbPackageOff               as EmptyStateIcon } from "react-icons/tb";
 import { TbChartBar                 as StatIcon       } from "react-icons/tb";
 import { TbListNumbers              as StepsIcon      } from "react-icons/tb";
+import { TbTimeline                 as ChronologyIcon } from "react-icons/tb";
 import { FaBarsProgress         as ProgressIcon       } from "react-icons/fa6";
 import { RiProgress5Line        as RadialProgressIcon } from "react-icons/ri";
 import { IoMdRadioButtonOn      as RadioIcon          } from "react-icons/io";
@@ -180,6 +181,7 @@ const navigation =
                     { id : 'network'    , type : LINK  , Icon : NetworkIcon    , path  : '/components/network'    } ,
                     { id : 'stat'       , type : LINK  , Icon : StatIcon       , path  : '/components/stat'       } ,
                     { id : 'steps'      , type : LINK  , Icon : StepsIcon      , path  : '/components/steps'      } ,
+                    { id : 'timeline'   , type : LINK  , Icon : ChronologyIcon , path  : '/components/timeline'   } ,
                     { id : 'status'     , type : LINK  , Icon : StatusIcon     , path  : '/components/status'     } ,
                 ]
             } ,

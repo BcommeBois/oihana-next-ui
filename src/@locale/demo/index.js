@@ -16,6 +16,7 @@ import rating    from './rating' ;
 import scenarios from './scenarios' ;
 import scheduler from './scheduler' ;
 import signals   from './signals' ;
+import timeline  from './timeline' ;
 import trees     from './trees' ;
 import typography from './typography' ;
 
@@ -39,6 +40,7 @@ const demo =
     scenarios ,
     scheduler ,
     signals ,
+    timeline ,
     trees ,
     typography ,
 } ;

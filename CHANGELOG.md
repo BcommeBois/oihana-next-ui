@@ -62,6 +62,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - The Lists page gains **Gestures** — tasks swiped done or removed, a feed pulled to load
   again with infinite scrolling at its end — and the Scanner page **The scan list** ; the
   Receiving scenario lists the parcels it read under its field.
+- **New `Timeline` and `TimelineItem`** (`components/timeline`) : moments on a line — a
+  parcel's history, a project's steps, the journal of a document. daisyUI's `timeline`, with
+  the data in `items` or composable children : each entry an icon on the line, a time on one
+  side (an ISO string or a `Date` written in the language, inside a `<time>`), a title and a
+  description on the other ; `status` colours the line up to the entry (`done`, `current` with
+  a ring and `aria-current="step"`) or leaves it grey (`todo`), and a reader hears the status
+  in words (new `components.timeline` bundle). `orientation`, `compact`, `responsive` (compact
+  below `md`), `snapIcon`, `side` (`end` by default — the usual for a history —, `start`, or
+  `alternate` as daisyUI's examples), `box` off for a bare journal, a `color` per entry, a
+  title that is a link or a button. The Timeline page shows a parcel driven step by step, a
+  project across, the responsive form and a signed receipt's journal ; the Receiving scenario
+  ends on that journal.
 - The Scanner page opens with **« In the field »** — the network, the screen, the keys — and
   the Logistics › Receiving scenario gets its thumb bar (`Dock` actions) and keys (F1, F2, V) ;
   the Dock page shows the actions variant. The application guide gains **In the field**.
