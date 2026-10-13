@@ -201,7 +201,7 @@ const PdfViewer =
     const file = useMemo( () => toDocumentFile( source ) , [ source ] ) ;
 
     const [ pdf     , setPdf     ] = useState( null ) ;
-    const [ sizes   , setSizes   ] = useState( [] ) ;   // { width , height } in points, per page
+    const [ sizes   , setSizes   ] = useState( [] ) ;   // { width , height , rotate } in points and degrees, per page
     const [ title   , setTitle   ] = useState( null ) ;
     const [ error   , setError   ] = useState( null ) ;
     const [ attempt , setAttempt ] = useState( 0 ) ;
@@ -240,8 +240,9 @@ const PdfViewer =
             const list = await Promise.all( Array.from( { length : document.numPages } , ( _ , index ) =>
                 document.getPage( index + 1 ).then( page =>
                 {
+                    // The viewport already counts the page's own /Rotate ; the angle is kept to add the reader's turn to it.
                     const { height , width } = page.getViewport( { scale : 1 } ) ;
-                    return { height , width } ;
+                    return { height , rotate : page.rotate ?? 0 , width } ;
                 } ) ) ) ;
 
             const metadata = await document.getMetadata().catch( () => null ) ;
@@ -894,7 +895,7 @@ const PdfViewer =
                                         root                  = { container }
                                         renderAnnotationLayer = { renderAnnotationLayer }
                                         renderTextLayer       = { renderTextLayer }
-                                        rotate                = { rotation }
+                                        rotate                = { ( ( sizes[ number - 1 ]?.rotate ?? 0 ) + rotation ) % 360 }
                                         width                 = { pageWidth }
                                     />
                                 ) ) }

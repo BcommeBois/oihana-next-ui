@@ -13,6 +13,7 @@ import {
     MdExtension          as ModulesIcon ,
     MdPictureAsPdf       as DocumentsIcon ,
     MdNoteAdd            as DocumentsCreateIcon ,
+    MdEditDocument       as DocumentsEditIcon ,
     MdAutoStories        as ScenariosIcon ,
     MdInventory          as PickingIcon ,
     MdLocalShipping      as LogisticsIcon ,
@@ -273,6 +274,7 @@ const navigation =
                 [
                     { id : 'documentsView'   , type : LINK , Icon : DocumentsIcon       , path : '/modules/documents'       } ,
                     { id : 'documentsCreate' , type : LINK , Icon : DocumentsCreateIcon , path : '/modules/documentsCreate' } ,
+                    { id : 'documentsEdit'   , type : LINK , Icon : DocumentsEditIcon   , path : '/modules/documentsEdit'   } ,
                 ]
             } ,
             {

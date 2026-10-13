@@ -1,11 +1,13 @@
 # Documents
 
 A PDF in the page : every page in a scrolling column, a toolbar, zoom, print, download and full
-screen — on a phone as on a desktop, which an `<iframe>` cannot do. And a PDF **made from
+screen — on a phone as on a desktop, which an `<iframe>` cannot do. A PDF **made from
 data** : an invoice, a sheet of labels, written as a React component, previewed as it is
-typed, downloaded, sent to an API, or rendered by the server. Two engines, pdf.js through
-`react-pdf` to read and `@react-pdf/renderer` to write, both **optional** : an application
-that never opens a document installs nothing, one that only reads installs one.
+typed, downloaded, sent to an API, or rendered by the server. And a PDF **received and
+touched** : merged, cut, turned, numbered, signed, watermarked, its form filled. Three
+engines, pdf.js through `react-pdf` to read, `@react-pdf/renderer` to write, `pdf-lib`
+through `@cantoo/pdf-lib` to edit, all **optional** : an application that never opens a
+document installs nothing, one that only reads installs one.
 
 | | |
 |---|---|
@@ -21,6 +23,8 @@ that never opens a document installs nothing, one that only reads installs one.
 | `PdfSignature` | the strokes of a `SignaturePad`, as vectors in a document |
 | `components/documents/engine` | the one module that names `react-pdf` ; `preloadPdf()`, `loadPdf()` |
 | `components/documents/engine/renderer` | the one module that names `@react-pdf/renderer` ; `renderToBlob()`, `preloadRenderer()` |
+| `components/documents/engine/editor` | the one module that names `@cantoo/pdf-lib` ; `loadEditor()`, `preloadEditor()` |
+| `helpers/pdf/edit` | `mergePdfs`, `extractPages`, `rotatePages`, `addPageNumbers`, `stampImage`, `stampSignature`, `watermark`, `listFormFields`, `fillForm` — and `parsePageRange`, `placement`, `loadPdfBytes`, `toPdfFile` ; tested on the engine |
 | `hooks/usePdfDocument` | the generation behind `PdfPreview` : a blob and its url, again after each change |
 | `helpers/pdf` | `toPdfSource`, `nextZoom`, `mostVisiblePage`, `findInText`, `renderPagesToImages`, `printImages`, `units`, `registerFonts`, `uploadPdf` — pure, tested |
 | `helpers/markdown` | `parseMarkdown` (GFM, the screen's grammar), `tableColumns` — pure, tested |
@@ -394,6 +398,55 @@ multipart `uploadPdf` sends from the browser. The demo's
 the E-commerce › Invoice scenario sends the same data to it and opens what comes back in a
 `PdfPanel`.
 
+## Editing a document
+
+```bash
+bun add @cantoo/pdf-lib
+```
+
+The maintained fork of `pdf-lib` — the original has not moved since 2022. Pure JavaScript,
+no DOM, **600 KB minified**, loaded on the first edit and never before : `loadEditor()` in
+`components/documents/engine/editor` is the one `import()` of it. Nothing to serve. A route
+handler imports the package itself, and the helpers below run there as they do in the page.
+
+Editing is **functions, not components**. Each takes what the viewer takes — a url,
+`{ url , headers }`, a `File`, a `Blob`, bytes — and returns the bytes of a new document ;
+`toPdfFile( bytes , name )` makes them a `File` for `PdfViewer`, whose toolbar downloads it,
+for `uploadPdf`, or for the next helper :
+
+```js
+import mergePdfs      from 'oihana-next-ui/helpers/pdf/edit/mergePdfs' ;
+import stampSignature from 'oihana-next-ui/helpers/pdf/edit/stampSignature' ;
+import toPdfFile      from 'oihana-next-ui/helpers/pdf/edit/toPdfFile' ;
+
+const signed = await stampSignature( quote , pad.current.value , { anchor : 'bottom-right' , page : 2 , width : 45 } ) ;
+const file   = toPdfFile( await mergePdfs( [ signed , terms ] , { title : 'Dossier' } ) , 'dossier.pdf' ) ;
+
+<PdfViewer source={ file } />
+```
+
+| | |
+|---|---|
+| `mergePdfs( sources , { title } )` | several documents end to end ; the first one's properties, or `title` |
+| `extractPages( source , pages )` | the pages named, in the order named — `'1-3,5'`, `'4-'`, `[ 3 , 1 ]` ; removing a page is naming the others |
+| `rotatePages( source , { angle , pages } )` | quarter turns, one page or all, kept in the file |
+| `addPageNumbers( source , { format , position , margin , from , pages } )` | « n / N » in Helvetica ; `pages : '2-'` skips a cover |
+| `stampImage( source , image , { page , anchor , x , y , width , opacity } )` | a PNG or JPEG on a page |
+| `stampSignature( source , signature , { page , anchor , x , y , width , color } )` | the strokes of a `SignaturePad`, **as vectors** |
+| `watermark( source , text , { angle , opacity , pages } )` | a word across the pages, large and light |
+| `listFormFields( source )` | `[ { name , type , value , options } ]` — what a form holds |
+| `fillForm( source , values , { flatten } )` | by name ; `flatten` makes the values part of the pages |
+
+Positions are said **the way one sees them** : millimetres from a corner (`anchor` :
+`'bottom-right'`, `'top-left'`, `'center'`…), the page's top at the top — `placement` turns
+them into the points a PDF counts from its bottom-left. `parsePageRange` reads pages as a
+print dialog does. A page already rotated is drawn on in its own, unrotated space : a stamp
+on a turned page comes out turned with it.
+
+What is **not** done here : extracting text (the viewer's search does that, with pdf.js),
+annotations, and a visual editor — the demo composes `FileDropzone`, `SignaturePad` and
+`PdfViewer` around the helpers, and that is the shape of an application's own screen.
+
 ## 🚨 Why not an `<iframe>`
 
 On a desktop, `<iframe src="file.pdf">` shows the browser's reader. **On an iPhone it shows the
@@ -410,5 +463,5 @@ application's decision, not the library's.
 
 ## What is not here
 
-Editing a PDF received — merging, numbering, stamping a signature, filling a form — is a
-third engine, on the roadmap.
+Annotating a PDF — highlights, comments, redaction — would need a fourth engine (EmbedPDF, or
+a commercial one) : not done, and not planned until a real need shows.

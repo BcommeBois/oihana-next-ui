@@ -124,7 +124,7 @@ const PdfThumbnails = ( { className , width = 112 } ) =>
                         onClick   = { () => goTo( number ) }
                         pdf       = { pdf }
                         root      = { column }
-                        rotation  = { rotation }
+                        rotation  = { ( ( size.rotate ?? 0 ) + rotation ) % 360 }
                         width     = { width }
                     />
                 ) ;

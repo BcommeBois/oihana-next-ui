@@ -8,6 +8,45 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Upgrading
+
+- **`@cantoo/pdf-lib` is a new optional peer** (`^2.11.0`), needed only to edit a PDF —
+  merge, extract, rotate, number, stamp, watermark, fill a form. Nothing to serve. Its own peer,
+  `html-entities`, comes with it under bun and npm.
+
+### Documents : editing a PDF
+
+- **New `components/documents/engine/editor`**, the one place that names `@cantoo/pdf-lib` —
+  the maintained fork of `pdf-lib`, the original frozen since 2022 : `loadEditor()` imports it
+  on demand, 600 KB minified, never before a document is touched ; `preloadEditor()` warms it
+  up. Pure JavaScript, no DOM : the helpers run in a route handler as they do in the page.
+- **New `helpers/pdf/edit`** — functions, not components, each taking what the viewer takes (a
+  url, `{ url , headers }`, a `File`, a `Blob`, bytes) and returning the bytes of a new
+  document : **`mergePdfs`** (several end to end, the first's properties or a `title`),
+  **`extractPages`** (`'1-3,5'`, `'4-'`, `[ 3 , 1 ]` — in the order named, so it reorders and
+  removes too), **`rotatePages`** (quarter turns, one page or all, kept in the file — the
+  per-page rotation the viewer deferred), **`addPageNumbers`** (« n / N » in Helvetica,
+  `position`, `format`, `pages : '2-'` to skip a cover), **`stampImage`** (a PNG or JPEG on a
+  page), **`stampSignature`** (the strokes of a `SignaturePad` **as vectors**, sharp at any
+  scale — a quote sent back signed), **`watermark`** (a word across the pages, large, light,
+  slanted), **`listFormFields`** and **`fillForm`** (by name — text, checkbox, radio, dropdown,
+  list — with `flatten`). Positions are said the way one sees them, in millimetres from a
+  corner (`anchor`), the page's top at the top : `placement` turns them into the points a PDF
+  counts from its bottom-left. `parsePageRange` reads pages as a print dialog does,
+  `loadPdfBytes` reads a source, `toPdfFile` makes bytes a `File` for the viewer, `uploadPdf`
+  or the next helper. 12 tests, on the engine itself.
+- **A page turned in the file is now shown turned.** `react-pdf`'s `rotate` replaces a page's
+  own `/Rotate` rather than adding to it, and the viewer passed its reader's turn — `0` at
+  rest — to every page : a document whose page 2 is at 90° came out upright, in the pages as
+  in the thumbnails. The page's own angle is read with its size and the reader's turn added to
+  it ; printing already did.
+- The demo app gains **« Editing a PDF »** under Modules › Documents : merge the two samples,
+  extract a page range from the forty pages, rotate, number with a cover skipped, **sign a
+  received PDF** — dropped or the sample, a `SignaturePad`, the corner and the page, a logo
+  on top —, watermark, and fill **`public/documents/form.pdf`**, a sample order form with six
+  fields, flattened or not. The wiki guide gains **Editing a document** ; « What is not
+  here » keeps only annotation.
+
 ## [0.44.0] — 2026-10-13
 
 A release that **takes a signature** — with a finger, a stylus or a mouse — and keeps it as

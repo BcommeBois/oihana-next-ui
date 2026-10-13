@@ -120,6 +120,7 @@ const navigation =
             documents    : 'Documents' ,
                 documentsView   : 'Visionneuse PDF' ,
                 documentsCreate : 'Créer un PDF' ,
+                documentsEdit   : 'Retoucher un PDF' ,
             tests        : 'Tests' ,
 
     } ,
@@ -243,6 +244,7 @@ const navigation =
             documents    : 'Documents' ,
                 documentsView   : 'PDF viewer' ,
                 documentsCreate : 'Creating a PDF' ,
+                documentsEdit   : 'Editing a PDF' ,
             tests        : 'Tests' ,
 
     }
