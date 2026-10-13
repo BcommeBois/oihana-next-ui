@@ -17,6 +17,7 @@ const textareas =
         description : 'La zone de texte et ses variantes : ce qu’elle transforme à la frappe, un éditeur Markdown avec son aperçu, un éditeur de code, et une valeur par langue.' ,
         tip         : '💡 Les onglets isolent une variante.' ,
         count       : '{0} composant(s)' ,
+        filterBar   : 'Filtrer les démos' ,
 
         items :
         {
@@ -64,6 +65,7 @@ const textareas =
         description : 'The text area and its variants : what it transforms as you type, a Markdown editor with its preview, a code editor, and one value per language.' ,
         tip         : '💡 The tabs isolate one variant.' ,
         count       : '{0} component(s)' ,
+        filterBar   : 'Filter the demos' ,
 
         items :
         {

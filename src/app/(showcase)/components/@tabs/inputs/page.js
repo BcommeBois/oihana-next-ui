@@ -4,6 +4,7 @@ import format from 'vegas-js-core/src/strings/fastformat' ;
 
 import Badge    from '@/components/Badge' ;
 import Divider  from '@/components/Divider' ;
+import Tabs     from '@/components/tabs/Tabs' ;
 
 import Container from '@/display/Container' ;
 import Page      from '@/display/Page' ;
@@ -148,7 +149,7 @@ const ROWS =
  */
 const Inputs = ( { path = 'app.lab.inputs' } = {} ) =>
 {
-    const { categories , count , description , items , tip , title } = useI18n( path ) ;
+    const { categories , count , description , filterBar , items , tip , title } = useI18n( path ) ;
 
     // In the address, so a link opens on a category ; one category by default, not all of them at once.
     const [ param , setFilter ] = useShallowParam( 'filter' , DEFAULT_FILTER ) ;
@@ -214,22 +215,22 @@ const Inputs = ( { path = 'app.lab.inputs' } = {} ) =>
 
             <Container maxWidth="max-w-full">
                 <div className="flex flex-col gap-4">
-                    <div className="overflow-x-auto">
-                        <div role="tablist" className="tabs tabs-boxed bg-base-200 p-2 rounded-box shadow-inner inline-flex min-w-full">
-                            { tabs.map( ({ category , key , label , icon: Icon }) => (
-                                <button
-                                    key       = { key }
-                                    role      = "tab"
-                                    className = { `tab gap-2 whitespace-nowrap ${ filter === key ? 'tab-active' : '' } ${ category ? 'ml-2 border-l border-base-content/15 font-bold' : '' }` }
-                                    onClick   = { () => handleFilterChange( key ) }
-                                    type      = "button"
-                                >
-                                    <Icon size={ 18 } />
-                                    <span className="hidden sm:inline">{ label }</span>
-                                </button>
-                            ))}
-                        </div>
-                    </div>
+                    <Tabs
+                        activation   = "manual"
+                        ariaLabel    = { filterBar }
+                        items        = { tabs.map( ( { category , icon : Icon , key , label } ) => (
+                        {
+                            // A field row carries its category's name : only a category tab is `true`.
+                            className : category === true ? 'ml-2 border-l border-base-content/15 font-bold' : undefined ,
+                            icon      : <Icon size={ 18 } /> ,
+                            id        : key ,
+                            label     : <span className="max-sm:sr-only">{ label }</span> ,
+                        } ) ) }
+                        onChange     = { handleFilterChange }
+                        style        = "box"
+                        tabClassName = "flex-nowrap whitespace-nowrap"
+                        value        = { filter }
+                    />
 
                     { activeFilter && (
                         <div className="alert bg-base-100 shadow-md">

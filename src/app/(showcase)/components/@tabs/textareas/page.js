@@ -6,6 +6,7 @@ import format from 'vegas-js-core/src/strings/fastformat' ;
 
 import Badge    from '@/components/Badge' ;
 import Divider  from '@/components/Divider' ;
+import Tabs     from '@/components/tabs/Tabs' ;
 
 import Container from '@/display/Container' ;
 import Page      from '@/display/Page' ;
@@ -59,7 +60,7 @@ const ROWS =
  */
 const TextAreas = ( { path = 'app.lab.textareas' } = {} ) =>
 {
-    const { count , description , items , tip , title } = useI18n( path ) ;
+    const { count , description , filterBar , items , tip , title } = useI18n( path ) ;
 
     const [ filter , setFilter ] = useState( 'all' ) ;
 
@@ -105,20 +106,20 @@ const TextAreas = ( { path = 'app.lab.textareas' } = {} ) =>
 
             <Container maxWidth="max-w-5xl">
                 <div className="flex flex-col gap-4">
-                    <div role="tablist" className="tabs tabs-boxed bg-base-200 p-2 rounded-box shadow-inner">
-                        { filterConfig.map( ({ key , label , icon: Icon }) => (
-                            <button
-                                key       = { key }
-                                role      = "tab"
-                                className = { `tab gap-2 ${ filter === key ? 'tab-active' : '' }` }
-                                onClick   = { () => handleFilterChange( key ) }
-                                type      = "button"
-                            >
-                                <Icon size={ 18 } />
-                                <span className="hidden sm:inline">{ label }</span>
-                            </button>
-                        ))}
-                    </div>
+                    <Tabs
+                        activation   = "manual"
+                        ariaLabel    = { filterBar }
+                        items        = { filterConfig.map( ( { icon : Icon , key , label } ) => (
+                        {
+                            icon  : <Icon size={ 18 } /> ,
+                            id    : key ,
+                            label : <span className="max-sm:sr-only">{ label }</span> ,
+                        } ) ) }
+                        onChange     = { handleFilterChange }
+                        style        = "box"
+                        tabClassName = "flex-nowrap whitespace-nowrap"
+                        value        = { filter }
+                    />
 
                     { activeFilter && (
                         <div className="alert bg-base-100 shadow-md">

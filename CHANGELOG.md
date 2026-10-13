@@ -49,6 +49,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   the triggers of the `Tooltip` demo (a tooltip wraps any element), rows and cards that are
   clickable as a whole, items of a daisyUI `menu`. **`a11y/useButtonType` now reports nothing in
   `src/`**, so its next warning is a real case.
+- **The filter bars of the Inputs and Textareas pages are a `Tabs`** (`style="box"`,
+  `activation="manual"`) instead of hand-written buttons carrying `tabs-boxed` — a daisyUI 4 class
+  that no longer exists. They gain what the hand-written bar lacked : `aria-selected` on the chosen
+  tab, one tab stop and the arrow keys, and a name for each icon-only tab on a phone (the label is
+  `sr-only` there, where it was `hidden`). On the Inputs page, the separator now stands before the
+  category tabs only — every field tab carried one, its category's name being read as « is a
+  category ».
 
 **⭐ Ratings that say « 3 out of 5 », in the reader's language**
 

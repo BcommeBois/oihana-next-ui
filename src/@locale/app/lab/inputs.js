@@ -18,6 +18,7 @@ const inputs =
         description : 'La collection des champs : du texte, des nombres, des dates et des heures, des mots de passe, et ce qui valide.' ,
         tip         : '💡 Les onglets filtrent par catégorie, ou isolent un composant.' ,
         count       : '{0} composant(s)' ,
+        filterBar   : 'Filtrer les démos' ,
 
         categories :
         {
@@ -154,6 +155,7 @@ const inputs =
         description : 'The collection of fields : text, numbers, dates and times, passwords, and what validates.' ,
         tip         : '💡 The tabs filter by category, or isolate one component.' ,
         count       : '{0} component(s)' ,
+        filterBar   : 'Filter the demos' ,
 
         categories :
         {
