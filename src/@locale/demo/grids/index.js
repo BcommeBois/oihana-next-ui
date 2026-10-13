@@ -24,6 +24,16 @@ const grids =
                 states   : { blocked : 'Bloqué' , free : 'Libre' , full : 'Plein' , reserved : 'Réservé' } ,
             } ,
 
+            hangar :
+            {
+                title    : 'Un hangar' ,
+                text     : 'Le plan d’ensemble : quatre allées de bacs sur deux faces, un couloir central, les quais à gauche, la réception en bas — 14 × 21, une seule vue qu’on pince pour entrer dans une allée. Les zones sont des fonds nommés sous les cellules, sans rôle ; chaque cellule porte son code métier (code), qui devient son libellé et son nom lu ; les axes globaux sont éteints (showAxes).' ,
+                pick     : 'Touchez un emplacement, un quai ou une baie.' ,
+                selected : 'Sélection : {0}' ,
+                states   : { blocked : 'Bloqué' , busy : 'Occupé' , free : 'Libre' , full : 'Plein' } ,
+                zones    : { docks : 'Quais' , H1 : 'Allée H1' , H2 : 'Allée H2' , H3 : 'Allée H3' , H4 : 'Allée H4' , receiving : 'Réception' } ,
+            } ,
+
             hall :
             {
                 title  : 'Une salle' ,
@@ -57,6 +67,16 @@ const grids =
                 zoomKeys : '· zoom:' ,
                 wheel    : 'wheel' ,
                 states   : { blocked : 'Blocked' , free : 'Free' , full : 'Full' , reserved : 'Reserved' } ,
+            } ,
+
+            hangar :
+            {
+                title    : 'A warehouse' ,
+                text     : 'The whole plan: four aisles of bins on two faces, a central corridor, the docks on the left, receiving at the bottom — 14 × 21, one view pinched to get into an aisle. Zones are named grounds under the cells, with no role; every cell carries its business code (code), which becomes its label and the name read aloud; the global axes are off (showAxes).' ,
+                pick     : 'Touch a bin, a dock or a bay.' ,
+                selected : 'Selected: {0}' ,
+                states   : { blocked : 'Blocked' , busy : 'Busy' , free : 'Free' , full : 'Full' } ,
+                zones    : { docks : 'Docks' , H1 : 'Aisle H1' , H2 : 'Aisle H2' , H3 : 'Aisle H3' , H4 : 'Aisle H4' , receiving : 'Receiving' } ,
             } ,
 
             hall :

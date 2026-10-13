@@ -109,6 +109,26 @@ describe( 'CellGrid' , () =>
         expect( markup ).toContain( 'bg-success"></span>Free' ) ;
     } ) ;
 
+    test( 'zones are drawn under the cells, a code names a cell, the axes can go' , () =>
+    {
+        const markup = renderToStaticMarkup(
+            <CellGrid
+                cells    = { [ { code : 'H2-04-B' , col : 3 , id : 'x' , row : 1 , state : 'full' } ] }
+                cols     = { 10 }
+                rows     = { 4 }
+                showAxes = { false }
+                states   = { states }
+                zones    = { [ { col : 0 , color : 'info' , id : 'h2' , label : 'Aisle H2' , row : 0 , span : { cols : 10 , rows : 2 } } ] }
+            />
+        ) ;
+
+        expect( markup ).toContain( 'aria-label="H2-04-B, Full"' ) ;
+        expect( markup ).toContain( '>H2-04-B</span>' ) ;
+        expect( markup ).toContain( 'bg-info/10 border-info/40' ) ;
+        expect( markup ).toContain( 'Aisle H2' ) ;
+        expect( markup ).not.toContain( '>A</span>' ) ;
+    } ) ;
+
     test( 'the axes can be named, the legend left out, the zoom tools too' , () =>
     {
         const markup = renderToStaticMarkup( <CellGrid cells={ cells } colLabels={ [ 10 , 20 , 30 , 40 ] } cols={ 4 } legend={ false } rowLabels={ [ 'X' , 'Y' , 'Z' ] } rows={ 3 } zoomable={ false } /> ) ;

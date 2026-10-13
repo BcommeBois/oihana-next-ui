@@ -10,6 +10,12 @@
  * `states` say what each state is called and which colour it wears — a
  * light ground and a border in that colour, the text staying the theme's.
  * A position with no cell is a gap, a corridor ; a cell may `span` several.
+ * **`zones`** name the parts of a larger plan — an aisle, the docks, the
+ * receiving area — as rectangles drawn under the cells, an aid to reading
+ * and nothing more ; a cell's **`code`** is then its name in the business
+ * (« H2-04-B », « Dock 3 ») in place of the computed coordinate, and
+ * `showAxes` turns the global letters and numbers off where they mean
+ * nothing.
  *
  * 🔑 **A plan of 8 × 40 does not fit a phone** : the plan lives in a
  * viewport, pinched to zoom and dragged to move, with `+` / `−` / « Fit »
@@ -29,7 +35,8 @@
  * @property {number} row - 0-based.
  * @property {number} col - 0-based.
  * @property {string} [state] - A key of `states`.
- * @property {React.ReactNode} [label] - Shown in the cell. Defaults to the coordinate.
+ * @property {string} [code] - The cell's own coordinate (« H2-04-B »), in place of the computed one : the default label, and the name a reader hears.
+ * @property {React.ReactNode} [label] - Shown in the cell. Defaults to `code`, then the coordinate.
  * @property {React.ReactNode} [badge] - A small figure under the label.
  * @property {{ rows ?: number , cols ?: number }} [span]
  * @property {boolean} [disabled] - Shown with its state, but not selectable, not reached by the arrows, `aria-disabled` : a seat already taken, a bin out of use. It may still be in `value` — a seat of the viewer's own, locked.
@@ -47,7 +54,7 @@
  * @param {number} [props.gap=4] - Between two cells, in pixels.
  * @param {boolean} [props.legend=true] - The states, under the plan.
  * @param {number} [props.maxZoom=3]
- * @param {number} [props.minZoom=0.5]
+ * @param {number} [props.minZoom=0.25]
  * @param {Function} [props.onCellClick] - `( cell ) => void`.
  * @param {Function} [props.onChange] - `( ids ) => void` when the selection changes.
  * @param {Function} [props.onZoomChange] - `( zoom ) => void`.
@@ -56,10 +63,12 @@
  * @param {Array<React.ReactNode>} [props.rowLabels] - The rows' names. Defaults to A, B, C…
  * @param {number} props.rows
  * @param {'none'|'single'|'multiple'} [props.selectable='single']
+ * @param {boolean} [props.showAxes=true] - The rows' and columns' names along the edges. Off for a plan of zones, where a global letter means nothing.
  * @param {Object.<string,{ color : import('../../themes/components/cellGrid').CellColor , label : React.ReactNode }>} [props.states={}]
  * @param {string[]} [props.value] - The selected ids (controlled).
  * @param {number} [props.zoom] - The zoom (controlled).
  * @param {boolean} [props.zoomable=true] - Pinch, drag, wheel and the buttons.
+ * @param {Array<{ id : string , label : React.ReactNode , row : number , col : number , span : { rows ?: number , cols ?: number } , color ?: import('../../themes/components/cellGrid').CellColor }>} [props.zones=[]] - Named rectangles drawn under the cells, not interactive. A zone keeps a band above its cells for its name : leave a row between two zones stacked, or the name sits on the cells above.
  *
  * @example
  * ```jsx
@@ -87,7 +96,7 @@ import cellRect , { planeSize }                           from '../../helpers/gr
 import nextCell                                           from '../../helpers/grids/nextCell' ;
 import pinchScale , { clampOffset , zoomAround }          from '../../helpers/grids/pinchScale' ;
 
-import { CELL_ACTIVE , CELL_BASE , CELL_COLORS , CELL_DISABLED , CELL_PLAIN , CELL_SELECTED , SWATCH_COLORS } from '../../themes/components/cellGrid' ;
+import { CELL_ACTIVE , CELL_BASE , CELL_COLORS , CELL_DISABLED , CELL_PLAIN , CELL_SELECTED , SWATCH_COLORS , ZONE_COLORS , ZONE_PLAIN } from '../../themes/components/cellGrid' ;
 
 import NO_LOCALE from '../../contexts/locale/noLocale' ;
 import useI18n   from '../../contexts/locale/useI18n' ;
@@ -100,10 +109,14 @@ const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' ;
 const letter = index => ( index < 26 ? LETTERS[ index ] : letter( Math.floor( index / 26 ) - 1 ) + LETTERS[ index % 26 ] ) ;
 
 /** The air around the plan, in pixels : the ring of a selected cell on an edge needs it. */
-const PAD = 16 ;
+const PAD = 20 ;
 
-/** Where the cells start : the axis labels' gutter, after the air. */
-const GUTTER = PAD + 24 ;
+/** The band the axis labels take, after the air. */
+const AXES = 24 ;
+
+/** The band a zone keeps above its cells for its name, and the air it keeps around them. */
+const ZONE_HEAD = 16 ;
+const ZONE_PAD  = 8 ;
 
 const ZOOM_STEP = 1.25 ;
 
@@ -123,7 +136,7 @@ const CellGrid =
     gap = 4 ,
     legend = true ,
     maxZoom = 3 ,
-    minZoom = 0.5 ,
+    minZoom = 0.25 ,
     onCellClick ,
     onChange ,
     onZoomChange ,
@@ -132,12 +145,20 @@ const CellGrid =
     rowLabels ,
     rows ,
     selectable = 'single' ,
+    showAxes = true ,
     states = {} ,
     value : valueFromProps ,
     zoom : zoomFromProps ,
     zoomable = true ,
+    zones = [] ,
 }) =>
 {
+    // Where the cells start : after the air, the axes' band when they are shown, and — down — the
+    // band the first zone keeps for its name.
+    const head    = zones.length > 0 ? ZONE_HEAD + ZONE_PAD : 0 ;
+    const gutterX = showAxes ? PAD + AXES : PAD ;
+    const gutterY = ( showAxes ? PAD + AXES : PAD ) + head ;
+
     const labels = useI18n( path , NO_LOCALE , false ) ?? {} ;
 
     const [ selected , setSelected ] = useValue( defaultValue , valueFromProps , onChange ) ;
@@ -157,9 +178,11 @@ const CellGrid =
     // The plan width the zoom was last fitted to : a plan that changed size is fitted again.
     const fittedFor = useRef( null ) ;
 
-    const full = { height : plane.height + GUTTER + PAD , width : plane.width + GUTTER + PAD } ;
+    const edge = zones.length > 0 ? ZONE_PAD : gap ;
 
-    const coordinate = useCallback( cell => `${ rowLabels?.[ cell.row ] ?? letter( cell.row ) }-${ colLabels?.[ cell.col ] ?? String( cell.col + 1 ).padStart( 2 , '0' ) }` , [ colLabels , rowLabels ] ) ;
+    const full = { height : plane.height + gutterY + PAD + edge , width : plane.width + gutterX + PAD + edge } ;
+
+    const coordinate = useCallback( cell => cell.code ?? `${ rowLabels?.[ cell.row ] ?? letter( cell.row ) }-${ colLabels?.[ cell.col ] ?? String( cell.col + 1 ).padStart( 2 , '0' ) }` , [ colLabels , rowLabels ] ) ;
 
     // The viewport's size, and the zoom that fits the plan in it at first.
     useEffect( () =>
@@ -424,17 +447,34 @@ const CellGrid =
                         className = "absolute left-0 top-0 origin-top-left"
                         style     = { { height : full.height , transform : `translate(${ offset.x }px, ${ offset.y }px) scale(${ zoom })` , width : full.width } }
                     >
+                        {/* The zones : named grounds under the cells, read by no one — the cells carry the words. */}
+                        { zones.map( zone =>
+                        {
+                            const rect = cellRect( zone , { cellSize , gap } ) ;
+
+                            return (
+                                <div
+                                    aria-hidden = "true"
+                                    className   = { cn( 'absolute rounded-box border border-dashed' , ZONE_COLORS[ zone.color ] ?? ZONE_PLAIN ) }
+                                    key         = { zone.id }
+                                    style       = { { height : rect.height + 2 * ZONE_PAD + ZONE_HEAD , left : gutterX + rect.x - ZONE_PAD , top : gutterY + rect.y - ZONE_PAD - ZONE_HEAD , width : rect.width + 2 * ZONE_PAD } }
+                                >
+                                    <span className="absolute left-1.5 top-0.5 text-[10px] font-medium uppercase tracking-wide text-base-content/60" style={ { lineHeight : `${ ZONE_HEAD - 2 }px` } }>{ zone.label }</span>
+                                </div>
+                            ) ;
+                        } ) }
+
                         {/* The axes : a position is its own identity here. */}
-                        <div aria-hidden="true" className="absolute left-0 top-0 text-[10px] text-base-content/60">
+                        { showAxes && <div aria-hidden="true" className="absolute left-0 top-0 text-[10px] text-base-content/60">
                             { Array.from( { length : cols } , ( _ , col ) => (
                                 // biome-ignore lint/suspicious/noArrayIndexKey: the column number is the label's identity.
-                                <span className="absolute flex items-center justify-center" key={ col } style={ { height : GUTTER - PAD - gap , left : GUTTER + col * ( cellSize + gap ) , top : PAD , width : cellSize } }>{ colLabels?.[ col ] ?? col + 1 }</span>
+                                <span className="absolute flex items-center justify-center" key={ col } style={ { height : AXES - gap , left : gutterX + col * ( cellSize + gap ) , top : PAD , width : cellSize } }>{ colLabels?.[ col ] ?? col + 1 }</span>
                             ) ) }
                             { Array.from( { length : rows } , ( _ , row ) => (
                                 // biome-ignore lint/suspicious/noArrayIndexKey: the row number is the label's identity.
-                                <span className="absolute flex items-center justify-center" key={ row } style={ { height : cellSize , left : PAD , top : GUTTER + row * ( cellSize + gap ) , width : GUTTER - PAD - gap } }>{ rowLabels?.[ row ] ?? letter( row ) }</span>
+                                <span className="absolute flex items-center justify-center" key={ row } style={ { height : cellSize , left : PAD , top : gutterY + row * ( cellSize + gap ) , width : AXES - gap } }>{ rowLabels?.[ row ] ?? letter( row ) }</span>
                             ) ) }
-                        </div>
+                        </div> }
 
                         {/* The cells, by row */}
                         { Array.from( { length : rows } , ( _ , row ) => (
@@ -463,7 +503,7 @@ const CellGrid =
                                             onFocus       = { () => setFocus( cell.id ) }
                                             ref           = { node => { if ( node ) buttons.current.set( cell.id , node ) ; else buttons.current.delete( cell.id ) ; } }
                                             role          = "gridcell"
-                                            style         = { { height : rect.height , left : GUTTER + rect.x , top : GUTTER + rect.y , width : rect.width } }
+                                            style         = { { height : rect.height , left : gutterX + rect.x , top : gutterY + rect.y , width : rect.width } }
                                             tabIndex      = { cell.id === focused ? 0 : -1 }
                                             type          = "button"
                                         >

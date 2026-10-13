@@ -89,9 +89,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   `value` / `onChange`, `onCellClick`, `cellSize` (44 px, what a finger wants), `gap`,
   `rowLabels` / `colLabels`, `zoom` / `onZoomChange`. `helpers/grids/cellRect`, `nextCell`,
   `pinchScale` (with `zoomAround`, `clampOffset`) are the pure part, tested ; new
-  `components.cellGrid` bundle. The CellGrid page shows an aisle with four states and a
-  corridor, a hall with a stage and seats to choose, a car park with plates ; the Inventory
-  scenario opens on the plan of its aisle.
+  `components.cellGrid` bundle. **A whole warehouse on one plan** : `zones` are named
+  rectangles drawn under the cells — an aisle, the docks, receiving — an aid to reading and
+  nothing more ; a cell's `code` is its name in the business (« H2-04-B », « Dock 3 ») in place
+  of the computed coordinate, as label and as the name read aloud ; `showAxes` turns the global
+  letters and numbers off where they mean nothing, and `minZoom` goes down to 0.25 for a large
+  plan. The CellGrid page shows an aisle with four states and a corridor, a warehouse of
+  four aisles with its docks and receiving area, a hall with a stage and seats to choose — the
+  taken ones `disabled`, two already chosen —, a car park with plates ; the Inventory scenario
+  opens on the plan of its aisle.
 - The Scanner page opens with **« In the field »** — the network, the screen, the keys — and
   the Logistics › Receiving scenario gets its thumb bar (`Dock` actions) and keys (F1, F2, V) ;
   the Dock page shows the actions variant. The application guide gains **In the field**.

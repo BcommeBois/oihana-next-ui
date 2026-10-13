@@ -9,6 +9,8 @@
  * - bg-primary/20 bg-secondary/20 bg-accent/20 bg-neutral/20 bg-info/20 bg-success/20 bg-warning/20 bg-error/20
  * - border-primary border-secondary border-accent border-neutral border-info border-success border-warning border-error
  * - bg-primary bg-secondary bg-accent bg-neutral bg-info bg-success bg-warning bg-error
+ * - bg-primary/10 bg-secondary/10 bg-accent/10 bg-neutral/10 bg-info/10 bg-success/10 bg-warning/10 bg-error/10
+ * - border-primary/40 border-secondary/40 border-accent/40 border-neutral/40 border-info/40 border-success/40 border-warning/40 border-error/40
  */
 
 /**
@@ -40,6 +42,21 @@ export const SWATCH_COLORS =
     success   : 'bg-success' ,
     warning   : 'bg-warning' ,
 } ;
+
+/** A zone's ground and dashed border, per colour : lighter than a cell, since cells sit on it. */
+export const ZONE_COLORS =
+{
+    accent    : 'bg-accent/10 border-accent/40' ,
+    error     : 'bg-error/10 border-error/40' ,
+    info      : 'bg-info/10 border-info/40' ,
+    neutral   : 'bg-neutral/10 border-neutral/40' ,
+    primary   : 'bg-primary/10 border-primary/40' ,
+    secondary : 'bg-secondary/10 border-secondary/40' ,
+    success   : 'bg-success/10 border-success/40' ,
+    warning   : 'bg-warning/10 border-warning/40' ,
+} ;
+
+export const ZONE_PLAIN = 'bg-base-200/60 border-base-300' ;
 
 /** A cell with no state, or a state the map does not name. */
 export const CELL_PLAIN = 'bg-base-200 border-base-300' ;

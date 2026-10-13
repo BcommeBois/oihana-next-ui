@@ -64,6 +64,58 @@ const PARK = Array.from( { length : 3 } , ( _ , row ) =>
 const MODES = [ 'single' , 'multiple' , 'none' ] ;
 
 /**
+ * A warehouse : four aisles of bins (two faces each) around a central corridor, four docks on
+ * the left, a receiving area at the bottom — 14 rows × 40 columns, every cell named as the
+ * business names it.
+ */
+const HANGAR = ( () =>
+{
+    const cells = [] ;
+    const zones = [] ;
+
+    // The docks, left : one tall cell each.
+    for ( let dock = 0 ; dock < 4 ; dock++ )
+    {
+        cells.push( { code : `Q${ dock + 1 }` , col : 0 , id : `dock-${ dock + 1 }` , row : dock * 3 , span : { cols : 2 , rows : 2 } , state : dock === 1 ? 'busy' : 'free' } ) ;
+    }
+
+    zones.push( { col : 0 , color : 'info' , id : 'docks' , label : 'Quais' , row : 0 , span : { cols : 2 , rows : 11 } } ) ;
+
+    // A corridor of two columns between the two halves of an aisle.
+    const WIDTH = 18 ;
+
+    // Four aisles : two rows of bins each (the two faces), 16 positions, a corridor between the pairs.
+    const aisles = [ [ 0 , 'H1' ] , [ 3 , 'H2' ] , [ 6 , 'H3' ] , [ 9 , 'H4' ] ] ;
+
+    for ( const [ top , name ] of aisles )
+    {
+        zones.push( { col : 3 , color : name === 'H2' ? 'primary' : 'neutral' , id : name , label : `Allée ${ name }` , row : top , span : { cols : WIDTH , rows : 2 } } ) ;
+
+        for ( let face = 0 ; face < 2 ; face++ )
+        {
+            for ( let position = 0 ; position < 16 ; position++ )
+            {
+                const col  = 3 + position + ( position >= 8 ? 2 : 0 ) ;
+                const seed = noise( 5000 + top * 50 + face * 20 + position ) ;
+                const code = `${ name }-${ String( position + 1 ).padStart( 2 , '0' ) }-${ face === 0 ? 'A' : 'B' }` ;
+
+                cells.push( { badge : seed < 0.5 ? Math.ceil( seed * 30 ) : undefined , code , col , id : code , label : code.slice( 3 ) , row : top + face , state : seed < 0.5 ? 'full' : seed < 0.85 ? 'free' : 'blocked' } ) ;
+            }
+        }
+    }
+
+    // Receiving, at the bottom : six wide bays.
+    zones.push( { col : 3 , color : 'success' , id : 'receiving' , label : 'Réception' , row : 12 , span : { cols : WIDTH , rows : 2 } } ) ;
+
+    for ( let bay = 0 ; bay < 6 ; bay++ )
+    {
+        cells.push( { code : `REC-${ bay + 1 }` , col : 3 + bay * 3 , id : `rec-${ bay + 1 }` , row : 12 , span : { cols : 3 , rows : 2 } , state : bay < 2 ? 'busy' : 'free' } ) ;
+    }
+
+    return { cells , zones } ;
+} )() ;
+
+/**
  * CellGrid demo : an aisle plan, a hall, a car park.
  *
  * @param {Object} props
@@ -76,6 +128,7 @@ const CellGridDemo = ( { path = 'demo.grids.cellGrid' } = {} ) =>
     const [ mode     , setMode     ] = useState( 'single' ) ;
     const [ selected , setSelected ] = useState( [] ) ;
     const [ seats    , setSeats    ] = useState( [ '4-3' , '4-4' ] ) ;
+    const [ bin      , setBin      ] = useState( [] ) ;
     const [ zoom     , setZoom     ] = useState( 1 ) ;
 
     const aisleStates = useMemo( () => (
@@ -100,6 +153,16 @@ const CellGridDemo = ( { path = 'demo.grids.cellGrid' } = {} ) =>
     } ) , [ t.park?.states ] ) ;
 
     const hall = useMemo( () => HALL.map( cell => ( seats.includes( cell.id ) ? { ...cell , state : 'chosen' } : cell ) ) , [ seats ] ) ;
+
+    const hangarStates = useMemo( () => (
+    {
+        blocked : { color : 'error'   , label : t.hangar?.states?.blocked } ,
+        busy    : { color : 'warning' , label : t.hangar?.states?.busy } ,
+        free    : { color : 'success' , label : t.hangar?.states?.free } ,
+        full    : { color : 'neutral' , label : t.hangar?.states?.full } ,
+    } ) , [ t.hangar?.states ] ) ;
+
+    const hangarZones = useMemo( () => HANGAR.zones.map( zone => ( { ...zone , label : t.hangar?.zones?.[ zone.id ] ?? zone.label } ) ) , [ t.hangar?.zones ] ) ;
 
     return (
         <Container className="flex flex-col gap-8 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-6xl">
@@ -142,6 +205,29 @@ const CellGridDemo = ( { path = 'demo.grids.cellGrid' } = {} ) =>
                     <span>{ t.aisle?.zoomKeys }</span>
                     <Kbd keys={ [ 'Ctrl' , t.aisle?.wheel ] } size="sm" />
                 </div>
+            </section>
+
+            <Divider />
+
+            {/* A warehouse */}
+            <section className="flex flex-col gap-3">
+                <h3 className="text-xl font-semibold">{ t.hangar?.title }</h3>
+                <p className="text-sm text-base-content/70">{ t.hangar?.text }</p>
+
+                <CellGrid
+                    ariaLabel = { t.hangar?.title }
+                    cellSize  = { 40 }
+                    cells     = { HANGAR.cells }
+                    className = "h-112"
+                    cols      = { 21 }
+                    onChange  = { setBin }
+                    rows      = { 14 }
+                    showAxes  = { false }
+                    states    = { hangarStates }
+                    value     = { bin }
+                    zones     = { hangarZones }
+                />
+                <p className="text-xs text-base-content/60">{ bin.length > 0 ? format( t.hangar?.selected ?? '{0}' , bin[ 0 ] ) : t.hangar?.pick }</p>
             </section>
 
             <Divider />
