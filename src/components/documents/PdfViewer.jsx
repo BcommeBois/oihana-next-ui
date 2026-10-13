@@ -52,7 +52,7 @@
  * ```
  */
 
-import { useCallback , useEffect , useImperativeHandle , useMemo , useRef , useState } from 'react' ;
+import { use , useCallback , useEffect , useImperativeHandle , useMemo , useRef , useState } from 'react' ;
 import { useMeasure } from 'react-use' ;
 
 import LinkButton from '../links/LinkButton' ;
@@ -65,8 +65,9 @@ import PdfViewerContext from './context' ;
 
 import { loadEngine } from './engine' ;
 
-import NO_LOCALE from '../../contexts/locale/noLocale' ;
-import useI18n   from '../../contexts/locale/useI18n' ;
+import FullscreenContext from '../../contexts/fullscreen/context' ;
+import NO_LOCALE         from '../../contexts/locale/noLocale' ;
+import useI18n           from '../../contexts/locale/useI18n' ;
 
 import useValue from '../../hooks/useValue' ;
 
@@ -425,6 +426,10 @@ const PdfViewer =
 
     const toggleFullscreen = useCallback( () => setFullscreen( value => !value ) , [] ) ;
 
+    // The application may already hold the Escape key (`FullscreenProvider`'s `lockEscape`) :
+    // then the viewer neither locks it again nor, worse, unlocks it on its way out.
+    const appHoldsEscape = use( FullscreenContext )?.escapeLocked ?? false ;
+
     useEffect( () =>
     {
         if ( !fullscreen )
@@ -456,7 +461,7 @@ const PdfViewer =
         // When the application is in the browser's full screen, Escape must close the viewer
         // and leave that full screen alone : the Keyboard Lock API hands the key to the page
         // (Chrome, Edge). Elsewhere one Escape closes both, the viewer with the full screen.
-        const locked = !!document.fullscreenElement && typeof navigator.keyboard?.lock === 'function' ;
+        const locked = !appHoldsEscape && !!document.fullscreenElement && typeof navigator.keyboard?.lock === 'function' ;
 
         if ( locked )
         {
@@ -475,7 +480,7 @@ const PdfViewer =
             }
         } ;
     }
-    , [ fullscreen ] ) ;
+    , [ appHoldsEscape , fullscreen ] ) ;
 
     // --------- The handle, and what the toolbar reads
 

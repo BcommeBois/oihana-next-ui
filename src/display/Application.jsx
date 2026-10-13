@@ -49,10 +49,18 @@ const NAVBAR_PROPS = { controls : { sound : true } } ;
  */
 const NAVIGATION_PENDING_INDICATOR = true ;
 
+/**
+ * The lab keeps Escape for its own dialogs and viewers in full screen — the
+ * one place to see the Keyboard Lock at work. Off by default elsewhere.
+ * @type {boolean}
+ */
+const FULLSCREEN_LOCK_ESCAPE = true ;
+
 const Application = ( { children , initialLang } ) => (
     <ApplicationProviders
         config                     = { config }
         feedbackStorageKey         = { FEEDBACK_STORAGE_KEY }
+        fullscreenLockEscape       = { FULLSCREEN_LOCK_ESCAPE }
         initialLang                = { initialLang }
         languages                  = { languages }
         locale                     = { locale }

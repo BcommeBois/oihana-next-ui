@@ -8,9 +8,10 @@ import FullscreenContext from './context'
  * React hook to access fullscreen context.
  *
  * @returns {{
+ *   escapeLocked: boolean,
  *   isFullscreen: boolean,
  *   toggleFullscreen: () => void
- * }}
+ * }} `escapeLocked` is true while the Escape key is kept for the page (`lockEscape` on the provider, in a browser that has the Keyboard Lock API, in full screen).
  *
  * @throws {Error} If used outside FullscreenContext.
  *

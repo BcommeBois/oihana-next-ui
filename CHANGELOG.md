@@ -36,6 +36,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   says where its files come from, and draws the first page of a hand-written two-page sample
   (`public/documents/sample.pdf`, which embeds no font : the proof that the served fonts work).
 
+**⌨️ Full screen that keeps the Escape key**
+
+- **`FullscreenProvider` takes `lockEscape`** (`ApplicationProviders` : `fullscreenLockEscape`),
+  off by default. In its full screen a browser takes Escape for itself and leaves full screen
+  before the page sees the key — a dialog, a drawer or a viewer that Escape should close never
+  gets it. With the Keyboard Lock API (Chrome, Edge) the key is handed to the page instead ; full
+  screen is then left through the button, or by **holding Escape for about two seconds**, a way
+  out the browser keeps and announces itself. `useFullscreen()` adds **`escapeLocked`**, true
+  while the lock holds — false where the API does not exist (Firefox, Safari), where nothing
+  changes. `PdfViewer` leaves the key to the application when it holds it. The demo app turns
+  it on.
+
 **📄 Documents : the viewer**
 
 - **New `components/documents/PdfViewer`** : a PDF in the page — every page in a scrolling

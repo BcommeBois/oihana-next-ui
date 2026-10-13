@@ -104,7 +104,7 @@ talks to.
 | `LocaleProvider` | the translations — `useI18n( 'path.to.bundle' )` |
 | `ThemeProvider` | light or dark — `useThemes()` gives `{ isDark , toggleIsDark }` |
 | `ApplicationProvider` | the shell's state : navbar and sidebar shown, the root's classes |
-| `FullScreenProvider` | `useFullscreen()`, derived from the document, so Escape reports itself |
+| `FullScreenProvider` | `useFullscreen()`, derived from the document, so Escape reports itself. **`fullscreenLockEscape`** keeps the Escape key for the page in full screen (Keyboard Lock API, Chrome and Edge) : a dialog or a viewer closes on Escape, full screen is left through the button or by holding Escape — off by default, and `escapeLocked` says whether it took |
 | `NavigationProvider` | the menu tree, its open groups, its mode |
 | `LoadingProvider` | one global `loading` flag — `useLoading` |
 | `ToastProvider` | `useToast()` — `toast( message , level )` |

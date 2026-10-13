@@ -31,6 +31,7 @@
  * @param {Object}          props
  * @param {React.ReactNode} props.children                      - The application tree.
  * @param {Object}          [props.config]                      - Application configuration, handed to the `ConfigProvider` ; its `defaultLang`, `version` and `versionCheck` are read here.
+ * @param {boolean}         [props.fullscreenLockEscape=false]  - In the browser's full screen, keep the Escape key for the page (`FullscreenProvider`'s `lockEscape`) : a dialog or a viewer closes on Escape, and full screen is left through the button or by holding Escape. Chrome and Edge only ; off by default.
  * @param {string}          [props.feedbackStorageKey]          - Where the device's sound and vibration settings are kept (`FeedbackProvider`). Name it per application : two applications served from one origin would otherwise share them.
  * @param {string}          [props.initialLang]                 - Language resolved on the server (a cookie, a header), so the first render agrees with the client.
  * @param {Array}           [props.languages]                   - Available languages.
@@ -84,6 +85,7 @@ const ApplicationProviders = (
     children ,
     config ,
     feedbackStorageKey ,
+    fullscreenLockEscape = false ,
     initialLang ,
     languages ,
     locale ,
@@ -130,7 +132,7 @@ const ApplicationProviders = (
                 <LocaleProvider i18n={ locale } defaultLang={ initialLang }>
                     <ThemeProvider>
                         <ApplicationProvider>
-                            <FullScreenProvider>
+                            <FullScreenProvider lockEscape={ fullscreenLockEscape }>
                                 <NavigationProvider
                                     defaultNavigation = { navigation }
                                     pendingIndicator  = { navigationPendingIndicator }
