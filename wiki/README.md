@@ -64,6 +64,14 @@ file can say : the shape of a group, and the recipes.
   just happened without looking : `useFeedbackSignal`, what browsers allow, and the
   `FeedbackProvider` master switch kept on the device, with `SoundButton`.
 
+### Offline
+
+- [`offline`](offline/README.md) — writing without a network : the outbox keeps each action on
+  the device and sends it in order when the server answers, never twice (`Idempotency-Key`) ;
+  the transport is the application's (an HTTP API, or Server Actions by kind) ; dependencies and
+  their results, replacement, accounts, files ; what the server has to do ; the banner, the list,
+  and what a failure becomes.
+
 ## Conventions
 
 - **One folder per group**, mirroring the path under `src/` — `components/metrics` here

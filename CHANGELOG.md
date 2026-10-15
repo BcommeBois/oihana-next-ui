@@ -39,11 +39,36 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
     `persistStorage()`, `estimateStorage()`.
   - `src/offline/` imports nothing but `idb` and itself — no React, nothing else of the library —
     and a test keeps it so.
-- **Lab** : Modules › Offline › Outbox, a test bench on the queue as it is stored — receipts, a
-  refused one, conflicts, a flaky server, a quote and its dependent lines, a replacement, a
-  correction on its way, a simulated cut, two accounts, a replayed key ; and `POST /api/outbox/[kind]`,
-  a test route that remembers the idempotency keys and refuses on demand (`?fail=`, `&times=`,
-  `?delay=`).
+- **`OutboxProvider` and `useOutbox`** (`contexts/outbox`) : the outbox of an application, mounted
+  once near its root. Opens the IndexedDB database `name` (a memory queue where IndexedDB is
+  missing) and sends what is due — at mount, when the server answers again (`useOnline`), when the
+  page comes back to the foreground, when a backed-off item comes due, every `interval` while items
+  wait, right after an item is queued ; never offline. One tab sends at a time (`navigator.locks`),
+  every tab sees the queue change (`BroadcastChannel`). `send`, `onSettle` and `onConflict` are
+  read at each use ; `scope` follows the signed-in account ; `online` forces the network state.
+  `useOutbox()` gives `{ ready , online , draining , items , counts , lastSyncAt , scope , enqueue ,
+  retry , remove , clear , drain }`, or `null` outside a provider.
+- **`OutboxBanner`** (`display`) : what the outbox holds, in one sentence — nothing while it is
+  empty (unless `showIdle` : « All your actions are sent. »), the actions waiting (offline : « sent
+  when the network is back »), the first refusal with its reason and a button to `onOpen`. Built on
+  `Alert`, read politely (`role="status"`), never a toast. Each prop (`online`, `pending`,
+  `rejected`, `conflicts`, `lastSyncAt`) takes over from the provider.
+- **`OutboxList`** (`display`) : the actions, newest first — named by kind (`labels`, `describe`),
+  their status, why they did not leave (`reasons` gives the API's codes the app's words), the next
+  attempt ; **Retry**, **Abandon** (pressed twice, no dialog), **Open** for a sent one. Another
+  account's actions are listed apart, untouchable.
+- `outboxErrorText( item , { errors , reasons } )` (`helpers/outbox`) : the sentence of a failure,
+  shared by the banner and the list. Labels in `components.outbox` (fr / en).
+- **Wiki** : `wiki/offline` — the queue, the two transports (an HTTP API, Server Actions by kind),
+  dependencies and their results, replacement, what the server has to do, what a failure becomes.
+- **Lab** : an outbox mounted over every showcase page, its banner at the top of the page and a
+  toast for a refusal, wherever it happens. The Receiving scenario queues the signed receipt with
+  the photo of the delivery note, and its journal follows the send. Modules › Offline › Outbox, a
+  test bench : receipts, a refused one, conflicts, a flaky server, a quote and its dependent lines,
+  a replacement, a correction on its way, a simulated cut, two accounts, a replayed key — with the
+  banner, the list, a counter on an icon and the queue as it is stored. And `POST
+  /api/outbox/[kind]`, a test route that remembers the idempotency keys and refuses on demand
+  (`?fail=`, `&times=`, `?delay=`).
 
 ## [0.46.1] — 2026-10-15
 

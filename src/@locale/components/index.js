@@ -8,6 +8,7 @@ import cellGrid   from './cellGrid'
 import connection from './connection'
 import document   from './document'
 import pullToRefresh from './pullToRefresh'
+import outbox from './outbox'
 import scanList   from './scanList'
 import signature  from './signature'
 import timeline   from './timeline'
@@ -41,6 +42,7 @@ const components =
     connection ,
     document ,
     pullToRefresh ,
+    outbox ,
     scanList ,
     signature ,
     timeline ,

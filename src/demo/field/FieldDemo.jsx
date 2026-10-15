@@ -9,6 +9,7 @@ import Container from '@/display/Container' ;
 import Badge  from '@/components/Badge' ;
 import Button from '@/components/Button' ;
 import Kbd    from '@/components/Kbd' ;
+import Link   from '@/components/links/Link' ;
 import Input  from '@/components/inputs/Input' ;
 
 import WakeLockToggle   from '@/components/buttons/WakeLockToggle' ;
@@ -65,6 +66,7 @@ const FieldDemo = ( { path = 'demo.field' } = {} ) =>
                     <div>
                         <Button loading={ checking } onClick={ check } size="sm" style="outline">{ t.online?.check }</Button>
                     </div>
+                    <Link className="text-xs" href="/modules/outbox">{ t.online?.outbox }</Link>
                 </section>
 
                 {/* The screen */}

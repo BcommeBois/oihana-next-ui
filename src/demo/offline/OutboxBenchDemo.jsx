@@ -1,27 +1,27 @@
 'use client' ;
 
-import { useCallback , useEffect , useRef , useState } from 'react' ;
+import { useEffect , useRef , useState } from 'react' ;
+
+import { MdOutbox } from 'react-icons/md' ;
 
 import format from 'vegas-js-core/src/strings/fastformat' ;
 
 import Container from '@/display/Container' ;
 
+import OutboxBanner from '@/display/OutboxBanner' ;
+import OutboxList   from '@/display/OutboxList' ;
+
 import Badge            from '@/components/Badge' ;
 import Button           from '@/components/Button' ;
+import Indicator        from '@/components/Indicator' ;
 import SegmentedControl from '@/components/SegmentedControl' ;
 import Toggle           from '@/components/checkboxes/Toggle' ;
 import Table            from '@/components/layouts/Table' ;
 
-import useOnline from '@/hooks/useOnline' ;
+import useI18n   from '@/contexts/locale/useI18n' ;
+import useOutbox from '@/contexts/outbox/useOutbox' ;
 
-import useI18n from '@/contexts/locale/useI18n' ;
-
-import openOfflineDb from '@/offline/db' ;
-import createOutbox  from '@/offline/outbox/createOutbox' ;
-import httpTransport from '@/offline/outbox/httpTransport' ;
-import idbRepository from '@/offline/outbox/idbRepository' ;
-
-const BASE = '/api/outbox' ;
+import { BASE , prepare , useLabOutbox } from './LabOutbox' ;
 
 const ACCOUNTS = [ { key : 'A' , label : 'A' } , { key : 'B' , label : 'B' } ] ;
 
@@ -34,27 +34,9 @@ const short = id => id.slice( 0 , 8 ) ;
 const wait = ms => new Promise( resolve => setTimeout( resolve , ms ) ) ;
 
 /**
- * A line of a quote gets the number the server gave the quote : the
- * substitution is the transport's business, never the queue's.
- *
- * @param {Object} item
- * @param {Object} refs
- * @returns {Object} The request.
- */
-const prepare = ( item , refs ) =>
-{
-    const request = item.payload ?? {} ;
-    if ( item.kind !== 'line' )
-    {
-        return request ;
-    }
-    const [ quote ] = Object.values( refs ) ;
-    return { ...request , body : { ...request.body , quote : quote?.id ?? null } } ;
-} ;
-
-/**
- * The outbox, undressed : buttons that queue intentions, the network and the
- * account to play with, and the queue as it is stored.
+ * The lab's outbox on a bench : buttons that queue intentions, the network
+ * and the account to play with, the banner and the list an application shows,
+ * and the queue as it is stored.
  *
  * @param {Object} props
  * @param {string} [props.path='demo.offline.outbox'] - Dot notation path to the demo locale.
@@ -63,125 +45,24 @@ const OutboxBenchDemo = ( { path = 'demo.offline.outbox' } = {} ) =>
 {
     const t = useI18n( path ) ?? {} ;
 
-    const { online : reachable } = useOnline() ;
+    const outbox = useOutbox() ;
+    const lab    = useLabOutbox() ;
 
-    const [ outbox     , setOutbox     ] = useState( null ) ;
-    const [ items      , setItems      ] = useState( [] ) ;
-    const [ counts     , setCounts     ] = useState( null ) ;
-    const [ lastSyncAt , setLastSyncAt ] = useState( null ) ;
-    const [ draining   , setDraining   ] = useState( false ) ;
-    const [ simulated  , setSimulated  ] = useState( false ) ;
-    const [ scope      , setScope      ] = useState( 'A' ) ;
-    const [ log        , setLog        ] = useState( [] ) ;
-    const [ replay     , setReplay     ] = useState( null ) ;
-    const [ now        , setNow        ] = useState( 0 ) ;
+    const { clear , counts , drain , draining , enqueue , items , lastSyncAt , online , ready , scope } = outbox ?? {} ;
 
-    const online = reachable && !simulated ;
+    const [ replay , setReplay ] = useState( null ) ;
+    const [ now    , setNow    ] = useState( 0 ) ;
 
-    const onlineRef = useRef( online ) ;
-    const counter   = useRef( 0 ) ;
-    const timer     = useRef( null ) ;
+    const counter = useRef( 0 ) ;
 
-    useEffect( () =>
-    {
-        onlineRef.current = online ;
-    }
-    , [ online ] ) ;
-
-    // The outbox lives in the browser only : opened after mount, closed on unmount.
-    useEffect( () =>
-    {
-        let cancelled = false ;
-        let db = null ;
-        let unsubscribe = null ;
-
-        const start = async () =>
-        {
-            db = await openOfflineDb( 'lab' ) ;
-
-            if ( cancelled )
-            {
-                db.close() ;
-                return ;
-            }
-
-            const next = createOutbox(
-            {
-                backoff    : { base : 5000 } ,
-                onSettle   : item => setLog( previous => [ { at : Date.now() , id : item.id , kind : item.kind , status : item.status } , ...previous ].slice( 0 , 8 ) ) ,
-                repository : idbRepository( db ) ,
-                scope      : 'A' ,
-                send       : httpTransport( { base : BASE , prepare } ) ,
-            }) ;
-
-            const refresh = async () =>
-            {
-                const [ list , summary , last ] = await Promise.all( [ next.list() , next.counts() , next.getLastSyncAt() ] ) ;
-                if ( !cancelled )
-                {
-                    setItems( list ) ;
-                    setCounts( summary ) ;
-                    setLastSyncAt( last ) ;
-                    setDraining( next.isDraining() ) ;
-                }
-            } ;
-
-            unsubscribe = next.subscribe( refresh ) ;
-
-            await next.recover() ;
-            await refresh() ;
-
-            setOutbox( next ) ;
-        } ;
-
-        start() ;
-
-        return () =>
-        {
-            cancelled = true ;
-            unsubscribe?.() ;
-            clearTimeout( timer.current ) ;
-            db?.close() ;
-        } ;
-    }
-    , [] ) ;
-
-    // Sends what is due ; wakes up again when the next backed-off item comes due.
-    const drain = useCallback( async () =>
-    {
-        if ( !outbox )
-        {
-            return ;
-        }
-
-        clearTimeout( timer.current ) ;
-
-        const { nextAt } = await outbox.drain( { online : onlineRef.current } ) ;
-
-        if ( nextAt !== null && onlineRef.current )
-        {
-            timer.current = setTimeout( drain , Math.max( nextAt - Date.now() , 2000 ) ) ;
-        }
-    }
-    , [ outbox ] ) ;
-
-    useEffect( () =>
-    {
-        if ( online )
-        {
-            drain() ;
-        }
-    }
-    , [ drain , online ] ) ;
-
-    // The « in N s » column ticks while an item waits for its time.
+    // The « in N s » column of the raw table ticks while an item waits for its time.
     useEffect( () =>
     {
         setNow( Date.now() ) ;
 
-        if ( !items.some( item => item.status === 'pending' && item.nextAttemptAt > Date.now() ) )
+        if ( !( items ?? [] ).some( item => item.status === 'pending' && item.nextAttemptAt > Date.now() ) )
         {
-            return ;
+            return undefined ;
         }
 
         const id = setInterval( () => setNow( Date.now() ) , 1000 ) ;
@@ -190,11 +71,10 @@ const OutboxBenchDemo = ( { path = 'demo.offline.outbox' } = {} ) =>
     }
     , [ items ] ) ;
 
-    const enqueue = async init =>
+    if ( !outbox || !lab )
     {
-        await outbox.enqueue( init ) ;
-        drain() ;
-    } ;
+        return null ;
+    }
 
     const pallet = () =>
     {
@@ -222,12 +102,11 @@ const OutboxBenchDemo = ( { path = 'demo.offline.outbox' } = {} ) =>
             key : 'quote' ,
             run : async () =>
             {
-                const quote = await outbox.enqueue( { kind : 'quote' , payload : { body : { customer : 'Dupont' } } } ) ;
+                const quote = await enqueue( { kind : 'quote' , payload : { body : { customer : 'Dupont' } } } ) ;
                 for ( const [ index , product ] of LINES.entries() )
                 {
-                    await outbox.enqueue( { dependsOn : [ quote.id ] , kind : 'line' , payload : { body : { product , quantity : ( index + 1 ) * 12 } } } ) ;
+                    await enqueue( { dependsOn : [ quote.id ] , kind : 'line' , payload : { body : { product , quantity : ( index + 1 ) * 12 } } } ) ;
                 }
-                drain() ;
             } ,
         } ,
         { key : 'replace' , run : () => enqueue( { kind : 'receipt' , payload : { body : { order : 'PO-2026-118' , pallet : pallet() } } , target : 'PO-2026-118' } ) } ,
@@ -235,25 +114,17 @@ const OutboxBenchDemo = ( { path = 'demo.offline.outbox' } = {} ) =>
             key : 'after' ,
             run : async () =>
             {
-                await outbox.enqueue( { kind : 'receipt' , payload : { body : { order : 'PO-2026-121' , version : 1 } , url : 'receipt?delay=3000' } , target : 'PO-2026-121' } ) ;
-                drain() ;
+                await enqueue( { kind : 'receipt' , payload : { body : { order : 'PO-2026-121' , version : 1 } , url : 'receipt?delay=3000' } , target : 'PO-2026-121' } ) ;
                 await wait( 500 ) ;
                 await enqueue( { kind : 'receipt' , payload : { body : { order : 'PO-2026-121' , version : 2 } } , target : 'PO-2026-121' } ) ;
             } ,
         } ,
     ] ;
 
-    const changeScope = next =>
+    const empty = async () =>
     {
-        setScope( next ) ;
-        outbox?.setScope( next ) ;
-        drain() ;
-    } ;
-
-    const clear = async () =>
-    {
-        await outbox.clear() ;
-        setLog( [] ) ;
+        await clear() ;
+        lab.clearLog() ;
         setReplay( null ) ;
     } ;
 
@@ -263,7 +134,7 @@ const OutboxBenchDemo = ( { path = 'demo.offline.outbox' } = {} ) =>
 
         if ( !done )
         {
-            setReplay( { text : t.controls?.replayNone } ) ;
+            setReplay( t.controls?.replayNone ) ;
             return ;
         }
 
@@ -274,15 +145,11 @@ const OutboxBenchDemo = ( { path = 'demo.offline.outbox' } = {} ) =>
             headers : { 'Content-Type' : 'application/json' , 'Idempotency-Key' : done.id } ,
             method  : 'POST' ,
         }) ;
-        const answer   = await response.json() ;
-        const replayed = response.headers.get( 'Idempotent-Replayed' ) === 'true' ;
+        const answer = await response.json() ;
 
-        setReplay(
-        {
-            text : replayed
-                ? format( t.controls?.replayed ?? '{0} {1} {2}' , response.status , 'true' , answer.id )
-                : format( t.controls?.created ?? '{0} {1}' , response.status , answer.id ) ,
-        }) ;
+        setReplay( response.headers.get( 'Idempotent-Replayed' ) === 'true'
+            ? format( t.controls?.replayed ?? '{0} {1} {2}' , response.status , 'true' , answer.id )
+            : format( t.controls?.created ?? '{0} {1}' , response.status , answer.id ) ) ;
     } ;
 
     const nextAttempt = item =>
@@ -295,13 +162,15 @@ const OutboxBenchDemo = ( { path = 'demo.offline.outbox' } = {} ) =>
         return seconds > 0 ? format( t.table?.in ?? '{0}' , seconds ) : t.table?.now ;
     } ;
 
-    const ready = outbox !== null ;
+    const attention = counts.pending + counts.posting + counts.rejected + counts.conflict + counts.blocked ;
 
     return (
         <Container className="flex flex-col gap-6 bg-base-200/60 p-8 rounded-box" maxWidth="max-w-6xl">
 
             <h2 className="text-2xl font-semibold">{ t.title }</h2>
             <p className="text-sm text-base-content/70">{ t.intro }</p>
+
+            <OutboxBanner showIdle />
 
             <div className="grid gap-6 md:grid-cols-2">
 
@@ -332,14 +201,14 @@ const OutboxBenchDemo = ( { path = 'demo.offline.outbox' } = {} ) =>
                     </div>
 
                     <div className="flex flex-col gap-1">
-                        <Toggle checked={ simulated } color="warning" inline label={ t.controls?.offline } onChange={ event => setSimulated( event.target.checked ) } />
+                        <Toggle checked={ lab.simulated } color="warning" inline label={ t.controls?.offline } onChange={ event => lab.setSimulated( event.target.checked ) } />
                         <span className="text-xs text-base-content/60">{ t.controls?.offlineHelp }</span>
                     </div>
 
                     <div className="flex flex-col gap-1">
                         <div className="flex items-center gap-3">
                             <span className="text-sm">{ t.controls?.account }</span>
-                            <SegmentedControl ariaLabel={ t.controls?.account } items={ ACCOUNTS } onChange={ changeScope } size="sm" value={ scope } />
+                            <SegmentedControl ariaLabel={ t.controls?.account } items={ ACCOUNTS } onChange={ lab.setScope } size="sm" value={ scope } />
                         </div>
                         <span className="text-xs text-base-content/60">{ t.controls?.accountHelp }</span>
                     </div>
@@ -347,23 +216,37 @@ const OutboxBenchDemo = ( { path = 'demo.offline.outbox' } = {} ) =>
                     <div className="flex flex-wrap gap-2">
                         <Button color="primary" disabled={ !ready } loading={ draining } onClick={ drain } size="sm">{ t.controls?.send }</Button>
                         <Button disabled={ !ready } onClick={ replayLast } size="sm" style="outline" tooltip={ t.controls?.replayHelp }>{ t.controls?.replay }</Button>
-                        <Button color="error" disabled={ !ready || !items.length } onClick={ clear } size="sm" style="outline">{ t.controls?.clear }</Button>
+                        <Button color="error" disabled={ !ready || !items.length } onClick={ empty } size="sm" style="outline">{ t.controls?.clear }</Button>
                     </div>
 
-                    { replay && <p className="text-xs text-base-content/80" role="status">{ replay.text }</p> }
+                    { replay && <p className="text-xs text-base-content/80" role="status">{ replay }</p> }
 
-                    { counts && (
-                        <p className="text-xs text-base-content/70 tabular-nums">
-                            { format( t.controls?.counts ?? '' , counts.pending + counts.posting , counts.rejected , counts.conflict , counts.blocked , counts.done , counts.other ) }
-                        </p>
-                    ) }
+                    <div className="flex items-center gap-3">
+                        <Indicator item={ attention > 0 && <Badge aria-hidden color="warning" size="sm">{ attention }</Badge> }>
+                            <Button aria-label={ format( t.indicator?.label ?? '{0}' , attention ) } shape="square" style="ghost">
+                                <MdOutbox aria-hidden="true" className="size-6" />
+                            </Button>
+                        </Indicator>
+                        <span className="text-xs text-base-content/60">{ t.indicator?.text }</span>
+                    </div>
+
+                    <p className="text-xs text-base-content/70 tabular-nums">
+                        { format( t.controls?.counts ?? '' , counts.pending + counts.posting , counts.rejected , counts.conflict , counts.blocked , counts.done , counts.other ) }
+                    </p>
                 </section>
             </div>
 
-            {/* The queue as it is stored */}
+            {/* What an application shows */}
             <section className="flex flex-col gap-3 rounded-box bg-base-100 p-4 shadow-sm">
-                <Table size="sm" zebra>
-                    <caption className="caption-top pb-2 text-left text-sm font-semibold">{ t.table?.caption }</caption>
+                <h3 className="font-semibold">{ t.list?.title }</h3>
+                <p className="text-xs text-base-content/70">{ t.list?.text }</p>
+                <OutboxList labels={ t.kinds } />
+            </section>
+
+            {/* The queue as it is stored */}
+            <details className="rounded-box bg-base-100 p-4 shadow-sm">
+                <summary className="cursor-pointer text-sm font-semibold">{ t.table?.caption }</summary>
+                <Table className="mt-3" size="sm" zebra>
                     <thead>
                         <tr>
                             <th>{ t.table?.id }</th>
@@ -374,12 +257,11 @@ const OutboxBenchDemo = ( { path = 'demo.offline.outbox' } = {} ) =>
                             <th>{ t.table?.next }</th>
                             <th>{ t.table?.error }</th>
                             <th>{ t.table?.result }</th>
-                            <th>{ t.table?.actions }</th>
                         </tr>
                     </thead>
                     <tbody>
                         { items.length === 0 && (
-                            <tr><td className="text-center text-base-content/60" colSpan={ 9 }>{ t.table?.empty }</td></tr>
+                            <tr><td className="text-center text-base-content/60" colSpan={ 8 }>{ t.table?.empty }</td></tr>
                         ) }
                         { items.map( item => (
                             <tr className={ item.scope !== scope ? 'opacity-50' : undefined } key={ item.id }>
@@ -394,42 +276,25 @@ const OutboxBenchDemo = ( { path = 'demo.offline.outbox' } = {} ) =>
                                 <td><Badge color={ COLORS[ item.status ] } size="sm" style="soft">{ t.statuses?.[ item.status ] ?? item.status }</Badge></td>
                                 <td className="text-right tabular-nums">{ item.attempts }</td>
                                 <td className="tabular-nums">{ nextAttempt( item ) }</td>
-                                <td className="text-xs">
-                                    { item.lastError
-                                        ? (
-                                            <>
-                                                <span className="font-mono">{ [ item.lastError.status || null , item.lastError.code ].filter( Boolean ).join( ' · ' ) }</span>
-                                                { item.lastError.exhausted && <span className="block text-base-content/60">{ t.table?.exhausted }</span> }
-                                            </>
-                                        )
-                                        : '—' }
+                                <td className="font-mono text-xs">
+                                    { item.lastError ? [ item.lastError.status || null , item.lastError.code ].filter( Boolean ).join( ' · ' ) : '—' }
                                 </td>
                                 <td className="font-mono text-xs">{ item.result?.id ?? '—' }</td>
-                                <td>
-                                    <div className="flex gap-1">
-                                        { [ 'rejected' , 'conflict' , 'blocked' ].includes( item.status ) && (
-                                            <Button onClick={ async () => { await outbox.retry( item.id ) ; drain() ; } } size="xs" style="outline">{ t.table?.retry }</Button>
-                                        ) }
-                                        { item.status !== 'done' && (
-                                            <Button color="error" onClick={ () => outbox.remove( item.id ) } size="xs" style="ghost">{ t.table?.remove }</Button>
-                                        ) }
-                                    </div>
-                                </td>
                             </tr>
                         ) ) }
                     </tbody>
                 </Table>
-            </section>
+            </details>
 
             {/* onSettle */}
             <section className="flex flex-col gap-2 rounded-box bg-base-100 p-4 shadow-sm">
                 <h3 className="font-semibold">{ t.log?.title }</h3>
                 <p className="text-xs text-base-content/70">{ t.log?.text }</p>
-                { log.length === 0
+                { lab.log.length === 0
                     ? <p className="text-xs text-base-content/60">{ t.log?.empty }</p>
                     : (
                         <ul className="flex flex-col gap-1 text-xs">
-                            { log.map( entry => (
+                            { lab.log.map( entry => (
                                 <li className="flex items-center gap-2" key={ `${ entry.id }-${ entry.at }-${ entry.status }` }>
                                     <span className="tabular-nums text-base-content/60">{ new Date( entry.at ).toLocaleTimeString() }</span>
                                     <span className="font-mono">{ short( entry.id ) }</span>

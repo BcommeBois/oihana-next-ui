@@ -90,7 +90,7 @@ const receiving =
             validate   : 'Valider la réception' ,
             done       : 'Réception validée.' ,
             next       : 'Nouvelle réception' ,
-            record     : 'Ce que l’application enverrait' ,
+            record     : 'Ce qui est parti dans la file d’envoi' ,
         } ,
 
         labels :
@@ -115,7 +115,9 @@ const receiving =
             checkedOf : '{0} lignes, {1} pièces' ,
             photo     : 'Bon de livraison photographié' ,
             signed    : 'Signé par le réceptionnaire' ,
-            sent      : 'À envoyer au serveur' ,
+            sent      : 'En file d’envoi' ,
+            sentDone  : 'Envoyé au serveur' ,
+            states    : { blocked : 'Bloqué : une action dont il dépend a échoué.' , conflict : 'En conflit : à revoir dans la file d’envoi.' , pending : 'Part dès que le serveur répond.' , posting : 'Envoi en cours…' , rejected : 'Refusé : voir la file d’envoi.' } ,
         } ,
 
         receipt :
@@ -231,7 +233,7 @@ const receiving =
             validate   : 'Confirm the receipt' ,
             done       : 'Receipt confirmed.' ,
             next       : 'New receipt' ,
-            record     : 'What the application would send' ,
+            record     : 'What went into the outbox' ,
         } ,
 
         labels :
@@ -256,7 +258,9 @@ const receiving =
             checkedOf : '{0} lines, {1} pieces' ,
             photo     : 'Delivery note photographed' ,
             signed    : 'Signed by the receiver' ,
-            sent      : 'To send to the server' ,
+            sent      : 'In the outbox' ,
+            sentDone  : 'Sent to the server' ,
+            states    : { blocked : 'Blocked : an action it depends on failed.' , conflict : 'In conflict : to review in the outbox.' , pending : 'Leaves as soon as the server answers.' , posting : 'Sending…' , rejected : 'Refused : see the outbox.' } ,
         } ,
 
         receipt :

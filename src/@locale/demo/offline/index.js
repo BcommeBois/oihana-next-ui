@@ -3,12 +3,18 @@
  */
 const offline =
 {
+    lab :
+    {
+        fr : { refused : 'Envoi refusé ({0}) : {1}' } ,
+        en : { refused : 'Send refused ({0}) : {1}' } ,
+    } ,
+
     outbox :
     {
         fr :
         {
             title : 'Le banc d’essai de la file' ,
-            intro : 'Une file d’intentions gardée dans IndexedDB (la base « lab »), envoyée dans l’ordre vers une route d’essai qui retient les clés d’idempotence — sans habillage : le tableau montre la file telle qu’elle est en base. Remplissez-la, coupez le réseau, changez de compte, rechargez la page : rien ne se perd (outils de développement → Application → IndexedDB → lab).' ,
+            intro : 'La file du lab, montée sur toutes ses pages : une file d’intentions gardée dans IndexedDB (la base « lab »), envoyée dans l’ordre vers une route d’essai qui retient les clés d’idempotence. Remplissez-la, coupez le réseau, changez de page — la bannière vous suit —, changez de compte : rien ne se perd (outils de développement → Application → IndexedDB → lab).' ,
 
             queue :
             {
@@ -54,9 +60,23 @@ const offline =
                 counts      : '{0} en attente · {1} refusé(s) · {2} en conflit · {3} bloqué(s) · {4} livré(s) · {5} d’un autre compte' ,
             } ,
 
+            indicator :
+            {
+                label : '{0} action(s) à suivre' ,
+                text  : 'Le compteur sur l’icône de la barre : useOutbox().counts dans un Indicator.' ,
+            } ,
+
+            list :
+            {
+                title : 'Ce que l’application montre' ,
+                text  : 'OutboxList : chaque action nommée par son type, son statut, la raison d’un refus, Réessayer, Abandonner (deux appuis).' ,
+            } ,
+
+            kinds : { line : 'Ligne de devis' , quote : 'Devis' , receipt : 'Réception' } ,
+
             table :
             {
-                caption  : 'La file, de la plus ancienne à la plus récente' ,
+                caption  : 'La file en base, de la plus ancienne à la plus récente' ,
                 empty    : 'La file est vide.' ,
                 id       : 'Id' ,
                 kind     : 'Type' ,
@@ -88,7 +108,7 @@ const offline =
         en :
         {
             title : 'The outbox test bench' ,
-            intro : 'A queue of intentions kept in IndexedDB (the « lab » database), sent in order to a test route that remembers the idempotency keys — undressed : the table shows the queue as it is stored. Fill it, cut the network, switch accounts, reload the page : nothing is lost (developer tools → Application → IndexedDB → lab).' ,
+            intro : 'The lab’s queue, mounted over all its pages : a queue of intentions kept in IndexedDB (the « lab » database), sent in order to a test route that remembers the idempotency keys. Fill it, cut the network, change page — the banner follows —, switch accounts : nothing is lost (developer tools → Application → IndexedDB → lab).' ,
 
             queue :
             {
@@ -134,9 +154,23 @@ const offline =
                 counts      : '{0} pending · {1} refused · {2} in conflict · {3} blocked · {4} delivered · {5} of another account' ,
             } ,
 
+            indicator :
+            {
+                label : '{0} action(s) to follow' ,
+                text  : 'The counter on the bar icon : useOutbox().counts in an Indicator.' ,
+            } ,
+
+            list :
+            {
+                title : 'What the application shows' ,
+                text  : 'OutboxList : each action named by its kind, its status, the reason of a refusal, Retry, Abandon (two presses).' ,
+            } ,
+
+            kinds : { line : 'Quote line' , quote : 'Quote' , receipt : 'Receipt' } ,
+
             table :
             {
-                caption  : 'The queue, oldest first' ,
+                caption  : 'The queue as stored, oldest first' ,
                 empty    : 'The queue is empty.' ,
                 id       : 'Id' ,
                 kind     : 'Kind' ,

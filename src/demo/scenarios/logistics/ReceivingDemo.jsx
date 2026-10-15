@@ -34,7 +34,8 @@ import parseGS1Date          from '@/helpers/barcodes/parseGS1Date' ;
 import readTypedCode         from '@/helpers/barcodes/readTypedCode' ;
 import sha256                from '@/helpers/crypto/sha256' ;
 
-import useI18n from '@/contexts/locale/useI18n' ;
+import useI18n   from '@/contexts/locale/useI18n' ;
+import useOutbox from '@/contexts/outbox/useOutbox' ;
 
 const ORDER = 'PO-2026-118' ;
 
@@ -124,8 +125,8 @@ const emptyLines = () => LINES.map( line => ( { ...line , lots : [] , reason : n
  * GTIN finds the line, its quantity adds up, its lot and expiry date are kept,
  * an expired parcel is refused and a close date warned of ; correct a quantity
  * on a keypad ; give a reason for each line that is off, and the photo of the
- * signed delivery note. Confirming prints the record the application would
- * send. The labels are drawn on the page, their dates worked out from today
+ * signed delivery note. Confirming queues the record, with the photo, in the
+ * outbox : it leaves at once, or when the network is back. The labels are drawn on the page, their dates worked out from today
  * once the page is in the browser.
  *
  * @param {Object} props
@@ -151,6 +152,7 @@ const ReceivingDemo = ( { path = 'demo.scenarios.logistics.receiving' } = {} ) =
     const [ photos  , setPhotos  ] = useState( [] ) ;
     const [ editing , setEditing ] = useState( null ) ;
     const [ record  , setRecord  ] = useState( null ) ;
+    const [ queued  , setQueued  ] = useState( null ) ;
 
     const [ signature , setSignature ] = useState( null ) ;
 
@@ -169,6 +171,10 @@ const ReceivingDemo = ( { path = 'demo.scenarios.logistics.receiving' } = {} ) =
     , [ Receipt , step ] ) ;
 
     const { signal } = useFeedbackSignal( { sound , vibration : sound } ) ;
+
+    // The receipt leaves through the outbox : sent now, or when the network is back.
+    const outbox = useOutbox() ;
+    const sent   = outbox?.items.find( item => item.id === queued )?.status ;
 
     const labels = today ? makeLabels( today ) : [] ;
 
@@ -193,6 +199,7 @@ const ReceivingDemo = ( { path = 'demo.scenarios.logistics.receiving' } = {} ) =
         setLines( emptyLines() ) ;
         setPhotos( [] ) ;
         setRecord( null ) ;
+        setQueued( null ) ;
         setSignature( null ) ;
         parcels.current?.clear() ;
     } ;
@@ -308,9 +315,7 @@ const ReceivingDemo = ( { path = 'demo.scenarios.logistics.receiving' } = {} ) =
         // The digest binds the signature to what was signed : the lines and the strokes, as they were.
         const digest = await sha256( JSON.stringify( { at , lines : lineRecords , order : ORDER , pallet : SSCC , signature } ) ) ;
 
-        say( 'success' , t.review?.done ) ;
-        setStep( 'done' ) ;
-        setRecord(
+        const receipt =
         {
             at ,
             digest ,
@@ -320,7 +325,21 @@ const ReceivingDemo = ( { path = 'demo.scenarios.logistics.receiving' } = {} ) =
             pallet       : SSCC ,
             signature    : { points : signature.strokes.reduce( ( sum , stroke ) => sum + stroke.length , 0 ) , strokes : signature.strokes.length } ,
             supplier     : t.delivery?.supplierName ,
+        } ;
+
+        say( 'success' , t.review?.done ) ;
+        setStep( 'done' ) ;
+        setRecord( receipt ) ;
+
+        const item = await outbox?.enqueue(
+        {
+            files   : note ? [ { bytes : note , field : 'deliveryNote' , name : note.name , type : note.type } ] : [] ,
+            kind    : 'receipt' ,
+            payload : { body : receipt } ,
+            target  : ORDER ,
         } ) ;
+
+        setQueued( item?.id ?? null ) ;
     } ;
 
     const status = ( { expected , received } ) =>
@@ -556,7 +575,12 @@ const ReceivingDemo = ( { path = 'demo.scenarios.logistics.receiving' } = {} ) =
                                         { description : format( t.journal?.checkedOf ?? '{0}' , record.lines.length , record.lines.reduce( ( sum , line ) => sum + line.received , 0 ) ) , id : 'checked' , status : 'done' , title : t.journal?.checked } ,
                                         { description : record.deliveryNote?.name , id : 'photo' , status : 'done' , title : t.journal?.photo } ,
                                         { description : <span className="font-mono text-xs break-all">{ record.digest }</span> , id : 'signed' , status : 'done' , time : record.at , title : t.journal?.signed } ,
-                                        { id : 'sent' , status : 'current' , title : t.journal?.sent } ,
+                                        {
+                                            description : sent && sent !== 'done' ? t.journal?.states?.[ sent ] : undefined ,
+                                            id          : 'sent' ,
+                                            status      : sent === 'done' ? 'done' : 'current' ,
+                                            title       : sent === 'done' ? t.journal?.sentDone : t.journal?.sent ,
+                                        } ,
                                     ] }
                                     timePattern = "LT"
                                 />

@@ -16,6 +16,7 @@ const field =
             no    : 'Hors ligne' ,
             since : 'depuis {0}' ,
             check : 'Vérifier maintenant' ,
+            outbox : 'Ce qui part quand le réseau revient : la file d’envoi →' ,
         } ,
 
         wake :
@@ -50,6 +51,7 @@ const field =
             no    : 'Offline' ,
             since : 'since {0}' ,
             check : 'Check now' ,
+            outbox : 'What leaves when the network is back : the outbox →' ,
         } ,
 
         wake :
