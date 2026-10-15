@@ -8,6 +8,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.47.0] — 2026-10-15
+
+A release **for working without a network**. A screen on a dock, in a van or in a cellar loses
+the network and keeps working : what is done waits on the device and leaves in order when the
+server answers, never twice ; what was seen or prepared is read and searched on the device ; a
+page never opened shows the application's words, not the browser's error screen. The outbox and
+the reserve share one IndexedDB database, through `idb` — the only new dependency — and their
+core imports no React. The README and the wiki now open on everything the library does offline.
+
 ### Added
 
 - **An outbox : writing without a network** (`oihana-next-ui/offline/*`). A queue of intentions
