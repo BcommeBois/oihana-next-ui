@@ -6,6 +6,7 @@ import buttons        from './buttons'
 import documents      from './documents'
 import documentsCreate from './documentsCreate'
 import documentsEdit   from './documentsEdit'
+import outbox          from './outbox'
 import dropzone       from './dropzone'
 import fileInput      from './fileInput'
 import i18n           from './i18n'
@@ -44,6 +45,7 @@ const lab =
     documents      ,
     documentsCreate ,
     documentsEdit ,
+    outbox ,
     dropzone       ,
     fileInput      ,
     i18n           ,

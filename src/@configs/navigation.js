@@ -91,6 +91,8 @@ import { SiDialogflow           as ModalIcon          } from "react-icons/si";
 import { MdAnimation            as MotionIcon         } from "react-icons/md";
 import { BiFoodMenu             as NavigationIcon     } from "react-icons/bi";
 import { MdOutlineNetworkWifi   as NetworkIcon        } from "react-icons/md";
+import { MdCloudOff             as OfflineIcon        } from "react-icons/md";
+import { MdOutbox               as OutboxIcon         } from "react-icons/md";
 import { TfiLayoutMenu          as PaginationIcon     } from "react-icons/tfi";
 import { TbLayoutSidebarRightExpand as PanelIcon      } from "react-icons/tb";
 import { TbLayoutNavbar             as TabsIcon       } from "react-icons/tb";
@@ -279,6 +281,15 @@ const navigation =
                     { id : 'documentsView'   , type : LINK , Icon : DocumentsIcon       , path : '/modules/documents'       } ,
                     { id : 'documentsCreate' , type : LINK , Icon : DocumentsCreateIcon , path : '/modules/documentsCreate' } ,
                     { id : 'documentsEdit'   , type : LINK , Icon : DocumentsEditIcon   , path : '/modules/documentsEdit'   } ,
+                ]
+            } ,
+            {
+                id   : 'offline'   ,
+                type : COLLAPSE    ,
+                Icon : OfflineIcon ,
+                items :
+                [
+                    { id : 'outbox' , type : LINK , Icon : OutboxIcon , path : '/modules/outbox' } ,
                 ]
             } ,
             {

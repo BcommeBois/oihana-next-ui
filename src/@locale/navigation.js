@@ -123,6 +123,8 @@ const navigation =
                 documentsView   : 'Visionneuse PDF' ,
                 documentsCreate : 'Créer un PDF' ,
                 documentsEdit   : 'Retoucher un PDF' ,
+            offline      : 'Hors ligne' ,
+                outbox          : 'File d’envoi' ,
             tests        : 'Tests' ,
 
     } ,
@@ -249,6 +251,8 @@ const navigation =
                 documentsView   : 'PDF viewer' ,
                 documentsCreate : 'Creating a PDF' ,
                 documentsEdit   : 'Editing a PDF' ,
+            offline      : 'Offline' ,
+                outbox          : 'Outbox' ,
             tests        : 'Tests' ,
 
     }

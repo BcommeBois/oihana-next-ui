@@ -11,6 +11,7 @@ import inputs    from './inputs' ;
 import lists     from './lists' ;
 import metrics   from './metrics' ;
 import modals    from './modals' ;
+import offline   from './offline' ;
 import passwords from './passwords' ;
 import radios    from './radios' ;
 import rating    from './rating' ;
@@ -36,6 +37,7 @@ const demo =
     lists ,
     metrics ,
     modals ,
+    offline ,
     passwords ,
     radios ,
     rating ,

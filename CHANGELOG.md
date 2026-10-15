@@ -8,6 +8,43 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- **An outbox : writing without a network** (`oihana-next-ui/offline/*`). A queue of intentions
+  kept on the device in IndexedDB, sent in order when the server can be reached, each with an id
+  born on the device that goes out as `Idempotency-Key` — the server answers a replay with what it
+  answered the first time, so a send cut mid-way never creates twice. `idb` (~1 KB gzip) is the
+  only new dependency.
+  - `createOutbox( { repository , send , scope , onSettle , onConflict , … } )` : `enqueue` ,
+    `list` , `counts` , `retry` , `remove` , `clear` , `drain( { online } )` , `subscribe` ,
+    `setScope` , `getLastSyncAt`. No React : the app decides when to drain.
+  - **The rules**, pure and tested : oldest first among the due items ; `dependsOn` waits for a
+    result and hands it to `send` as `refs` (a quote's server key into its lines), and blocks when
+    the dependency fails — retried, it unblocks the chain ; `after` waits for an item to be over,
+    whatever its outcome ; a new pending item of the same `kind` and `target` replaces the old one
+    (an item on its way is waited for instead) ; a network failure or a 401 stops the round and
+    counts no attempt ; 408 / 425 / 429 / 5xx back off (30 s doubling to 15 min, ± 20 %) until
+    `maxAttempts` (10), then `rejected` as `exhausted` ; 409 and 412 are a `conflict` the app may
+    settle with `onConflict` ; any other 4xx is `rejected` with the API's `code` ; an item left
+    `posting` goes back to pending after `claimTimeout` ; delivered items keep their result for
+    `keepDone` (24 h) ; `scope` keeps the items of another account and never sends them.
+  - **Files** are stored as `ArrayBuffer`s beside the item, in the same transaction — never a
+    `Blob`, which WebKit may invalidate. Beyond `softLimit` (200 MB) files are refused with a
+    `quota` error, JSON never is. Storage persistence is asked at the first item queued.
+  - `httpTransport( { base , headers , prepare , timeout } )` : JSON, or multipart when files are
+    queued (the body in `payload`, each file under its field) ; the headers are read at each send ;
+    `prepare( item , refs )` rewrites a request with the results of its dependencies ; a refusal
+    throws `{ status , code , message }` read from the answer.
+  - `openOfflineDb( name )`, `idbRepository( db )`, `memoryRepository()` (tests, server render),
+    `persistStorage()`, `estimateStorage()`.
+  - `src/offline/` imports nothing but `idb` and itself — no React, nothing else of the library —
+    and a test keeps it so.
+- **Lab** : Modules › Offline › Outbox, a test bench on the queue as it is stored — receipts, a
+  refused one, conflicts, a flaky server, a quote and its dependent lines, a replacement, a
+  correction on its way, a simulated cut, two accounts, a replayed key ; and `POST /api/outbox/[kind]`,
+  a test route that remembers the idempotency keys and refuses on demand (`?fail=`, `&times=`,
+  `?delay=`).
+
 ## [0.46.1] — 2026-10-15
 
 One fix, reported by an application rendering its screens on the server : a controlled field
