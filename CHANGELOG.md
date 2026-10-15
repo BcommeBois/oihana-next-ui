@@ -8,6 +8,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.46.1] — 2026-10-15
+
+One fix, reported by an application rendering its screens on the server : a controlled field
+reached the HTML empty.
+
 ### Fixed
 
 - **A controlled field renders its value on the server.** `useTransformValue` started on
