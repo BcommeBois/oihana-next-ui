@@ -2,6 +2,12 @@
 
 import { useState, useEffect, useRef } from 'react'
 
+const normalize = v =>
+{
+    if ( v === null || v === undefined ) return '' ;
+    return String( v ) ;
+} ;
+
 /**
  * Hook for input value transformation, validation, and formatting.
  *
@@ -45,19 +51,17 @@ const useTransformValue =
      revertOnBlurIfInvalid = true
  }) =>
 {
-    const normalize = v =>
-    {
-        if ( v === null || v === undefined ) return '' ;
-        return String( v ) ;
-    } ;
-
     const isControlled = valueFromProps !== undefined ;
 
     // --------- Internal state (for uncontrolled or display layer)
 
-    const [ internalValue, setInternalValue ] = useState( () => normalize( defaultValue ) ) ;
+    // A controlled field starts on its value: effects never run on the server, so syncing
+    // only below would render it empty until hydration.
+    const initialValue = normalize( isControlled ? valueFromProps : defaultValue ) ;
 
-    const lastValidValueRef = useRef( normalize( defaultValue ) ) ;
+    const [ internalValue, setInternalValue ] = useState( initialValue ) ;
+
+    const lastValidValueRef = useRef( initialValue ) ;
 
     // --------- Sync from controlled value (ONLY when parent changes)
 

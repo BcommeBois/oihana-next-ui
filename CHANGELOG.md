@@ -8,6 +8,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Fixed
+
+- **A controlled field renders its value on the server.** `useTransformValue` started on
+  `defaultValue` and copied `value` in only from an effect — and effects never run on the
+  server : `<Input value="H2-04-B" />` reached the HTML as `value=""`, empty until hydration on
+  a slow handheld, and for good in a static render (print, preview). The state now starts on the
+  controlled value ; the effect still follows the changes after. The server HTML and the first
+  client render agree, so hydration is unchanged. This covers `Input`, `TextArea` and every field
+  built on them (`InputCounter`, `InputScan`, `InputSearch`, the masked date and time fields, the
+  card fields, `I18nInput`, `I18nTextArea`, `TextAreaMarkdown`…). Tested in
+  `tests/components/Input.test.jsx` with `renderToStaticMarkup`.
+
 ## [0.46.0] — 2026-10-13
 
 A release **for the field** — a screen held in a hand on a dock, in a van, on a shop floor.
