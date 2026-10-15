@@ -4,6 +4,8 @@ import { useEffect } from "react" ;
 
 import unregisterServiceWorkers from '../helpers/pwa/unregisterServiceWorkers' ;
 
+import useServiceWorkerPageCache from '../hooks/useServiceWorkerPageCache' ;
+
 /**
  * @typedef {'classic' | 'module'} WorkerType
  */
@@ -38,6 +40,9 @@ import unregisterServiceWorkers from '../helpers/pwa/unregisterServiceWorkers' ;
  * registered for the origin**, so a development server starts clean. Pass
  * `enabled` to test a worker on a development server anyway.
  *
+ * At each move it also asks the worker to keep the page shown
+ * (`useServiceWorkerPageCache`) : a page reached by a link opens offline too.
+ *
  * @param {Object} props
  * @param {boolean} [props.enabled=process.env.NODE_ENV === 'production'] - Register at all. Off, every registration of the origin is removed instead.
  * @param {string} [props.path='/sw.js'] - Service worker file path.
@@ -71,6 +76,8 @@ const ServiceWorker =
      path = '/sw.js' ,
  }) =>
 {
+    useServiceWorkerPageCache( { enabled } ) ;
+
     useEffect( () =>
     {
         if ( !( 'serviceWorker' in navigator ) )

@@ -1,10 +1,32 @@
-# Offline : the outbox and the reserve
+# Offline
 
-Writing without a network, and reading without one. A screen in a warehouse, a van or a customer's cellar records what
-was done — a receipt, a count, a signed report — and must not lose it because the network is
-gone at that moment. The outbox keeps each action on the device, sends it when the server can
-be reached, in order, and never twice. The reserve keeps what was seen or prepared, to read it
-and search it when the network is gone.
+A screen in a warehouse, a van or a customer's cellar records what was done — a receipt, a count,
+a signed report — and must not lose it because the network is gone at that moment ; it must
+still show the customer it is standing in front of, and still open when the page was never
+visited. This guide is the whole of it : what the library does, piece by piece, and what stays
+with the application.
+
+## Everything offline, at a glance
+
+| Need | Pieces | Section |
+|---|---|---|
+| **Writing** without a network | the outbox : `OutboxProvider`, `useOutbox`, `OutboxBanner`, `OutboxList` | [below](#what-it-is-and-what-it-is-not) |
+| **Reading** without a network | the reserve : `OfflineStoreProvider`, `useOfflineRecord`, `useOfflineQuery` | [Reading offline](#reading-offline--the-reserve) |
+| **Searching** without a network | `query`, `describe` on the reserve | [Searching offline](#searching-offline) |
+| **A page never visited** | the service worker's shell, `pwa.offlineShell` | [When a navigation fails](#when-a-navigation-fails--the-shell) |
+| **Knowing the network is there** | `useOnline`, `ConnectionStatus` — the server asked, not the Wi-Fi | [`hooks/useOnline`](../../src/hooks/useOnline.js) |
+| **Scanning, reading a PDF** | the engines served by the application and kept by the worker | [barcodes](../components/barcodes/README.md), [documents](../components/documents/README.md) |
+| **A screen that stays on** | `useWakeLock`, `WakeLockToggle` | [`hooks/useWakeLock`](../../src/hooks/useWakeLock.js) |
+
+Small preferences — theme, language, sound — are **not** kept here : they live in a cookie and
+`localStorage`, read before the first frame and by the server. IndexedDB is for volume : the
+queue, its files, the reserve.
+
+## The outbox and the reserve
+
+Writing without a network, and reading without one. The outbox keeps each action on the device,
+sends it when the server can be reached, in order, and never twice. The reserve keeps what was
+seen or prepared, to read it and search it when the network is gone.
 
 ```jsx
 import OutboxProvider from 'oihana-next-ui/contexts/outbox/provider'
@@ -19,9 +41,11 @@ import useOfflineRecord     from 'oihana-next-ui/hooks/useOfflineRecord'
 import useOfflineQuery      from 'oihana-next-ui/hooks/useOfflineQuery'
 ```
 
-The lab mounts one over all its pages ([`src/demo/offline/LabOutbox.jsx`](../../src/demo/offline/LabOutbox.jsx))
-and shows it on a test bench, Modules › Offline › Outbox, against a test route that behaves like
-an idempotent API ([`src/app/api/outbox/[kind]/route.js`](../../src/app/api/outbox/[kind]/route.js)).
+The lab mounts both over all its pages ([`src/demo/offline/LabOutbox.jsx`](../../src/demo/offline/LabOutbox.jsx))
+and shows them under Modules › Offline : the outbox on a test bench, against a test route that
+behaves like an idempotent API ([`src/app/api/outbox/[kind]/route.js`](../../src/app/api/outbox/[kind]/route.js)) ;
+the reserve on two hundred parcels of wood, searched on the server online and on the device
+offline. Its shell is [`/offline`](../../src/demo/offline/OfflineShellDemo.jsx).
 
 ## What it is, and what it is not
 
@@ -245,5 +269,42 @@ search — among your 240 customers prepared », so that « no result » never r
 exist ». A filter only the server can answer (real-time stock, an aggregate) is greyed out
 offline, with a word of why — not hidden.
 
-A page served when a navigation fails — offline, to a page never visited — is not part of this
-module.
+## When a navigation fails : the shell
+
+The outbox and the reserve live in pages ; offline, a page has to open first. With `pwa.offline`
+the service worker keeps each page visited, Next's scripts and styles (their names change with
+every build, so a kept copy never goes stale) and the application's images and fonts, and opens
+them without a network.
+
+A page reached **by a link** counts as visited too. `next/link` fetches a page's data, never its
+HTML, so the worker would not see it ; `ServiceWorker` and `useServiceWorkerUpdate` post each
+page shown to the worker (`useServiceWorkerPageCache`), which fetches and keeps its HTML once per
+page and per version, in the background.
+
+A page **never visited** has nothing to open : that is what the shell is for.
+
+```json
+"pwa" : { "offline" : true , "cachePrefix" : "wms" , "offlineShell" : "/offline" }
+```
+
+- **At install**, the worker keeps the shell and the scripts, styles and images its HTML names — so it
+  renders and runs with no network at all. A shell that cannot be fetched (installed offline)
+  does not stop the install.
+- **A navigation that fails** gets the copy of the page if it was visited ; else a **redirect**
+  to `/offline?from=<the page asked for>`, served from the cache ; without a shell, the home page
+  if kept, else a short page the worker writes itself — never the browser's error screen.
+- **A redirect, not the shell under the address asked for** : the address and the page shown
+  agree, which Next's router needs to hydrate.
+- **`next/link`** asks for data (`?_rsc=`), not a page : when that fails, Next falls back to a
+  full navigation, which reaches the worker.
+- **Every release starts afresh** : the worker's cache is named after the version, and the old
+  ones are deleted when the new worker takes over. The reserve and the queue live in IndexedDB,
+  which the worker never touches.
+
+The shell is a page of the application : what it shows is yours. A useful one says the page asked
+for needs the network (with **Retry**), lists what waits to be sent (`OutboxList`), and points to
+what can still be read (the reserve). Read `?from=` as a path of the application only — never
+send the reader to an address taken from the URL.
+
+The worker is registered in production builds only : try it on `next build && next start`, then
+developer tools → Network → Offline.

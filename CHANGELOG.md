@@ -83,9 +83,28 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   record change ; the request of `useOfflineQuery` compared by value.
 - An outbox item may declare **`uses : [ [ kind , key ] ]`**, the reserve records it needs : kept
   while it waits.
-- **Wiki** : `wiki/offline` — the queue, the two transports (an HTTP API, Server Actions by kind),
-  dependencies and their results, replacement, what the server has to do, what a failure becomes ;
-  the reserve, and searching offline.
+- **An offline shell** (`pwa.offlineShell`). With `"offlineShell" : "/offline"` in the `pwa` block,
+  `oihana-inject-version` gives the caching worker a page of the application to keep at install —
+  with the scripts and styles its HTML names — and a navigation that fails goes to it :
+  `/offline?from=<the page asked for>`, by a redirect, so the address and the page agree for Next's
+  router. A page already visited still opens from its copy. Without a shell, the worker falls back
+  on the home page if kept, then on a short page of its own, never the browser's error screen. The
+  injector refuses a shell that is not a path of the application.
+- **The caching worker keeps Next's scripts and styles** (`/_next/static/`), cache first : their
+  names change with every build, so a kept copy never goes stale, and a page visited now runs
+  offline, not only its HTML. The application's images, fonts and manifest are kept too, network
+  first. It no longer keeps an error answer as a page.
+- **A page reached by a link opens offline after a reload.** `next/link` fetches a page's data,
+  never its HTML, so the worker only ever kept the pages typed, reloaded or opened first.
+  `useServiceWorkerPageCache` — used by `ServiceWorker` and `useServiceWorkerUpdate`, nothing to
+  add — posts each page shown to the worker (`CACHE_PAGE`), which fetches and keeps its HTML once
+  per page and per version, in the background ; a redirect is not kept. The minimal worker ignores
+  the message.
+- **Wiki** : `wiki/offline` — everything the library does offline at a glance ; the queue, the two
+  transports (an HTTP API, Server Actions by kind), dependencies and their results, replacement,
+  what the server has to do, what a failure becomes ; the reserve, and searching offline ; the
+  shell. **README** : a « Works offline » feature and an « Offline » section that lists every
+  piece, `offlineShell` documented with the `pwa` block.
 - **Lab** : an outbox mounted over every showcase page, its banner at the top of the page and a
   toast for a refusal, wherever it happens. The Receiving scenario queues the signed receipt with
   the photo of the delivery note, and its journal follows the send. Modules › Offline › Outbox, a
@@ -96,7 +115,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   (`?fail=`, `&times=`, `?delay=`). Modules › Offline › Reserve : two hundred parcels of wood
   searched on the server online and in the reserve offline — « Prepare my day », the record seen
   at a given time, the real-time filter greyed out offline, what the reserve keeps and its sweep —
-  on `GET /api/offline/parcels`.
+  on `GET /api/offline/parcels`. And its shell, `/offline` : the page asked for and **Retry**,
+  what waits to be sent, what can still be read.
+
+### Upgrading
+
+- **`idb` is a new dependency** (ISC, ~1 KB gzip) : IndexedDB for the outbox and the reserve.
+  Nothing to do.
+- **An application with `pwa.offline` gets a worker that keeps `/_next/static/`** after the next
+  `oihana-inject-version` : pages visited open and run offline. Nothing to do ; the cache is still
+  named after the version and emptied at each release.
+- **To show a page of yours when a navigation fails** : write it (`app/offline/page.js`, for
+  instance — what waits in the outbox and what the reserve holds make it useful), add
+  `"offlineShell" : "/offline"` to the `pwa` block of `package.json`, run `oihana-inject-version`.
 
 ## [0.46.1] — 2026-10-15
 

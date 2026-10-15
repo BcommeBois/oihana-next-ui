@@ -277,6 +277,7 @@
   },
   "pwa": {
     "offline": true,
-    "cachePrefix": "oihana-ui"
+    "cachePrefix": "oihana-ui",
+    "offlineShell": "/offline"
   }
 }

@@ -62,6 +62,8 @@ import { useCallback , useEffect , useRef , useState } from 'react' ;
 
 import unregisterServiceWorkers from '../helpers/pwa/unregisterServiceWorkers' ;
 
+import useServiceWorkerPageCache from './useServiceWorkerPageCache' ;
+
 const useServiceWorkerUpdate = (
 {
     enabled        = process.env.NODE_ENV === 'production' ,
@@ -72,6 +74,9 @@ const useServiceWorkerUpdate = (
     checkOnFocus   = true ,
 } = {} ) =>
 {
+    // A page reached by a link is kept too, so it opens offline after a reload.
+    useServiceWorkerPageCache( { enabled } ) ;
+
     const [ updateAvailable , setUpdateAvailable ] = useState( false ) ;
     const [ nextVersion     , setNextVersion     ] = useState( null ) ;
 

@@ -66,13 +66,13 @@ file can say : the shape of a group, and the recipes.
 
 ### Offline
 
-- [`offline`](offline/README.md) — writing without a network : the outbox keeps each action on
+- [`offline`](offline/README.md) — everything the library does offline, at a glance, then writing without a network : the outbox keeps each action on
   the device and sends it in order when the server answers, never twice (`Idempotency-Key`) ;
   the transport is the application's (an HTTP API, or Server Actions by kind) ; dependencies and
   their results, replacement, accounts, files ; what the server has to do ; the banner, the list,
   and what a failure becomes. And reading without a network : the reserve of records seen or
   prepared, swept by age and size, and searched offline — a simpler search that says what it
-  reads.
+  reads. And the shell a failed navigation is sent to, kept by the service worker at install.
 
 ## Conventions
 

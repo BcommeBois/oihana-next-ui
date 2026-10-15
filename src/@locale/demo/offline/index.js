@@ -9,6 +9,38 @@ const offline =
         en : { refused : 'Send refused ({0}) : {1}' } ,
     } ,
 
+    shell :
+    {
+        fr :
+        {
+            online   : 'Serveur joignable' ,
+            away     : 'Hors ligne' ,
+            asked    : 'La page demandée, {0}, n’a pas encore été ouverte sur cet appareil : elle demande le réseau.' ,
+            none     : 'La page demandée demande le réseau.' ,
+            retry    : 'Réessayer' ,
+            how      : 'Le service worker garde cette page à l’installation (pwa.offlineShell) et y renvoie toute navigation qui échoue, la page demandée dans ?from=. Une page déjà visitée, elle, s’ouvre depuis le cache.' ,
+            outbox   : 'Ce qui attend d’être envoyé' ,
+            read     : 'Ce qui se lit sans réseau' ,
+            readText : 'Les fiches vues ou préparées restent consultables, et la recherche continue sur elles.' ,
+            reserve  : 'La réserve →' ,
+            bench    : 'La file d’envoi →' ,
+        } ,
+        en :
+        {
+            online   : 'Server reachable' ,
+            away     : 'Offline' ,
+            asked    : 'The page asked for, {0}, was never opened on this device : it needs the network.' ,
+            none     : 'The page asked for needs the network.' ,
+            retry    : 'Retry' ,
+            how      : 'The service worker keeps this page at install (pwa.offlineShell) and sends any failed navigation to it, the page asked for in ?from=. A page already visited opens from the cache.' ,
+            outbox   : 'What waits to be sent' ,
+            read     : 'What can be read without a network' ,
+            readText : 'The records seen or prepared can still be read, and searched.' ,
+            reserve  : 'The reserve →' ,
+            bench    : 'The outbox →' ,
+        } ,
+    } ,
+
     store :
     {
         fr :

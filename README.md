@@ -14,6 +14,8 @@ A modular Next.js UI component library built with React 19, Tailwind CSS v4 and 
 - 🎨 Tailwind CSS v4 + DaisyUI v5
 - 🌙 Dark mode support (flash-free)
 - 📱 PWA ready
+- 📴 Works offline — actions queued and sent when the network is back, records kept and searched
+  on the device, a page served when a navigation fails ([offline](#offline))
 - ♿ Accessible components
 - 🧩 Composable and themeable
 
@@ -62,8 +64,9 @@ then the groups :
 [`components/metrics`](wiki/components/metrics/README.md),
 [`components/scheduler`](wiki/components/scheduler/README.md),
 [`contexts/feedback`](wiki/contexts/feedback/README.md),
-[`contexts/locale`](wiki/contexts/locale/README.md) and
-[`contexts/navigation`](wiki/contexts/navigation/README.md).
+[`contexts/locale`](wiki/contexts/locale/README.md),
+[`contexts/navigation`](wiki/contexts/navigation/README.md) and
+[`offline`](wiki/offline/README.md).
 
 ### Scripts
 
@@ -72,7 +75,7 @@ the host application :
 
 | Command | What it writes |
 |:--|:--|
-| `oihana-inject-version` | `src/version.js`, `public/version.json` (`version` and the deployed `commit`) and `public/sw.js`, from `version` and the `pwa` block of your `package.json` (`offline`, `cachePrefix`) |
+| `oihana-inject-version` | `src/version.js`, `public/version.json` (`version` and the deployed `commit`) and `public/sw.js`, from `version` and the `pwa` block of your `package.json` (`offline`, `cachePrefix`, `offlineShell`) |
 | `oihana-cache-size` | nothing — it reports the weight of `.next` and its Turbopack caches (`--all` for the full breakdown) |
 | `oihana-generate-splash` | the iOS splash screens under `public/assets/splash` (`--bg`, `--landscape`, `--force`) ; requires `sharp` in the host |
 | `oihana-copy-maplibre-worker` | the map engine's worker under `public/maplibre/` — only needed with `maplibre-gl` 6, which loads its worker from a file ; the library stays on 5, which needs none — see the [maps guide](wiki/components/maps/README.md) |
@@ -92,7 +95,11 @@ the host application :
 ```
 
 The service-worker templates come from the package, so a host keeps no copy of
-its own.
+its own. With `offline`, the worker keeps each page visited, Next's scripts and styles, the
+barcode reader and the PDF engine, and serves them without a network. Add `"offlineShell" :
+"/offline"` and it also keeps that page at install — a page of yours — and sends any navigation
+that fails to it, the page asked for in `?from=` : a page never visited shows your words, not the
+browser's error screen.
 
 ### Default labels
 
@@ -159,6 +166,24 @@ own beside your `@plugin "daisyui"` block, which stays yours :
 @import 'oihana-next-ui/themes/daisyui/oihana.css' ;     /* oihana-ui-light / oihana-ui-dark */
 @import 'oihana-next-ui/themes/daisyui/catppuccin.css' ; /* the four Catppuccin flavours */
 ```
+
+## Offline
+
+A screen held in a hand on a dock, in a van or in a cellar loses the network, and must not lose
+the work. Everything the library does for it, at a glance — the [**offline guide**](wiki/offline/README.md)
+says how the pieces fit :
+
+| Need | Pieces |
+|:--|:--|
+| **Writing without a network** | the outbox — `OutboxProvider`, `useOutbox`, `OutboxBanner`, `OutboxList`, on `oihana-next-ui/offline/outbox/*` : each action kept on the device (IndexedDB, files included), sent in order when the server answers, never twice (`Idempotency-Key`), with dependencies, replacement, retries and accounts ; your transport — an HTTP API or Server Actions |
+| **Reading without a network** | the reserve — `OfflineStoreProvider`, `useOfflineRecord`, `useOfflineQuery`, on `oihana-next-ui/offline/store/*` : the records seen or prepared for the day, aged and swept, and **searched on the device** (text without accents, filters, sort) |
+| **A page that does not exist offline** | the service worker's shell — `pwa.offlineShell` : kept at install, shown with the page asked for |
+| **Knowing the network is really there** | `useOnline`, `ConnectionStatus` : the server asked, not just the Wi-Fi |
+| **Scanning, reading a PDF** | `oihana-copy-zxing-wasm`, `oihana-copy-pdfjs-assets` : the engines served by your application, kept by the worker |
+| **A screen that stays on** | `useWakeLock`, `WakeLockToggle` |
+
+The core of the outbox and the reserve (`offline/*`) imports nothing but `idb` : no React, so it
+also runs outside a component.
 
 ## Development
 
