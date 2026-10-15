@@ -125,6 +125,7 @@ const navigation =
                 documentsEdit   : 'Retoucher un PDF' ,
             offline      : 'Hors ligne' ,
                 outbox          : 'File d’envoi' ,
+                offlineStore    : 'Réserve' ,
             tests        : 'Tests' ,
 
     } ,
@@ -253,6 +254,7 @@ const navigation =
                 documentsEdit   : 'Editing a PDF' ,
             offline      : 'Offline' ,
                 outbox          : 'Outbox' ,
+                offlineStore    : 'Reserve' ,
             tests        : 'Tests' ,
 
     }

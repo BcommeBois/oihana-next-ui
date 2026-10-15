@@ -59,8 +59,33 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   account's actions are listed apart, untouchable.
 - `outboxErrorText( item , { errors , reasons } )` (`helpers/outbox`) : the sentence of a failure,
   shared by the banner and the list. Labels in `components.outbox` (fr / en).
+- **A reserve : reading without a network** (`oihana-next-ui/offline/store/*`). The records an
+  application keeps on the device — what a page saw, what a morning prepared — read and searched
+  when the server cannot answer.
+  - `createStore( { repository , ttl , softLimit , locale } )` : `remember( kind , key , value ,
+    { pinned , token , ttl } )`, `rememberMany` (a day at once, one notification), `read` →
+    `{ value , seenAt , expired , pinned , token }`, `list`, `forget`, `pin`, `clear`,
+    `subscribe`. An expired record is still read ; `token` is the application's mark of freshness,
+    kept untouched.
+  - `sweep( { keep } )` : the expired records first, then — over `softLimit` (100 MB) — the oldest
+    seen, a tenth at a time ; never a pinned record, never one in `keep`.
+  - **Searching offline**, `query( kind , { text , where , sort , limit , offset } )` → `{ items ,
+    total }` : every word in the declared fields, accents and case ignored ; `where` by value, list
+    or operators (`gt`, `gte`, `lt`, `lte`, `ne`, `in`) on dotted paths ; several sort keys, texts
+    in the order of the language. `describe( kind , { text , where , sort } )` declares the fields.
+    Not the server's query language : a simpler search, over what the device holds.
+  - `idbStoreRepository( db )`, `memoryStoreRepository()`. The database moves to version 2 : a
+    device holding a queue under version 1 keeps it, and an older tab closes its connection rather
+    than blocking the upgrade.
+- **`OfflineStoreProvider`**, **`useOfflineStore`**, **`useOfflineRecord( kind , key )`**,
+  **`useOfflineQuery( kind , request , { enabled } )`** : the reserve in React — the outbox's
+  database, swept at mount and every hour, never a record a waiting action `uses` ; every tab sees a
+  record change ; the request of `useOfflineQuery` compared by value.
+- An outbox item may declare **`uses : [ [ kind , key ] ]`**, the reserve records it needs : kept
+  while it waits.
 - **Wiki** : `wiki/offline` — the queue, the two transports (an HTTP API, Server Actions by kind),
-  dependencies and their results, replacement, what the server has to do, what a failure becomes.
+  dependencies and their results, replacement, what the server has to do, what a failure becomes ;
+  the reserve, and searching offline.
 - **Lab** : an outbox mounted over every showcase page, its banner at the top of the page and a
   toast for a refusal, wherever it happens. The Receiving scenario queues the signed receipt with
   the photo of the delivery note, and its journal follows the send. Modules › Offline › Outbox, a
@@ -68,7 +93,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   a replacement, a correction on its way, a simulated cut, two accounts, a replayed key — with the
   banner, the list, a counter on an icon and the queue as it is stored. And `POST
   /api/outbox/[kind]`, a test route that remembers the idempotency keys and refuses on demand
-  (`?fail=`, `&times=`, `?delay=`).
+  (`?fail=`, `&times=`, `?delay=`). Modules › Offline › Reserve : two hundred parcels of wood
+  searched on the server online and in the reserve offline — « Prepare my day », the record seen
+  at a given time, the real-time filter greyed out offline, what the reserve keeps and its sweep —
+  on `GET /api/offline/parcels`.
 
 ## [0.46.1] — 2026-10-15
 

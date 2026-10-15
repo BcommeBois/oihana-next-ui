@@ -1,9 +1,10 @@
-# Offline : the outbox
+# Offline : the outbox and the reserve
 
-Writing without a network. A screen in a warehouse, a van or a customer's cellar records what
+Writing without a network, and reading without one. A screen in a warehouse, a van or a customer's cellar records what
 was done — a receipt, a count, a signed report — and must not lose it because the network is
 gone at that moment. The outbox keeps each action on the device, sends it when the server can
-be reached, in order, and never twice.
+be reached, in order, and never twice. The reserve keeps what was seen or prepared, to read it
+and search it when the network is gone.
 
 ```jsx
 import OutboxProvider from 'oihana-next-ui/contexts/outbox/provider'
@@ -11,6 +12,11 @@ import useOutbox      from 'oihana-next-ui/contexts/outbox/useOutbox'
 import OutboxBanner   from 'oihana-next-ui/display/OutboxBanner'
 import OutboxList     from 'oihana-next-ui/display/OutboxList'
 import httpTransport  from 'oihana-next-ui/offline/outbox/httpTransport'
+
+import OfflineStoreProvider from 'oihana-next-ui/contexts/offlineStore/provider'
+import useOfflineStore      from 'oihana-next-ui/contexts/offlineStore/useOfflineStore'
+import useOfflineRecord     from 'oihana-next-ui/hooks/useOfflineRecord'
+import useOfflineQuery      from 'oihana-next-ui/hooks/useOfflineQuery'
 ```
 
 The lab mounts one over all its pages ([`src/demo/offline/LabOutbox.jsx`](../../src/demo/offline/LabOutbox.jsx))
@@ -117,6 +123,8 @@ for ( const line of lines )
 - **`target`** — a second pending item of the same kind and target **replaces** the first : the
   corrected receipt leaves, not both. One already on its way cannot be recalled : the new one
   waits for it (`after`), and leaves whatever its outcome.
+- **`uses`** — `[ [ kind , key ] ]`, the reserve records the action needs : the customer a quote
+  is for. The reserve keeps them while the action waits, whatever their age.
 - **`files`** — `{ name , type , field , bytes }`, bytes as a `Blob`, a typed array or an
   `ArrayBuffer`. They are stored as `ArrayBuffer`s beside the item — WebKit may invalidate a
   stored `Blob`. Beyond a soft limit (200 MB) files are refused with a `quota` error ; JSON never
@@ -179,5 +187,63 @@ The `kind → action` registry and where a dependency's result goes ; the words 
 its API's codes ; when to toast ; the « waiting to be sent » screen around `OutboxList` ; what to
 do on sign-out ; and the server's idempotency.
 
-Reading offline — keeping what was seen to show it without a network — and a page served when a
-navigation fails are not part of this module.
+## Reading offline : the reserve
+
+The outbox writes ; the reserve reads. It keeps records on the device — what a page saw, what a
+morning prepared — and searches them when the server cannot.
+
+```jsx
+<OutboxProvider name="wms" send={ send }>
+    <OfflineStoreProvider name="wms">        {/* the same database */}
+        <App />
+    </OfflineStoreProvider>
+</OutboxProvider>
+```
+
+```js
+const { remember , rememberMany } = useOfflineStore() ;
+
+await remember( 'parcel' , parcel.id , parcel ) ;                                   // seen : kept 7 days
+await rememberMany( 'parcel' , day.map( value => ( { key : value.id , value } ) ) ,
+                    { pinned : true } ) ;                                          // prepared : kept until unpinned
+
+const { value , seenAt , expired , found } = useOfflineRecord( 'parcel' , id ) ;
+```
+
+- **What to keep is the application's** : the records a page shows, the customers of the day's
+  appointments, the catalogue. The library ages them and sweeps them — the expired first, then
+  the oldest over a soft limit (100 MB) — never a pinned record, never one a waiting action
+  `uses`.
+- **An expired record is still read.** Old data beats none ; the screen says when it was seen,
+  and reads the server again when it can. `token` is the application's own mark of freshness (a
+  harvest token, a version), kept and handed back untouched.
+- **`ttl`** and **`softLimit`** are options of the provider : an application may read them from
+  its own configuration.
+
+### Searching offline
+
+The server's query language does not come to the device : the reserve has the records the
+device kept, not the database. The search offline is **simpler, and says so**.
+
+```js
+describe( 'parcel' , { text : [ 'number' , 'product' , 'essence' , 'location' ] , where : [ 'essence' , 'state' ] , sort : 'number' } ) ;
+
+const { items , total } = useOfflineQuery( 'parcel' ,
+    { text , where : { state : [ 'intact' , 'opened' ] , volume : { gte : 1 } } , sort : '-receivedAt' , limit : 20 } ,
+    { enabled : !online } ) ;
+```
+
+- `text` : every word found in the declared fields, accents and case ignored — « chene » finds
+  « Chêne ».
+- `where` : a value, a list of values, or operators (`gt`, `gte`, `lt`, `lte`, `ne`, `in`), by
+  dotted path (`address.city`).
+- `sort` : one key or several, texts in the order of the language (« A-2 » before « A-10 »).
+
+**One request, two sources.** The screen builds one description of its search ; online the
+application sends it to its API, offline to `useOfflineQuery`. And it **says which** : « Offline
+search — among your 240 customers prepared », so that « no result » never reads as « does not
+exist ». A filter only the server can answer (real-time stock, an aggregate) is greyed out
+offline, with a word of why — not hidden.
+
+A page served when a navigation fails — offline, to a page never visited — is not part of this
+module.

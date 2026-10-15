@@ -70,7 +70,9 @@ file can say : the shape of a group, and the recipes.
   the device and sends it in order when the server answers, never twice (`Idempotency-Key`) ;
   the transport is the application's (an HTTP API, or Server Actions by kind) ; dependencies and
   their results, replacement, accounts, files ; what the server has to do ; the banner, the list,
-  and what a failure becomes.
+  and what a failure becomes. And reading without a network : the reserve of records seen or
+  prepared, swept by age and size, and searched offline — a simpler search that says what it
+  reads.
 
 ## Conventions
 

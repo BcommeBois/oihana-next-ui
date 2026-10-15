@@ -9,6 +9,136 @@ const offline =
         en : { refused : 'Send refused ({0}) : {1}' } ,
     } ,
 
+    store :
+    {
+        fr :
+        {
+            title : 'Lire sans réseau' ,
+            intro : 'Une liste de colis cherchée sur le serveur en ligne, et dans la réserve de l’appareil hors ligne — le même écran, qui dit lequel il lit. Une fiche ouverte en ligne est gardée 7 jours ; « Préparer ma journée » garde les 200 colis, épinglés. Coupez le réseau : la recherche continue, sur ce que l’appareil a gardé.' ,
+            online       : 'Serveur joignable' ,
+            away         : 'Hors ligne' ,
+            simulate     : 'Simuler hors ligne' ,
+            prepare      : 'Préparer ma journée' ,
+            prepareHelp  : 'Garde tous les colis, épinglés, pour la journée.' ,
+            prepared     : '{0} colis gardés pour la journée.' ,
+            prepareFailed : 'Le serveur n’a pas répondu : rien n’a été gardé.' ,
+            search :
+            {
+                label            : 'Rechercher un colis' ,
+                placeholder      : 'Numéro, produit, essence, emplacement, fournisseur…' ,
+                essence          : 'Essence' ,
+                allEssences      : 'Toutes les essences' ,
+                state            : 'État' ,
+                allStates        : 'Tous les états' ,
+                available        : 'Disponible maintenant' ,
+                availableOffline : 'Le stock en temps réel n’existe que sur le serveur : filtre indisponible hors ligne.' ,
+            } ,
+            mode :
+            {
+                online  : '{0} colis sur le serveur.' ,
+                offline : 'Recherche hors ligne — parmi vos {0} colis.' ,
+                empty   : 'Hors ligne, et la réserve est vide : ouvrez des fiches ou préparez la journée une fois en ligne.' ,
+            } ,
+            table  : { empty : 'Aucun colis.' , essence : 'Essence' , location : 'Emplacement' , number : 'Colis' , product : 'Produit' , state : 'État' } ,
+            states : { intact : 'Intact' , opened : 'Entamé' , reserved : 'Réservé' } ,
+            detail :
+            {
+                title         : 'Fiche du colis' ,
+                pick          : 'Touchez un numéro pour ouvrir sa fiche.' ,
+                missing       : 'Cette fiche n’est pas dans la réserve : ouvrez-la une fois en ligne.' ,
+                seen          : 'Vue à {0}' ,
+                pinned        : 'épinglée' ,
+                expired       : 'périmée' ,
+                product       : 'Produit' ,
+                essence       : 'Essence' ,
+                location      : 'Emplacement' ,
+                volume        : 'Volume' ,
+                pieces        : 'Pièces' ,
+                lot           : 'Lot' ,
+                supplier      : 'Fournisseur' ,
+                receivedAt    : 'Reçu le' ,
+                certification : 'Certification' ,
+                drying        : 'Séchage' ,
+            } ,
+            reserve :
+            {
+                title   : 'Ce que la réserve garde' ,
+                text    : 'Chaque fiche ouverte en ligne est gardée 7 jours ; la journée préparée, épinglée, sans limite. Le ménage retire les fiches périmées, jamais les épinglées, jamais celles dont un envoi en attente a besoin.' ,
+                count   : '{0} fiche(s), dont {1} épinglée(s)' ,
+                seenAt  : 'Vue le' ,
+                expires : 'Expire le' ,
+                pinned  : 'épinglée' ,
+                forget  : 'Oublier' ,
+                sweep   : 'Faire le ménage' ,
+                swept   : '{0} fiche(s) retirée(s).' ,
+                clear   : 'Vider la réserve' ,
+            } ,
+        } ,
+        en :
+        {
+            title : 'Reading without a network' ,
+            intro : 'A list of parcels searched on the server online, and in the device’s reserve offline — the same screen, which says which one it reads. A record opened online is kept 7 days ; « Prepare my day » keeps the 200 parcels, pinned. Cut the network : the search goes on, over what the device kept.' ,
+            online       : 'Server reachable' ,
+            away         : 'Offline' ,
+            simulate     : 'Simulate offline' ,
+            prepare      : 'Prepare my day' ,
+            prepareHelp  : 'Keeps every parcel, pinned, for the day.' ,
+            prepared     : '{0} parcels kept for the day.' ,
+            prepareFailed : 'The server did not answer : nothing was kept.' ,
+            search :
+            {
+                label            : 'Search a parcel' ,
+                placeholder      : 'Number, product, species, location, supplier…' ,
+                essence          : 'Species' ,
+                allEssences      : 'All species' ,
+                state            : 'State' ,
+                allStates        : 'All states' ,
+                available        : 'Available now' ,
+                availableOffline : 'Real-time stock only exists on the server : filter unavailable offline.' ,
+            } ,
+            mode :
+            {
+                online  : '{0} parcels on the server.' ,
+                offline : 'Offline search — among your {0} parcels.' ,
+                empty   : 'Offline, and the reserve is empty : open records or prepare the day once online.' ,
+            } ,
+            table  : { empty : 'No parcel.' , essence : 'Species' , location : 'Location' , number : 'Parcel' , product : 'Product' , state : 'State' } ,
+            states : { intact : 'Intact' , opened : 'Opened' , reserved : 'Reserved' } ,
+            detail :
+            {
+                title         : 'Parcel record' ,
+                pick          : 'Touch a number to open its record.' ,
+                missing       : 'This record is not in the reserve : open it once online.' ,
+                seen          : 'Seen at {0}' ,
+                pinned        : 'pinned' ,
+                expired       : 'expired' ,
+                product       : 'Product' ,
+                essence       : 'Species' ,
+                location      : 'Location' ,
+                volume        : 'Volume' ,
+                pieces        : 'Pieces' ,
+                lot           : 'Lot' ,
+                supplier      : 'Supplier' ,
+                receivedAt    : 'Received on' ,
+                certification : 'Certification' ,
+                drying        : 'Drying' ,
+            } ,
+            reserve :
+            {
+                title   : 'What the reserve keeps' ,
+                text    : 'Every record opened online is kept 7 days ; the prepared day, pinned, without limit. The sweep removes the expired records, never the pinned ones, never the ones a waiting send needs.' ,
+                count   : '{0} record(s), {1} pinned' ,
+                seenAt  : 'Seen on' ,
+                expires : 'Expires on' ,
+                pinned  : 'pinned' ,
+                forget  : 'Forget' ,
+                sweep   : 'Sweep' ,
+                swept   : '{0} record(s) removed.' ,
+                clear   : 'Empty the reserve' ,
+            } ,
+        } ,
+    } ,
+
     outbox :
     {
         fr :

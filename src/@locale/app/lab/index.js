@@ -7,6 +7,7 @@ import documents      from './documents'
 import documentsCreate from './documentsCreate'
 import documentsEdit   from './documentsEdit'
 import outbox          from './outbox'
+import offlineStore    from './offlineStore'
 import dropzone       from './dropzone'
 import fileInput      from './fileInput'
 import i18n           from './i18n'
@@ -46,6 +47,7 @@ const lab =
     documentsCreate ,
     documentsEdit ,
     outbox ,
+    offlineStore ,
     dropzone       ,
     fileInput      ,
     i18n           ,

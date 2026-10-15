@@ -2,7 +2,7 @@ import 'fake-indexeddb/auto' ;
 
 import { describe , expect , test } from 'bun:test' ;
 
-import openOfflineDb , { META , OUTBOX , OUTBOX_FILES , VERSION } from '../../src/offline/db' ;
+import openOfflineDb , { META , OUTBOX , OUTBOX_FILES , STORE , VERSION } from '../../src/offline/db' ;
 import createOutbox                                          from '../../src/offline/outbox/createOutbox' ;
 import idbRepository                                         from '../../src/offline/outbox/idbRepository' ;
 
@@ -12,11 +12,11 @@ const open = () => openOfflineDb( `test-${ ++counter }` ) ;
 
 describe( 'openOfflineDb' , () =>
 {
-    test( 'creates the stores and the status index at version 1' , async () =>
+    test( 'creates the stores and their indexes at the current version' , async () =>
     {
         const db = await open() ;
         expect( db.version ).toBe( VERSION ) ;
-        expect( [ ...db.objectStoreNames ].sort() ).toEqual( [ META , OUTBOX , OUTBOX_FILES ].sort() ) ;
+        expect( [ ...db.objectStoreNames ].sort() ).toEqual( [ META , OUTBOX , OUTBOX_FILES , STORE ].sort() ) ;
         expect( [ ...db.transaction( OUTBOX ).store.indexNames ] ).toEqual( [ 'status' ] ) ;
         db.close() ;
     } ) ;

@@ -7,12 +7,15 @@ import { usePathname , useRouter } from 'next/navigation' ;
 import format from 'vegas-js-core/src/strings/fastformat' ;
 
 import OutboxBanner   from '@/display/OutboxBanner' ;
-import OutboxProvider from '@/contexts/outbox/provider' ;
+import OutboxProvider       from '@/contexts/outbox/provider' ;
+import OfflineStoreProvider from '@/contexts/offlineStore/provider' ;
 
 import useI18n  from '@/contexts/locale/useI18n' ;
 import useToast from '@/contexts/toasts/useToast' ;
 
 import outboxErrorText from '@/helpers/outbox/outboxErrorText' ;
+
+import useNumberFormat from '@/hooks/useNumberFormat' ;
 
 import httpTransport from '@/offline/outbox/httpTransport' ;
 
@@ -54,9 +57,10 @@ const LabOutboxContext = createContext( null ) ;
 export const useLabOutbox = () => use( LabOutboxContext ) ;
 
 /**
- * The outbox of the lab, mounted over every showcase page : a refusal toasts
- * wherever it happens, and the banner says what waits, on any page but the
- * bench (which shows its own).
+ * The outbox and the reserve of the lab, mounted over every showcase page : a
+ * refusal toasts wherever it happens, the banner says what waits on any page
+ * but the bench (which shows its own), and what a page keeps to read offline
+ * stays from one page to the next.
  *
  * @param {Object} props
  * @param {React.ReactNode} props.children
@@ -69,6 +73,8 @@ const LabOutbox = ( { children , path = 'demo.offline.lab' } ) =>
     const kinds  = useI18n( 'demo.offline.outbox.kinds' ) ?? {} ;
 
     const { toast } = useToast() ;
+
+    const { locale } = useNumberFormat() ;
 
     const pathname = usePathname() ;
     const router   = useRouter() ;
@@ -107,12 +113,14 @@ const LabOutbox = ( { children , path = 'demo.offline.lab' } ) =>
                 scope    = { scope }
                 send     = { send }
             >
-                { pathname !== BENCH && (
-                    <div className="mx-auto w-full max-w-6xl px-4 pt-4 empty:hidden">
-                        <OutboxBanner onOpen={ () => router.push( BENCH ) } />
-                    </div>
-                ) }
-                { children }
+                <OfflineStoreProvider locale={ locale } name="lab">
+                    { pathname !== BENCH && (
+                        <div className="mx-auto w-full max-w-6xl px-4 pt-4 empty:hidden">
+                            <OutboxBanner onOpen={ () => router.push( BENCH ) } />
+                        </div>
+                    ) }
+                    { children }
+                </OfflineStoreProvider>
             </OutboxProvider>
         </LabOutboxContext>
     ) ;

@@ -76,10 +76,11 @@ export const EXHAUSTED = 'exhausted' ;
  * @param {string[]} [init.after=[]] - Items that must be over first, whatever their outcome.
  * @param {Object[]} [init.files=[]] - `{ name , type , field , size }` — the bytes live in their own store.
  * @param {?string} [init.scope=null] - The account that queued it.
+ * @param {Array<[string, string|number]>} [init.uses=[]] - The reserve records it needs, `[ kind , key ]` : kept until it is sent.
  * @param {number} [now=Date.now()]
  * @returns {Object} The item.
  */
-export const createItem = ( { after = [] , dependsOn = [] , files = [] , kind , payload = null , scope = null , target = null } , now = Date.now() ) =>
+export const createItem = ( { after = [] , dependsOn = [] , files = [] , kind , payload = null , scope = null , target = null , uses = [] } , now = Date.now() ) =>
 {
     if ( typeof kind !== 'string' || kind === '' )
     {
@@ -94,6 +95,7 @@ export const createItem = ( { after = [] , dependsOn = [] , files = [] , kind , 
         files ,
         dependsOn ,
         after ,
+        uses ,
         scope ,
         status        : PENDING ,
         attempts      : 0 ,

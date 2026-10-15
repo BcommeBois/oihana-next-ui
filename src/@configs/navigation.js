@@ -93,6 +93,7 @@ import { BiFoodMenu             as NavigationIcon     } from "react-icons/bi";
 import { MdOutlineNetworkWifi   as NetworkIcon        } from "react-icons/md";
 import { MdCloudOff             as OfflineIcon        } from "react-icons/md";
 import { MdOutbox               as OutboxIcon         } from "react-icons/md";
+import { MdOutlineInventory2    as OfflineStoreIcon   } from "react-icons/md";
 import { TfiLayoutMenu          as PaginationIcon     } from "react-icons/tfi";
 import { TbLayoutSidebarRightExpand as PanelIcon      } from "react-icons/tb";
 import { TbLayoutNavbar             as TabsIcon       } from "react-icons/tb";
@@ -338,7 +339,8 @@ const navigation =
                 Icon : OfflineIcon ,
                 items :
                 [
-                    { id : 'outbox' , type : LINK , Icon : OutboxIcon , path : '/modules/outbox' } ,
+                    { id : 'outbox'       , type : LINK , Icon : OutboxIcon       , path : '/modules/outbox'       } ,
+                    { id : 'offlineStore' , type : LINK , Icon : OfflineStoreIcon , path : '/modules/offlineStore' } ,
                 ]
             } ,
         ]
