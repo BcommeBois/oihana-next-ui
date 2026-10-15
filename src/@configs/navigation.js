@@ -284,15 +284,6 @@ const navigation =
                 ]
             } ,
             {
-                id   : 'offline'   ,
-                type : COLLAPSE    ,
-                Icon : OfflineIcon ,
-                items :
-                [
-                    { id : 'outbox' , type : LINK , Icon : OutboxIcon , path : '/modules/outbox' } ,
-                ]
-            } ,
-            {
                 id   : 'maps'   ,
                 type : COLLAPSE ,
                 Icon : MapIcon  ,
@@ -339,6 +330,15 @@ const navigation =
                     { id : 'chartsCirculars' , type : LINK  , Icon : ChartCircularIcon , path  : '/modules/circulars' } ,
                     { id : 'chartsGrids'     , type : LINK  , Icon : ChartGridIcon     , path  : '/modules/grids'     } ,
                     { id : 'chartsMetrics'   , type : LINK  , Icon : MetricsIcon       , path  : '/modules/metrics'   } ,
+                ]
+            } ,
+            {
+                id   : 'offline'   ,
+                type : COLLAPSE    ,
+                Icon : OfflineIcon ,
+                items :
+                [
+                    { id : 'outbox' , type : LINK , Icon : OutboxIcon , path : '/modules/outbox' } ,
                 ]
             } ,
         ]
