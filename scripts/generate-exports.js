@@ -11,6 +11,7 @@ const SRC_DIRS = [
     'helpers',
     'hooks',
     'motions',
+    'offline',
     'themes'
 ];
 

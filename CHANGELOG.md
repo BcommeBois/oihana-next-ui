@@ -12,7 +12,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - 2026-10-17 — **The offline core can be imported** : `./offline/*` was missing from the
   `exports` of `package.json`, so `oihana-next-ui/offline/outbox/httpTransport` and the other
-  paths of the 0.47.0 documentation could not be resolved by an application.
+  paths of the 0.47.0 documentation could not be resolved by an application. The release
+  regenerates the exports from `scripts/generate-exports.js`, which did not list `offline` and
+  dropped the entry at the version bump : the script lists it now.
 - 2026-10-17 — **The outbox reads the reason of a refusal**. `readError()`, in `httpTransport`,
   now takes the code from `reason`, else from a `code` that is a string — a numeric `code` is the
   HTTP status copied and is ignored, where it used to land in `lastError.code` as a number and
