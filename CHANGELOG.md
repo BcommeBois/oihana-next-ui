@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.48.0] — 2026-10-17
+
+A release **for the outbox meeting a real API**. The offline core can at last be imported by an
+application : 0.47.0 shipped without `oihana-next-ui/offline/*` in its exports. A refusal now
+gives its reason whatever the shape of the server's error — a numeric `code` is no longer taken
+for one — and a server that asks to wait is obeyed : the whole queue pauses for the time it
+said, and that wait never counts against the item.
+
 ### Added
 
 - 2026-10-17 — **The outbox waits when the server says so** (`Retry-After`). `httpTransport`
