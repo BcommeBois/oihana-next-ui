@@ -9,7 +9,9 @@
  *
  * `?fail=409|412|422|500` refuses the way an API would, with a readable code ;
  * `&times=N` only the first N times for a key, then accepts. `?delay=ms` (up to
- * 10 s) answers late, to catch an item on its way.
+ * 10 s) answers late, to catch an item on its way. The 422 comes in the other
+ * shape an API may use : the status in `code`, the reason in `reason`, the
+ * explanation in `details`.
  */
 
 const MAX_DELAY = 10000 ;
@@ -18,11 +20,18 @@ const MAX_KEYS = 500 ;
 
 const FAILURES =
 {
-    401 : { code : 'unauthenticated'       , message : 'Sign in again.' } ,
-    409 : { code : 'document_not_draft'    , message : 'The document is no longer a draft.' } ,
-    412 : { code : 'modified_elsewhere'    , message : 'It was changed elsewhere since it was read.' } ,
-    422 : { code : 'unit_already_consumed' , message : 'This unit was already shipped.' } ,
-    500 : { code : 'server_error'          , message : 'The server failed.' } ,
+    401 : { code : 'unauthenticated'    , message : 'Sign in again.' } ,
+    409 : { code : 'document_not_draft' , message : 'The document is no longer a draft.' } ,
+    412 : { code : 'modified_elsewhere' , message : 'It was changed elsewhere since it was read.' } ,
+    422 :
+    {
+        status  : 'error' ,
+        code    : 422 ,
+        message : 'Unprocessable Entity' ,
+        details : 'This unit was already shipped.' ,
+        reason  : 'unit_already_consumed' ,
+    } ,
+    500 : { code : 'server_error' , message : 'The server failed.' } ,
 } ;
 
 // Kept on globalThis so a hot reload of this module does not forget the keys.

@@ -130,6 +130,12 @@ describe( 'Failures' , () =>
         expect( classifyError( new Error( 'a bug' ) ) ).toBe( 'retry' ) ;
     } ) ;
 
+    test( 'a timeout reason from a server is classified by its status' , () =>
+    {
+        expect( classifyError( { status : 422 , code : 'timeout' } ) ).toBe( 'reject' ) ;
+        expect( classifyError( { status : 504 , code : 'timeout' } ) ).toBe( 'retry' ) ;
+    } ) ;
+
     test( 'the backoff doubles, caps, and spreads' , () =>
     {
         const half = () => 0.5 ;

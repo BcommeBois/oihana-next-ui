@@ -155,6 +155,9 @@ export const backoffDelay = ( attempts , { base = 30000 , jitter = 0.2 , max = 9
  * - `conflict` : 409, 412 — the target changed elsewhere ;
  * - `reject` : any other 4xx — refused for good.
  *
+ * A timeout is the transport's (status 0) : a server answering a 4xx with a
+ * `timeout` reason is classified by its status.
+ *
  * @param {*} error
  * @returns {'network'|'auth'|'retry'|'conflict'|'reject'}
  */
@@ -162,7 +165,7 @@ export const classifyError = error =>
 {
     const status = typeof error?.status === 'number' ? error.status : null ;
 
-    if ( error?.code === 'timeout' )
+    if ( status === 0 && error?.code === 'timeout' )
     {
         return 'retry' ;
     }

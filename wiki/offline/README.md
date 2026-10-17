@@ -162,8 +162,26 @@ Never queue a function, a class instance or a Server Action itself : an item is 
    A connection cut after the server created the record but before the answer arrived is
    retried : the server must answer that replay with what it answered the first time — never a
    second record. Without it, every bad moment on the field makes a duplicate.
-2. **Say why it refuses**, in a JSON body : `{ code , message }` (or `{ error : { code , message } }`).
-   The code reaches the list and the banner, where the application gives it words (`reasons`).
+2. **Say why it refuses**, in a JSON body — or nested in its `error` member. `httpTransport` reads :
+   - **the reason** — a stable code, `snake_case` — in `reason`, else in `code` when it is a
+     string. A numeric `code` is the HTTP status copied, not a reason : it is ignored ;
+   - **the message** in `details`, else `detail` (RFC 9457 Problem Details), else `message`, else
+     `title`, else the status text.
+
+   ```json
+   {
+       "status"  : "error" ,
+       "code"    : 422 ,
+       "message" : "Unprocessable Entity" ,
+       "details" : "This unit was already shipped." ,
+       "reason"  : "unit_already_consumed"
+   }
+   ```
+
+   gives `lastError : { status : 422 , code : 'unit_already_consumed' , message : 'This unit was
+   already shipped.' }` ; `{ code : 'unit_already_consumed' , message : '…' }` gives the same.
+   The reason reaches the list and the banner, where the application gives it words (`reasons`).
+   Another shape : pass your own `readError( response )` to `httpTransport`.
 3. **409 or 412** when the target changed meanwhile (the document left its draft state, it was
    edited elsewhere) ; **422** when the action itself is wrong.
 
@@ -176,6 +194,21 @@ Never queue a function, a class instance or a Server Action itself : an item is 
 | 408, 425, 429, 5xx, a timeout | tried again later : 30 s, doubling, up to 15 min | yes — 10, then refused as `exhausted` |
 | 409, 412 | `conflict` : `onConflict( item , error )` may answer `retry`, `reject` or `done` | yes |
 | any other 4xx | `rejected`, with the server's code : a person decides | yes |
+
+The status decides what happens ; the reason only gives it words — shown on a refused item, and
+on one waiting for its next attempt :
+
+```jsx
+const reasons =
+{
+    idempotency_key_reused : 'Already sent with other content : queue it again' ,   // 422, refused
+    idempotency_key_in_use : 'The server is still handling the first attempt' ,     // 429, retried
+    rate_limited           : 'The server asks to slow down' ,                       // 429, retried
+    unit_already_consumed  : 'This unit was already shipped' ,                      // 422, refused
+} ;
+
+<OutboxList reasons={ reasons } />
+```
 
 Refused, conflicting and blocked items stay until someone retries or abandons them. Sent items
 keep their result a day — what `Open` hands to the application — then go.

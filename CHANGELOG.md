@@ -8,6 +8,21 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Fixed
+
+- 2026-10-17 — **The offline core can be imported** : `./offline/*` was missing from the
+  `exports` of `package.json`, so `oihana-next-ui/offline/outbox/httpTransport` and the other
+  paths of the 0.47.0 documentation could not be resolved by an application.
+- 2026-10-17 — **The outbox reads the reason of a refusal**. `readError()`, in `httpTransport`,
+  now takes the code from `reason`, else from a `code` that is a string — a numeric `code` is the
+  HTTP status copied and is ignored, where it used to land in `lastError.code` as a number and
+  never matched the application's `reasons`. The message comes from `details`, else `detail` (RFC
+  9457 Problem Details), `message`, `title`, then the status text — and `HTTP <status>` when that
+  text is empty, as it always is over HTTP/2. The `{ code , message }` and
+  `{ error : { code , message } }` bodies read as before.
+- 2026-10-17 — **A server reason `timeout` no longer means a retry** : only the transport's own
+  timeout (status 0) does ; a server's answer is classified by its status.
+
 ## [0.47.0] — 2026-10-15
 
 A release **for working without a network**. A screen on a dock, in a van or in a cellar loses

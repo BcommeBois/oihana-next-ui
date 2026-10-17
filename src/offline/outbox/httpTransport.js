@@ -1,12 +1,29 @@
 import { createOutboxError } from './schema' ;
 
 /**
- * Reads what a refusing server said : `{ code , message }` from a JSON body
- * shaped `{ code , message }` or `{ error : { code , message } }`, else the
- * status text.
+ * A string worth reading : a non-empty one, else `null`.
+ *
+ * @param {*} value
+ * @returns {?string}
+ */
+const filled = value => typeof value === 'string' && value.trim() !== '' ? value : null ;
+
+/**
+ * Reads what a refusing server said, from a JSON body or nested in its
+ * `error` member :
+ * - `code` : the stable reason — `reason`, else a `code` that is a string. A
+ *   numeric `code` is the HTTP status copied, not a reason : it is ignored ;
+ * - `message` : `details` or `detail` (RFC 9457), else `message` or `title`,
+ *   else an `error` string, else the status text.
  *
  * @param {Response} response
  * @returns {Promise<{ status : number , code : ?string , message : string }>}
+ *
+ * @example
+ * // 422 { status : 'error' , code : 422 , message : 'Unprocessable Entity' ,
+ * //       details : 'This unit was already shipped.' , reason : 'unit_already_consumed' }
+ * await readError( response ) ;
+ * // → { status : 422 , code : 'unit_already_consumed' , message : 'This unit was already shipped.' }
  */
 export const readError = async response =>
 {
@@ -25,8 +42,14 @@ export const readError = async response =>
 
     return {
         status  : response.status ,
-        code    : error?.code ?? null ,
-        message : error?.message ?? ( typeof body?.error === 'string' ? body.error : null ) ?? response.statusText ?? `HTTP ${ response.status }` ,
+        code    : filled( error?.reason ) ?? filled( error?.code ) ,
+        message : filled( error?.details )
+               ?? filled( error?.detail  )
+               ?? filled( error?.message )
+               ?? filled( error?.title   )
+               ?? filled( body?.error    )
+               ?? filled( response.statusText )
+               ?? `HTTP ${ response.status }` ,
     } ;
 } ;
 

@@ -65,6 +65,7 @@
     "./hooks/*": "./src/hooks/*",
     "./locale/*": "./src/@locale/*",
     "./motions/*": "./src/motions/*",
+    "./offline/*": "./src/offline/*",
     "./themes/*": "./src/themes/*"
   },
   "peerDependencies": {

@@ -1,6 +1,6 @@
 import { describe , expect , test } from 'bun:test' ;
 
-import httpTransport from '../../src/offline/outbox/httpTransport' ;
+import httpTransport , { readError } from '../../src/offline/outbox/httpTransport' ;
 
 const item = ( init = {} ) => ( { files : [] , id : 'item-1' , kind : 'receipts' , payload : { body : { a : 1 } } , ...init } ) ;
 
@@ -84,6 +84,64 @@ describe( 'httpTransport' , () =>
 
         const nested = recorder( () => Response.json( { error : { code : 'modified' , message : 'Changed' } } , { status : 412 } ) ) ;
         await expect( httpTransport( { fetch : nested.fetch } )( item() ) ).rejects.toMatchObject( { code : 'modified' , status : 412 } ) ;
+    } ) ;
+
+    test( 'the reason and the details win over a numeric code and the status label' , async () =>
+    {
+        const body =
+        {
+            status  : 'error' ,
+            code    : 422 ,
+            message : 'Unprocessable Entity' ,
+            details : 'The Idempotency-Key was first sent with another body.' ,
+            reason  : 'idempotency_key_reused' ,
+        } ;
+
+        expect( await readError( Response.json( body , { status : 422 } ) ) ).toEqual(
+        {
+            status  : 422 ,
+            code    : 'idempotency_key_reused' ,
+            message : 'The Idempotency-Key was first sent with another body.' ,
+        }) ;
+
+        const { fetch } = recorder( () => Response.json( body , { status : 422 } ) ) ;
+        await expect( httpTransport( { fetch } )( item() ) ).rejects.toMatchObject( { code : 'idempotency_key_reused' , status : 422 } ) ;
+
+        const nested = Response.json( { error : { code : 409 , details : 'Signed meanwhile.' , reason : 'quote_signed' } } , { status : 409 } ) ;
+        expect( await readError( nested ) ).toMatchObject( { code : 'quote_signed' , message : 'Signed meanwhile.' } ) ;
+    } ) ;
+
+    test( 'a numeric code alone is no reason' , async () =>
+    {
+        const response = Response.json( { code : 422 , message : 'Unprocessable Entity' } , { status : 422 } ) ;
+        expect( await readError( response ) ).toEqual( { status : 422 , code : null , message : 'Unprocessable Entity' } ) ;
+    } ) ;
+
+    test( 'a Problem Details body (RFC 9457) gives its detail, and its code extension' , async () =>
+    {
+        const problem =
+        {
+            type   : 'https://api.example.com/problems/quote-signed' ,
+            title  : 'Conflict' ,
+            status : 409 ,
+            detail : 'The quote was signed meanwhile.' ,
+            code   : 'quote_signed' ,
+        } ;
+        const response = new Response( JSON.stringify( problem ) , { headers : { 'content-type' : 'application/problem+json' } , status : 409 } ) ;
+        expect( await readError( response ) ).toEqual( { status : 409 , code : 'quote_signed' , message : 'The quote was signed meanwhile.' } ) ;
+
+        const titled = Response.json( { title : 'Conflict' } , { status : 409 } ) ;
+        expect( await readError( titled ) ).toEqual( { status : 409 , code : null , message : 'Conflict' } ) ;
+    } ) ;
+
+    test( 'empty strings are skipped ; an error string, the status text, then HTTP <status>' , async () =>
+    {
+        const blanks = Response.json( { reason : '' , code : ' ' , details : '' , message : 'Refused' } , { status : 400 } ) ;
+        expect( await readError( blanks ) ).toEqual( { status : 400 , code : null , message : 'Refused' } ) ;
+
+        expect( await readError( Response.json( { error : 'Nope' } , { status : 403 } ) ) ).toMatchObject( { code : null , message : 'Nope' } ) ;
+        expect( await readError( new Response( null , { status : 422 , statusText : 'Unprocessable Entity' } ) ) ).toMatchObject( { message : 'Unprocessable Entity' } ) ;
+        expect( await readError( new Response( null , { status : 422 } ) ) ).toEqual( { status : 422 , code : null , message : 'HTTP 422' } ) ;
     } ) ;
 
     test( 'a network failure is status 0, code network ; a slow server is a timeout' , async () =>
