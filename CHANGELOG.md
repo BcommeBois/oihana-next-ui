@@ -8,6 +8,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- 2026-10-17 — **The outbox waits when the server says so** (`Retry-After`). `httpTransport`
+  reads the header of a refusal — seconds or an HTTP date, `parseRetryAfter()` — and hands it
+  to the queue as `retryAfter` (milliseconds) ; another transport throws the same field. A retry
+  so timed is tried again when the server said, capped by `backoff.max` (15 min), **counts no
+  attempt** — a send still being handled by the server can no longer be refused as `exhausted`
+  while it succeeds — stops the round and **pauses the whole queue** until then (`holdUntil`,
+  kept in IndexedDB, shared by the tabs) : a rate-limited server is not sent the rest of the
+  queue in the meantime. `nextWakeAt()` never answers before the pause ends. Without the
+  header, nothing changes. Called from another origin, the API must expose the header
+  (`Access-Control-Expose-Headers: Retry-After`).
+
 ### Fixed
 
 - 2026-10-17 — **The offline core can be imported** : `./offline/*` was missing from the

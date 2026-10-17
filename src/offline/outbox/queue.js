@@ -74,17 +74,27 @@ export const nextDue = ( items , now , scope , claimed = new Set() ) =>
 
 /**
  * When the next pending item of this account comes due — to schedule a wake-up.
+ * Never before the end of a pause the server asked for.
  *
  * @param {Object[]} items
  * @param {?string} scope
+ * @param {?number} [holdUntil=null] - The queue waits until then (`Retry-After`).
  * @returns {?number}
  */
-export const nextWakeAt = ( items , scope ) =>
+export const nextWakeAt = ( items , scope , holdUntil = null ) =>
 {
     const times = items
         .filter( item => item.status === PENDING && sameScope( item , scope ) )
         .map( item => item.nextAttemptAt ) ;
-    return times.length ? Math.min( ...times ) : null ;
+
+    if ( !times.length )
+    {
+        return null ;
+    }
+
+    const at = Math.min( ...times ) ;
+
+    return ( holdUntil ?? 0 ) > at ? holdUntil : at ;
 } ;
 
 /**
@@ -130,6 +140,12 @@ export const reconcileBlocked = items =>
 } ;
 
 /**
+ * The longest wait between two attempts, in milliseconds, unless `backoff.max`
+ * says otherwise — a server's `Retry-After` is capped by it too.
+ */
+export const BACKOFF_MAX = 900000 ;
+
+/**
  * The wait before attempt `attempts + 1` : doubles from `base`, capped at
  * `max`, spread by `± jitter` so a fleet of devices does not retry in step.
  *
@@ -141,7 +157,7 @@ export const reconcileBlocked = items =>
  * @param {Function} [random=Math.random]
  * @returns {number} Milliseconds.
  */
-export const backoffDelay = ( attempts , { base = 30000 , jitter = 0.2 , max = 900000 } = {} , random = Math.random ) =>
+export const backoffDelay = ( attempts , { base = 30000 , jitter = 0.2 , max = BACKOFF_MAX } = {} , random = Math.random ) =>
 {
     const delay = Math.min( base * 2 ** Math.max( 0 , attempts - 1 ) , max ) ;
     return Math.round( delay * ( 1 + ( random() * 2 - 1 ) * jitter ) ) ;

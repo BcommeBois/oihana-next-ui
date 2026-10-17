@@ -1,10 +1,13 @@
-import { backoffDelay , byId , classifyError , collectRefs , nextDue , nextWakeAt } from './queue' ;
+import { BACKOFF_MAX , backoffDelay , byId , classifyError , collectRefs , nextDue , nextWakeAt } from './queue' ;
 import { CONFLICT , DONE , EXHAUSTED , PENDING , POSTING , REJECTED , toLastError } from './schema' ;
 
 /**
  * What a failed send makes of an item, and whether the round stops : a
  * network or auth failure stops it (the next items would fail the same way)
  * and counts no attempt ; a retry backs off until `maxAttempts`, then rejects.
+ * A retry the server timed (`retryAfter`) waits that long, capped by
+ * `backoff.max`, counts no attempt, stops the round and pauses the queue
+ * until then (`holdUntil`).
  *
  * @param {Object} item - The item as it was sent.
  * @param {*} error - What `send` threw.
@@ -13,7 +16,7 @@ import { CONFLICT , DONE , EXHAUSTED , PENDING , POSTING , REJECTED , toLastErro
  * @param {Object} [options.backoff] - `{ base , max , jitter }`.
  * @param {number} [options.maxAttempts=10]
  * @param {Function} [options.random=Math.random]
- * @returns {{ item : Object , kind : string , stop : boolean }}
+ * @returns {{ item : Object , kind : string , stop : boolean , holdUntil : ?number }}
  */
 export const applyFailure = ( item , error , { backoff , maxAttempts = 10 , now , random = Math.random } ) =>
 {
@@ -23,7 +26,13 @@ export const applyFailure = ( item , error , { backoff , maxAttempts = 10 , now 
 
     if ( kind === 'network' || kind === 'auth' )
     {
-        return { item : { ...base , status : PENDING } , kind , stop : true } ;
+        return { holdUntil : null , item : { ...base , status : PENDING } , kind , stop : true } ;
+    }
+
+    if ( kind === 'retry' && typeof error?.retryAfter === 'number' && error.retryAfter > 0 )
+    {
+        const holdUntil = now + Math.min( error.retryAfter , backoff?.max ?? BACKOFF_MAX ) ;
+        return { holdUntil , item : { ...base , nextAttemptAt : holdUntil , status : PENDING } , kind , stop : true } ;
     }
 
     const attempts = ( item.attempts ?? 0 ) + 1 ;
@@ -33,19 +42,21 @@ export const applyFailure = ( item , error , { backoff , maxAttempts = 10 , now 
         if ( attempts >= maxAttempts )
         {
             return {
+                holdUntil : null ,
                 item : { ...base , attempts , lastError : { ...lastError , code : lastError.code ?? EXHAUSTED , exhausted : true } , status : REJECTED } ,
                 kind : 'reject' ,
                 stop : false ,
             } ;
         }
         return {
+            holdUntil : null ,
             item : { ...base , attempts , nextAttemptAt : now + backoffDelay( attempts , backoff , random ) , status : PENDING } ,
             kind ,
             stop : false ,
         } ;
     }
 
-    return { item : { ...base , attempts , status : kind === 'conflict' ? CONFLICT : REJECTED } , kind , stop : false } ;
+    return { holdUntil : null , item : { ...base , attempts , status : kind === 'conflict' ? CONFLICT : REJECTED } , kind , stop : false } ;
 } ;
 
 /**
@@ -69,8 +80,9 @@ export const applyConflictDecision = ( item , decision , now ) =>
 
 /**
  * Sends the due items, oldest first, `concurrency` at a time, until none is
- * due, the network goes, or `signal` aborts. Used by `createOutbox`, which
- * owns the shared state handed in `context`.
+ * due, the network goes, the server asks to wait, or `signal` aborts. Sends
+ * nothing while the queue is paused (`holdUntil` in the repository's meta).
+ * Used by `createOutbox`, which owns the shared state handed in `context`.
  *
  * @param {Object} context
  * @param {Object} context.repository
@@ -128,6 +140,11 @@ const drain = async ( context , signal ) =>
 
             state.failed += 1 ;
             state.stopped = state.stopped || outcome.stop ;
+
+            if ( outcome.holdUntil )
+            {
+                await repository.setMeta( 'holdUntil' , Math.max( outcome.holdUntil , await repository.getMeta( 'holdUntil' ) ?? 0 ) ) ;
+            }
         }
 
         // Abandoned while it was on its way : nothing to write back.
@@ -148,6 +165,11 @@ const drain = async ( context , signal ) =>
     {
         while ( !state.stopped && !signal?.aborted )
         {
+            if ( ( await repository.getMeta( 'holdUntil' ) ?? 0 ) > now() )
+            {
+                return ;
+            }
+
             const item = nextDue( await repository.all() , now() , getScope() , claimed ) ;
 
             if ( !item )
@@ -170,7 +192,7 @@ const drain = async ( context , signal ) =>
 
     await Promise.all( Array.from( { length : Math.max( 1 , concurrency ) } , worker ) ) ;
 
-    return { ...state , nextAt : nextWakeAt( await repository.all() , getScope() ) } ;
+    return { ...state , nextAt : nextWakeAt( await repository.all() , getScope() , await repository.getMeta( 'holdUntil' ) ) } ;
 } ;
 
 export default drain ;

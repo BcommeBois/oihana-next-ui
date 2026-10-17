@@ -123,7 +123,7 @@ const send = ( item , refs ) => actions[ item.kind ]( item.id , item.payload , r
 ```
 
 The action receives the item's id as its idempotency key, and throws `{ status , code , message }`
-when it refuses. Files are better sent by a Route Handler — `httpTransport` for those kinds — than
+when it refuses — with `retryAfter` (milliseconds) when the server asked to wait. Files are better sent by a Route Handler — `httpTransport` for those kinds — than
 through a Server Action's body limit.
 
 ## Queuing
@@ -184,6 +184,10 @@ Never queue a function, a class instance or a Server Action itself : an item is 
    Another shape : pass your own `readError( response )` to `httpTransport`.
 3. **409 or 412** when the target changed meanwhile (the document left its draft state, it was
    edited elsewhere) ; **422** when the action itself is wrong.
+4. **429 or 503 with `Retry-After`** when it is busy — rate limited, or still handling the first
+   attempt of the same key. `httpTransport` reads seconds or an HTTP date. Called from another
+   origin, the browser hides that header unless the API sends
+   `Access-Control-Expose-Headers: Retry-After`.
 
 ## What happens to a failure
 
@@ -191,7 +195,8 @@ Never queue a function, a class instance or a Server Action itself : an item is 
 |---|---|---|
 | nothing (no network) | waits for the network ; the round stops | no |
 | 401 | waits for the application to sign in again ; the round stops | no |
-| 408, 425, 429, 5xx, a timeout | tried again later : 30 s, doubling, up to 15 min | yes — 10, then refused as `exhausted` |
+| a retry with `Retry-After` (429, 503…) | tried again when the server said, at most `backoff.max` (15 min) ; the round stops and the **whole queue pauses** until then | no |
+| 408, 425, 429, 5xx, a timeout, without `Retry-After` | tried again later : 30 s, doubling, up to 15 min | yes — 10, then refused as `exhausted` |
 | 409, 412 | `conflict` : `onConflict( item , error )` may answer `retry`, `reject` or `done` | yes |
 | any other 4xx | `rejected`, with the server's code : a person decides | yes |
 

@@ -98,6 +98,7 @@ const OutboxBenchDemo = ( { path = 'demo.offline.outbox' } = {} ) =>
         { key : 'conflict' , run : () => enqueue( { kind : 'receipt' , payload : { body : { pallet : pallet() } , url : 'receipt?fail=409' } } ) } ,
         { key : 'modified' , run : () => enqueue( { kind : 'receipt' , payload : { body : { pallet : pallet() } , url : 'receipt?fail=412' } } ) } ,
         { key : 'flaky'    , run : () => enqueue( { kind : 'receipt' , payload : { body : { pallet : pallet() } , url : 'receipt?fail=500&times=2' } } ) } ,
+        { key : 'busy'     , run : () => enqueue( { kind : 'receipt' , payload : { body : { pallet : pallet() } , url : 'receipt?fail=429&times=2' } } ) } ,
         {
             key : 'quote' ,
             run : async () =>

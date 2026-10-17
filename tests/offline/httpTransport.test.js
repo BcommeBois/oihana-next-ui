@@ -1,6 +1,6 @@
 import { describe , expect , test } from 'bun:test' ;
 
-import httpTransport , { readError } from '../../src/offline/outbox/httpTransport' ;
+import httpTransport , { parseRetryAfter , readError } from '../../src/offline/outbox/httpTransport' ;
 
 const item = ( init = {} ) => ( { files : [] , id : 'item-1' , kind : 'receipts' , payload : { body : { a : 1 } } , ...init } ) ;
 
@@ -142,6 +142,33 @@ describe( 'httpTransport' , () =>
         expect( await readError( Response.json( { error : 'Nope' } , { status : 403 } ) ) ).toMatchObject( { code : null , message : 'Nope' } ) ;
         expect( await readError( new Response( null , { status : 422 , statusText : 'Unprocessable Entity' } ) ) ).toMatchObject( { message : 'Unprocessable Entity' } ) ;
         expect( await readError( new Response( null , { status : 422 } ) ) ).toEqual( { status : 422 , code : null , message : 'HTTP 422' } ) ;
+    } ) ;
+
+    test( 'Retry-After reads seconds or an HTTP date ; absent, unreadable, zero or past is null' , () =>
+    {
+        const now = Date.parse( 'Sat, 17 Oct 2026 10:00:00 GMT' ) ;
+        expect( parseRetryAfter( '2' , now ) ).toBe( 2000 ) ;
+        expect( parseRetryAfter( ' 120 ' , now ) ).toBe( 120000 ) ;
+        expect( parseRetryAfter( 'Sat, 17 Oct 2026 10:00:30 GMT' , now ) ).toBe( 30000 ) ;
+        expect( parseRetryAfter( 'Sat, 17 Oct 2026 09:59:00 GMT' , now ) ).toBeNull() ;
+        expect( parseRetryAfter( '0' , now ) ).toBeNull() ;
+        expect( parseRetryAfter( 'soon' , now ) ).toBeNull() ;
+        expect( parseRetryAfter( '-5' , now ) ).toBeNull() ;
+        expect( parseRetryAfter( null , now ) ).toBeNull() ;
+    } ) ;
+
+    test( 'a refusal carries the Retry-After of the server ; a readError of its own wins' , async () =>
+    {
+        const busy = () => Response.json( { code : 429 , reason : 'rate_limited' } , { headers : { 'Retry-After' : '2' } , status : 429 } ) ;
+
+        const { fetch } = recorder( busy ) ;
+        await expect( httpTransport( { fetch } )( item() ) ).rejects.toMatchObject( { code : 'rate_limited' , retryAfter : 2000 , status : 429 } ) ;
+
+        const plain = recorder( () => Response.json( {} , { status : 503 } ) ) ;
+        await expect( httpTransport( { fetch : plain.fetch } )( item() ) ).rejects.toMatchObject( { retryAfter : null , status : 503 } ) ;
+
+        const own = async response => ( { code : 'busy' , message : 'Busy' , retryAfter : 5000 , status : response.status } ) ;
+        await expect( httpTransport( { fetch , readError : own } )( item() ) ).rejects.toMatchObject( { code : 'busy' , retryAfter : 5000 } ) ;
     } ) ;
 
     test( 'a network failure is status 0, code network ; a slow server is a timeout' , async () =>

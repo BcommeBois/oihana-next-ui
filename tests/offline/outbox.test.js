@@ -293,6 +293,42 @@ describe( 'createOutbox' , () =>
         expect( sent ).toHaveLength( 1 ) ;
     } ) ;
 
+    test( 'a server asking to wait pauses the whole queue, then everything leaves' , async () =>
+    {
+        let busy = true ;
+        const answers =
+        {
+            a : () =>
+            {
+                if ( busy )
+                {
+                    busy = false ;
+                    const error = new Error( 'Too Many Requests' ) ;
+                    Object.assign( error , { code : 'rate_limited' , retryAfter : 2000 , status : 429 } ) ;
+                    throw error ;
+                }
+                return { ok : 'a' } ;
+            } ,
+        } ;
+        const { clock , outbox , sent } = setup( { answers } ) ;
+        const a = await outbox.enqueue( { kind : 'a' } ) ;
+        clock.now += 1 ;
+        await outbox.enqueue( { kind : 'b' } ) ;
+
+        expect( await outbox.drain() ).toMatchObject( { failed : 1 , nextAt : clock.now + 2000 , sent : 0 , stopped : true } ) ;
+        expect( await outbox.get( a.id ) ).toMatchObject( { attempts : 0 , lastError : { code : 'rate_limited' } , status : 'pending' } ) ;
+        expect( await outbox.nextWakeAt() ).toBe( clock.now + 2000 ) ;
+
+        clock.now += 1999 ;
+        await outbox.drain() ;
+        expect( sent.map( one => one.kind ) ).toEqual( [ 'a' ] ) ;
+
+        clock.now += 1 ;
+        await outbox.drain() ;
+        expect( sent.map( one => one.kind ) ).toEqual( [ 'a' , 'a' , 'b' ] ) ;
+        expect( ( await outbox.counts() ).pending ).toBe( 0 ) ;
+    } ) ;
+
     test( 'remove abandons an item and its dependents block' , async () =>
     {
         const { outbox } = setup() ;

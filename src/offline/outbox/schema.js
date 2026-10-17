@@ -115,13 +115,15 @@ export const createItem = ( { after = [] , dependsOn = [] , files = [] , kind , 
  * @param {number} [init.status=0] - The HTTP status ; `0` when nothing came back.
  * @param {?string} [init.code=null] - A code the API gives (`unit_already_consumed`…), or `network`, `timeout`, `aborted`.
  * @param {string} [init.message] - A sentence.
- * @returns {Error & { status : number , code : ?string }}
+ * @param {?number} [init.retryAfter=null] - Milliseconds the server asks to wait (`Retry-After`) : the next attempt waits that long, uncounted, and the whole queue pauses.
+ * @returns {Error & { status : number , code : ?string , retryAfter : ?number }}
  */
-export const createOutboxError = ( { code = null , message , status = 0 } = {} ) =>
+export const createOutboxError = ( { code = null , message , retryAfter = null , status = 0 } = {} ) =>
 {
     const error = new Error( message ?? code ?? `HTTP ${ status }` ) ;
-    error.status = status ;
-    error.code   = code ;
+    error.status     = status ;
+    error.code       = code ;
+    error.retryAfter = retryAfter ;
     return error ;
 } ;
 

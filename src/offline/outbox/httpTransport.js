@@ -54,6 +54,37 @@ export const readError = async response =>
 } ;
 
 /**
+ * Reads a `Retry-After` header : seconds (`120`) or an HTTP date.
+ *
+ * @param {?string} value
+ * @param {number} [now=Date.now()]
+ * @returns {?number} Milliseconds to wait ; `null` when absent, unreadable, zero or past.
+ *
+ * @example
+ * parseRetryAfter( '2' ) ; // → 2000
+ * parseRetryAfter( 'Sat, 17 Oct 2026 10:00:30 GMT' , Date.parse( 'Sat, 17 Oct 2026 10:00:00 GMT' ) ) ; // → 30000
+ */
+export const parseRetryAfter = ( value , now = Date.now() ) =>
+{
+    const text = filled( value )?.trim() ;
+
+    if ( !text )
+    {
+        return null ;
+    }
+
+    if ( /^\d+$/.test( text ) )
+    {
+        const delay = Number( text ) * 1000 ;
+        return delay > 0 ? delay : null ;
+    }
+
+    const at = Date.parse( text ) ;
+
+    return Number.isNaN( at ) || at <= now ? null : at - now ;
+} ;
+
+/**
  * Reads what an accepting server answered : JSON when it says so, the text
  * otherwise, `null` for an empty answer.
  *
@@ -111,7 +142,8 @@ const join = ( base , path ) =>
  * and `prepare( item , refs )` may rewrite it with the results of its
  * dependencies (the server key of a quote put into its lines). The item's id
  * goes out as `Idempotency-Key` : the server answers a replay with what it
- * answered the first time.
+ * answered the first time. A refusal's `Retry-After` header goes into the
+ * error as `retryAfter` (milliseconds) : the queue waits that long.
  *
  * Without files, the body goes as JSON ; with files, as a multipart form : the
  * body in a `payload` field (JSON), each file under its `field`.
@@ -121,7 +153,7 @@ const join = ( base , path ) =>
  * @param {Object|Function} [options.headers] - Headers, or `( item ) => headers`, read at each send (a token changes).
  * @param {Function} [options.prepare] - `( item , refs ) => ({ url , method , body , headers })`. Defaults to the payload.
  * @param {Function} [options.fetch=globalThis.fetch]
- * @param {Function} [options.readError] - `( response ) => Promise<{ status , code , message }>`.
+ * @param {Function} [options.readError] - `( response ) => Promise<{ status , code , message }>` ; a `retryAfter` it returns wins over the header.
  * @param {number} [options.timeout=30000] - Milliseconds before a request is given up (`code : 'timeout'`).
  * @returns {Function} `( item , refs , { files , signal } ) => Promise<result>`.
  *
@@ -214,7 +246,7 @@ async ( item , refs = {} , { files = [] , signal } = {} ) =>
 
     if ( !response.ok )
     {
-        throw createOutboxError( await read( response ) ) ;
+        throw createOutboxError( { retryAfter : parseRetryAfter( response.headers.get( 'retry-after' ) ) , ...await read( response ) } ) ;
     }
 
     return readResult( response ) ;

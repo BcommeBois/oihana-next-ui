@@ -188,6 +188,7 @@ const offline =
                 conflict : 'En conflit (409)' ,
                 modified : 'Modifiée ailleurs (412)' ,
                 flaky    : 'Le serveur tombe deux fois (500)' ,
+                busy     : 'Le serveur demande d’attendre (429)' ,
                 quote    : 'Un devis et 3 lignes qui en dépendent' ,
                 replace  : 'La réception PO-2026-118 (remplace celle en attente)' ,
                 after    : 'Corriger une réception en route' ,
@@ -195,6 +196,7 @@ const offline =
                 {
                     after   : 'La première part et met 3 s à répondre ; la correction, mise en file pendant ce temps, l’attend (after) puis part.' ,
                     flaky   : 'Elle recule de 5 s, puis de 10 s, puis passe.' ,
+                    busy    : 'Deux fois « réessayez dans 3 s » : toute la file attend 3 s, sans compter de tentative, puis la réception passe.' ,
                     quote   : 'Les lignes attendent le devis, puis reçoivent son numéro.' ,
                     replace : 'Hors ligne, cliquez deux fois : une seule reste en file.' ,
                 } ,
@@ -282,6 +284,7 @@ const offline =
                 conflict : 'In conflict (409)' ,
                 modified : 'Changed elsewhere (412)' ,
                 flaky    : 'The server fails twice (500)' ,
+                busy     : 'The server asks to wait (429)' ,
                 quote    : 'A quote and 3 lines that depend on it' ,
                 replace  : 'Receipt PO-2026-118 (replaces the pending one)' ,
                 after    : 'Correct a receipt on its way' ,
@@ -289,6 +292,7 @@ const offline =
                 {
                     after   : 'The first leaves and takes 3 s to answer ; the correction, queued meanwhile, waits for it (after) then leaves.' ,
                     flaky   : 'It backs off 5 s, then 10 s, then goes through.' ,
+                    busy    : 'Twice « retry in 3 s » : the whole queue waits 3 s, no attempt counted, then the receipt goes through.' ,
                     quote   : 'The lines wait for the quote, then receive its number.' ,
                     replace : 'Offline, click twice : only one stays queued.' ,
                 } ,

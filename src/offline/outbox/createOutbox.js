@@ -278,7 +278,8 @@ const createOutbox =
     {
         if ( !online || !send )
         {
-            return list().then( items => ({ failed : 0 , nextAt : nextWakeAt( items , scope ) , sent : 0 , stopped : true }) ) ;
+            return Promise.all( [ list() , repository.getMeta( 'holdUntil' ) ] )
+                .then( ( [ items , holdUntil ] ) => ({ failed : 0 , nextAt : nextWakeAt( items , scope , holdUntil ) , sent : 0 , stopped : true }) ) ;
         }
 
         if ( running )
@@ -333,7 +334,7 @@ const createOutbox =
         } ,
         getLastSyncAt : () => repository.getMeta( 'lastSyncAt' ) ,
         isDraining    : () => running !== null ,
-        nextWakeAt    : async () => nextWakeAt( await repository.all() , scope ) ,
+        nextWakeAt    : async () => nextWakeAt( await repository.all() , scope , await repository.getMeta( 'holdUntil' ) ) ,
     } ;
 } ;
 

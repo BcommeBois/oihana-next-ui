@@ -7,11 +7,11 @@
  * body , files }`. A known `Idempotency-Key` gets the same answer again, `200`,
  * with `Idempotent-Replayed: true` : never a second creation.
  *
- * `?fail=409|412|422|500` refuses the way an API would, with a readable code ;
+ * `?fail=409|412|422|429|500` refuses the way an API would, with a readable code ;
  * `&times=N` only the first N times for a key, then accepts. `?delay=ms` (up to
  * 10 s) answers late, to catch an item on its way. The 422 comes in the other
  * shape an API may use : the status in `code`, the reason in `reason`, the
- * explanation in `details`.
+ * explanation in `details`. The 429 asks to wait 3 s (`Retry-After`).
  */
 
 const MAX_DELAY = 10000 ;
@@ -31,7 +31,20 @@ const FAILURES =
         details : 'This unit was already shipped.' ,
         reason  : 'unit_already_consumed' ,
     } ,
+    429 :
+    {
+        status  : 'error' ,
+        code    : 429 ,
+        message : 'Too Many Requests' ,
+        details : 'Too many requests : retry in a few seconds.' ,
+        reason  : 'rate_limited' ,
+    } ,
     500 : { code : 'server_error' , message : 'The server failed.' } ,
+} ;
+
+const HEADERS =
+{
+    429 : { 'Retry-After' : '3' } ,
 } ;
 
 // Kept on globalThis so a hot reload of this module does not forget the keys.
@@ -109,7 +122,7 @@ export async function POST( request , { params } )
         if ( seen < times )
         {
             memory.failures.set( key , seen + 1 ) ;
-            return Response.json( FAILURES[ fail ] , { status : fail } ) ;
+            return Response.json( FAILURES[ fail ] , { headers : HEADERS[ fail ] , status : fail } ) ;
         }
     }
 

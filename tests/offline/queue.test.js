@@ -81,6 +81,14 @@ describe( 'Which item leaves' , () =>
         expect( nextWakeAt( items , null ) ).toBe( 40 ) ;
         expect( nextWakeAt( items , 'X' ) ).toBeNull() ;
     } ) ;
+
+    test( 'the next wake-up never comes before the end of a pause' , () =>
+    {
+        const items = [ item( 'a' , { nextAttemptAt : 40 } ) ] ;
+        expect( nextWakeAt( items , null , 70 ) ).toBe( 70 ) ;
+        expect( nextWakeAt( items , null , 20 ) ).toBe( 40 ) ;
+        expect( nextWakeAt( [] , null , 70 ) ).toBeNull() ;
+    } ) ;
 } ) ;
 
 describe( 'Blocked chains' , () =>
@@ -165,6 +173,26 @@ describe( 'Failures' , () =>
         const last = applyFailure( item( 'a' , { attempts : 9 } ) , { status : 500 } , { maxAttempts : 10 , now : 100 } ) ;
         expect( last.item.status ).toBe( 'rejected' ) ;
         expect( last.item.lastError ).toMatchObject( { code : 'exhausted' , exhausted : true , status : 500 } ) ;
+    } ) ;
+
+    test( 'a retry the server timed waits that long, uncounted, stops the round and holds the queue' , () =>
+    {
+        const busy = { code : 'idempotency_key_in_use' , message : 'Busy' , retryAfter : 2000 , status : 429 } ;
+        const out  = applyFailure( item( 'a' , { attempts : 9 } ) , busy , { maxAttempts : 10 , now : 100 , random : () => 0.9 } ) ;
+        expect( out ).toMatchObject( { holdUntil : 2100 , kind : 'retry' , stop : true } ) ;
+        expect( out.item ).toMatchObject( { attempts : 9 , nextAttemptAt : 2100 , status : 'pending' } ) ;
+        expect( out.item.lastError ).toEqual( { code : 'idempotency_key_in_use' , message : 'Busy' , status : 429 } ) ;
+
+        const long = { retryAfter : 3600000 , status : 503 } ;
+        expect( applyFailure( item( 'a' ) , long , { now : 0 } ).holdUntil ).toBe( 900000 ) ;
+        expect( applyFailure( item( 'a' ) , long , { backoff : { max : 60000 } , now : 0 } ).holdUntil ).toBe( 60000 ) ;
+    } ) ;
+
+    test( 'a retryAfter on a refusal changes nothing' , () =>
+    {
+        const out = applyFailure( item( 'a' ) , { retryAfter : 2000 , status : 422 } , { now : 1 } ) ;
+        expect( out ).toMatchObject( { holdUntil : null , stop : false } ) ;
+        expect( out.item ).toMatchObject( { attempts : 1 , status : 'rejected' } ) ;
     } ) ;
 
     test( 'a 422 rejects with its code ; a 409 conflicts, and the app may decide' , () =>
