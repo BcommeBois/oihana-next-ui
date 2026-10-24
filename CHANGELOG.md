@@ -8,6 +8,29 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Security
+
+- 2026-10-24 — **Next.js 16.4.3 for the lab** (16.3.8 before). Three advisories of 2026-10-22
+  touch every 16.x up to 16.4.0 and are fixed in 16.4.1 : remote code execution in `use cache`
+  functions returning typed arrays (GHSA-673q-mjm6-r5xr, critical), remote code execution in the
+  Image Optimization API with SVG files (GHSA-2464-fhr4-w9xw, critical — already covered here by
+  `sharp` 0.35.5) and a denial of service through Server Actions (GHSA-p3m5-59mp-jv5r, high, no
+  workaround). React and React DOM move to 19.3.1.
+- 2026-10-24 — **The lockfile is refreshed** : `bun audit` goes from 19 advisories to 1.
+  `postcss` 8.5.31, `nanoid` 3.3.20, `source-map-js` 1.2.2, `browserslist` 4.29.4,
+  `baseline-browser-mapping` 2.11.32 and `fast-uri` 3.1.9 replace the vulnerable versions ;
+  every other move stays within the declared ranges (webpack 5.112, behind `raw-loader`, among
+  them). Left : `postcss-selector-parser` 6.0.10 (moderate, CPU on crafted selectors), pinned
+  exactly by `@tailwindcss/typography` 0.5.20 and only run on our own stylesheets at build time.
+
+### Upgrading
+
+- **The `next` peer stays `^16.0.0`** : it is the floor the library needs, not the version to
+  run. An application on Next 16 below 16.4.1 should upgrade its own `next` — the advisories
+  above are in the framework, not in this library.
+- Patch floors raised in the library's dependencies : `flag-icons` ^7.6.0, `html-react-parser`
+  ^6.1.9, `react-is` ^19.3.1, `react-syntax-highlighter` ^16.1.2, `sanitize-html` ^2.18.1.
+
 ## [0.48.0] — 2026-10-17
 
 A release **for the outbox meeting a real API**. The offline core can at last be imported by an
