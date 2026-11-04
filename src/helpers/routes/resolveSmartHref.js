@@ -27,13 +27,7 @@
  * ```
  */
 
-/**
- * The pathname of a URL string, without its query and without its hash.
- *
- * @param {string} url
- * @returns {string}
- */
-const pathnameOf = url => String( url ).split( '#' )[ 0 ].split( '?' )[ 0 ] ;
+import pathnameOf from './pathnameOf' ;
 
 const resolveSmartHref = ( previousUrl , href ) =>
 {

@@ -8,6 +8,7 @@ import filters   from './filters' ;
 import images    from './images' ;
 import media     from './media' ;
 import inputs    from './inputs' ;
+import links     from './links' ;
 import lists     from './lists' ;
 import metrics   from './metrics' ;
 import modals    from './modals' ;
@@ -34,6 +35,7 @@ const demo =
     images ,
     media ,
     inputs ,
+    links ,
     lists ,
     metrics ,
     modals ,

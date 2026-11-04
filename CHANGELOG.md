@@ -8,6 +8,43 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.49.0] — 2026-11-04
+
+A release **for the way back from a record opened elsewhere than its list**. The previous-path
+provider can keep a short trail of the pages visited in the tab, and `useOriginUrl` reads it to
+name the page the reader came from before a run of sibling records — so a back link can lead
+there, beside its link to the list. The lab also moves to Next.js 16.4.3 for three security
+advisories.
+
+### Added
+
+- 2026-11-04 — **`PreviousPathProvider` keeps a trail, on request** (`trailLimit`, `0` by
+  default : nothing changes until it is asked for). The context now also publishes `trail`, the
+  last pages visited in the tab, oldest first. A query-only move replaces the last entry ; the
+  browser's own back and forward (`popstate`) cut the trail back to the last visit of the page
+  they lead to ; every other move — a link to a page seen earlier included — adds a step, so a
+  record opened again from another page now comes from that page. The oldest entry drops out
+  beyond the limit. It lives in memory : a reload starts a new one.
+- 2026-11-04 — **`useOriginUrl( scope )`** (`contexts/previousPath`) and the pure
+  **`resolveOriginUrl( trail , scope )`** (`helpers/routes`) : where the reader came from before
+  reaching the records under `scope`, past every sibling record. `null` when the reader came
+  through the list itself — a smart link to the list already says it — or from nowhere. A record
+  opened from a cross-reference or a dashboard can then link back there, beside its link to the
+  list :
+
+  ```jsx
+  const originUrl = useOriginUrl( '/articles' ) ;
+
+  { originUrl && <BackLink href={ originUrl } label="Back" /> }
+  <BackLink smart href="/articles" label="All articles" />
+  ```
+- 2026-11-04 — **`nextTrail( trail , url , limit )`** and **`pathnameOf( url )`**
+  (`helpers/routes`), the two pure pieces the trail is built on. `resolveSmartHref` now reads
+  `pathnameOf` instead of its own private copy — same behaviour.
+- 2026-11-04 — The lab keeps a trail of twenty pages, and the smart back link demo
+  (Components › Buttons) gained an « Origin of a record » block. The « Navigation Links » demo
+  on the same page now follows the language of the interface (`demo.links.navigation`).
+
 ### Security
 
 - 2026-10-24 — **Next.js 16.4.3 for the lab** (16.3.8 before). Three advisories of 2026-10-22
