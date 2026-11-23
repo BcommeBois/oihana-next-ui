@@ -31,6 +31,36 @@ export const DOCK_LABEL  = 'dock-label' ;
 export const DOCK_ACTIVE = 'dock-active' ;
 
 /**
+ * The count pill of a dock item, on top of the `Badge` it is drawn with.
+ * @type {string}
+ */
+export const DOCK_BADGE = 'border-0 font-bold tabular-nums' ;
+
+/**
+ * The round of a featured item : the screen's main action, raised above the
+ * dock's top edge.
+ * @type {string}
+ */
+export const DOCK_FEATURED = 'grid size-12 -mt-5 place-items-center rounded-full shadow-md' ;
+
+/**
+ * The fill and ink of the featured round, one per daisyUI colour — written out
+ * in full so that Tailwind finds them.
+ * @type {Object<string,string>}
+ */
+export const DOCK_FEATURED_COLORS =
+{
+    accent    : 'bg-accent text-accent-content' ,
+    error     : 'bg-error text-error-content' ,
+    info      : 'bg-info text-info-content' ,
+    neutral   : 'bg-neutral text-neutral-content' ,
+    primary   : 'bg-primary text-primary-content' ,
+    secondary : 'bg-secondary text-secondary-content' ,
+    success   : 'bg-success text-success-content' ,
+    warning   : 'bg-warning text-warning-content' ,
+} ;
+
+/**
  * @typedef {'xs' | 'sm' | 'md' | 'lg' | 'xl'} DockSize
  */
 
@@ -117,6 +147,33 @@ export const getDockItemClasses =
 = {} ) => cn
 (
     { [ DOCK_ACTIVE ] : !!active } ,
+    className ,
+) ;
+
+/**
+ * Generates the className of a featured item's round.
+ *
+ * @param {Object} [props]
+ * @param {string} [props.color='primary'] - One of the eight daisyUI colours ; an unknown one falls back to `primary`.
+ * @param {string} [props.className] - ClassName to append.
+ *
+ * @returns {string} The round's className expression.
+ *
+ * @example
+ * ```js
+ * getDockFeaturedClasses() ;
+ * // → 'grid size-12 -mt-5 place-items-center rounded-full shadow-md bg-primary text-primary-content'
+ * ```
+ */
+export const getDockFeaturedClasses =
+({
+    color = 'primary' ,
+    className ,
+}
+= {} ) => cn
+(
+    DOCK_FEATURED ,
+    DOCK_FEATURED_COLORS[ color ] ?? DOCK_FEATURED_COLORS.primary ,
     className ,
 ) ;
 

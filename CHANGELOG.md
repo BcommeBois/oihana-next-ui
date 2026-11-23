@@ -8,6 +8,30 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- 2026-11-23 — **`DockItem` takes a count pill** (`badge`). A number or a string is drawn in a
+  small pill on the icon's top corner (`badgeColor`, `primary` by default ; `badgeClassName` for
+  more) ; a node is drawn as is ; `null`, `undefined` or `false` draws nothing, and a `0` passed
+  is shown. The pill is hidden from screen readers : the item's name says the count. No more
+  `Indicator` around the icon by hand.
+- 2026-11-23 — **`DockItem` can be the screen's main action** (`featured`, off by default) : a
+  filled round (`color`, `primary` by default) raised above the dock's top edge — the « + » of a
+  bottom bar. It is never active, and its label names the control instead of being printed.
+- 2026-11-23 — **`Dock` passes props to its container** : `as` (`'nav'` for a landmark, or a
+  component such as `motion.nav`), a `ref`, and the rest (`aria-label`, `role`, `data-*`, props
+  of an animation). A `style` is merged with the keyboard lift. Animating the dock itself keeps it
+  fixed, with its spacer and its keyboard avoidance — an animated wrapper made it `relative` and
+  lost both.
+- The lab's Dock page shows a central action, the pills, and a dock that rises as a `nav`.
+
+### Fixed
+
+- 2026-11-23 — **`Dock items={[…]}` dropped every key it did not name.** In the navigation variant,
+  `exact`, `aria-label` and `data-*` reached the item only through the composable form ; they — and
+  the new `badge`, `featured` and `color` — now go to each `DockItem`. A `Button`'s `loading` and a
+  string `style`, meaningless on a dock link, are left out.
+
 ## [0.50.0] — 2026-11-23
 
 A release **for a picker field that is nothing but a question**. `PickerTrigger` can open from its

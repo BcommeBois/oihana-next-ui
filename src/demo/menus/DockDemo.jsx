@@ -9,19 +9,39 @@
  * @module demo/menus/DockDemo
  */
 
+import { useState } from 'react' ;
+
+import { motion } from 'motion/react' ;
+
 import Alert    from '@/components/Alert' ;
+import Button   from '@/components/Button' ;
 import Dock     from '@/components/menus/Dock' ;
 import DockItem from '@/components/menus/DockItem' ;
 
 import {
+    MdAdd as AddIcon ,
     MdCheck as CheckIcon ,
+    MdContacts as ContactsIcon ,
     MdHome as HomeIcon ,
     MdInbox as InboxIcon ,
+    MdInsights as StatsIcon ,
+    MdNotifications as BellIcon ,
     MdSettings as SettingsIcon ,
+    MdShoppingCart as CartIcon ,
+    MdStorefront as StoreIcon ,
 }
 from 'react-icons/md' ;
 
 const ICON = 'size-[1.2em]' ;
+
+const featuredItems =
+[
+    { id: 'home'     , label: 'Accueil'   , onClick: () => alert( 'Accueil' )   , icon: <HomeIcon className={ ICON } /> } ,
+    { id: 'contacts' , label: 'Contacts'  , href: '/components' , exact: false , icon: <ContactsIcon className={ ICON } /> } ,
+    { id: 'create'   , label: 'Créer'     , onClick: () => alert( 'Créer' )     , icon: <AddIcon className="size-6" /> , featured: true } ,
+    { id: 'store'    , label: 'Catalogue' , onClick: () => alert( 'Catalogue' ) , icon: <StoreIcon className={ ICON } /> } ,
+    { id: 'stats'    , label: 'Stats'     , onClick: () => alert( 'Stats' )     , icon: <StatsIcon className={ ICON } /> } ,
+] ;
 
 const items =
 [
@@ -41,6 +61,8 @@ const Frame = ({ children }) => (
 
 export default function DockDemo()
 {
+    const [ rise , setRise ] = useState( 0 ) ;
+
     return (
         <>
 
@@ -123,6 +145,51 @@ export default function DockDemo()
                                 Settings
                             </DockItem>
                         </Dock>
+                    </Frame>
+                </div>
+            </div>
+
+            <div className="card bg-base-200 shadow-xl">
+                <div className="card-body">
+                    <h2 className="card-title text-sm">Dock — action centrale (featured)</h2>
+                    <p className="text-xs text-base-content/70">L’action principale de l’écran, en relief au milieu : jamais active, son libellé la nomme sans s’afficher. « Contacts » pointe vers une section avec <code className="font-mono">exact: false</code> : il reste allumé sur toutes les pages en dessous, dont celle-ci.</p>
+                    <Frame>
+                        <Dock items={ featuredItems } position="relative" className="border border-base-300" />
+                    </Frame>
+                </div>
+            </div>
+
+            <div className="card bg-base-200 shadow-xl">
+                <div className="card-body">
+                    <h2 className="card-title text-sm">Dock — pastilles (badge)</h2>
+                    <p className="text-xs text-base-content/70">Un nombre, un <code className="font-mono">0</code> passé (affiché), un nœud libre. La pastille est cachée aux lecteurs d’écran : le nom de l’item dit le compte.</p>
+                    <Frame>
+                        <Dock position="relative" className="border border-base-300">
+                            <DockItem aria-label="Panier, 3 articles" badge={ 3 } icon={ <CartIcon className={ ICON } /> } onClick={ () => alert( 'Panier' ) }>Panier</DockItem>
+                            <DockItem aria-label="Messages, aucun" badge={ 0 } badgeColor="neutral" icon={ <InboxIcon className={ ICON } /> } onClick={ () => alert( 'Messages' ) }>Messages</DockItem>
+                            <DockItem aria-label="Alertes, nouvelles" badge={ <span aria-hidden className="status status-error" /> } icon={ <BellIcon className={ ICON } /> } onClick={ () => alert( 'Alertes' ) }>Alertes</DockItem>
+                        </Dock>
+                    </Frame>
+                </div>
+            </div>
+
+            <div className="card bg-base-200 shadow-xl">
+                <div className="card-body">
+                    <h2 className="card-title text-sm">Dock — as, ref et props du conteneur</h2>
+                    <p className="text-xs text-base-content/70"><code className="font-mono">as=&#123; motion.nav &#125;</code> et <code className="font-mono">aria-label</code> : un repère de navigation qui monte depuis le bas. Fixé, le dock animé garde sa cale et reste au-dessus du clavier.</p>
+                    <Button size="sm" onClick={ () => setRise( value => value + 1 ) }>Rejouer</Button>
+                    <Frame>
+                        <Dock
+                            animate    = { { y : 0 } }
+                            aria-label = "Navigation de démonstration"
+                            as         = { motion.nav }
+                            className  = "border border-base-300"
+                            initial    = { { y : '100%' } }
+                            items      = { featuredItems }
+                            key        = { rise }
+                            position   = "relative"
+                            transition = { { type : 'spring' , stiffness : 380 , damping : 34 } }
+                        />
                     </Frame>
                 </div>
             </div>

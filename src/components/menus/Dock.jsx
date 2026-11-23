@@ -21,6 +21,13 @@
  * the virtual keyboard** (`avoidKeyboard`) by following the visual viewport,
  * which a `fixed` element on its own does not on Android or iOS.
  *
+ * The container takes `as`, a `ref` and any other prop — `aria-label`, `role`,
+ * `data-*`, a `style` (merged with the keyboard lift). `as="nav"` makes a
+ * navigation dock a landmark ; `as={ motion.div }` animates the dock ITSELF,
+ * which stays fixed and keeps its spacer and its keyboard avoidance — a
+ * transform on an ancestor, by contrast, would make that ancestor the
+ * containing block of the fixed dock.
+ *
  * On iOS, add `<meta name="viewport" content="viewport-fit=cover">` to the root
  * layout so the safe area is counted.
  *
@@ -52,10 +59,25 @@
  *     <DockItem href="/" icon={ <HomeIcon /> }>Home</DockItem>
  *     <DockItem active icon={ <InboxIcon /> }>Inbox</DockItem>
  * </Dock>
+ *
+ * // A navigation bar around its main action, rising when it mounts
+ * <Dock
+ *     animate    = { { y : 0 } }
+ *     aria-label = "Main"
+ *     as         = { motion.nav }
+ *     initial    = { { y : '100%' } }
+ *     items      = {[
+ *         { id: 'home'     , label: 'Home'     , href: '/'         , icon: <HomeIcon /> } ,
+ *         { id: 'contacts' , label: 'Contacts' , href: '/contacts' , icon: <ContactsIcon /> , exact: false } ,
+ *         { id: 'create'   , label: 'Create'   , onClick: create   , icon: <AddIcon /> , featured: true } ,
+ *         { id: 'cart'     , label: 'Cart'     , onClick: openCart , icon: <CartIcon /> , badge: 3 , 'aria-label': 'Cart, 3 items' } ,
+ *         { id: 'stats'    , label: 'Stats'    , href: '/stats'    , icon: <StatsIcon /> , exact: false } ,
+ *     ]}
+ * />
  * ```
  */
 
-import { useEffect , useRef , useState } from 'react' ;
+import { useCallback , useEffect , useRef , useState } from 'react' ;
 
 import cn             from '../../themes/helpers/cn' ;
 import getDockClasses from '../../themes/components/dock' ;
@@ -68,35 +90,59 @@ export const ACTIONS    = 'actions' ;
 
 /**
  * @param {Object} props
+ * @param {import('react').ElementType} [props.as='div'] - The container : an element (`'nav'`) or a component (`motion.div`).
  * @param {boolean} [props.avoidKeyboard=true] - Fixed, follow the visual viewport so the dock stays above the virtual keyboard.
  * @param {import('react').ReactNode} [props.children] - Composable DockItem children (ignored when `items` is set).
  * @param {string} [props.className] - Additional classes for the dock wrapper.
- * @param {Array<{ id?: string, active?: boolean, label?: import('react').ReactNode, href?: import('next/link').LinkProps['href'], icon?: import('react').ReactNode, onClick?: import('react').MouseEventHandler, className?: string, color?: string, style?: string, loading?: boolean, disabled?: boolean, type?: string }>} [props.items] - Data-driven dock entries. With `variant="actions"`, each is a `Button` : `color`, `style`, `loading`, `disabled`, `type`, `icon` (a component) apply.
+ * @param {Array<{ id?: string, active?: boolean, label?: import('react').ReactNode, href?: import('next/link').LinkProps['href'], icon?: import('react').ReactNode, onClick?: import('react').MouseEventHandler, className?: string, exact?: boolean, badge?: import('react').ReactNode, badgeClassName?: string, badgeColor?: string, featured?: boolean, color?: string, style?: string, loading?: boolean, disabled?: boolean, type?: string }>} [props.items] - Data-driven dock entries. With `variant="navigation"`, every other key (`exact`, `badge`, `featured`, `color`, `aria-label`, `data-*`…) goes to the `DockItem`. With `variant="actions"`, each is a `Button` : `color`, `style`, `loading`, `disabled`, `type`, `icon` (a component) apply.
  * @param {string} [props.itemClassName] - Additional classes applied to each item.
  * @param {import('../../themes/layout/position').PositionValue} [props.position] - CSS position (default 'fixed'; use 'relative' to embed).
+ * @param {import('react').Ref} [props.ref] - Forwarded to the container.
  * @param {boolean} [props.showLabel=true] - Render item labels (navigation).
  * @param {import('../../themes/components/dock').DockSize | Object.<string, import('../../themes/components/dock').DockSize>} [props.size] - Dock size (xs, sm, md, lg, xl).
  * @param {boolean} [props.spacer] - Fixed, reserve the dock's height in the page's flow. Defaults to `true` when fixed.
+ * @param {Object} [props.style] - Inline style of the container, merged with the keyboard lift.
  * @param {'navigation'|'actions'} [props.variant='navigation']
  * @returns {React.JSX.Element}
  */
 const Dock =
 ({
+    as : Component = 'div' ,
     avoidKeyboard = true ,
     children ,
     className ,
     items ,
     itemClassName ,
     position ,
+    ref ,
     showLabel = true ,
     size ,
     spacer ,
+    style ,
     variant = NAVIGATION ,
+
+    ...rest
 }) =>
 {
     const fixed = position === undefined || position === 'fixed' ;
 
     const node = useRef( null ) ;
+
+    // The container is measured here AND handed to the caller : one element, two refs.
+    const setNode = useCallback( element =>
+    {
+        node.current = element ;
+
+        if ( typeof ref === 'function' )
+        {
+            ref( element ) ;
+        }
+        else if ( ref )
+        {
+            ref.current = element ;
+        }
+    }
+    , [ ref ] ) ;
 
     const [ height , setHeight ] = useState( 0 ) ;
     const [ lift   , setLift   ] = useState( 0 ) ;
@@ -182,6 +228,11 @@ const Dock =
                 ) ;
             }
 
+            // A `Button`'s own keys mean nothing on a dock link : a string `style` would even
+            // reach the DOM, where React refuses it. The rest is the item's (`exact`, `badge`,
+            // `featured`, `aria-label`, `data-*`…).
+            const { loading : _loading , style : itemStyle , ...itemRest } = rest ;
+
             return (
                 <DockItem
                     key       = { id ?? `item-${ index }` }
@@ -192,6 +243,8 @@ const Dock =
                     label     = { label }
                     onClick   = { onClick }
                     showLabel = { showLabel }
+                    style     = { typeof itemStyle === 'object' ? itemStyle : undefined }
+                    { ...itemRest }
                 />
             ) ;
         } )
@@ -200,14 +253,15 @@ const Dock =
     return (
         <>
             { fixed && ( spacer ?? true ) && height > 0 && <div aria-hidden="true" style={ { height } } /> }
-            <div
+            <Component
                 className = { classes }
-                ref       = { node }
                 role      = { actions ? 'toolbar' : undefined }
-                style     = { lift > 0 ? { bottom : lift } : undefined }
+                { ...rest }
+                ref       = { setNode }
+                style     = { lift > 0 ? { ...style , bottom : lift } : style }
             >
                 { content }
-            </div>
+            </Component>
         </>
     ) ;
 } ;
