@@ -19,6 +19,35 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   a field whose button looks for something rather than edits it. The lab's pickers page shows
   both options on the member field.
 
+### Changed
+
+- 2026-11-23 — **Tailwind CSS 4.3.5 and daisyUI 5.8.2 for the lab** (4.3.3 and 5.7.50 before),
+  moved together. Every Tailwind from 4.3.4 requires lightningcss 1.33.0, which read two rules
+  of daisyUI's `join` (a relative selector inside `@scope`) as empty selectors and printed
+  « Found 2 warnings while optimizing generated CSS » ; daisyUI 5.8.1 rewrites them as
+  `:where(:scope > …)`. With them : lightningcss 1.32.0 → 1.33.0 and `magic-string` 0.30.21 →
+  1.4.5 (only `@tailwindcss/node` uses it). The `tailwindcss` and `daisyui` peers stay `^4.0.0`
+  and `^5.0.0`.
+
+  🚨 **Building the lab now needs Node.js 22.12 or later** (or 20.19 on the 20 line) :
+  `@tailwindcss/node` loads `magic-string` 1.x, an ES module only, with `require()`, and an older
+  Node fails every stylesheet with « require() of ES Module … not supported ». After switching
+  Node, clear `.next/cache/turbopack`, which replays the failure otherwise.
+
+### Security
+
+- 2026-11-23 — **Next.js 16.4.6 for the lab** (16.4.3 before). Seven moderate advisories touch
+  16.3.0 to 16.4.4 and are fixed from 16.4.5 : information disclosure across root params when a
+  `use cache` function is called through `unstable_cache()` (GHSA-mfr8-8qww-v76h), cache leak
+  across root param values in nested `use cache` functions (GHSA-vc7v-qv4w-wrv8), cross-user
+  cache disclosure and poisoning with binary arguments (GHSA-rhh4-g77r-r9qj), cache poisoning of
+  shared fallback shells in Cache Components (GHSA-vvgp-ww4w-46vf), an SVG rejection bypass in
+  the image optimization (GHSA-7qx7-33qx-rqx2), HttpOnly cookie exposure on Edge runtime routes
+  (GHSA-f3mh-rxg3-f5g2), and cross-client response injection in self-hosted applications
+  forwarding fetched responses (GHSA-pc58-hwjq-p385). Patch release, no migration step ; the
+  `next` peer stays `^16.0.0`. `bun audit` is back to the one known advisory
+  (`postcss-selector-parser`, build only).
+
 ## [0.49.0] — 2026-11-04
 
 A release **for the way back from a record opened elsewhere than its list**. The previous-path
