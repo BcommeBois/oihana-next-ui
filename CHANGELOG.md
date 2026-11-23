@@ -8,6 +8,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.52.0] — 2026-11-23
+
+A release **for pages built once and served from the CDN**. `initServerI18n` takes `static`, so
+the server side of the translations stops reading the language cookie — the one read that made
+every page of an application render on demand ; `LangProvider` then sets `<html lang>` itself
+when the client restores the language ; and the `Drawer` shell no longer leaves a prerendered
+page to the client. `static` is off by default : an application that reads the cookie on the
+server keeps doing so.
+
 ### Added
 
 - 2026-11-23 — **`initServerI18n` takes `static`** (off by default). With it, `getServerI18n()`
