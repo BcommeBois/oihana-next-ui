@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.50.0] — 2026-11-23
+
+A release **for a picker field that is nothing but a question**. `PickerTrigger` can open from its
+whole box rather than from its button alone, and take another glyph than the pencil for a button
+that looks for something rather than edits it — both off by default. The lab moves to Next.js
+16.4.6 for seven advisories, and to Tailwind CSS 4.3.5 with daisyUI 5.8.2 ; building it now
+needs Node.js 22.12 or later.
+
 ### Added
 
 - 2026-11-23 — **`PickerTrigger` can open from its whole box** (`clickable`, off by default :
