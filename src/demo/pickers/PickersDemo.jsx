@@ -9,7 +9,9 @@
  *    pinned.
  *  - **A collection** — 240 members on a fake server, searched there and loaded
  *    page by page, with an avatar, a « nobody » row and « the server fails ».
- *    Scroll down, then type : the list opens on its first results.
+ *    Scroll down, then type : the list opens on its first results. The same
+ *    member is shown a second time with the whole box clickable and a search
+ *    glyph on its button (`clickable`, `icon`).
  *  - **A disabled field**, a `PickerOption` on its own, and the three sorts of
  *    choice card (radio, checkbox, button) on the same look.
  *
@@ -17,6 +19,8 @@
  */
 
 import { useCallback , useRef , useState } from 'react' ;
+
+import { MdPersonSearch } from 'react-icons/md' ;
 
 import Avatar            from '@/components/avatars/Avatar' ;
 import Badge             from '@/components/Badge' ;
@@ -159,6 +163,17 @@ const PickersDemo = () =>
                     <PickerTrigger
                         label       = "Membre"
                         placeholder = "Personne"
+                        subtitle    = { member?.team }
+                        title       = { member?.name }
+                        onOpen      = { () => setPicking( 'member' ) }
+                    />
+
+                    <PickerTrigger
+                        clickable
+                        changeLabel = "Chercher"
+                        icon        = { MdPersonSearch }
+                        label       = "Membre — tout le cadre ouvre la liste"
+                        placeholder = "Quel membre ?"
                         subtitle    = { member?.team }
                         title       = { member?.name }
                         onOpen      = { () => setPicking( 'member' ) }

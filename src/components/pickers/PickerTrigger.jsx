@@ -17,6 +17,21 @@
  * Why a field and a modal rather than a list inside the form : an inline list
  * makes the form scroll twice and grow as the results arrive.
  *
+ * Two ways to open it :
+ *
+ *  - **the button only** (default) — the box is a reading surface, its text
+ *    can be selected and copied ;
+ *  - **the whole box** (`clickable`) — for a field that is nothing but a
+ *    question (« Which customer? ») : a touch anywhere on it opens the picker,
+ *    the box shows a pointer and a hover tint. The button stays, the path of
+ *    the keyboard and of a screen reader ; a box without a focus of its own
+ *    adds no second tab stop. Anything interactive put in `content` would open
+ *    the picker too : keep `clickable` off for such a selection.
+ *
+ * The button's glyph is a pencil unless `icon` names another — a field whose
+ * button LOOKS for something (a person, a place) reads better with that
+ * glyph than with « edit ».
+ *
  * Labels : `changeLabel` wins, then `trigger.change` in the i18n bundle at
  * `path`, then the English last resort.
  *
@@ -35,9 +50,11 @@ import cn from '../../themes/helpers/cn' ;
  * @param {React.ReactNode} [props.badges]                 - Flag chips of the selection.
  * @param {string}          [props.changeLabel]            - The button label ; hidden under `sm`, where the pencil alone stays (the button keeps it as its accessible name).
  * @param {React.ReactNode} [props.children]               - Extra content under the field (a hint, an error…).
+ * @param {boolean}         [props.clickable=false]        - The whole box opens the picker, not only its button.
  * @param {string}          [props.className]              - Additional class names for the wrapper.
  * @param {React.ReactNode} [props.content]                - Renders the selection itself, replacing the title / subtitle / note stack — for a selection that has its own cell.
  * @param {boolean}         [props.disabled=false]         - Dims the field and blocks the button — for a question that has no meaning yet, rather than making the field appear and disappear.
+ * @param {React.ElementType} [props.icon=MdEdit]         - The button's glyph.
  * @param {string}          [props.label]                  - Field label above the box.
  * @param {React.ReactNode} [props.note]                   - Third line.
  * @param {Function}        props.onOpen                   - Opens the picker.
@@ -56,6 +73,18 @@ import cn from '../../themes/helpers/cn' ;
  *     onOpen      = { () => setPicking( true ) }
  * />
  * ```
+ *
+ * @example
+ * ```jsx
+ * <PickerTrigger
+ *     clickable
+ *     changeLabel = "Select"
+ *     icon        = { MdPersonSearch }
+ *     placeholder = "Which member?"
+ *     title       = { member?.name }
+ *     onOpen      = { () => setPicking( true ) }
+ * />
+ * ```
  */
 const PickerTrigger =
 ({
@@ -63,8 +92,10 @@ const PickerTrigger =
     changeLabel ,
     children ,
     className ,
+    clickable = false ,
     content ,
     disabled = false ,
+    icon : Icon = MdEdit ,
     label ,
     note ,
     onOpen ,
@@ -78,6 +109,18 @@ const PickerTrigger =
 
     const changeText = changeLabel ?? change ;
 
+    const boxOpens = clickable && !disabled ;
+
+    const onButtonClick = event =>
+    {
+        if ( boxOpens )
+        {
+            event.stopPropagation() ;
+        }
+
+        onOpen?.( event ) ;
+    } ;
+
     return (
         <div className={ cn( 'flex flex-col gap-1' , disabled && 'opacity-60' , className ) }>
 
@@ -85,7 +128,15 @@ const PickerTrigger =
                 <span className="text-xs font-semibold uppercase tracking-wide text-base-content/60">{ label }</span>
             }
 
-            <div className="flex items-center gap-3 rounded-box border border-base-300/60 px-3 py-2">
+            {/* biome-ignore lint/a11y/noStaticElementInteractions: with `clickable` the box is a larger touch target for the button inside it — the button stays the one focusable control */}
+            {/* biome-ignore lint/a11y/useKeyWithClickEvents: same — the keyboard reaches the button, a second tab stop on the box would repeat it */}
+            <div
+                className = { cn(
+                    'flex items-center gap-3 rounded-box border border-base-300/60 px-3 py-2' ,
+                    boxOpens && 'cursor-pointer transition-colors hover:bg-base-content/5' ,
+                ) }
+                onClick = { boxOpens ? onOpen : undefined }
+            >
 
                 <span className="flex min-w-0 flex-1 flex-col gap-0.5">
                     { content ?? ( title
@@ -106,9 +157,9 @@ const PickerTrigger =
                     aria-label = { changeText }
                     className  = "btn btn-ghost btn-sm shrink-0"
                     disabled   = { disabled }
-                    onClick    = { onOpen }
+                    onClick    = { onButtonClick }
                 >
-                    <MdEdit className="size-4" aria-hidden="true" />
+                    <Icon className="size-4" aria-hidden="true" />
                     <span className="hidden sm:inline">{ changeText }</span>
                 </button>
 

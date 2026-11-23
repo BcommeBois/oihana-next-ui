@@ -8,6 +8,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- 2026-11-23 — **`PickerTrigger` can open from its whole box** (`clickable`, off by default :
+  nothing changes until it is asked for). The box then shows a pointer and a hover tint, and a
+  touch anywhere on it opens the picker — for a field that is nothing but a question. The
+  button stays the one focusable control, so the keyboard and screen readers see no change.
+  Keep it off when `content` holds anything interactive.
+- 2026-11-23 — **`PickerTrigger` takes the button's glyph** (`icon`, `MdEdit` by default), for
+  a field whose button looks for something rather than edits it. The lab's pickers page shows
+  both options on the member field.
+
 ## [0.49.0] — 2026-11-04
 
 A release **for the way back from a record opened elsewhere than its list**. The previous-path
