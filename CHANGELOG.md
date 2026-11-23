@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.51.0] — 2026-11-23
+
+A release **for a bottom bar built around its main action**. A `DockItem` can be that action — a
+filled round raised above the dock — and carry a count pill on its icon ; the `Dock` hands its
+container an element or a component (`as`), a `ref` and any other prop, so it can be a `nav`
+landmark or animate itself while staying fixed ; and `items={[…]}` stops dropping the keys it did
+not name. Everything is off by default : no existing dock changes.
+
 ### Added
 
 - 2026-11-23 — **`DockItem` takes a count pill** (`badge`). A number or a string is drawn in a
