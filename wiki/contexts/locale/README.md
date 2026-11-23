@@ -121,6 +121,23 @@ server's first render and the client's agree. Keep it for what only the server c
 metadata, a redirect, a static page ; text a reader sees while switching languages belongs to
 the client (`useI18n`, `I18nText`).
 
+### Prerendered pages
+
+Reading a cookie is what makes Next render a page on every request : with the call above in
+the root layout, no page of the application is ever static. That is the right trade behind a
+sign-in, where everything is rendered on demand anyway. A public site that wants its pages
+built once and served from the CDN passes `static : true` :
+
+```js
+initServerI18n( { locale , defaultLang , languages , metadatas , static : true } ) ;
+```
+
+`getServerI18n()` then answers in `defaultLang` without reading the cookie — and the root
+layout must not read it either : hand `defaultLang` to `<html lang>` and to `initialLang`.
+`LangProvider` restores the stored language on the client and sets `<html lang>` to match. The
+price : metadata are served in the default language, and a reader who chose another one sees
+the default for an instant on the first paint.
+
 ## Numbers and dates
 
 The language picks the words ; the **locale** picks the conventions — `en` alone does not say

@@ -77,10 +77,16 @@ const LangProvider =
     }
     , [ storageKey , serverLang , languages ] ) ;
 
-    // Sync dayjs locale
+    // Sync dayjs locale and the document's language : the server wrote `<html lang>`
+    // once, a language chosen or restored on the client has to follow.
     useEffect( () =>
     {
         dayjs.locale( lang ) ;
+
+        if ( lang )
+        {
+            document.documentElement.lang = lang ;
+        }
     }
     , [ lang ] ) ;
 

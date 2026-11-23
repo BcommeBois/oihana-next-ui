@@ -8,6 +8,25 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- 2026-11-23 — **`initServerI18n` takes `static`** (off by default). With it, `getServerI18n()`
+  and `getServerLang()` answer in `defaultLang` without reading the language cookie, so the
+  pages that call them can be prerendered ; the client restores the stored language on its own.
+  The locale guide has the trade-off.
+
+### Changed
+
+- 2026-11-23 — **`LangProvider` keeps `<html lang>` in step with the language.** The attribute
+  was written by the server only, so a language chosen in the page left it stale until the next
+  full render.
+- 2026-11-23 — **`Drawer` no longer keeps its page from being prerendered.** Its scroll reset
+  reads the search parameters, which left the whole shell to the client on a static page ; it
+  now sits in a component of its own under a `Suspense`. Same props, same behaviour.
+- 2026-11-23 — The lab is served as static pages : its root layout no longer reads the language
+  cookie, its 404 is a `not-found` page rather than a catch-all route, and a `robots` file
+  keeps crawlers off the demonstration endpoints.
+
 ## [0.51.0] — 2026-11-23
 
 A release **for a bottom bar built around its main action**. A `DockItem` can be that action — a

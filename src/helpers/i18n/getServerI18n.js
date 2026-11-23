@@ -26,6 +26,10 @@ export const DEFAULT_STORAGE_KEY = 'lang' ;
  * Resolves the current language from the cookie.
  * Falls back to defaultLang if the cookie is absent or invalid.
  *
+ * With `static : true` passed to `initServerI18n`, the cookie is never read
+ * and the answer is `defaultLang` : reading a cookie is what makes Next render
+ * a page on every request instead of once at build time.
+ *
  * @param {string} [storageKey='lang'] - Cookie key to read from.
  *
  * @returns {Promise<string>} Resolved language code.
@@ -41,7 +45,12 @@ export const DEFAULT_STORAGE_KEY = 'lang' ;
  */
 export const getServerLang = async ( storageKey = DEFAULT_STORAGE_KEY ) =>
 {
-    const { defaultLang , languages } = getServerI18nConfig() ;
+    const { defaultLang , languages , static : isStatic } = getServerI18nConfig() ;
+
+    if ( isStatic )
+    {
+        return defaultLang ;
+    }
 
     const cookieStore = await cookies() ;
     const code        = cookieStore.get( storageKey )?.value ;

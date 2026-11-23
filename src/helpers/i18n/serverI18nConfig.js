@@ -13,6 +13,7 @@
  * @property {string} defaultLang - Fallback language code.
  * @property {string[]} languages - Available language codes.
  * @property {Object} [metadatas] - Static metadata shared across all pages (config.metadatas).
+ * @property {boolean} [static=false] - Never read the language cookie : `getServerLang` answers `defaultLang`, so a page that calls `getServerI18n` can still be prerendered. The client then switches to the stored language on its own.
  */
 
 /** @type {ServerI18nConfig | null} */

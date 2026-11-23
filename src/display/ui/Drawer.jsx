@@ -18,7 +18,7 @@
 
 'use client' ;
 
-import { useId , useEffect , useRef } from 'react' ;
+import { Suspense , useId , useEffect , useRef } from 'react' ;
 
 import cn from '../../themes/helpers/cn' ;
 
@@ -32,6 +32,24 @@ import { breakpoints } from '../../themes/enums/breakpoints' ;
 
 export const START = 'start' ;
 export const END   = 'end' ;
+
+/**
+ * Resets the content's scroll on a route change, and renders nothing.
+ *
+ * A component of its own because `useResetScroll` reads the search parameters :
+ * on a prerendered page whatever reads them is left to the client, up to the
+ * nearest `Suspense`. Called in `Drawer` itself, that would be the whole shell.
+ *
+ * @param {Object} props
+ * @param {Object} [props.options] - The options of `useResetScroll`.
+ * @param {React.RefObject} props.target - The scroll container.
+ */
+const DrawerScrollReset = ( { options , target } ) =>
+{
+    useResetScroll( target , options ) ;
+
+    return null ;
+} ;
 
 /**
  * @param {Object} props
@@ -69,10 +87,6 @@ const Drawer =
     const drawerId   = useId() ;
     const contentRef = useRef( null ) ;
     const sideRef    = useRef( null ) ;
-
-    // `false` is the shorthand for `{ disabled : true }` — the whole shell stops
-    // resetting, which is coarse and occasionally what a page wants.
-    useResetScroll( contentRef , scrollReset === false ? { disabled : true } : scrollReset ) ;
 
     // Handle responsive breakpoint changes
     useEffect( () =>
@@ -177,6 +191,16 @@ const Drawer =
                 />
                 { sideBar }
             </div>
+
+            { /* Last, so its effect still runs after those of the content and the sidebar.
+                 `false` is the shorthand for `{ disabled : true }` — the whole shell stops
+                 resetting, which is coarse and occasionally what a page wants. */ }
+            <Suspense fallback={ null }>
+                <DrawerScrollReset
+                    options = { scrollReset === false ? { disabled : true } : scrollReset }
+                    target  = { contentRef }
+                />
+            </Suspense>
 
         </div>
     ) ;

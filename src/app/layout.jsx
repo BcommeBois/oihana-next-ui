@@ -1,5 +1,3 @@
-import { cookies } from 'next/headers' ;
-
 import "./global.css" ;
 
 import courierPrime  from '@/themes/fonts/courrierPrime' ;
@@ -23,12 +21,15 @@ import getServerMetadatas from '@/helpers/i18n/getServerMetadatas' ;
 import config from '@/@configs' ;
 import locale from '@/@locale'
 
+// `static` : the language cookie is never read on the server, so every page is
+// prerendered. The client switches to the stored language on its own.
 initServerI18n(
 {
     locale      : locale ,
     defaultLang : config.defaultLang ,
     languages   : config.languages   ,
     metadatas   : config.metadatas   ,
+    static      : true ,
 }) ;
 
 export async function generateMetadata()
@@ -63,10 +64,9 @@ export const viewport =
     viewportFit  : 'cover' ,
 };
 
-export default async function RootLayout ( { children } )
+export default function RootLayout ( { children } )
 {
-    const cookieStore = await cookies() ;
-    const initialLang = cookieStore.get( 'lang' )?.value ?? config.defaultLang ;
+    const initialLang = config.defaultLang ;
 
     const classNames  = getFontClassNames([
         bitter ,
