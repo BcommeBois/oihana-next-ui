@@ -8,6 +8,20 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [0.52.1] — 2026-11-24
+
+A small release for **search fields**. `InputSearch` no longer lets the browser drop its list of
+past entries under the field : in a search they matched nothing the list held any more, and hid
+its first results. Every search built on it follows, with nothing to change in an application.
+
+### Changed
+
+- `InputSearch` turns the browser's suggestions off by default (`autoComplete="off"`) : a search
+  is not a form, and what was typed in it once says nothing of what the list holds now — the
+  browser's list of past entries also covered the first results. Every component built on it
+  follows (`UrlSearch`, `PagedPickerModal`, `OptionPickerModal`, `ChecklistPanel`,
+  `RemoteFilterPicker`, `AssignmentList`). A caller passing its own `autoComplete` still wins.
+
 ## [0.52.0] — 2026-11-23
 
 A release **for pages built once and served from the CDN**. `initServerI18n` takes `static`, so

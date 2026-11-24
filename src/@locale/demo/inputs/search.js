@@ -9,7 +9,7 @@ const search =
         log :
         {
             title       : 'Recherche différée' ,
-            note        : 'Chaque appel à onSearch s’ajoute au journal. Tapez puis attendez, effacez au clavier puis attendez : la valeur vide part aussi. Entrée ou la loupe ne font partir une valeur qu’une fois.' ,
+            note        : 'Chaque appel à onSearch s’ajoute au journal. Tapez puis attendez, effacez au clavier puis attendez : la valeur vide part aussi. Entrée ou la loupe ne font partir une valeur qu’une fois. Le navigateur ne propose plus ses anciennes saisies sous le champ (autoComplete coupé par défaut).' ,
             placeholder : 'Tapez, effacez, appuyez sur Entrée…' ,
             empty       : 'Aucune recherche envoyée' ,
         } ,
@@ -71,7 +71,7 @@ const search =
         log :
         {
             title       : 'Deferred search' ,
-            note        : 'Every call to onSearch is added to the log. Type then wait, clear with the keyboard then wait : the empty value leaves too. Enter or the magnifier sends a value once only.' ,
+            note        : 'Every call to onSearch is added to the log. Type then wait, clear with the keyboard then wait : the empty value leaves too. Enter or the magnifier sends a value once only. The browser no longer suggests its past entries under the field (autoComplete off by default).' ,
             placeholder : 'Type, clear, press Enter…' ,
             empty       : 'No search sent yet' ,
         } ,

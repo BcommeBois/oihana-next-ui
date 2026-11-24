@@ -21,7 +21,14 @@ import { MdClose as CloseIcon, MdSearch as SearchIcon } from 'react-icons/md';
 /**
  * InputSearch component - Search input with debounce, search button, and clear functionality.
  *
+ * **The browser's suggestions are off by default** (`autoComplete="off"`). A
+ * search is not a form : what was typed in it yesterday says nothing of what
+ * the list holds today, and the browser's list of past entries would cover the
+ * first results. A caller that wants them back passes its own `autoComplete`,
+ * which comes after the default.
+ *
  * @param {Object} props
+ * @param {string} [props.autoComplete='off'] - The field's `autocomplete` attribute. Off by default ; `'on'` (or a token) gives the browser's suggestions back.
  * @param {number} [props.debounceDelay=0] - Milliseconds of quiet before `onSearch` fires on its own. The debounced search fires for every NEW value — a return to the default value included, so a field emptied from the keyboard resets the list — and never twice for the same value : Enter or the search button already searched it. Nothing fires on mount.
  * @param {Function} [props.onClear] - Called by the clear button. When given, it is trusted to reset the search itself, so the debounced search does not fire `onSearch('')` again ; without it, the debounced search does.
  * @param {boolean} [props.busy=false] - A search is in flight : the clear button trades its icon for a spinner and ignores clicks, `aria-busy`, but stays in the tab order — ONE sign of waiting per field, so the search button, when shown, keeps its icon and only ignores clicks. The field itself keeps taking keystrokes, so a reader can change their mind mid-wait. A native `disabled` would drop the focus of whoever pressed the button.
@@ -207,6 +214,7 @@ const InputSearch =
             readOnly      = { readOnly }
             ref           = { mergedRef }
             type          = "text"
+            autoComplete  = "off"
             useFieldset   = { useFieldset }
             value         = { value }
             size          = { size }
